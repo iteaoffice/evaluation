@@ -1,0 +1,69 @@
+{
+  "name": "iteaoffice/evaluation",
+  "type": "library",
+  "license": "proprietary",
+  "description": "Code to manage project evaluation",
+  "keywords": [
+    "project",
+    "evaluation"
+  ],
+  "homepage": "https://itea3.org",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.itea4.org"
+    }
+  ],
+  "authors": [
+    {
+      "name": "Johan van der Heide",
+      "email": "johan.van.der.heide@itea3.org"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^7.3",
+    "ext-dom": "*",
+    "ext-json": "*",
+    "ext-zip": "*",
+    "zendframework/zend-mvc": "^3.0.1",
+    "zendframework/zend-mvc-form": "^1.0.0",
+    "zendframework/zend-code": "@stable",
+    "zendframework/zend-math": "^3.1.1",
+    "zendframework/zend-mvc-console": "^1.2.0",
+    "zendframework/zend-mvc-plugins": "^1.0.1",
+    "zendframework/zend-navigation": "^2.9.0",
+    "jield-webdev/bjy-authorize": "^1.4.0",
+    "doctrine/doctrine-orm-module": "@stable",
+    "phpoffice/phppresentation": "^0.9",
+    "phpoffice/phpword": "^0.16",
+    "phpoffice/phpspreadsheet": "^1.6.0",
+    "rulin132/jpgraph": "^4.2.6"
+  },
+  "require-dev": {
+    "iteaoffice/testing": "^1.2",
+    "iteaoffice/general": "^4.1",
+    "iteaoffice/affiliation": "^4.1",
+    "iteaoffice/contact": "^4.1",
+    "iteaoffice/organisation": "^4.1",
+    "iteaoffice/search": "^1.1",
+    "iteaoffice/program": "^4.1",
+    "iteaoffice/project": "^4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Evaluation\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "EvaluationTest\\": "test/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev",
+      "dev-develop": "1.0.x-dev"
+    }
+  }
+}
