@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Evaluation\Service;
 
 use Evaluation\Repository\FilteredObjectRepository;
-use Project\Entity;
+use Evaluation\Entity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use function class_implements;

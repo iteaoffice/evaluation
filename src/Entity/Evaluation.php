@@ -1,0 +1,402 @@
+<?php
+/**
+ * ITEA Office all rights reserved
+ *
+ * PHP Version 7
+ *
+ * @category    Project
+ *
+ * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
+ * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @license     https://itea3.org/license.txt proprietary
+ *
+ * @link        http://github.com/iteaoffice/project for the canonical source repository
+ */
+
+declare(strict_types=1);
+
+namespace Evaluation\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Zend\Form\Annotation;
+
+/**
+ * Evaluation.
+ *
+ * @ORM\Table(name="evaluation")
+ * @ORM\Entity()
+ */
+class Evaluation extends AbstractEntity
+{
+    public const DISPLAY_COST = 4;
+    public const DISPLAY_EFFORT = 2;
+    public const DISPLAY_EFFORT_PERCENTAGE = 3;
+    /**
+     * Status constants.
+     */
+    public const DISPLAY_PARTNERS = 1;
+    public const ELIGIBLE_NO = 0;
+    public const ELIGIBLE_NOT_SET = 2;
+    public const ELIGIBLE_YES = 1;
+
+    protected static $displayTemplates
+        = [
+            self::DISPLAY_PARTNERS          => 'txt-partners',
+            self::DISPLAY_EFFORT            => 'txt-effort',
+            self::DISPLAY_EFFORT_PERCENTAGE => 'txt-effort-percentage',
+            self::DISPLAY_COST              => 'txt-cost',
+        ];
+
+    protected static $eligibleTemplates
+        = [
+            self::ELIGIBLE_YES     => 'txt-eligible',
+            self::ELIGIBLE_NO      => 'txt-not-eligible',
+            self::ELIGIBLE_NOT_SET => 'txt-eligibility-not-set',
+        ];
+    /**
+     * @ORM\Column(name="evaluation_id", type="integer", options={"unsigned":true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Annotation\Exclude()
+     *
+     * @var integer
+     */
+    private $id;
+    /**
+     * @ORM\Column(name="description", type="text", nullable=true)
+     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Attributes({"rows":15})
+     * @Annotation\Options({"label":"txt-description","help-block": "txt-evaluation-description-explanation"})
+     *
+     * @var string
+     */
+    private $description;
+    /**
+     * @ORM\Column(name="date_updated", type="datetime", nullable=false)
+     * @Gedmo\Timestampable(on="update")
+     * @Annotation\Exclude()
+     *
+     * @var \DateTime
+     */
+    private $dateUpdated;
+    /**
+     * @ORM\ManyToOne(targetEntity="Project\Entity\Funding\Status", cascade="persist", inversedBy="evaluation")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="status_id", referencedColumnName="status_id", nullable=false)
+     * })
+     * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
+     * @Annotation\Options({
+     *      "help-block":"txt-evaluation-status-explanation",
+     *      "target_class":"Project\Entity\Funding\Status",
+     *      "find_method":{
+     *          "name":"findBy",
+     *          "params": {
+     *              "criteria":{"isEvaluation":"1"},
+     *              "orderBy":{
+     *                  "sequence":"ASC"}
+     *              }
+     *          }
+     *      }
+     * )
+     * @Annotation\Attributes({"label":"txt-evaluation-status"})
+     *
+     * @var \Project\Entity\Funding\Status
+     */
+    private $status;
+    /**
+     * @ORM\ManyToOne(targetEntity="Contact\Entity\Contact", cascade="persist", inversedBy="evaluation")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="contact_id", referencedColumnName="contact_id")
+     * })
+     * @Annotation\Type("Contact\Form\Element\Contact")
+     * @Annotation\Attributes({"label":"txt-evaluation-contact-label"})
+     * @Annotation\Options({"help-block":"txt-evaluation-contact-help-block"})
+     *
+     * @var \Contact\Entity\Contact
+     */
+    private $contact;
+    /**
+     * @ORM\ManyToOne(targetEntity="General\Entity\Country", cascade="persist", inversedBy="evaluation")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="country_id", referencedColumnName="country_id")
+     * })
+     * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
+     * @Annotation\Options({
+     *      "help-block":"txt-evaluation-country-explanation",
+     *      "target_class":"General\Entity\Country",
+     *      "find_method":{
+     *          "name":"findForForm",
+     *          "params": {
+     *              "criteria":{},
+     *              "orderBy":{
+     *                  "country":"ASC"}
+     *              }
+     *          }
+     *      }
+     * )
+     * @Annotation\Attributes({"label":"txt-country"})
+     *
+     * @var \General\Entity\Country
+     */
+    private $country;
+    /**
+     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Type", cascade="persist", inversedBy="evaluation")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="type_id", referencedColumnName="type_id", nullable=false)
+     * })
+     * @Annotation\Type("DoctrineORMModule\Form\Element\EntityRadio")
+     * @Annotation\Options({
+     *      "help-block":"txt-evaluation-type-explanation",
+     *      "target_class":"Project\Entity\Evaluation\Type",
+     *      "find_method":{
+     *          "name":"findBy",
+     *          "params": {
+     *              "criteria":{},
+     *              "orderBy":{
+     *                  "type":"ASC"}
+     *              }
+     *          }
+     *      }
+     * )
+     * @Annotation\Attributes({"label":"txt-type"})
+     *
+     * @var \Project\Entity\Evaluation\Type
+     */
+    private $type;
+    /**
+     * @ORM\ManyToOne(targetEntity="Project\Entity\Project", cascade="persist", inversedBy="evaluation")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="project_id", referencedColumnName="project_id", nullable=false)
+     * })
+     * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
+     * @Annotation\Options({
+     *      "help-block":"txt-evaluation-project-explanation",
+     *      "target_class":"Project\Entity\Project",
+     *      "find_method":{
+     *          "name":"findBy",
+     *          "params": {
+     *              "criteria":{},
+     *              "orderBy":{
+     *                  "call":"ASC"}
+     *              }
+     *          }
+     *      }
+     * )
+     * @Annotation\Attributes({"label":"txt-project"})
+     *
+     * @var \Project\Entity\Project
+     */
+    private $project;
+    /**
+     * @ORM\Column(name="eligible", type="smallint", length=2, nullable=true)
+     * @Annotation\Type("Zend\Form\Element\Radio")
+     * @Annotation\Attributes({"array":"eligibleTemplates"})
+     * @Annotation\Options({"label":"txt-eligibility","help-block":"txt-evaluation-eligibility-explanation"})
+     *
+     * @var int
+     */
+    private $eligible;
+
+    public function __construct()
+    {
+        $this->eligible = self::ELIGIBLE_NOT_SET;
+    }
+
+    public static function getEligibleTemplates(): array
+    {
+        return self::$eligibleTemplates;
+    }
+
+    public static function getDisplayTemplates(): array
+    {
+        return self::$displayTemplates;
+    }
+
+    /**
+     * Magic Getter.
+     *
+     * @param $property
+     *
+     * @return mixed
+     */
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    /**
+     * Magic Setter.
+     *
+     * @param $property
+     * @param $value
+     */
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    /**
+     * @param $property
+     *
+     * @return bool
+     */
+    public function __isset($property)
+    {
+        return isset($this->$property);
+    }
+
+    /**
+     * @return \Contact\Entity\Contact
+     */
+    public function getContact()
+    {
+        return $this->contact;
+    }
+
+    /**
+     * @param \Contact\Entity\Contact $contact
+     */
+    public function setContact($contact)
+    {
+        $this->contact = $contact;
+    }
+
+    /**
+     * @return \General\Entity\Country
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param \General\Entity\Country $country
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateUpdated()
+    {
+        return $this->dateUpdated;
+    }
+
+    /**
+     * @param \DateTime $dateUpdated
+     */
+    public function setDateUpdated($dateUpdated)
+    {
+        $this->dateUpdated = $dateUpdated;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @param bool $textual
+     *
+     * @return int
+     */
+    public function getEligible(bool $textual = false)
+    {
+        if ($textual) {
+            if (null === $this->eligible) {
+                return '-';
+            }
+
+            return self::$eligibleTemplates[$this->eligible];
+        }
+
+        return $this->eligible;
+    }
+
+    /**
+     * @param int $eligible
+     */
+    public function setEligible($eligible)
+    {
+        $this->eligible = $eligible;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return \Project\Entity\Project
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    /**
+     * @param \Project\Entity\Project $project
+     */
+    public function setProject($project)
+    {
+        $this->project = $project;
+    }
+
+    /**
+     * @return \Project\Entity\Funding\Status
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param \Project\Entity\Funding\Status $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return Type
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param Type $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+}

@@ -1,0 +1,168 @@
+<?php
+/**
+ * ITEA Office all rights reserved
+ *
+ * PHP Version 7
+ *
+ * @category    Project
+ *
+ * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
+ * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @license     https://itea3.org/license.txt proprietary
+ *
+ * @link        http://github.com/iteaoffice/project for the canonical source repository
+ */
+
+declare(strict_types=1);
+
+namespace Project\Controller\Evaluation;
+
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Project\Controller\Plugin\GetFilter;
+use Project\Entity\Evaluation\Report2\Criterion\Category;
+use Project\Entity\Evaluation\Report2\Criterion\Type;
+use Project\Form\Evaluation\Report2\Criterion\TypeFilter;
+use Project\Service\EvaluationReport2Service;
+use Project\Service\FormService;
+use Zend\Http\Request;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Paginator\Paginator;
+use Zend\View\Model\ViewModel;
+
+/**
+ * Class ReportCriterionTypeController
+ *
+ * @method GetFilter getProjectFilter()
+ * @package Project\Controller\Evaluation
+ */
+final class ReportCriterionTypeController extends AbstractActionController
+{
+    /**
+     * @var EvaluationReport2Service
+     */
+    private $evaluationReportService;
+    /**
+     * @var FormService
+     */
+    private $formService;
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    public function __construct(
+        EvaluationReport2Service $evaluationReportService,
+        FormService              $formService,
+        EntityManager            $entityManager
+    ) {
+        $this->evaluationReportService = $evaluationReportService;
+        $this->formService             = $formService;
+        $this->entityManager           = $entityManager;
+    }
+
+    public function listAction()
+    {
+        $page         = $this->params()->fromRoute('page', 1);
+        $filterPlugin = $this->getProjectFilter();
+        $query        = $this->evaluationReportService->findFiltered(Type::class, $filterPlugin->getFilter());
+
+        $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
+        $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);
+        $paginator->setCurrentPageNumber($page);
+        $paginator->setPageRange(\ceil($paginator->getTotalItemCount() / $paginator::getDefaultItemCountPerPage()));
+
+        $form = new TypeFilter($this->entityManager);
+        $form->setData(['filter' => $filterPlugin->getFilter()]);
+
+        return new ViewModel([
+            'paginator'     => $paginator,
+            'form'          => $form,
+            'encodedFilter' => \urlencode($filterPlugin->getHash()),
+            'order'         => $filterPlugin->getOrder(),
+            'direction'     => $filterPlugin->getDirection(),
+        ]);
+    }
+
+    public function viewAction()
+    {
+        $type = $this->evaluationReportService->find(Type::class, (int)$this->params('id'));
+
+        if ($type === null) {
+            return $this->notFoundAction();
+        }
+
+        return new ViewModel([
+            'type' => $type
+        ]);
+    }
+
+    public function newAction()
+    {
+        /** @var Request $request */
+        $request = $this->getRequest();
+        $data    = $request->getPost()->toArray();
+        $form    = $this->formService->prepare(new Type(), $data);
+        $form->remove('delete');
+
+        if ($request->isPost()) {
+            if (isset($data['cancel'])) {
+                $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+            }
+
+            if ($form->isValid()) {
+                /* @var $type Type */
+                $type = $form->getData();
+                $this->evaluationReportService->save($type);
+                $this->redirect()->toRoute(
+                    'zfcadmin/evaluation/report2/criterion/type/view',
+                    ['id' => $type->getId()]
+                );
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form
+        ]);
+    }
+
+    public function editAction()
+    {
+        /** @var Request $request */
+        $request = $this->getRequest();
+        $type    = $this->evaluationReportService->find(Type::class, (int)$this->params('id'));
+        $data    = $request->getPost()->toArray();
+        $form    = $this->formService->prepare($type, $data);
+
+        if ($type === null) {
+            return $this->notFoundAction();
+        }
+
+        if ($request->isPost()) {
+            if (isset($data['cancel'])) {
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+            }
+
+            if (isset($data['delete'])) {
+                $this->evaluationReportService->delete($type);
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+            }
+
+            if ($form->isValid()) {
+                /** @var Type $type */
+                $type = $form->getData();
+                $this->evaluationReportService->save($type);
+                $this->redirect()->toRoute(
+                    'zfcadmin/evaluation/report2/criterion/type/view',
+                    ['id' => $type->getId()]
+                );
+            }
+        }
+
+        return new ViewModel([
+            'form' => $form,
+            'type' => $type
+        ]);
+    }
+}

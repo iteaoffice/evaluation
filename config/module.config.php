@@ -10,12 +10,24 @@
 
 namespace Evaluation;
 
+use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\Stdlib;
 
 $config = [
     'controllers'        => [
         'factories' => [
-
+            Controller\EvaluationController::class                => ConfigAbstractFactory::class,
+            Controller\EvaluationManagerController::class         => ConfigAbstractFactory::class,
+            Controller\FeedbackController::class                  => ConfigAbstractFactory::class,
+            Controller\ReportController::class                    => ConfigAbstractFactory::class,
+            Controller\ReportManagerController::class             => ConfigAbstractFactory::class,
+            Controller\Report\CriterionController::class          => ConfigAbstractFactory::class,
+            Controller\Report\VersionController::class            => ConfigAbstractFactory::class,
+            Controller\Report\WindowController::class             => ConfigAbstractFactory::class,
+            Controller\Report\Criterion\CategoryController::class => ConfigAbstractFactory::class,
+            Controller\Report\Criterion\TypeController::class     => ConfigAbstractFactory::class,
+            Controller\Report\Criterion\TopicController::class    => ConfigAbstractFactory::class,
+            Controller\Report\Criterion\VersionController::class  => ConfigAbstractFactory::class,
         ],
     ],
     'controller_plugins' => [
