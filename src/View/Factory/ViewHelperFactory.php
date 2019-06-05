@@ -23,9 +23,8 @@ use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Class LinkInvokableFactory
- *
- * @package Project\View\Factory
+ * Class ViewHelperFactory
+ * @package Evaluation\View\Factory
  */
 final class ViewHelperFactory implements FactoryInterface
 {

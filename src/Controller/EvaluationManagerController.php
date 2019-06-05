@@ -103,12 +103,10 @@ final class EvaluationManagerController extends AbstractActionController
             );
         }
 
-        $form->setData(
-            [
-                'call'   => $callId,
-                'source' => $source,
-            ]
-        );
+        $form->setData([
+            'call'   => $callId,
+            'source' => $source,
+        ]);
 
         /** @var Call $call */
         $call = $this->callService->findCallById((int)$callId);
@@ -127,9 +125,7 @@ final class EvaluationManagerController extends AbstractActionController
         switch ($evaluationType->getId()) {
             case Type::TYPE_PO_EVALUATION:
             case Type::TYPE_FPP_EVALUATION:
-                /*
-                 * Collect the data add it in the matrix
-                 */
+                // Collect the data add it in the matrix
                 $projects = $this->projectService->findProjectsByCallAndVersionType($call, $versionType);
                 break;
             case Type::TYPE_FUNDING_STATUS:

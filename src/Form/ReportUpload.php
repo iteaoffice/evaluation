@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Evaluation\Form\Evaluation;
+namespace Evaluation\Form;
 
 use Zend\Form\Element;
 use Zend\Form\Form;
@@ -18,8 +18,8 @@ use Zend\InputFilter\InputFilter;
 use Zend\Validator\File\Extension;
 
 /**
- * Class Report
- * @package Project\Form\Evaluation
+ * Class ReportUpload
+ * @package Evaluation\Form
  */
 final class ReportUpload extends Form
 {

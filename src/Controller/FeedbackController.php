@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace Project\Controller;
+namespace Evaluation\Controller;
 
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;

@@ -20,12 +20,12 @@ namespace Evaluation\Controller\Report;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
-use Project\Controller\Plugin\GetFilter;
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Result;
-use Project\Form\Evaluation\Report2\CriterionFilter;
-use Project\Service\EvaluationReport2Service;
-use Project\Service\FormService;
+use Evaluation\Controller\Plugin\GetFilter;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Result;
+use Evaluation\Form\Report\CriterionFilter;
+use Evaluation\Service\EvaluationReportService;
+use Evaluation\Service\FormService;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator;
@@ -45,7 +45,7 @@ final class CriterionController extends AbstractActionController
     private $entityManager;
 
     /**
-     * @var EvaluationReport2Service
+     * @var EvaluationReportService
      */
     private $evaluationReportService;
 
@@ -55,9 +55,9 @@ final class CriterionController extends AbstractActionController
     private $formService;
 
     public function __construct(
-        EntityManager            $entityManager,
-        EvaluationReport2Service $evaluationReportService,
-        FormService              $formService
+        EntityManager           $entityManager,
+        EvaluationReportService $evaluationReportService,
+        FormService             $formService
     ) {
         $this->entityManager           = $entityManager;
         $this->evaluationReportService = $evaluationReportService;

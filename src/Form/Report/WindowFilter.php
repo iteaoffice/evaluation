@@ -16,18 +16,22 @@
 
 declare(strict_types=1);
 
-namespace Evaluation\Form\Report\Criterion;
+namespace Evaluation\Form\Report;
 
-use Doctrine\ORM\EntityManager;
-use DoctrineORMModule\Form\Element\EntityMultiCheckbox;
-use Project\Entity\Evaluation\Report2\Criterion\Category;
-use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
+use Zend\Form\Element;
 
-final class TypeFilter extends Form
+/**
+ * Class WindowFilter
+ * @package Evaluation\Form\Report
+ */
+final class WindowFilter extends Form
 {
-    public function __construct(EntityManager $entityManager)
+    /**
+     * TopicFilter constructor.
+     */
+    public function __construct()
     {
         parent::__construct();
         $this->setAttribute('method', 'get');
@@ -42,28 +46,6 @@ final class TypeFilter extends Form
                 'attributes' => [
                     'class'       => 'form-control',
                     'placeholder' => _('txt-search'),
-                ],
-            ]
-        );
-
-        $filterFieldset->add(
-            [
-                'type'    => EntityMultiCheckbox::class,
-                'name'    => 'category',
-                'options' => [
-                    'target_class'   => Category::class,
-                    'find_method'    => [
-                        'name'   => 'findAll',
-                        'params' => [
-                            'criteria' => [],
-                            'orderBy'  => [
-                                'category' => 'ASC',
-                            ],
-                        ],
-                    ],
-                    'inline'         => true,
-                    'object_manager' => $entityManager,
-                    'label'          => _("txt-category"),
                 ],
             ]
         );

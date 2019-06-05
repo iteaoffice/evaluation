@@ -20,17 +20,17 @@ namespace Evaluation\Controller;
 use Contact\Entity\Contact;
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Project\Controller\Plugin\Evaluation\Report2ExcelDownload;
-use Project\Controller\Plugin\Evaluation\Report2ExcelExport;
-use Project\Controller\Plugin\Evaluation\Report2ExcelImport;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
-use Project\Entity\Evaluation\Report2\Result;
-use Project\Entity\Evaluation\Report2\Type as EvaluationReportType;
-use Project\Entity\Version\Review as VersionReview;
-use Project\Form\Evaluation\Report2\Report as EvaluationReportForm;
-use Project\Form\Evaluation\ReportUpload;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
+use Evaluation\Controller\Plugin\Report\ExcelDownload;
+use Evaluation\Controller\Plugin\Report\ExcelExport;
+use Evaluation\Controller\Plugin\Report\ExcelImport;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Entity\Report\Result;
+use Evaluation\Entity\Report\Type as EvaluationReportType;
+use Evaluation\Form\Report as EvaluationReportForm;
+use Evaluation\Form\ReportUpload;
+use Evaluation\Service\EvaluationReportService;
 use Project\Service\ProjectService;
+use Project\Entity\Version\Review as VersionReview;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -47,9 +47,9 @@ use function unlink;
  *
  * @method Identity|Contact identity()
  * @method FlashMessenger flashMessenger()
- * @method Report2ExcelExport evaluationReport2ExcelExport(EvaluationReport $evaluationReport, bool $isFinal = false, bool $forDistribution = false)
- * @method Report2ExcelImport evaluationReport2ExcelImport(string $file)
- * @method Report2ExcelDownload evaluationReport2ExcelDownload(Contact $contact, int $status)
+ * @method ExcelExport evaluationReportExcelExport(EvaluationReport $evaluationReport, bool $isFinal = false, bool $forDistribution = false)
+ * @method ExcelImport evaluationReportExcelImport(string $file)
+ * @method ExcelDownload evaluationReportExcelDownload(Contact $contact, int $status)
  *
  */
 final class ReportController extends AbstractActionController
@@ -251,7 +251,7 @@ final class ReportController extends AbstractActionController
                 $excel = $uploadForm->get('excel')->getValue();
                 if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
                     $success = false;
-                    $importHelper = $this->evaluationReport2ExcelImport($excel['tmp_name']);
+                    $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
                     if (!$importHelper->hasParseErrors()) {
                         $success = $importHelper->import($evaluationReport);
                     }
@@ -286,11 +286,11 @@ final class ReportController extends AbstractActionController
                         )
                     );
 
-                    return $this->redirect()->toRoute('community/evaluation/report/list');
+                    return $this->redirect()->toRoute('community/evaluation/report2/list');
                 }
             } // Download excel
             else {
-                return $this->evaluationReport2ExcelExport($evaluationReport)->parseResponse();
+                return $this->evaluationReportExcelExport($evaluationReport)->parseResponse();
             }
         }
 
@@ -359,7 +359,7 @@ final class ReportController extends AbstractActionController
                 $this->translator->translate('txt-evaluation-report-is-final-and-cant-be-edited-any-more')
             );
 
-            return $this->redirect()->toRoute('community/evaluation/report/view', ['id' => $evaluationReport->getId()]);
+            return $this->redirect()->toRoute('community/evaluation/report2/view', ['id' => $evaluationReport->getId()]);
         }
 
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
@@ -425,7 +425,7 @@ final class ReportController extends AbstractActionController
                     }
 
                     return $this->redirect()->toRoute(
-                        'community/evaluation/report/view',
+                        'community/evaluation/report2/view',
                         ['id' => $evaluationReport->getId()],
                         ['fragment' => 'report']
                     );
@@ -438,7 +438,7 @@ final class ReportController extends AbstractActionController
                     );
 
                     return $this->redirect()->toRoute(
-                        'community/evaluation/report/update',
+                        'community/evaluation/report2/update',
                         ['id' => $evaluationReport->getId()],
                         ['fragment' => 'offline']
                     );
@@ -456,7 +456,7 @@ final class ReportController extends AbstractActionController
 
             if (isset($data['cancel'])) {
                 return $this->redirect()->toRoute(
-                    'community/evaluation/report/view',
+                    'community/evaluation/report2/view',
                     ['id' => $evaluationReport->getId()]
                 );
             }
@@ -476,7 +476,7 @@ final class ReportController extends AbstractActionController
                 );
 
                 return $this->redirect()->toRoute(
-                    'community/evaluation/report/view',
+                    'community/evaluation/report2/view',
                     ['id' => $report->getId()],
                     ['fragment' => 'report']
                 );

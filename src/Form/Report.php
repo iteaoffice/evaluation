@@ -10,15 +10,15 @@
 
 declare(strict_types=1);
 
-namespace Project\Form\Evaluation\Report2;
+namespace Evaluation\Form;
 
 use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Result;
-use Project\InputFilter\Evaluation\Report2\ResultFilter;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Result;
+use Evaluation\InputFilter\Report\ResultFilter;
+use Evaluation\Service\EvaluationReportService;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
@@ -27,10 +27,9 @@ use Zend\InputFilter\InputFilter;
 
 /**
  * Class Report
- *
- * @package Project\Form\Evaluation
+ * @package Evaluation\Form
  */
-class Report extends Form
+final class Report extends Form
 {
     public function __construct(
         EvaluationReport        $report,
@@ -70,8 +69,8 @@ class Report extends Form
         $resultCollection->setAllowRemove(false);
         /** @var Result $reportResult */
         foreach ($reportService->getSortedResults($report) as $reportResult) {
-            $criterion = $reportResult->getCriterion();
-            $hasScore = $criterion->getHasScore();
+            $criterion            = $reportResult->getCriterionVersion()->getCriterion();
+            $hasScore             = $criterion->getHasScore();
             $reportResultFieldset = new Fieldset($criterion->getId());
             $reportResultFieldset->setHydrator($doctrineHydrator);
             $reportResultFieldset->setObject($reportResult);
@@ -144,9 +143,7 @@ class Report extends Form
                             ],
                             'options'    => array_merge(
                                 $optionTemplate,
-                                [
-                                'value_options' => json_decode($criterion->getValues(), true),
-                                ]
+                                ['value_options' => json_decode($criterion->getValues(), true)]
                             ),
                         ]
                     );
@@ -154,16 +151,14 @@ class Report extends Form
 
                 case Criterion::INPUT_TYPE_STRING:
                 default:
-                    $reportResultFieldset->add(
-                        [
-                            'type'       => Element\Text::class,
-                            'name'       => ($hasScore ? 'comment' : 'value'),
-                            'attributes' => [
-                                'value' => ($hasScore ? $reportResult->getComment() : $reportResult->getValue())
-                            ],
-                            'options'    => $optionTemplate
-                        ]
-                    );
+                    $reportResultFieldset->add([
+                        'type'       => Element\Text::class,
+                        'name'       => ($hasScore ? 'comment' : 'value'),
+                        'attributes' => [
+                            'value' => ($hasScore ? $reportResult->getComment() : $reportResult->getValue())
+                        ],
+                        'options'    => $optionTemplate
+                    ]);
             }
             // Add result to the result collection
             $resultCollection->add($reportResultFieldset);
@@ -172,12 +167,10 @@ class Report extends Form
         // Add the result collection to the form
         $this->add($resultCollection);
 
-        $scores = \is_null($report->getProjectReportReport())
+        $scores = ($report->getProjectReportReport() === null)
             ? $report::getVersionScores() : $report::getReportScores();
         $translatedScores = array_map(
-            function ($scoreLabel) {
-                return _($scoreLabel);
-            },
+            function ($scoreLabel) { return _($scoreLabel); },
             $scores
         );
         $this->add(

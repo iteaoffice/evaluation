@@ -19,11 +19,11 @@ namespace Evaluation\Controller\Report;
 
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
-use Project\Controller\Plugin\GetFilter;
-use Project\Entity\Evaluation\Report2\Window;
-use Project\Form;
-use Project\Service\EvaluationReport2Service;
-use Project\Service\FormService;
+use Evaluation\Controller\Plugin\GetFilter;
+use Evaluation\Entity\Report\Window;
+use Evaluation\Form\Report\WindowFilter;
+use Evaluation\Service\EvaluationReportService;
+use Evaluation\Service\FormService;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator;
@@ -38,7 +38,7 @@ use Zend\View\Model\ViewModel;
 final class WindowController extends AbstractActionController
 {
     /**
-     * @var EvaluationReport2Service
+     * @var EvaluationReportService
      */
     private $evaluationReportService;
     /**
@@ -47,8 +47,8 @@ final class WindowController extends AbstractActionController
     private $formService;
 
     public function __construct(
-        EvaluationReport2Service $evaluationReportService,
-        FormService $formService
+        EvaluationReportService $evaluationReportService,
+        FormService             $formService
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
@@ -64,7 +64,7 @@ final class WindowController extends AbstractActionController
         $paginator->setCurrentPageNumber($page);
         $paginator->setPageRange(\ceil($paginator->getTotalItemCount() / $paginator::getDefaultItemCountPerPage()));
 
-        $form = new Form\Evaluation\Criterion\TopicFilter();
+        $form = new WindowFilter();
         $form->setData(['filter' => $filterPlugin->getFilter()]);
 
         return new ViewModel([
@@ -95,6 +95,7 @@ final class WindowController extends AbstractActionController
         $request = $this->getRequest();
         $data    = $request->getPost()->toArray();
         $form    = $this->formService->prepare(new Window(), $data);
+        $form->setInputFilter(new \Evaluation\InputFilter\Report\WindowFilter());
         $form->remove('delete');
 
         if ($request->isPost()) {
@@ -129,6 +130,7 @@ final class WindowController extends AbstractActionController
 
         $data = $request->getPost()->toArray();
         $form = $this->formService->prepare($window, $data);
+        $form->setInputFilter(new \Evaluation\InputFilter\Report\WindowFilter());
         $form->remove('delete');
 
         if ($request->isPost()) {

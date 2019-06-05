@@ -27,10 +27,9 @@ use Zend\Form\Form;
 
 /**
  * Class CriterionFilter
- *
- * @package Project\Form\Evaluation
+ * @package Evaluation\Form\Report
  */
-class CriterionFilter extends Form
+final class CriterionFilter extends Form
 {
     /**
      * CirterionFilter constructor.

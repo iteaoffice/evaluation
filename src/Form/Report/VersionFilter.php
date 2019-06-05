@@ -27,8 +27,7 @@ use Zend\Form\Form;
 
 /**
  * Class VersionFilter
- *
- * @package Project\Form\Evaluation
+ * @package Evaluation\Form\Report
  */
 final class VersionFilter extends Form
 {

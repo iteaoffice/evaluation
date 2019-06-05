@@ -15,13 +15,14 @@
 
 declare(strict_types=1);
 
-namespace Project\Form\Evaluation\Report2\Criterion;
+namespace Evaluation\Form\Report\Criterion;
 
 use Doctrine\ORM\EntityManager;
 use Project\Entity\Evaluation\Report2\Criterion;
 use Project\Entity\Evaluation\Report2\Criterion\Version as CriterionVersion;
 use Project\Form\ObjectFieldset;
 use Zend\Form\Element\Select;
+use function sprintf;
 
 final class VersionFieldset extends ObjectFieldset
 {
@@ -36,7 +37,7 @@ final class VersionFieldset extends ObjectFieldset
         $criteria = $entityManager->getRepository(Criterion::class)->findForVersion($criterionVersion);
         /** @var Criterion $criterion */
         foreach ($criteria as $criterion) {
-            $valueOptions[$criterion->getId()] = \sprintf(
+            $valueOptions[$criterion->getId()] = sprintf(
                 '%d: %s',
                 $criterion->getId(),
                 (string) $criterion

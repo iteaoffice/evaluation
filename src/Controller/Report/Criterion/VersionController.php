@@ -20,7 +20,7 @@ namespace Evaluation\Controller\Report\Criterion;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Version as ReportVersion;
 use Evaluation\Service\EvaluationReportService;
-use Project\Service\FormService;
+use Evaluation\Service\FormService;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;

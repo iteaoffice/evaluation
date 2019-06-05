@@ -19,14 +19,14 @@ namespace Evaluation\Controller\Report;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
-use DoctrineORMModule\Form\Element\EntityMultiCheckbox;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
-use Project\Controller\Plugin\GetFilter;
-use Project\Entity\Evaluation\Report2;
-use Project\Entity\Evaluation\Report2\Version;
-use Project\Form;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
-use Project\Service\FormService;
+use Evaluation\Controller\Plugin\GetFilter;
+use Evaluation\Entity\Report;
+use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Evaluation\Entity\Report\Version;
+use Evaluation\Form\Report\VersionFilter;
+use Evaluation\Service\EvaluationReportService;
+use Evaluation\Service\FormService;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator;
@@ -76,7 +76,7 @@ final class VersionController extends AbstractActionController
         $paginator->setCurrentPageNumber($page);
         $paginator->setPageRange(\ceil($paginator->getTotalItemCount() / $paginator::getDefaultItemCountPerPage()));
 
-        $form = new Form\Evaluation\VersionFilter($this->entityManager);
+        $form = new VersionFilter($this->entityManager);
         $form->setData(['filter' => $filterPlugin->getFilter()]);
 
         return new ViewModel([
@@ -99,10 +99,10 @@ final class VersionController extends AbstractActionController
 
         return new ViewModel([
             'reportVersion'  => $reportVersion,
-            'reports'        => $this->evaluationReportService->count(Report2::class, ['version' => $reportVersion]),
-            'activeWindows'  =>  $this->entityManager->getRepository(Report2\Window::class)
+            'reports'        => $this->evaluationReportService->count(Report::class, ['version' => $reportVersion]),
+            'activeWindows'  =>  $this->entityManager->getRepository(Report\Window::class)
                 ->findActiveWindows($reportVersion),
-            'sortedCriteria' => $this->entityManager->getRepository(Report2\Criterion\Version::class)
+            'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
                 ->findSorted($reportVersion),
         ]);
     }
@@ -150,7 +150,7 @@ final class VersionController extends AbstractActionController
             return $this->notFoundAction();
         }
 
-        $hasReports = ($this->evaluationReportService->count(Report2::class, ['version' => $reportVersion]) > 0);
+        $hasReports = ($this->evaluationReportService->count(Report::class, ['version' => $reportVersion]) > 0);
         $data       = $request->getPost()->toArray();
         $form       = $this->formService->prepare($reportVersion, $data);
         $form->getInputFilter()->get($reportVersion->get('underscore_entity_name'))->get('topics')
@@ -227,7 +227,7 @@ final class VersionController extends AbstractActionController
         return new ViewModel([
             'form'           => $form,
             'reportVersion'  => $reportVersion,
-            'sortedCriteria' => $this->entityManager->getRepository(Report2\Criterion\Version::class)
+            'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
                 ->findSorted($reportVersion),
         ]);
 

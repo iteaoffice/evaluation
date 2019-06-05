@@ -22,9 +22,8 @@ use DoctrineORMModule\Form\Element\EntityMultiCheckbox;
 use Evaluation\Entity\Report\Version;
 use Evaluation\Entity\Report\Window;
 use Evaluation\Form\ObjectFieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
 
-final class WindowFieldset extends ObjectFieldset implements InputFilterProviderInterface
+final class WindowFieldset extends ObjectFieldset
 {
     public function __construct(EntityManager $entityManager, Window $window)
     {
@@ -43,18 +42,5 @@ final class WindowFieldset extends ObjectFieldset implements InputFilterProvider
         }
 
         $reportVersionsElement->setValueOptions($currentOptions);
-    }
-
-    public function getInputFilterSpecification(): array
-    {
-        // These fields are optional
-        return [
-            'dateEndReport' => [
-                'required' => false,
-            ],
-            'dateEndSelection' => [
-                'required' => false,
-            ]
-        ];
     }
 }

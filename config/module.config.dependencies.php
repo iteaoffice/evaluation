@@ -32,7 +32,7 @@ use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use ZfcTwig\View\TwigRenderer;
 
 return [
-    ConfigAbstractFactory::class => [
+    /*ConfigAbstractFactory::class => [
         // Controllers
         Controller\EvaluationController::class               => [
             ProjectService::class,
@@ -157,7 +157,7 @@ return [
             Service\EvaluationReportService::class,
             TranslatorInterface::class
         ],
-    ]
+    ]*/
 ];
 
 

@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace Project\Form\Evaluation\Report2\Criterion;
+namespace Evaluation\Form\Report\Criterion;
 
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
