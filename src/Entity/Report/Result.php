@@ -41,9 +41,9 @@ class Result extends AbstractEntity
         self::SCORE_NOT_EVALUATED => 'txt-not-evaluated-yet',
                                 0 => 'txt-very-low:-unacceptable-or-missing',
                                 1 => 'txt-low:-insufficient-lacking-or-inadequate',
-                                2 => 'txt-medium:-txt-minimum-required',
-                                3 => 'txt-good:-txt-expected-quality',
-                                4 => 'txt-excellent:-txt-outstanding-work'
+                                2 => 'txt-medium:-minimum-required',
+                                3 => 'txt-good:-expected-quality',
+                                4 => 'txt-excellent:-outstanding-work'
     ];
 
     protected static $scoreColors = [

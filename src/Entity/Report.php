@@ -46,24 +46,22 @@ class Report extends AbstractEntity
      *
      * @var array
      */
-    private static $versionScores
-        = [
-            self::SCORE_TOP          => 'txt-score-top-project',
-            self::SCORE_MIDDLE_PLUS  => 'txt-score-middle+',
-            self::SCORE_MIDDLE       => 'txt-score-middle',
-            self::SCORE_MIDDLE_MINUS => 'txt-score-middle-',
-            self::SCORE_LOW          => 'txt-score-low-quality'
-        ];
+    private static $versionScores = [
+        self::SCORE_TOP          => 'txt-score-top-project',
+        self::SCORE_MIDDLE_PLUS  => 'txt-score-middle+',
+        self::SCORE_MIDDLE       => 'txt-score-middle',
+        self::SCORE_MIDDLE_MINUS => 'txt-score-middle-',
+        self::SCORE_LOW          => 'txt-score-low-quality'
+    ];
     /**
      * Templates for the report-based evaluation report scores.
      *
      * @var array
      */
-    private static $reportScores
-        = [
-            self::SCORE_APPROVED => 'txt-approved',
-            self::SCORE_REJECTED => 'txt-rejected'
-        ];
+    private static $reportScores = [
+        self::SCORE_APPROVED => 'txt-approved',
+        self::SCORE_REJECTED => 'txt-rejected'
+    ];
     /**
      * @ORM\Column(name="evaluation_report_id", type="integer", options={"unsigned":true})
      * @ORM\Id
