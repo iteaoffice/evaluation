@@ -22,11 +22,14 @@ use Evaluation\Entity\Report\Version as ReportVersion;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
 use Zend\Http\Request;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Model\ViewModel;
 
 /**
  * Class VersionController
+ * @method FlashMessenger flashMessenger()
  * @package Evaluation\Controller\Report\Criterion
  */
 final class VersionController extends AbstractActionController
@@ -41,12 +44,19 @@ final class VersionController extends AbstractActionController
      */
     private $formService;
 
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService
+        FormService             $formService,
+        TranslatorInterface     $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
+        $this->translator              = $translator;
     }
 
     public function viewAction()
@@ -92,6 +102,9 @@ final class VersionController extends AbstractActionController
                 /** @var CriterionVersion $criterionVersion */
                 $criterionVersion = $form->getData();
                 $this->evaluationReportService->save($criterionVersion);
+                $this->flashMessenger()->addSuccessMessage(
+                    $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-saved')
+                );
                 return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report2/version/view',
                     ['id' => $reportVersion->getId()]
@@ -136,6 +149,9 @@ final class VersionController extends AbstractActionController
 
             if (isset($data['delete']) && !$hasResults) {
                 $this->evaluationReportService->delete($criterionVersion);
+                $this->flashMessenger()->addSuccessMessage(
+                    $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-deleted')
+                );
                 return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report2/version/view',
                     ['id' => $criterionVersion->getReportVersion()->getId()]
@@ -146,6 +162,9 @@ final class VersionController extends AbstractActionController
                 /** @var CriterionVersion $criterionVersion */
                 $criterionVersion = $form->getData();
                 $this->evaluationReportService->save($criterionVersion);
+                $this->flashMessenger()->addSuccessMessage(
+                    $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-saved')
+                );
                 return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report2/version/view',
                     ['id' => $criterionVersion->getReportVersion()->getId()]

@@ -1,0 +1,28 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-evaluation")) %}
+{% do headTitle().append(translate("txt-evaluation-report-window-%s")|format(window)) %}
+
+<h1>{{ translate("txt-evaluation-report-window-%s")|format(window) }}</h1>
+
+<dl class="dl-horizontal">
+    <dt>{{ translate("txt-id") }}</dt>
+    <dd>{{ window.id }}</dd>
+    <dt>{{ translate("txt-report-versions") }}</dt>
+    {% for reportVersion in window.reportVersions %}
+        <dd>{{ report2VersionLink(reportVersion, 'view') }}</dd>
+    {%  endfor %}
+    <dt>{{ translate("txt-title") }}</dt>
+    <dd>{{ window.title }}</dd>
+    <dt>{{ translate("txt-description") }}</dt>
+    <dd>{{ window.description }}</dd>
+    <dt>{{ translate("txt-report-start-date") }}</dt>
+    <dd>{{ window.dateStartReport|date('d-m-Y') }}</dd>
+    <dt>{{ translate("txt-report-end-date") }}</dt>
+    <dd>{% if window.dateEndSelection %}{{ window.dateEndReport|date('d-m-Y') }}{% else %}-{% endif %}</dd>
+    <dt>{{ translate("txt-selection-start-date") }}</dt>
+    <dd>{{ window.dateStartSelection|date('d-m-Y') }}</dd>
+    <dt>{{ translate("txt-selectrion-end-date") }}</dt>
+    <dd>{% if window.dateEndSelection %}{{ window.dateEndSelection|date('d-m-Y') }}{% else %}-{% endif %}</dd>
+</dl>
+
+{{ report2WindowLink(window,'edit','button') }}

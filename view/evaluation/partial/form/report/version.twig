@@ -1,0 +1,21 @@
+{% do form.prepare() %}
+
+{{ form().openTag(form)|raw }}
+{% set versionFieldset = form.get('evaluation_entity_report_version') %}
+
+{{ ztbformelement(versionFieldset.get('label')) }}
+{{ ztbformelement(versionFieldset.get('description')) }}
+{{ ztbformelement(versionFieldset.get('reportType')) }}
+{{ ztbformelement(versionFieldset.get('topics')) }}
+{{ ztbformelement(versionFieldset.get('archived')) }}
+
+<div class="form-group row">
+    <div class="offset-sm-3 col-sm-9">
+        {{ formelement(form.get('submit')) }}
+        {{ formelement(form.get('cancel')) }}
+        {% if form.has('delete') %}
+            {{ formelement(form.get('delete')) }}
+        {% endif %}
+    </div>
+</div>
+{{ form().closeTag()|raw }}

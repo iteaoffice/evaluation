@@ -18,28 +18,33 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report\Criterion;
 
-use Project\Entity\Evaluation\Report2\Criterion\Type;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Criterion\Type;
+use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class TypeLink
  * @package Evaluation\View\Helper\Report\Criterion
  */
-final class TypeLink extends LinkAbstract
+final class TypeLink extends AbstractLink
 {
+    /**
+     * @var Type
+     */
+    private $type;
+
     public function __invoke(
         Type   $type = null,
         string $action = 'view',
         string $show = 'name'
     ): string
     {
-        $this->reportCriterionType = $type ?? new Type();
+        $this->type = $type ?? new Type();
         $this->setAction($action);
         $this->setShow($show);
 
-        $this->addRouterParam('id', $this->reportCriterionType->getId());
+        $this->addRouterParam('id', $this->type->getId());
         $this->setShowOptions([
-            'name' => $this->reportCriterionType->getType()
+            'name' => $this->type->getType()
         ]);
 
         return $this->createLink();
@@ -63,14 +68,14 @@ final class TypeLink extends LinkAbstract
                 $this->setRouter('zfcadmin/evaluation/report2/criterion/type/view');
                 $this->setText(sprintf(
                     $this->translator->translate("txt-view-evaluation-report-critertion-type-%s"),
-                    $this->reportCriterionType->getType()
+                    $this->type->getType()
                 ));
                 break;
             case 'edit':
                 $this->setRouter('zfcadmin/evaluation/report2/criterion/type/edit');
                 $this->setText(sprintf(
                     $this->translator->translate("txt-edit-evaluation-report-critertion-type-%s"),
-                    $this->reportCriterionType->getType()
+                    $this->type->getType()
                 ));
                 break;
             default:

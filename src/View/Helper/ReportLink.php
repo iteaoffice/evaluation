@@ -18,19 +18,18 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper;
 
-use Project\Acl\Assertion\Evaluation\Report2 as EvaluationReportAssertion;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
+use Evaluation\Acl\Assertion\Report as EvaluationReportAssertion;
+use Evaluation\Entity\Report as EvaluationReport;
 use Project\Entity\Report\Review as ReportReview;
 use Project\Entity\Version\Review as VersionReview;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Service\EvaluationReportService;
 use function sprintf;
 
 /**
- * Class Report2Link
- * @package Project\View\Helper\Evaluation
+ * Class ReportLink
+ * @package Evaluation\View\Helper
  */
-final class ReportLink extends LinkAbstract
+final class ReportLink extends AbstractLink
 {
     /**
      * @var EvaluationReport

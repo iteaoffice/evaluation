@@ -25,7 +25,9 @@ use Evaluation\Form\Report\WindowFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
 use Zend\Http\Request;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
 
@@ -33,6 +35,7 @@ use Zend\View\Model\ViewModel;
  * Class WindowController
  *
  * @method GetFilter getProjectFilter()
+ * @method FlashMessenger flashMessenger()
  * @package Evaluation\Controller\Report
  */
 final class WindowController extends AbstractActionController
@@ -46,12 +49,19 @@ final class WindowController extends AbstractActionController
      */
     private $formService;
 
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService
+        FormService             $formService,
+        TranslatorInterface     $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
+        $this->translator              = $translator;
     }
 
     public function listAction()
@@ -107,6 +117,9 @@ final class WindowController extends AbstractActionController
                 /** @var Window $window */
                 $window = $form->getData();
                 $this->evaluationReportService->save($window);
+                $this->flashMessenger()->addSuccessMessage(
+                    $this->translator->translate('txt-evaluation-report-window-has-successfully-been-saved')
+                );
                 $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report2/window/view',
                     ['id' => $window->getId()]
@@ -142,6 +155,9 @@ final class WindowController extends AbstractActionController
                 /** Window $window */
                 $window = $form->getData();
                 $this->evaluationReportService->save($window);
+                $this->flashMessenger()->addSuccessMessage(
+                    $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
+                );
                 return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report2/window/view',
                     ['id' => $window->getId()]

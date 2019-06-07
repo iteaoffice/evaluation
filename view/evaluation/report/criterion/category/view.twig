@@ -1,0 +1,18 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-evaluation")) %}
+{% do headTitle().append(translate("txt-evaluation-report-criterion-category-%s")|format(category)) %}
+
+<h1>{{ translate("txt-evaluation-report-criterion-category-%s")|format(category) }} {{ report2CriterionCategoryLink(category,'edit','button') }}</h1>
+
+<dl class="dl-horizontal">
+    <dt>{{ translate("txt-category-id") }}</dt>
+    <dd>{{ category.id }}</dd>
+    <dt>{{ translate("txt-category") }}</dt>
+    <dd>{{ category.category }}</dd>
+    <dt>{{ translate("txt-types") }}</dt>
+    {% for type in category.types %}
+        <dd>{{ report2CriterionTypeLink(type,'view','name') }}</dd>
+    {% else %}
+        <dd>{{ translate("txt-no-evaluation-report-criterion-type-defined") }}</dd>
+    {% endfor %}
+</dl>

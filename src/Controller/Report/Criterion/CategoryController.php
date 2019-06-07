@@ -126,6 +126,9 @@ final class CategoryController extends AbstractActionController
         $category = $this->evaluationReportService->find(Category::class, (int)$this->params('id'));
         $data = $request->getPost()->toArray();
         $form = $this->formService->prepare($category, $data);
+        if ($category->getTypes()->count() > 0) {
+            $form->remove('delete');
+        }
 
         if ($category === null) {
             return $this->notFoundAction();
@@ -156,11 +159,9 @@ final class CategoryController extends AbstractActionController
             }
         }
 
-        return new ViewModel(
-            [
-                'form'     => $form,
-                'category' => $category
-            ]
-        );
+        return new ViewModel([
+            'form'     => $form,
+            'category' => $category
+        ]);
     }
 }

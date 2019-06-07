@@ -84,14 +84,14 @@ class Type extends AbstractEntity
      */
     private $versionType;
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Version", cascade={"persist"}, mappedBy="reportType")
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Version", cascade={"persist"}, mappedBy="reportType")
      * @Annotation\Exclude()
      *
      * @var Version[]|Collection
      */
     private $reportVersions;
     /**
-     * @ORM\ManyToMany(targetEntity="Project\Entity\Evaluation\Report2\Criterion", cascade={"persist"}, mappedBy="reportTypes")
+     * @ORM\ManyToMany(targetEntity="Evaluation\Entity\Report\Criterion", cascade={"persist"}, mappedBy="reportTypes")
      * @Annotation\Exclude()
      *
      * @var Collection

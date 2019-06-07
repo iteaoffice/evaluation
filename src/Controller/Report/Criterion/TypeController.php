@@ -24,7 +24,7 @@ use Evaluation\Controller\Plugin\GetFilter;
 use Evaluation\Entity\Report\Criterion\Type;
 use Evaluation\Form\Report\Criterion\TypeFilter;
 use Evaluation\Service\EvaluationReportService;
-use Project\Service\FormService;
+use Evaluation\Service\FormService;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator;
@@ -132,9 +132,13 @@ final class TypeController extends AbstractActionController
     {
         /** @var Request $request */
         $request = $this->getRequest();
+        /** @var Type $type */
         $type    = $this->evaluationReportService->find(Type::class, (int)$this->params('id'));
         $data    = $request->getPost()->toArray();
         $form    = $this->formService->prepare($type, $data);
+        if (!$this->evaluationReportService->typeIsDeletable($type)) {
+            $form->remove('delete');
+        }
 
         if ($type === null) {
             return $this->notFoundAction();

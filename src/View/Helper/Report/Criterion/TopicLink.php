@@ -18,14 +18,14 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report\Criterion;
 
-use Project\Entity\Evaluation\Report2\Criterion\Topic;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Criterion\Topic;
+use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class TopicLink
  * @package Evaluation\View\Helper\Report\Criterion
  */
-final class TopicLink extends LinkAbstract
+final class TopicLink extends AbstractLink
 {
     /**
      * @var Topic

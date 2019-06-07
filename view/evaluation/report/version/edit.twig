@@ -1,0 +1,7 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-evaluation")) %}
+{% do headTitle().append(translate("txt-edit-report-version-%s")|format(reportVersion.label)) %}
+
+<h1>{{ translate("txt-edit-report-version-%s")|format(reportVersion.label) }}</h1>
+
+{% include 'evaluation/partial/form/report/version' %}

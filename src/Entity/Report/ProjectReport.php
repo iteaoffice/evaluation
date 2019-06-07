@@ -59,7 +59,7 @@ class ProjectReport extends AbstractEntity
      */
     private $id;
     /**
-     * @ORM\OneToOne(targetEntity="Project\Entity\Evaluation\Report2", cascade={"persist","remove"}, inversedBy="projectReportReport")
+     * @ORM\OneToOne(targetEntity="Evaluation\Entity\Report", cascade={"persist","remove"}, inversedBy="projectReportReport")
      * @ORM\JoinColumn(name="evaluation_report_id", referencedColumnName="evaluation_report_id", nullable=false)
      * @Annotation\Exclude()
      *

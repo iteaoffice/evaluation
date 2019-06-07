@@ -64,14 +64,14 @@ class Result extends AbstractEntity
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2", cascade={"persist"}, inversedBy="results")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report", cascade={"persist"}, inversedBy="results")
      * @ORM\JoinColumn(name="evaluation_report_id", referencedColumnName="evaluation_report_id", nullable=false)
      *
      * @var EvaluationReport
      */
     private $evaluationReport;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Version", cascade={"persist"}, inversedBy="results")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Criterion\Version", cascade={"persist"}, inversedBy="results")
      * @ORM\JoinColumn(name="criterion_version_id", referencedColumnName="criterion_version_id")
      * @Annotation\Exclude()
      *

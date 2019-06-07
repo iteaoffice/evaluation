@@ -1,0 +1,62 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-evaluation")) %}
+{% do headTitle().append(translate("txt-evaluation-report-version-%s")|format(reportVersion.label)) %}
+
+{% if reportVersion.archived %}
+    {{ ztbalert().info(translate("txt-this-evaluation-report-version-has-been-archived"))|raw }}
+{% endif %}
+<h1>{{ reportVersion.label }}</h1>
+{% if reportVersion.description is not empty %}
+<p class="lead">{{ reportVersion.description }}</p>
+{% endif %}
+
+<h2>{{ translate("txt-general") }}</h2>
+<div class="row">
+    <div class="col-md-6">
+        <dl class="dl-horizontal">
+            <dt>{{ translate("txt-label") }}</dt>
+            <dd>{{ reportVersion.label }}</dd>
+            <dt>{{ translate("txt-description") }}</dt>
+            <dd>{{ reportVersion.description }}</dd>
+            <dt>{{ translate("txt-type") }}</dt>
+            <dd>{{ reportVersion.reportType.type }}</dd>
+            <dt>{{ translate("txt-archived") }}</dt>
+            <dd>{% if reportVersion.archived %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
+        </dl>
+    </div>
+    <div class="col-md-6">
+        <dl class="dl-horizontal">
+            <dt>{{ translate("txt-topics") }}</dt>
+            <dd>{% for topic in reportVersion.topics %}
+                    {{ report2CriterionTopicLink(topic) }}{% if not loop.last %}, {% endif %}
+                {% else %}
+                    -
+                {% endfor %}
+            </dd>
+            <dt>{{ translate("txt-active-windows") }}</dt>
+            <dd>{% for window in activeWindows %}
+                    {{ report2WindowLink(window) }} ({{ translate("txt-from") }} {{ window.dateStartReport|string_date }}{% if window.dateEndReport %}
+                        {{ translate("txt-to")|lower }} {{ window.dateEndReport|string_date|default('-') }}
+                    {% endif %})
+                    {% if not loop.last %}<br>{% endif %}
+                {% else %}
+                    -
+                {% endfor %}
+            </dd>
+            <dt>{{ translate("txt-evaluation-reports") }}</dt>
+            <dd>{{ reports }}</dd>
+            <dt>{{ translate("txt-created") }}</dt>
+            <dd>{{ reportVersion.dateCreated|string_date }}</dd>
+        </dl>
+    </div>
+</div>
+
+{{ report2VersionLink(reportVersion,'edit','button') }} {{ report2VersionLink(reportVersion,'copy','button') }}
+
+<hr>
+<h2>{{ translate("txt-criteria") }}</h2>
+{% include 'project/evaluation/report2-version/partial/criteria' with {'readonly': false} %}
+
+{% if not reportVersion.archived %}
+    {{ report2CriterionVersionLink(null, 'add', 'button', reportVersion) }}
+{% endif %}

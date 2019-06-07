@@ -121,7 +121,7 @@ class Window extends AbstractEntity
      */
     private $dateEndSelection;
     /**
-     * @ORM\ManyToMany(targetEntity="Project\Entity\Evaluation\Report2\Version", cascade={"persist"}, inversedBy="windows")
+     * @ORM\ManyToMany(targetEntity="Evaluation\Entity\Report\Version", cascade={"persist"}, inversedBy="windows")
      * @ORM\OrderBy=({"type"="ASC"})
      * @ORM\JoinTable(name="evaluation_report2_window_report_version",
      *    joinColumns={@ORM\JoinColumn(name="window_id", referencedColumnName="window_id")},
@@ -129,7 +129,7 @@ class Window extends AbstractEntity
      * )
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntityMultiCheckbox")
      * @Annotation\Options({
-     *     "target_class":"Project\Entity\Evaluation\Report2\Version",
+     *     "target_class":"Evaluation\Entity\Report\Version",
      *     "find_method":{
      *          "name":"findBy",
      *          "params": {

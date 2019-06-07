@@ -72,7 +72,7 @@ class Report extends AbstractEntity
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Version", cascade={"persist"}, inversedBy="evaluationReports")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Version", cascade={"persist"}, inversedBy="evaluationReports")
      * @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=false)
      * @Annotation\Exclude()
      *
@@ -119,21 +119,21 @@ class Report extends AbstractEntity
      */
     private $dateUpdated;
     /**
-     * @ORM\OneToOne(targetEntity="Project\Entity\Evaluation\Report2\ProjectReport", cascade={"persist"}, mappedBy="evaluationReport")
+     * @ORM\OneToOne(targetEntity="Evaluation\Entity\Report\ProjectReport", cascade={"persist"}, mappedBy="evaluationReport")
      * @Annotation\Exclude()
      *
      * @var Report\ProjectReport
      */
     private $projectReportReport;
     /**
-     * @ORM\OneToOne(targetEntity="Project\Entity\Evaluation\Report2\ProjectVersion", cascade={"persist"}, mappedBy="evaluationReport")
+     * @ORM\OneToOne(targetEntity="Evaluation\Entity\Report\ProjectVersion", cascade={"persist"}, mappedBy="evaluationReport")
      * @Annotation\Exclude()
      *
      * @var Report\ProjectVersion
      */
     private $projectVersionReport;
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Result", cascade={"persist","remove"}, mappedBy="evaluationReport", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Result", cascade={"persist","remove"}, mappedBy="evaluationReport", orphanRemoval=true)
      * @Annotation\Exclude()
      *
      * @var Report\Result[]|Collection

@@ -1,0 +1,29 @@
+{% do form.prepare() %}
+
+{{ form().openTag(form)|raw }}
+{% set window = form.get('evaluation_entity_report_window') %}
+
+{{ ztbformelement(window.get('reportVersions')) }}
+{{ ztbformelement(window.get('title')) }}
+{{ ztbformelement(window.get('description')) }}
+{{ ztbformelement(window.get('dateStartReport')) }}
+{{ ztbformelement(window.get('dateEndReport')) }}
+{{ ztbformelement(window.get('dateStartSelection')) }}
+{{ ztbformelement(window.get('dateEndSelection')) }}
+
+<div class="form-group row">
+    <div class="offset-sm-3 col-sm-9">
+        {{ formelement(form.get('submit')) }}
+        {{ formelement(form.get('cancel')) }}
+        {% if form.has('delete') %}
+            {{ formelement(form.get('delete')) }}
+        {% endif %}
+    </div>
+</div>
+{{ form().closeTag()|raw }}
+<script>
+    $('input[type=date]').datepicker({
+        sliderAccessArgs: {touchonly: false},
+        dateFormat: 'yy-mm-dd'
+    });
+</script>

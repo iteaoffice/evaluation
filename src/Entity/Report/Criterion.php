@@ -28,7 +28,7 @@ use Zend\Form\Annotation;
  * Evaluation report criterion
  *
  * @ORM\Table(name="evaluation_report2_criterion")
- * @ORM\Entity(repositoryClass="Project\Repository\Evaluation\Report\CriterionRepository")
+ * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\CriterionRepository")
  */
 class Criterion extends AbstractEntity
 {
@@ -140,14 +140,14 @@ class Criterion extends AbstractEntity
     private $archived = false;
     /**
      * /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Version", cascade={"persist"}, mappedBy="criterion")
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Criterion\Version", cascade={"persist"}, mappedBy="criterion")
      * @Annotation\Exclude()
      *
      * @var Collection
      */
     private $versions;
     /**
-     * @ORM\ManyToMany(targetEntity="Project\Entity\Evaluation\Report2\Type", cascade={"persist", "remove"}, inversedBy="criteria")
+     * @ORM\ManyToMany(targetEntity="Evaluation\Entity\Report\Type", cascade={"persist", "remove"}, inversedBy="criteria")
      * @ORM\OrderBy=({"sequence"="ASC"})
      * @ORM\JoinTable(name="evaluation_report2_criterion_report_type",
      *    joinColumns={@ORM\JoinColumn(name="criterion_id", referencedColumnName="criterion_id")},
@@ -155,7 +155,7 @@ class Criterion extends AbstractEntity
      * )
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntityMultiCheckbox")
      * @Annotation\Options({
-     *     "target_class":"Project\Entity\Evaluation\Report2\Type",
+     *     "target_class":"Evaluation\Entity\Report\Type",
      *     "label":"txt-evaluation-report-criterion-report-types-label",
      *     "help-block":"txt-evaluation-report-criterion-report-types-help-block"
      * })

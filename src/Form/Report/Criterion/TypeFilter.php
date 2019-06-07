@@ -20,7 +20,7 @@ namespace Evaluation\Form\Report\Criterion;
 
 use Doctrine\ORM\EntityManager;
 use DoctrineORMModule\Form\Element\EntityMultiCheckbox;
-use Project\Entity\Evaluation\Report2\Criterion\Category;
+use Evaluation\Entity\Report\Criterion\Category;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;

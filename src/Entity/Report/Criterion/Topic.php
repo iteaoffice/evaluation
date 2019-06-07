@@ -28,7 +28,7 @@ use Zend\Form\Annotation;
  * Evaluation report criterion category
  *
  * @ORM\Table(name="evaluation_report2_criterion_topic")
- * @ORM\Entity(repositoryClass="Project\Repository\Evaluation\Report\Criterion\TopicRepository")
+ * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\Criterion\TopicRepository")
  */
 class Topic extends AbstractEntity
 {
@@ -59,14 +59,14 @@ class Topic extends AbstractEntity
      */
     private $topic;
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Criterion\VersionTopic", cascade={"persist"}, mappedBy="topic")
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Criterion\VersionTopic", cascade={"persist"}, mappedBy="topic")
      * @Annotation\Exclude()
      *
      * @var Collection
      */
     private $versionTopics;
     /**
-     * @ORM\ManyToMany(targetEntity="Project\Entity\Evaluation\Report2\Version", cascade={"persist"}, mappedBy="topics")
+     * @ORM\ManyToMany(targetEntity="Evaluation\Entity\Report\Version", cascade={"persist","remove"}, mappedBy="topics")
      * @Annotation\Exclude()
      *
      * @var Collection

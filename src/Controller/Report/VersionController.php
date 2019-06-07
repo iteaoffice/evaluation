@@ -28,6 +28,7 @@ use Evaluation\Form\Report\VersionFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
 use Zend\Http\Request;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
@@ -41,11 +42,6 @@ use Zend\View\Model\ViewModel;
 final class VersionController extends AbstractActionController
 {
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * @var EvaluationReportService
      */
     private $evaluationReportService;
@@ -55,14 +51,26 @@ final class VersionController extends AbstractActionController
      */
     private $formService;
 
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
     public function __construct(
-        EntityManager           $entityManager,
         EvaluationReportService $evaluationReportService,
-        FormService             $formService
+        FormService             $formService,
+        TranslatorInterface     $translator,
+        EntityManager           $entityManager
     ) {
-        $this->entityManager           = $entityManager;
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
+        $this->translator              = $translator;
+        $this->entityManager           = $entityManager;
     }
 
     public function listAction()

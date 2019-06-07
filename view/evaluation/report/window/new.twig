@@ -1,0 +1,7 @@
+{% do headLink().appendStylesheet('//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.min.css') %}
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-create-new-evaluation-report-window")) %}
+
+<h1>{{ translate("txt-create-new-evaluation-report-window") }}</h1>
+
+{% include 'evaluation/partial/form/report/window' %}

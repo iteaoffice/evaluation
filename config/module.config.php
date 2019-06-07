@@ -10,6 +10,7 @@
 
 namespace Evaluation;
 
+use Evaluation\View\Factory\ViewHelperFactory;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\Stdlib;
 
@@ -43,13 +44,24 @@ $config = [
     ],
     'view_helpers'       => [
         'aliases'    => [
+            'report2VersionLink'               => View\Helper\Report\VersionLink::class,
+            'report2WindowLink'                => View\Helper\Report\WindowLink::class,
+            'report2CriterionCategoryLink'     => View\Helper\Report\Criterion\CategoryLink::class,
+            'report2CriterionTypeLink'         => View\Helper\Report\Criterion\TypeLink::class,
+            'report2CriterionTopicLink'        => View\Helper\Report\Criterion\TopicLink::class,
+            'report2CriterionVersionLink'      => View\Helper\Report\Criterion\VersionLink::class,
 
         ],
         'invokables' => [
 
         ],
         'factories'  => [
-
+            View\Helper\Report\VersionLink::class            => ViewHelperFactory::class,
+            View\Helper\Report\WindowLink::class             => ViewHelperFactory::class,
+            View\Helper\Report\Criterion\CategoryLink::class => ViewHelperFactory::class,
+            View\Helper\Report\Criterion\TypeLink::class     => ViewHelperFactory::class,
+            View\Helper\Report\Criterion\TopicLink::class    => ViewHelperFactory::class,
+            View\Helper\Report\Criterion\VersionLink::class  => ViewHelperFactory::class,
         ],
     ],
     'form_elements'      => [
@@ -62,7 +74,19 @@ $config = [
     ],
     'service_manager'    => [
         'factories' => [
-
+            // Services
+            Service\EvaluationReportService::class                     => ConfigAbstractFactory::class,
+            Service\EvaluationService::class                           => ConfigAbstractFactory::class,
+            Service\FormService::class                                 => ConfigAbstractFactory::class,
+            // Navigation
+            Navigation\Invokable\ReportLabel::class                    => Factory\InvokableFactory::class,
+            Navigation\Invokable\Report\CriterionLabel::class          => Factory\InvokableFactory::class,
+            Navigation\Invokable\Report\VersionLabel::class            => Factory\InvokableFactory::class,
+            Navigation\Invokable\Report\WindowLabel::class             => Factory\InvokableFactory::class,
+            Navigation\Invokable\Report\Criterion\CategoryLabel::class => Factory\InvokableFactory::class,
+            Navigation\Invokable\Report\Criterion\TypeLabel::class     => Factory\InvokableFactory::class,
+            Navigation\Invokable\Report\Criterion\TopicLabel::class    => Factory\InvokableFactory::class,
+            Navigation\Invokable\Report\Criterion\VersionLabel::class  => Factory\InvokableFactory::class,
         ],
     ],
     'doctrine'           => [

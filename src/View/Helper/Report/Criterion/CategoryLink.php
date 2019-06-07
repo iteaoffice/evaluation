@@ -18,27 +18,32 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report\Criterion;
 
-use Project\Entity\Evaluation\Report2\Criterion\Category;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Criterion\Category;
+use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class CategoryLink
  * @package Evaluation\View\Helper\Report\Criterion
  */
-final class CategoryLink extends LinkAbstract
+final class CategoryLink extends AbstractLink
 {
+    /**
+     * @var Category
+     */
+    private $category;
+
     public function __invoke(
         Category $category = null,
         string   $action = 'view',
         string   $show = 'name'
     ): string {
-        $this->reportCriterionCategory = $category ?? new Category();
+        $this->category = $category ?? new Category();
         $this->setAction($action);
         $this->setShow($show);
 
-        $this->addRouterParam('id', $this->reportCriterionCategory->getId());
+        $this->addRouterParam('id', $this->category->getId());
         $this->setShowOptions([
-            'name' => $this->reportCriterionCategory->getCategory()
+            'name' => $this->category->getCategory()
         ]);
 
         return $this->createLink();
@@ -62,14 +67,14 @@ final class CategoryLink extends LinkAbstract
                 $this->setRouter('zfcadmin/evaluation/report2/criterion/category/view');
                 $this->setText(sprintf(
                     $this->translator->translate("txt-view-evaluation-report-critertion-category-%s"),
-                    $this->reportCriterionCategory->getCategory()
+                    $this->category->getCategory()
                 ));
                 break;
             case 'edit':
                 $this->setRouter('zfcadmin/evaluation/report2/criterion/category/edit');
                 $this->setText(sprintf(
                     $this->translator->translate("txt-edit-evaluation-report-critertion-category-%s"),
-                    $this->reportCriterionCategory->getCategory()
+                    $this->category->getCategory()
                 ));
                 break;
             default:

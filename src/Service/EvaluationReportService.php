@@ -21,7 +21,6 @@ use Contact\Entity\Contact;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Project\Entity\ChangeRequest\Process;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Criterion\Type as CriterionType;
@@ -31,6 +30,7 @@ use Evaluation\Entity\Report\Result as EvaluationReportResult;
 use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Entity\Report\Version as EvaluationReportVersion;
 use Project\Entity\Project;
+use Project\Entity\ChangeRequest\Process;
 use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Report\Review as ReportReview;
 use Project\Entity\Version\Review as VersionReview;
@@ -47,7 +47,7 @@ use function sprintf;
  *
  * @package Project\Service
  */
-class EvaluationReportService extends AbstractService
+final class EvaluationReportService extends AbstractService
 {
     public const STATUS_NEW         = 1;
     public const STATUS_IN_PROGRESS = 2;
@@ -400,6 +400,14 @@ class EvaluationReportService extends AbstractService
            'type'          => $type,
            'reportVersion' => $reportVersion,
            'confidential'  => false
+        ]);
+        return ($count === 0);
+    }
+
+    public function typeIsDeletable(CriterionType $type): bool
+    {
+        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count([
+            'type' => $type,
         ]);
         return ($count === 0);
     }

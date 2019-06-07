@@ -46,13 +46,13 @@ class Version extends AbstractEntity
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Criterion", cascade={"persist"}, inversedBy="versions")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Criterion", cascade={"persist"}, inversedBy="versions")
      * @ORM\JoinColumn(name="criterion_id", referencedColumnName="criterion_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
      *     "help-block":"txt-evaluation-report-criterion-version-criterion-help-block",
      *     "label":"txt-criterion",
-     *     "target_class":"Project\Entity\Evaluation\Report2\Criterion",
+     *     "target_class":"Evaluation\Entity\Report\Criterion",
      *         "find_method":{
      *             "name":"findBy",
      *             "params": {
@@ -65,7 +65,7 @@ class Version extends AbstractEntity
      */
     private $criterion;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Version", cascade={"persist"}, inversedBy="criterionVersions")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Version", cascade={"persist"}, inversedBy="criterionVersions")
      * @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=false)
      * @Annotation\Exclude()
      *
@@ -73,11 +73,11 @@ class Version extends AbstractEntity
      */
     private $reportVersion;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Type", cascade={"persist"}, inversedBy="criterionVersions")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Criterion\Type", cascade={"persist"}, inversedBy="criterionVersions")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="type_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
-     *     "target_class":"Project\Entity\Evaluation\Report2\Criterion\Type",
+     *     "target_class":"Evaluation\Entity\Report\Criterion\Type",
      *     "optgroup_identifier":"categoryLabel",
      *     "help-block":"txt-evaluation-report-criterion-version-type-help-block",
      *     "label":"txt-type"
@@ -133,9 +133,9 @@ class Version extends AbstractEntity
      */
     private $highlighted = false;
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Criterion\VersionTopic", cascade={"persist","remove"}, mappedBy="criterionVersion", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Criterion\VersionTopic", cascade={"persist","remove"}, mappedBy="criterionVersion", orphanRemoval=true)
      * @Annotation\ComposedObject({
-     *     "target_object":"Project\Entity\Evaluation\Report2\Criterion\VersionTopic",
+     *     "target_object":"Evaluation\Entity\Report\Criterion\VersionTopic",
      *     "is_collection":"true"
      * })
      * @Annotation\Options({
@@ -151,7 +151,7 @@ class Version extends AbstractEntity
     private $versionTopics;
     /**
      * /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Result", cascade={"persist"}, mappedBy="criterionVersion")
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Result", cascade={"persist"}, mappedBy="criterionVersion")
      * @Annotation\Exclude()
      *
      * @var Collection

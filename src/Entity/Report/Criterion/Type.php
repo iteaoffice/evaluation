@@ -1,17 +1,4 @@
 <?php
-/**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
- * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
- * @license     https://itea3.org/license.txt proprietary
- *
- * @link        http://github.com/iteaoffice/project for the canonical source repository
- */
 
 declare(strict_types=1);
 
@@ -66,11 +53,11 @@ class Type extends AbstractEntity
     private $type;
     /**
      * @Gedmo\SortableGroup
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Category", cascade={"persist"}, inversedBy="types")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Criterion\Category", cascade={"persist"}, inversedBy="types")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="category_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
-     *     "target_class":"Project\Entity\Evaluation\Report2\Criterion\Category",
+     *     "target_class":"Evaluation\Entity\Report\Criterion\Category",
      *     "label":"txt-category",
      *     "help-block":"txt-report-criterion-category-help-block"
      * })
@@ -79,7 +66,7 @@ class Type extends AbstractEntity
      */
     private $category;
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Version", cascade={"persist"}, mappedBy="type")
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Criterion\Version", cascade={"persist"}, mappedBy="type")
      * @Annotation\Exclude()
      *
      * @var Collection

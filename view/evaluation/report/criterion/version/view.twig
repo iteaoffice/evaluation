@@ -1,0 +1,42 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-evaluation")) %}
+{% do headTitle().append(translate("txt-evaluation-report-criterion-%s")|format(criterionVersion.criterion)) %}
+
+<h1>{{ criterion }}</h1>
+
+<dl class="dl-horizontal">
+    <dt>{{ translate("txt-id") }}</dt>
+    <dd>{{ criterionVersion.id }}</dd>
+    <dt>{{ translate("txt-sequence") }}</dt>
+    <dd>{{ criterionVersion.sequence }}</dd>
+    <dt>{{ translate("txt-criterion") }}</dt>
+    <dd>{% if criterionVersion.criterion.archived %}
+            <del>{{ report2CriterionLink(criterionVersion.criterion, 'view', 'name') }}</del>
+        {% else %}
+            {{ report2CriterionLink(criterionVersion.criterion, 'view', 'name') }}
+        {% endif %}</dd>
+    <dt>{{ translate("txt-help-block") }}</dt>
+    <dd>{{ criterionVersion.criterion.helpBlock|default('-') }}</dd>
+    <dt>{{ translate("txt-input-type") }}</dt>
+    <dd>{{ translate(criterionVersion.criterion.parseInputType()) }}</dd>
+    {% if criterionVersion.criterion.values is not empty %}
+        <dt>{{ translate("txt-values") }}</dt>
+        <dd>{{ criterionVersion.criterion.values|join(', ') }}</dd>
+    {% endif %}
+    <dt>{{ translate("txt-has-score") }}</dt>
+    <dd>{% if criterionVersion.criterion.hasScore %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
+    <dt>{{ translate("txt-archived") }}</dt>
+    <dd>{% if criterionVersion.criterion.archived %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
+    <dt>{{ translate("txt-required") }}</dt>
+    <dd>{% if criterionVersion.required %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
+    <dt>{{ translate("txt-confidential") }}</dt>
+    <dd>{% if criterionVersion.confidential %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
+    <dt>{{ translate("txt-highlighted") }}</dt>
+    <dd>{% if criterionVersion.highlighted %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
+    <dt>{{ translate("txt-results") }}</dt>
+    <dd>0</dd>
+    <dt>{{ translate("txt-in-report-versions") }}</dt>
+    <dd>0</dd>
+</dl>
+
+{{ report2CriterionVersionLink(criterionVersion, 'edit', 'button') }}

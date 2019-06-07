@@ -43,12 +43,12 @@ class Version extends AbstractEntity
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Type", cascade={"persist"}, inversedBy="reportVersions")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Type", cascade={"persist"}, inversedBy="reportVersions")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="type_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-type",
-     *     "target_class":"Project\Entity\Evaluation\Report2\Type",
+     *     "target_class":"Evaluation\Entity\Report\Type",
      *     "help-block":"txt-evaluation-report-type-help-block"
      * })
      *
@@ -97,21 +97,21 @@ class Version extends AbstractEntity
      */
     private $dateCreated;
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2", cascade={"persist"}, mappedBy="version", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report", cascade={"persist"}, mappedBy="version", orphanRemoval=true)
      * @Annotation\Exclude()
      *
      * @var Collection
      */
     private $evaluationReports;
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Version", cascade={"persist","remove"}, mappedBy="reportVersion", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Criterion\Version", cascade={"persist","remove"}, mappedBy="reportVersion", orphanRemoval=true)
      * @Annotation\Exclude()
      *
      * @var Collection
      */
     private $criterionVersions;
     /**
-     * @ORM\ManyToMany(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Topic", cascade={"persist","remove"}, inversedBy="reportVersions")
+     * @ORM\ManyToMany(targetEntity="Evaluation\Entity\Report\Criterion\Topic", cascade={"persist","remove"}, inversedBy="reportVersions")
      * @ORM\JoinTable(name="evaluation_report2_criterion_topic_version",
      *      joinColumns={@ORM\JoinColumn(name="version_id", referencedColumnName="version_id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="topic_id", referencedColumnName="topic_id")}
@@ -120,7 +120,7 @@ class Version extends AbstractEntity
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntityMultiCheckbox")
      * @Annotation\Options({
      *     "label":"txt-topics",
-     *     "target_class":"Project\Entity\Evaluation\Report2\Criterion\Topic",
+     *     "target_class":"Evaluation\Entity\Report\Criterion\Topic",
      *     "find_method":{
      *          "name":"findBy",
      *          "params": {
@@ -137,7 +137,7 @@ class Version extends AbstractEntity
     private $topics;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Project\Entity\Evaluation\Report2\Window", cascade={"persist","remove"}, mappedBy="reportVersions")
+     * @ORM\ManyToMany(targetEntity="Evaluation\Entity\Report\Window", cascade={"persist","remove"}, mappedBy="reportVersions")
      *
      * @var Collection
      */

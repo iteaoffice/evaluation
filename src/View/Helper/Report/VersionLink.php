@@ -18,14 +18,14 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
 
-use Project\Entity\Evaluation\Report2\Version;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Version;
+use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class VersionLink
  * @package Evaluation\View\Helper\Report
  */
-final class VersionLink extends LinkAbstract
+final class VersionLink extends AbstractLink
 {
     /**
      * @var Version

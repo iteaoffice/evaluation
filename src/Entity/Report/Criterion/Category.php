@@ -60,7 +60,7 @@ class Category extends AbstractEntity
     private $category;
 
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Type", cascade={"persist"}, mappedBy="category")
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Criterion\Type", cascade={"persist"}, mappedBy="category")
      * @ORM\OrderBy({"sequence"="ASC"})
      * @Annotation\Exclude()
      *

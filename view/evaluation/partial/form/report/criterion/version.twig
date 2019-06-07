@@ -1,0 +1,99 @@
+{% do form.prepare() %}
+
+{{ form().openTag(form)|raw }}
+{% set criterionFieldset = form.get('evaluation_entity_report_criterion_version') %}
+
+<div class="form-group row">
+    <label for="report-version" class="col-sm-3 col-form-label">{{ translate("txt-evaluation-report") }}</label>
+    <div class="col-sm-9">
+        <input id="report-version" type="text" readonly class="form-control-plaintext" value="{{ reportVersion.label }}">
+    </div>
+</div>
+{{ ztbformelement(criterionFieldset.get('sequence')) }}
+{{ ztbformelement(criterionFieldset.get('criterion')) }}
+{{ ztbformelement(criterionFieldset.get('type')) }}
+<div class="form-group row">
+    <label class="col-sm-3 col-form-label">{{ translate(criterionFieldset.get('versionTopics').getOption('label')) }}</label>
+    <div class="col-sm-9">
+        <div id="topics">
+            {% for fieldset in criterionFieldset.get('versionTopics').getFieldsets() %}
+                <div class="card mb-2">
+                    <div class="card-body row">
+                        <div class="col">
+                            {{ ztbformelement(fieldset.get('topic'), true) }}
+                        </div>
+                        <div class="col">
+                            {{ ztbformelement(fieldset.get('weight'), true) }}
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label>&nbsp;</label><br>
+                                <button type="button" class="btn btn-danger">{{ translate("txt-remove") }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button id="btn-add-topic" type="button" class="btn btn-primary">{{ translate("txt-add-topic") }}</button>
+        <small class="form-text text-muted">{{ translate("txt-add-topic-help-block") }}</small>
+    </div>
+</div>
+
+{{ ztbformelement(criterionFieldset.get('required')) }}
+{{ ztbformelement(criterionFieldset.get('confidential')) }}
+{{ ztbformelement(criterionFieldset.get('highlighted')) }}
+
+<div class="form-group row">
+    <div class="offset-sm-3 col-sm-9">
+        {{ formelement(form.get('submit')) }}
+        {{ formelement(form.get('cancel')) }}
+        {% if form.has('delete') %}
+            {{ formelement(form.get('delete')) }}
+        {% endif %}
+    </div>
+</div>
+{{ form().closeTag()|raw }}
+
+<div id="template" class="d-none">
+    <div class="card mb-2">
+        <div class="card-body row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="topic-__index__">{{ translate("txt-topic") }}</label>
+                    <select id="topic-__index__" name="project_entity_evaluation_report2_criterion_version[versionTopics][__index__][topic]"
+                            class="form-control">
+                        {% for topic in topics %}
+                            <option value="{{ topic.id }}">{{ topic.topic }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="weight-__index__">{{ translate("txt-weight") }}</label>
+                    <input id="weight-__index__" name="project_entity_evaluation_report2_criterion_version[versionTopics][__index__][weight]"
+                           class="form-control" value="" type="number">
+                </div>
+            </div>
+            <div class="col">
+                <label>&nbsp;</label><br>
+                <button type="button" class="btn btn-danger">{{ translate("txt-remove") }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var form = $('form');
+    form.on('click', 'button.btn-danger', function () {
+        $(this).closest('div.card').fadeOut(300, function () {
+            $(this).remove();
+        });
+    });
+    form.on('click', '#btn-add-topic', function () {
+        var topics = form.find('#topics'), html = $('#template').html();
+        html = html.replace(/__index__/g, topics.find('div.card').length);
+        $(html).hide().appendTo(topics).fadeIn(300);
+    });
+</script>

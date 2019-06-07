@@ -23,7 +23,7 @@ use Doctrine\ORM\QueryBuilder;
 use Gedmo\Sortable\Entity\Repository\SortableRepository;
 use Evaluation\Entity\Report\Version;
 use Evaluation\Entity\Report\Window;
-use Project\Repository\FilteredObjectRepository;
+use Evaluation\Repository\FilteredObjectRepository;
 use function array_key_exists;
 use function in_array;
 use function strtoupper;

@@ -12,7 +12,6 @@ use Evaluation\Controller;
 use Zend\Router\Http\Segment;
 use Zend\Router\Http\Literal;
 
-return [];
 return [
     'router' => [
         'routes' => [
@@ -37,10 +36,10 @@ return [
                                     ],
                                 ],
                             ],
-                            'report' => [
+                            'report2' => [
                                 'type'          => Literal::class,
                                 'options'       => [
-                                    'route'    => '/report',
+                                    'route'    => '/report2',
                                     'defaults' => [
                                         'action'     => 'list',
                                         'controller' => Controller\ReportManagerController::class,
@@ -483,7 +482,7 @@ return [
                             ],
                         ],
                     ],
-                    'project'    => [
+                    /*'project'    => [
                         'child_routes'  => [
                             'evaluation'       => [
                                 'type'          => 'Segment',
@@ -517,7 +516,7 @@ return [
                                 ],
                             ],
                         ],
-                    ],
+                    ],*/
                 ],
             ],
         ],

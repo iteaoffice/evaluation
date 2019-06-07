@@ -18,14 +18,14 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
 
-use Project\Entity\Evaluation\Report2\Window;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Window;
+use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class WindowLink
- * @package Project\View\Helper\Evaluation
+ * @package Evaluation\View\Helper\Report
  */
-final class WindowLink extends LinkAbstract
+final class WindowLink extends AbstractLink
 {
     /**
      * @var Window

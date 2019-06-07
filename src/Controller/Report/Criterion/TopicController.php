@@ -21,18 +21,23 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
 use Evaluation\Controller\Plugin\GetFilter;
 use Evaluation\Entity\Report\Criterion\Topic;
-use Project\Form\Evaluation\Criterion\TopicFilter;
+use Evaluation\Form\Report\Criterion\TopicFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
 use Zend\Http\Request;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
+use function ceil;
+use function urlencode;
 
 /**
  * Class TopicController
  *
  * @method GetFilter getProjectFilter()
+ * @method FlashMessenger flashMessenger()
  * @package Evaluation\Controller\Report
  */
 final class TopicController extends AbstractActionController
@@ -47,12 +52,19 @@ final class TopicController extends AbstractActionController
      */
     private $formService;
 
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService
+        FormService             $formService,
+        TranslatorInterface     $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
+        $this->translator              = $translator;
     }
 
     public function listAction()
@@ -64,7 +76,7 @@ final class TopicController extends AbstractActionController
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
         $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);
         $paginator->setCurrentPageNumber($page);
-        $paginator->setPageRange(\ceil($paginator->getTotalItemCount() / $paginator::getDefaultItemCountPerPage()));
+        $paginator->setPageRange(ceil($paginator->getTotalItemCount() / $paginator::getDefaultItemCountPerPage()));
 
         $form = new TopicFilter();
         $form->setData(['filter' => $filterPlugin->getFilter()]);
@@ -72,7 +84,7 @@ final class TopicController extends AbstractActionController
         return new ViewModel([
             'paginator'     => $paginator,
             'form'          => $form,
-            'encodedFilter' => \urlencode($filterPlugin->getHash()),
+            'encodedFilter' => urlencode($filterPlugin->getHash()),
             'order'         => $filterPlugin->getOrder(),
             'direction'     => $filterPlugin->getDirection(),
         ]);
@@ -81,6 +93,7 @@ final class TopicController extends AbstractActionController
     public function viewAction()
     {
         $topic = $this->evaluationReportService->find(Topic::class, (int)$this->params('id'));
+
         if ($topic === null) {
             return $this->notFoundAction();
         }
@@ -107,6 +120,9 @@ final class TopicController extends AbstractActionController
                 /* @var $topic Topic */
                 $topic = $form->getData();
                 $this->evaluationReportService->save($topic);
+                $this->flashMessenger()->addSuccessMessage(
+                    $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
+                );
                 return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report2/criterion/topic/view',
                     ['id' => $topic->getId()]
@@ -130,7 +146,7 @@ final class TopicController extends AbstractActionController
 
         $data = $request->getPost()->toArray();
         $form = $this->formService->prepare($topic, $data);
-        if (($topic->getReportVersions()->count() > 0) || ($topic->getVersionTopics()->count() > 0)) {
+        if ($topic->getVersionTopics()->count() > 0) {
             $form->remove('delete');
         }
 
@@ -141,7 +157,9 @@ final class TopicController extends AbstractActionController
 
             if (isset($data['delete'])) {
                 $this->evaluationReportService->delete($topic);
-
+                $this->flashMessenger()->addSuccessMessage(
+                    $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-deleted')
+                );
                 return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/topic/list');
             }
 
@@ -149,6 +167,9 @@ final class TopicController extends AbstractActionController
                 /** @var Topic $topic */
                 $topic = $form->getData();
                 $this->evaluationReportService->save($topic);
+                $this->flashMessenger()->addSuccessMessage(
+                    $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
+                );
                 $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report2/criterion/topic/view',
                     ['id' => $topic->getId()]

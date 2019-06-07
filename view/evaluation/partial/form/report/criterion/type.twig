@@ -1,0 +1,20 @@
+{% do form.prepare() %}
+
+{{ form().openTag(form)|raw }}
+{% set type = form.get('evaluation_entity_report_criterion_type') %}
+
+{{ ztbformelement(form.get('csrf')) }}
+{{ ztbformelement(type.get('category')) }}
+{{ ztbformelement(type.get('type')) }}
+{{ ztbformelement(type.get('sequence')) }}
+
+<div class="form-group row">
+    <div class="offset-sm-3 col-sm-9">
+        {{ formelement(form.get('submit')) }}
+        {{ formelement(form.get('cancel')) }}
+        {% if form.has('delete') %}
+            {{ formelement(form.get('delete')) }}
+        {% endif %}
+    </div>
+</div>
+{{ form().closeTag()|raw }}

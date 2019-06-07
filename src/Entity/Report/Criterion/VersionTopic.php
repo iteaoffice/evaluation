@@ -40,7 +40,7 @@ class VersionTopic extends AbstractEntity
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Version", cascade={"persist"}, inversedBy="versionTopics")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Criterion\Version", cascade={"persist"}, inversedBy="versionTopics")
      * @ORM\JoinColumn(name="criterion_version_id", referencedColumnName="criterion_version_id", nullable=false)
      * @Annotation\Exclude()
      *
@@ -48,11 +48,11 @@ class VersionTopic extends AbstractEntity
      */
     private $criterionVersion;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Report2\Criterion\Topic", cascade={"persist"}, inversedBy="versionTopics")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Criterion\Topic", cascade={"persist"}, inversedBy="versionTopics")
      * @ORM\JoinColumn(name="topic_id", referencedColumnName="topic_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
-     *     "target_class":"Project\Entity\Evaluation\Report2\Criterion\Topic",
+     *     "target_class":"Evaluation\Entity\Report\Criterion\Topic",
      *     "label":"txt-topic"
      * })
      *
