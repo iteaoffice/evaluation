@@ -39,8 +39,7 @@ final class VersionLink extends LinkAbstract
         string           $action = 'view',
         string           $show = 'name',
         ReportVersion    $reportVersion = null
-    ): string
-    {
+    ): string {
         $this->criterionVersion = $criterionVersion ?? new CriterionVersion();
         if ($this->criterionVersion->getCriterion() === null) {
             $this->criterionVersion->setCriterion(new Criterion());

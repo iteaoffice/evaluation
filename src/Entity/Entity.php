@@ -14,5 +14,5 @@ namespace Evaluation\Entity;
 
 interface Entity
 {
-    public function getId(): ?int;
+    public function getId();
 }

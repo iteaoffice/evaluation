@@ -28,8 +28,6 @@ use function strtolower;
  */
 abstract class AbstractEntity implements Entity, ResourceInterface
 {
-    abstract public function getId(): ?int;
-
     public function getResourceId(): string
     {
         return sprintf('%s:%s', $this->get('full_entity_name'), $this->getId());
@@ -70,6 +68,8 @@ abstract class AbstractEntity implements Entity, ResourceInterface
                 throw new InvalidArgumentException(sprintf("Unknown option %s for get entity name", $what));
         }
     }
+
+    abstract public function getId();
 
     public function __toString(): string
     {

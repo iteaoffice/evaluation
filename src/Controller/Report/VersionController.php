@@ -238,6 +238,5 @@ final class VersionController extends AbstractActionController
             'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
                 ->findSorted($reportVersion),
         ]);
-
     }
 }

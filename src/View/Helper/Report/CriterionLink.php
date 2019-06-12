@@ -36,8 +36,7 @@ final class CriterionLink extends LinkAbstract
         Criterion $criterion = null,
         $action = 'view',
         $show = 'name'
-    ): string
-    {
+    ): string {
         $this->criterion = $criterion ?? new Criterion();
         $this->setAction($action);
         $this->setShow($show);

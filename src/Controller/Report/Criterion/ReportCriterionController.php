@@ -119,7 +119,7 @@ final class ReportCriterionController extends AbstractActionController
                 /** @var Criterion $criterion */
                 $criterion = $form->getData();
                 $this->evaluationReportService->save($criterion);
-               return $this->redirect()->toRoute(
+                return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report2/criterion/view',
                     ['id' => $criterion->getId()]
                 );

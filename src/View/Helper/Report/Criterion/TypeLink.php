@@ -36,8 +36,7 @@ final class TypeLink extends AbstractLink
         Type   $type = null,
         string $action = 'view',
         string $show = 'name'
-    ): string
-    {
+    ): string {
         $this->type = $type ?? new Type();
         $this->setAction($action);
         $this->setShow($show);

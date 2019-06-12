@@ -170,7 +170,9 @@ final class Report extends Form
         $scores = ($report->getProjectReportReport() === null)
             ? $report::getVersionScores() : $report::getReportScores();
         $translatedScores = array_map(
-            function ($scoreLabel) { return _($scoreLabel); },
+            function ($scoreLabel) {
+                return _($scoreLabel);
+            },
             $scores
         );
         $this->add(

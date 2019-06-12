@@ -36,8 +36,7 @@ final class WindowLink extends AbstractLink
         Window $window = null,
         string $action = 'view',
         string $show = 'name'
-    ): string
-    {
+    ): string {
         $this->window = $window ?? new Window();
         $this->setAction($action);
         $this->setShow($show);
