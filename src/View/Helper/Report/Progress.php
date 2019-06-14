@@ -18,8 +18,8 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
 
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Service\EvaluationReportService;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\View\Helper\AbstractHelper;
 use function sprintf;

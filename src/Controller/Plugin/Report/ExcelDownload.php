@@ -28,6 +28,7 @@ use Evaluation\Service\EvaluationReportService;
 use Zend\Http\Headers;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Zend\Mvc\Controller\PluginManager;
 use ZipArchive;
 use function file_exists;
 use function file_get_contents;
@@ -59,24 +60,18 @@ final class ExcelDownload extends AbstractPlugin
      */
     private $zipTempFile;
 
-    /**
-     * ReportExcelDownload constructor.
-     *
-     * @param EvaluationReportService $evaluationReportService
-     * @param ExcelExport       $reportExcelExport
-     */
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ExcelExport             $reportExcelExport
+        PluginManager           $pluginManager
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->reportExcelExport       = $reportExcelExport;
+        $this->reportExcelExport       = $pluginManager->get(ExcelExport::class);
     }
 
     /*
      * Download Excel .xlsx files combined in a .zip
      */
-    public function __invoke(Contact $contact, int $status, bool $forDistribution = false): ReportExcelDownload
+    public function __invoke(Contact $contact, int $status, bool $forDistribution = false): ExcelDownload
     {
         $this->zipTempFile = tempnam(sys_get_temp_dir(), 'zip');
         $zip               = new ZipArchive();

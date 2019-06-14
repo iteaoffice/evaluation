@@ -27,23 +27,19 @@ use Evaluation\Form\Report\CriterionFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
 use Zend\Http\Request;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class Report2CriterionController
+ * Class CriterionController
  *
- * @method GetFilter getProjectFilter()
+ * @method GetFilter getEvaluationFilter()
  * @package Evaluation\Controller\Report
  */
 final class CriterionController extends AbstractActionController
 {
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
     /**
      * @var EvaluationReportService
      */
@@ -53,21 +49,32 @@ final class CriterionController extends AbstractActionController
      * @var FormService
      */
     private $formService;
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+    /**
+     * @var
+     */
+    private $translator;
 
     public function __construct(
-        EntityManager           $entityManager,
         EvaluationReportService $evaluationReportService,
-        FormService             $formService
+        FormService             $formService,
+        EntityManager           $entityManager,
+        TranslatorInterface     $translator
     ) {
-        $this->entityManager           = $entityManager;
+
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
+        $this->entityManager           = $entityManager;
+        $this->translator              = $translator;
     }
 
     public function listAction()
     {
         $page         = $this->params()->fromRoute('page', 1);
-        $filterPlugin = $this->getProjectFilter();
+        $filterPlugin = $this->getEvaluationFilter();
         $query        = $this->evaluationReportService->findFiltered(Criterion::class, $filterPlugin->getFilter());
 
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
@@ -97,7 +104,6 @@ final class CriterionController extends AbstractActionController
 
         return new ViewModel([
             'criterion' => $criterion,
-            'results'   => $this->evaluationReportService->count(Result::class, ['criterion' => $criterion]),
             'versions'  => $this->evaluationReportService->count(Criterion\Version::class, ['criterion' => $criterion])
         ]);
     }
@@ -144,12 +150,11 @@ final class CriterionController extends AbstractActionController
 
         $data        = $request->getPost()->toArray();
         $form        = $this->formService->prepare($criterion, $data);
-        $hasResults  = ($this->evaluationReportService->count(Result::class, ['criterion' => $criterion]) > 0);
         $hasVersions = ($this->evaluationReportService->count(
             Criterion\Version::class,
             ['criterion' => $criterion]
         ) > 0);
-        if ($hasResults || $hasVersions) {
+        if ($hasVersions) {
             $form->remove('delete');
         }
 
@@ -158,7 +163,7 @@ final class CriterionController extends AbstractActionController
                 return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/list');
             }
 
-            if (isset($data['delete']) && !$hasResults && !$hasVersions) {
+            if (isset($data['delete']) && !$hasVersions) {
                 $this->evaluationReportService->delete($criterion);
                 return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/list');
             }

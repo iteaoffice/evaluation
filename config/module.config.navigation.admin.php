@@ -119,10 +119,10 @@ return [
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
-                                        'id' => \Project\Entity\Evaluation\Report2\Criterion::class,
+                                        'id' => Entity\Report\Criterion::class,
                                     ],
                                     'invokables' => [
-                                        \Project\Navigation\Invokable\Evaluation\Report2\CriterionLabel::class,
+                                        Navigation\Invokable\Report\CriterionLabel::class,
                                     ],
                                 ],
                                 'pages'   => [
@@ -132,7 +132,7 @@ return [
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
-                                                'id' => \Project\Entity\Evaluation\Report2\Criterion::class,
+                                                'id' => Entity\Report\Criterion::class,
                                             ],
                                         ],
                                     ],

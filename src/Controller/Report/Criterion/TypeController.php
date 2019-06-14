@@ -35,7 +35,7 @@ use function urlencode;
 /**
  * Class TypeController
  *
- * @method GetFilter getProjectFilter()
+ * @method GetFilter getEvaluationFilter()
  * @package Evaluation\Controller\Report\Criterion
  */
 final class TypeController extends AbstractActionController
@@ -66,7 +66,7 @@ final class TypeController extends AbstractActionController
     public function listAction()
     {
         $page         = $this->params()->fromRoute('page', 1);
-        $filterPlugin = $this->getProjectFilter();
+        $filterPlugin = $this->getEvaluationFilter();
         $query        = $this->evaluationReportService->findFiltered(Type::class, $filterPlugin->getFilter());
 
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));

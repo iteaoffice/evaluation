@@ -33,10 +33,17 @@ $config = [
     ],
     'controller_plugins' => [
         'aliases'   => [
-
+            'getEvaluationFilter'          => Controller\Plugin\GetFilter::class,
+            'evaluationReport2ExcelExport' => Controller\Plugin\Report\ExcelExport::class,
         ],
         'factories' => [
-
+            Controller\Plugin\GetFilter::class                    => Factory\InvokableFactory::class,
+            Controller\Plugin\Report\ExcelExport::class           => ConfigAbstractFactory::class,
+            Controller\Plugin\Report\ExcelDownload::class         => ConfigAbstractFactory::class,
+            Controller\Plugin\Report\PdfExport::class             => ConfigAbstractFactory::class,
+            Controller\Plugin\Report\ConsolidatedPdfExport::class => ConfigAbstractFactory::class,
+            Controller\Plugin\Report\ExcelImport::class           => ConfigAbstractFactory::class,
+            Controller\Plugin\Report\Presentation::class          => ConfigAbstractFactory::class,
         ],
     ],
     'view_manager'       => [
@@ -44,8 +51,12 @@ $config = [
     ],
     'view_helpers'       => [
         'aliases'    => [
+            'evaluationReport2Link'            => View\Helper\ReportLink::class,
+            'evaluationReport2FinalLink'       => View\Helper\Report\FinalLink::class,
+            'evaluationReport2Progress'        => View\Helper\Report\Progress::class,
             'report2VersionLink'               => View\Helper\Report\VersionLink::class,
             'report2WindowLink'                => View\Helper\Report\WindowLink::class,
+            'report2CriterionLink'             => View\Helper\Report\CriterionLink::class,
             'report2CriterionCategoryLink'     => View\Helper\Report\Criterion\CategoryLink::class,
             'report2CriterionTypeLink'         => View\Helper\Report\Criterion\TypeLink::class,
             'report2CriterionTopicLink'        => View\Helper\Report\Criterion\TopicLink::class,
@@ -56,8 +67,12 @@ $config = [
 
         ],
         'factories'  => [
+            View\Helper\ReportLink::class                    => ViewHelperFactory::class,
+            View\Helper\Report\FinalLink::class              => ViewHelperFactory::class,
+            View\Helper\Report\Progress::class               => ConfigAbstractFactory::class,
             View\Helper\Report\VersionLink::class            => ViewHelperFactory::class,
             View\Helper\Report\WindowLink::class             => ViewHelperFactory::class,
+            View\Helper\Report\CriterionLink::class          => ViewHelperFactory::class,
             View\Helper\Report\Criterion\CategoryLink::class => ViewHelperFactory::class,
             View\Helper\Report\Criterion\TypeLink::class     => ViewHelperFactory::class,
             View\Helper\Report\Criterion\TopicLink::class    => ViewHelperFactory::class,
@@ -74,6 +89,10 @@ $config = [
     ],
     'service_manager'    => [
         'factories' => [
+            // ACL
+            Acl\Assertion\FeedbackAssertion::class                     => Factory\InvokableFactory::class,
+            Acl\Assertion\EvaluationAssertion::class                   => Factory\InvokableFactory::class,
+            Acl\Assertion\ReportAssertion::class                       => Factory\InvokableFactory::class,
             // Services
             Service\EvaluationReportService::class                     => ConfigAbstractFactory::class,
             Service\EvaluationService::class                           => ConfigAbstractFactory::class,
@@ -87,6 +106,8 @@ $config = [
             Navigation\Invokable\Report\Criterion\TypeLabel::class     => Factory\InvokableFactory::class,
             Navigation\Invokable\Report\Criterion\TopicLabel::class    => Factory\InvokableFactory::class,
             Navigation\Invokable\Report\Criterion\VersionLabel::class  => Factory\InvokableFactory::class,
+            // Misc
+            Options\ModuleOptions::class                               => Options\Factory\ModuleOptionsFactory::class
         ],
     ],
     'doctrine'           => [

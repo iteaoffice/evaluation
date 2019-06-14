@@ -20,18 +20,21 @@ namespace Evaluation\Controller\Plugin\Report;
 
 use DateTime;
 use JpGraph\JpGraph;
+use LinearScale;
 use Project\Entity\Challenge;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Result;
+use Evaluation\Controller\Plugin\ReportPdf;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Result;
+use Evaluation\Service\EvaluationReportService;
+use Evaluation\Options\ModuleOptions;
 use Project\Entity\Rationale;
 use Project\Entity\Report\Review as ReportReviewer;
 use Project\Entity\Version\Review as VersionReviewer;
 use Project\Entity\Version\Version;
-use Project\Options\ModuleOptions;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
+use RadarAxis;
 use RadarGraph;
 use RadarPlot;
 use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
@@ -163,7 +166,7 @@ final class PdfExport extends AbstractPlugin
         $this->translator              = $translator;
     }
 
-    public function __invoke(EvaluationReport $evaluationReport, bool $forDistribution = false): Report2PdfExport
+    public function __invoke(EvaluationReport $evaluationReport, bool $forDistribution = false): PdfExport
     {
         $this->evaluationReport   = $evaluationReport;
         $this->forDistribution    = $forDistribution;
@@ -172,11 +175,11 @@ final class PdfExport extends AbstractPlugin
         $this->results            = $this->evaluationReportService->getSortedResults($evaluationReport);
 
         $pdf = new ReportPdf();
-        $pdf->setTemplate($this->moduleOptions->getEvaluationReportTemplate());
+        $pdf->setTemplate($this->moduleOptions->getReportTemplate());
 
         //@todo Change this so the template is taken from the program
         if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
-            $originalTemplate = $this->moduleOptions->getEvaluationReportTemplate();
+            $originalTemplate = $this->moduleOptions->getReportTemplate();
             $project          = $this->evaluationReportService->getProject($this->evaluationReport);
 
             $template = $originalTemplate;
@@ -214,7 +217,7 @@ final class PdfExport extends AbstractPlugin
         $pdf->setFooterMargin(0);
         $pdf->SetDisplayMode('real');
         $pdf->SetAutoPageBreak(true, 10);
-        $pdf->SetAuthor($this->moduleOptions->getEvaluationReportAuthor());
+        $pdf->SetAuthor($this->moduleOptions->getReportAuthor());
         $title = sprintf(
             $this->translator->translate('txt-final-evaluation-report-for-%s'),
             $this->evaluationReportService->parseLabel($evaluationReport)
@@ -368,11 +371,15 @@ final class PdfExport extends AbstractPlugin
         $chart->ShowMinorTickMarks(true);
 
         $chart->img->SetAntiAliasing(true);
-        $chart->yscale->ticks->Set(1, (($maxTopicWeight === 1) ? 0.2 : 0.5));
+        /** @var LinearScale $yScale */
+        $yScale = $chart->yscale;
+        $yScale->ticks->Set(1, (($maxTopicWeight === 1) ? 0.2 : 0.5));
         $chart->title->SetFont(FF_USERFONT, FS_NORMAL, 16);
         $chart->title->Set($this->translator->translate('txt-evaluation-topic-scores'));
-        $chart->axis->SetFont(FF_USERFONT, FS_NORMAL, 12);
-        $chart->axis->title->SetFont(FF_USERFONT, FS_NORMAL, 14);
+        /** @var RadarAxis $axis */
+        $axis = $chart->axis;
+        $axis->SetFont(FF_USERFONT, FS_NORMAL, 12);
+        $axis->title->SetFont(FF_USERFONT, FS_NORMAL, 14);
 
         $plot = new RadarPlot($chartData);
         $plot->SetFillColor([167, 216, 184]);

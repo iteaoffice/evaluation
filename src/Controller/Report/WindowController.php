@@ -34,7 +34,7 @@ use Zend\View\Model\ViewModel;
 /**
  * Class WindowController
  *
- * @method GetFilter getProjectFilter()
+ * @method GetFilter getEvaluationFilter()
  * @method FlashMessenger flashMessenger()
  * @package Evaluation\Controller\Report
  */
@@ -67,7 +67,7 @@ final class WindowController extends AbstractActionController
     public function listAction()
     {
         $page         = $this->params()->fromRoute('page', 1);
-        $filterPlugin = $this->getProjectFilter();
+        $filterPlugin = $this->getEvaluationFilter();
         $query        = $this->evaluationReportService->findFiltered(Window::class, $filterPlugin->getFilter());
         $paginator    = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
         $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);

@@ -19,7 +19,7 @@ namespace Evaluation\Repository\Report\Criterion;
 
 use Doctrine\Common\Collections\Criteria;
 use Gedmo\Sortable\Entity\Repository\SortableRepository;
-use Evaluation\Entity\Report\Criterion as CriterionVersion;
+use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Version;
 
 /**

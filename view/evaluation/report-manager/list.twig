@@ -1,0 +1,231 @@
+{% do headTitle().append(translate('txt-admin')) %}
+{% do headTitle().append(translate('txt-evaluation-report-list')) %}
+
+{% do form.prepare() %}
+{{ form().openTag(form)|raw }}
+
+{% set filter = form.get('filter') %}
+
+<div class="row">
+    <div class="col-md-10">
+        <h1>{{ translate("txt-evaluation-report-list") }}</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="lead">{{ translate("txt-evaluation-report-explanation") }}</p>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="input-group">
+                        {{ formelement(filter.get('search')) }}
+                        <span class="input-group-btn">{{ formelement(form.get('submit')) }}</span>
+                    </div>
+                </div>
+                {% if type == constant("Project\\Entity\\Evaluation\\Report::TYPE_FINAL") %}
+                <div class="form-group">
+                    {{ formelement(form.get('presentation')) }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if paginator.pageRange > 0 %}
+            <table class="table table-hover table-striped table-sm">
+                {% if subject != constant("Project\\Entity\\Evaluation\\Report\\Type::TYPE_REPORT") %}
+                    {% if type == constant("Project\\Entity\\Evaluation\\Report::TYPE_INDIVIDUAL") %}
+                        <thead>
+                        <tr>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'project', 'text': translate('txt-project')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'version', 'text': translate('txt-version')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'reviewer', 'text': translate('txt-reviewer')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
+                            <th>{{ translate("txt-status") }}</th>
+                            <th>{{ translate("txt-action") }}</th>
+                        </tr>
+                        </thead>
+                        <tfoot></tfoot>
+                        <tbody>
+                        {% for versionReviewer in paginator.getCurrentItems() %}
+                            <tr>
+                                <td>{{ projectLink(versionReviewer.version.project, 'view-admin', 'name') }}</td>
+                                <td>{{ versionLink(versionReviewer.version, 'view-admin', 'description') }}
+                                {% if versionReviewer.version.versionType.id == constant("Project\\Entity\\Version\\Type::TYPE_CR") %}
+                                    {% if versionReviewer.version.changerequestProcess.type == constant("Project\\Entity\\ChangeRequest\\Process::TYPE_MINOR") %}
+                                        <small>({{ translate("txt-minor") }})</small>
+                                    {% else %}
+                                        <small>({{ translate("txt-major") }})</small>
+                                    {% endif %}
+                                {% endif %}
+                                </td>
+                                <td>{{ contactLink(versionReviewer.contact, 'view-admin', 'name') }}</td>
+                                {% if versionReviewer.projectVersionReport2 %}
+                                    {% set report = versionReviewer.projectVersionReport2.evaluationReport %}
+                                    <td>{% if report.final %}{{ translate('txt-yes') }}{% else %}{{ translate('txt-no') }}{% endif %}</td>
+                                    <td>{{ report.dateCreated|string_date }}</td>
+                                    <td>{{ report.dateUpdated|string_date }}</td>
+                                    <td>{{ evaluationReport2Progress(report) }}</td>
+                                    <td>{{ evaluationReport2Link(report, 'view', 'icon') }}
+                                        {{ evaluationReport2Link(report, 'download-offline-form', 'icon') }}
+                                    </td>
+                                {% else %}
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>{{ evaluationReport2Progress() }}</td>
+                                    <td>{{ evaluationReport2Link(null, 'download-offline-form', 'icon', false, null, versionReviewer) }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% elseif type == constant("Project\\Entity\\Evaluation\\Report::TYPE_FINAL") %}
+                        <thead>
+                        <tr>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'project', 'text': translate('txt-project')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'version', 'text': translate('txt-version')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
+                            <th>{{ translate("txt-status") }}</th>
+                            <th>{{ translate("txt-action") }}</th>
+                        </tr>
+                        </thead>
+                        <tfoot></tfoot>
+                        <tbody>
+                        {% for version in paginator.getCurrentItems() %}
+                            <tr>
+                                <td>{{ projectLink(version.project, 'view-admin', 'name') }}</td>
+                                <td>{{ versionLink(version, 'view-admin', 'description') }}</td>
+                                {% if version.projectVersionReport2 %}
+                                    {% set report = version.projectVersionReport2.evaluationReport %}
+                                    <td>{% if report.final %}{{ translate('txt-yes') }}{% else %}{{ translate('txt-no') }}{% endif %}</td>
+                                    <td>{{ report.dateCreated|string_date }}</td>
+                                    <td>{{ report.dateUpdated|string_date }}</td>
+                                    <td>{{ evaluationReport2Progress(report) }}</td>
+                                    <td>{{ evaluationReport2FinalLink(report, 'download', 'icon') }}
+                                        {{ evaluationReport2FinalLink(report, 'download-distributable', 'icon') }}
+                                        {{ evaluationReport2FinalLink(report, 'download-distributable-pdf', 'icon') }}
+                                    </td>
+                                {% else %}
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>{{ evaluationReport2Progress() }}</td>
+                                    <td></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% endif %}
+
+                {% else %}
+                    {% if type == constant("Project\\Entity\\Evaluation\\Report::TYPE_INDIVIDUAL") %}
+                        <thead>
+                        <tr>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'project', 'text': translate('txt-project')} %}</a></th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'report', 'text': translate('txt-report')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'reviewer', 'text': translate('txt-reviewer')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
+                            <th>{{ translate("txt-status") }}</th>
+                            <th>{{ translate("txt-action") }}</th>
+                        </tr>
+                        </thead>
+                        <tfoot></tfoot>
+                        <tbody>
+                        {% for reportReviewer in paginator.getCurrentItems() %}
+                            <tr>
+                                <td>{{ projectLink(reportReviewer.projectReport.project, 'view-admin', 'name') }}</td>
+                                <td>{{ reportLink(reportReviewer.projectReport,'report-admin','name') }}</td>
+                                <td>{{ contactLink(reportReviewer.contact, 'view-admin', 'name') }}</td>
+                                {% if reportReviewer.projectReportReport2 %}
+                                    {% set report = reportReviewer.projectReportReport2.evaluationReport %}
+                                    <td>{% if report.final %}{{ translate('txt-yes') }}{% else %}{{ translate('txt-no') }}{% endif %}</td>
+                                    <td>{{ report.dateCreated|string_date }}</td>
+                                    <td>{{ report.dateUpdated|string_date }}</td>
+                                    <td>{{ evaluationReport2Progress(report) }}</td>
+                                    <td>{{ evaluationReport2Link(report, 'view', 'icon') }}
+                                        {{ evaluationReport2Link(report, 'download-offline-form', 'icon') }}
+                                    </td>
+                                {% else %}
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>{{ evaluationReport2Progress() }}</td>
+                                    <td>{{ evaluationReport2Link(null, 'download-offline-form', 'icon', false, reportReviewer) }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% elseif type == constant("Project\\Entity\\Evaluation\\Report::TYPE_FINAL") %}
+                        <thead>
+                        <tr>
+                        <tr>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'project', 'text': translate('txt-project')} %}</a></th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'report', 'text': translate('txt-report')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
+                            <th>{{ translate("txt-status") }}</th>
+                            <th>{{ translate("txt-action") }}</th>
+                        </tr>
+                        </thead>
+                        <tfoot></tfoot>
+                        <tbody>
+                        {% for report in paginator.getCurrentItems() %}
+                            <tr>
+                                <td>{{ projectLink(report.project, 'view-admin', 'name') }}</td>
+                                <td>{{ reportLink(report,'report-admin','name') }}</td>
+                                {% if report.projectReportReport2 %}
+                                    {% set evaluationReport = report.projectReportReport2.evaluationReport %}
+                                    <td>{% if evaluationReport.final %}{{ translate('txt-yes') }}{% else %}{{ translate('txt-no') }}{% endif %}</td>
+                                    <td>{{ evaluationReport.dateCreated|string_date }}</td>
+                                    <td>{{ evaluationReport.dateUpdated|string_date }}</td>
+                                    <td>{{ evaluationReport2Progress(evaluationReport) }}</td>
+                                    <td>{{ evaluationReport2FinalLink(evaluationReport, 'download', 'icon') }}
+                                        {{ evaluationReport2FinalLink(evaluationReport, 'download-distributable', 'icon') }}
+                                        {{ evaluationReport2FinalLink(evaluationReport, 'download-distributable-pdf', 'icon') }}
+                                    </td>
+                                {% else %}
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>{{ evaluationReport2Progress() }}</td>
+                                    <td></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% endif %}
+                {% endif %}
+            </table>
+
+            {% include 'application/partial/pagination-control' %}
+
+        {% else %}
+            {{ ztbalert().info(translate("txt-no-evaluation-report-found"))|raw }}
+        {% endif %}
+    </div>
+
+    <div class="col-md-2">
+        <div class="well well-sm">
+            <fieldset>
+                <div class="form-group row">
+                    {{ ztbformelement(filter.get('type'), true) }}
+                    {{ ztbformelement(filter.get('status'), true) }}
+                    {{ ztbformelement(filter.get('subject'), true) }}
+                    {% if subject == constant("Project\\Entity\\Evaluation\\Report\\Type::TYPE_REPORT") %}
+                        {{ ztbformelement(filter.get('year'), true) }}
+                        {{ ztbformelement(filter.get('period'), true) }}
+                    {% endif %}
+                    {{ ztbformelement(filter.get('call'), true) }}
+                </div>
+                    {{ ztbformelement(form.get('submit')) }}
+                    {{ ztbformelement(form.get('clear')) }}
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+{{ form().closeTag()|raw }}

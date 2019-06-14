@@ -18,17 +18,18 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
 
-use Project\Acl\Assertion\Evaluation\Report as EvaluationReportAssertion;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
+use Evaluation\Acl\Assertion\ReportAssertion;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\View\Helper\AbstractLink;
+use Exception;
 use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Version\Version as ProjectVersion;
-use Project\View\Helper\LinkAbstract;
 
 /**
  * Class FinalLink
  * @package Evaluation\View\Helper\Report
  */
-final class FinalLink extends LinkAbstract
+final class FinalLink extends AbstractLink
 {
     /**
      * @var EvaluationReport
@@ -52,7 +53,7 @@ final class FinalLink extends LinkAbstract
      * @param ProjectReport|null $projectReport
      * @param ProjectVersion|null $projectVersion
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function __invoke(
         EvaluationReport $evaluationReport = null,
@@ -68,10 +69,10 @@ final class FinalLink extends LinkAbstract
         $this->projectVersion = $projectVersion ?? new ProjectVersion();
 
         if (!$this->evaluationReport->isEmpty()) {
-            $this->addRouterParam('id', $this->getEvaluationReport()->getId());
+            $this->addRouterParam('id', $this->evaluationReport->getId());
         }
 
-        if (!$this->hasAccess($this->evaluationReport, EvaluationReportAssertion::class, $this->getAction())) {
+        if (!$this->hasAccess($this->evaluationReport, ReportAssertion::class, $this->getAction())) {
             return '';
         }
 
@@ -79,7 +80,7 @@ final class FinalLink extends LinkAbstract
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      * @return void
      */
     public function parseAction(): void
@@ -95,7 +96,7 @@ final class FinalLink extends LinkAbstract
                     $route = 'zfcadmin/evaluation/report2/create-from-version';
                     $this->setText($this->translator->translate('txt-download-offline-form'));
                     $this->addRouterParam('version', $this->projectVersion->getId());
-                } elseif (!$this->getEvaluationReport()->isEmpty()) {
+                } elseif (!$this->evaluationReport->isEmpty()) {
                     $this->setText($this->translator->translate('txt-download'));
                     $route = 'zfcadmin/evaluation/report2/update';
                 }
@@ -131,7 +132,7 @@ final class FinalLink extends LinkAbstract
                 break;
 
             default:
-                throw new \Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
+                throw new Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
         }
     }
 }

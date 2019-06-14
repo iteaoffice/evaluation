@@ -18,14 +18,14 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
 
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class CriterionLink
  * @package Evaluation\View\Helper\Report
  */
-final class CriterionLink extends LinkAbstract
+final class CriterionLink extends AbstractLink
 {
     /**
      * @var Criterion
@@ -34,8 +34,8 @@ final class CriterionLink extends LinkAbstract
 
     public function __invoke(
         Criterion $criterion = null,
-        $action = 'view',
-        $show = 'name'
+        string    $action = 'view',
+        string    $show = 'name'
     ): string {
         $this->criterion = $criterion ?? new Criterion();
         $this->setAction($action);

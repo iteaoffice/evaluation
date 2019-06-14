@@ -40,16 +40,15 @@ use Zend\Mvc\Plugin\Identity\Identity;
 use Zend\View\Model\ViewModel;
 use function array_merge;
 use function sprintf;
-use function unlink;
 
 /**
  * Project evaluation report controller.
  *
  * @method Identity|Contact identity()
  * @method FlashMessenger flashMessenger()
- * @method ExcelExport evaluationReportExcelExport(EvaluationReport $evaluationReport, bool $isFinal = false, bool $forDistribution = false)
- * @method ExcelImport evaluationReportExcelImport(string $file)
- * @method ExcelDownload evaluationReportExcelDownload(Contact $contact, int $status)
+ * @method ExcelExport evaluationReport2ExcelExport(EvaluationReport $evaluationReport, bool $isFinal = false, bool $forDistribution = false)
+ * @method ExcelImport evaluationReport2ExcelImport(string $file)
+ * @method ExcelDownload evaluationReport2ExcelDownload(Contact $contact, int $status)
  *
  */
 final class ReportController extends AbstractActionController
@@ -63,24 +62,24 @@ final class ReportController extends AbstractActionController
      */
     private $projectService;
     /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
      * @var EntityManager
      */
     private $entityManager;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
         ProjectService          $projectService,
-        TranslatorInterface     $translator,
-        EntityManager           $entityManager
+        EntityManager           $entityManager,
+        TranslatorInterface     $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->projectService          = $projectService;
-        $this->translator              = $translator;
         $this->entityManager           = $entityManager;
+        $this->translator              = $translator;
     }
 
     public function listAction()
@@ -199,7 +198,7 @@ final class ReportController extends AbstractActionController
         // Check for non-archived evaluation report versions and use the most recent when there are multiple
         if ($versionReviewId !== null) {
             /** @var VersionReview $versionReview */
-            $versionReview = $this->evaluationReportService->find(VersionReview::class, (int) $reviewId);
+            $versionReview = $this->projectService->find(VersionReview::class, (int) $reviewId);
             if ($versionReview instanceof VersionReview) {
                 $reportVersion = $this->evaluationReportService
                     ->findReportVersionForProjectVersion($versionReview->getVersion());
@@ -246,16 +245,14 @@ final class ReportController extends AbstractActionController
         if ($offlineMode) {
             // Upload Excel
             if ($request->isPost()) {
-                $data = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
-                $uploadForm->setData($data);
+                $uploadForm->setData(array_merge($request->getPost()->toArray(), $request->getFiles()->toArray()));
                 $excel = $uploadForm->get('excel')->getValue();
                 if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
                     $success = false;
-                    $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
+                    $importHelper = $this->evaluationReport2ExcelImport($excel['tmp_name']);
                     if (!$importHelper->hasParseErrors()) {
                         $success = $importHelper->import($evaluationReport);
                     }
-                    unlink($excel['tmp_name']);
                     if ($success) {
                         $this->evaluationReportService->save($evaluationReport);
                         $this->flashMessenger()->addSuccessMessage(
@@ -290,7 +287,7 @@ final class ReportController extends AbstractActionController
                 }
             } // Download excel
             else {
-                return $this->evaluationReportExcelExport($evaluationReport)->parseResponse();
+                return $this->evaluationReport2ExcelExport($evaluationReport)->parseResponse();
             }
         }
 
@@ -397,7 +394,7 @@ final class ReportController extends AbstractActionController
                 $excel = $uploadForm->get('excel')->getValue();
                 if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
                     $success = false;
-                    $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
+                    $importHelper = $this->evaluationReport2ExcelImport($excel['tmp_name']);
                     if (!$importHelper->hasParseErrors()) {
                         // Prevent duplicate entries by clearing old results when an outdated Excel is used
                         if ($importHelper->excelIsOutdated($evaluationReport)) {
@@ -406,7 +403,6 @@ final class ReportController extends AbstractActionController
                         }
                         $success = $importHelper->import($evaluationReport);
                     }
-                    unlink($excel['tmp_name']);
                     if ($success) {
                         $this->evaluationReportService->save($evaluationReport);
                         $this->flashMessenger()->addSuccessMessage(
@@ -445,7 +441,7 @@ final class ReportController extends AbstractActionController
                 }
             } // Download excel
             else {
-                return $this->evaluationReportExcelExport($evaluationReport)->parseResponse();
+                return $this->evaluationReport2ExcelExport($evaluationReport)->parseResponse();
             }
         }
 
@@ -539,7 +535,7 @@ final class ReportController extends AbstractActionController
 
     public function downloadCombinedAction(): Response
     {
-        return $this->evaluationReportExcelDownload(
+        return $this->evaluationReport2ExcelDownload(
             $this->identity(),
             (int)$this->params('status', EvaluationReportService::STATUS_NEW)
         )->parseResponse();

@@ -61,6 +61,9 @@ final class TypeRepository extends SortableRepository implements FilteredObjectR
             case 'type':
                 $queryBuilder->addOrderBy('t.type', $direction);
                 break;
+            case 'category':
+                $queryBuilder->addOrderBy('c.category', $direction);
+                break;
             default:
                 $queryBuilder->addOrderBy('t.sequence', $direction);
         }

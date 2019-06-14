@@ -131,7 +131,7 @@ class Type extends AbstractEntity
         return $this->category;
     }
 
-    // Used in \Entity\Evaluation\Report2\Criterion\Version to fill the optgroup label with optgroup_identifier
+    // Used in Evaluation\Entity\Report\Criterion\Version to fill the optgroup label with optgroup_identifier
     public function getCategoryLabel(): string
     {
         return (string) $this->category;

@@ -1,0 +1,49 @@
+<h2>{{ translate("txt-statistics") }}</h2>
+<div class="row">
+    <div class="col-md-6">
+        <dl class="dl-horizontal">
+            <dt>{{ translate('txt-evaluation-subject') }}</dt>
+            <dd>
+                {% if type is constant("Project\\Entity\\Evaluation\\Report\\Type::TYPE_GENERAL_REPORT") %}
+                    {{ reportLink(review.projectReport, 'report-community', 'name') }}
+                {% elseif type is constant("Project\\Entity\\Evaluation\\Report\\Type::TYPE_GENERAL_VERSION") %}
+                    {{ versionLink(review.version,'view-community','description') }}
+                {% endif %}
+            </dd>
+            <dt>{{ translate('txt-status') }}</dt>
+            <dd>{% if action == 'new' %}
+                    {{ evaluationReport2Progress() }}
+                {% else %}
+                    {{ evaluationReport2Progress(report) }}
+                {% endif %}
+            </dd>
+            <dt>{{ translate('txt-final') }}</dt>
+            <dd>{% if report.final %}
+                    {{ translate('txt-yes') }} ({{ evaluationReport2Link(report, 'undo-final') }})
+                {% else %}
+                    {{ translate('txt-no') }}
+                {% endif %}
+            </dd>
+            {% if report.dateCreated is not empty %}
+                <dt>{{ translate('txt-date-created') }}</dt>
+                <dd>{{ report.dateCreated|string_date }}</dd>
+                <dt>{{ translate('txt-date-updated') }}</dt>
+                <dd>{{ report.dateUpdated|string_date }}</dd>
+            {% endif %}
+            <dt>{{ translate('txt-steering-group-reviewers') }}</dt>
+            {% for reviewer in reviewers %}
+                <dd>{{ reviewer.contact.parseFullName() }} {{ contactLink(reviewer.contact,'view-admin','icon') }}</dd>
+            {% endfor %}
+        </dl>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        {% if action == 'view' and not report.final %}
+            {{ evaluationReport2Link(report, 'edit', 'button', true) }}
+            {% if complete %}
+                {{ evaluationReport2Link(report, 'finalise', 'help-button', true) }}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

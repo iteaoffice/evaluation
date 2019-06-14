@@ -20,11 +20,15 @@ namespace Evaluation\Repository\Report;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Sortable\Entity\Repository\SortableRepository;
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Criterion\Version as CriterionVersion;
-use Project\Entity\Evaluation\Report2\Type;
-use Project\Entity\Evaluation\Report2\Version as ReportVersion;
-use Project\Repository\FilteredObjectRepository;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Evaluation\Entity\Report\Type;
+use Evaluation\Entity\Report\Version as ReportVersion;
+use Evaluation\Repository\FilteredObjectRepository;
+use function array_key_exists;
+use function implode;
+use function in_array;
+use function strtoupper;
 
 /**
  * Class CriterionRepository
@@ -41,33 +45,33 @@ final class CriterionRepository extends SortableRepository implements FilteredOb
 
         $direction = Criteria::ASC;
         if (isset($filter['direction'])
-            && \in_array(\strtoupper($filter['direction']), [Criteria::ASC, Criteria::DESC], true)
+            && in_array(strtoupper($filter['direction']), [Criteria::ASC, Criteria::DESC], true)
         ) {
-            $direction = \strtoupper($filter['direction']);
+            $direction = strtoupper($filter['direction']);
         }
 
         // Filter on the name
-        if (\array_key_exists('search', $filter)) {
+        if (array_key_exists('search', $filter)) {
             $queryBuilder->andWhere($queryBuilder->expr()->like('cr.criterion', ':like'));
             $queryBuilder->setParameter('like', sprintf("%%%s%%", $filter['search']));
         }
 
         // Filter on the report type
-        if (\array_key_exists('type', $filter)) {
-            $queryBuilder->andWhere($queryBuilder->expr()->in('rt.id', \implode($filter['type'], ', ')));
+        if (array_key_exists('type', $filter)) {
+            $queryBuilder->andWhere($queryBuilder->expr()->in('rt.id', implode($filter['type'], ', ')));
         }
 
         // Filter on enabled
-        if (\array_key_exists('show', $filter) && ($filter['show'] !== 'all')) {
+        if (array_key_exists('show', $filter) && ($filter['show'] !== 'all')) {
             $queryBuilder->andWhere($queryBuilder->expr()->eq('cr.archived', ':archived'));
             $queryBuilder->setParameter('archived', ($filter['show'] === 'archived') ? 1 : 0);
-        } elseif (!\array_key_exists('show', $filter)) {
+        } elseif (!array_key_exists('show', $filter)) {
             $queryBuilder->andWhere($queryBuilder->expr()->eq('cr.archived', ':archived'));
             $queryBuilder->setParameter('archived', 0);
         }
 
         // Filter on has score
-        if (\array_key_exists('has-score', $filter) && ($filter['has-score'] !== 'all')) {
+        if (array_key_exists('has-score', $filter) && ($filter['has-score'] !== 'all')) {
             $queryBuilder->andWhere($queryBuilder->expr()->eq('cr.hasScore', ':hasScore'));
             $queryBuilder->setParameter('hasScore', ($filter['has-score'] === 'yes') ? 1 : 0);
         }

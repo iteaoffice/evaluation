@@ -36,7 +36,7 @@ use Zend\View\Model\ViewModel;
 /**
  * Class VersionController
  *
- * @method GetFilter getProjectFilter()
+ * @method GetFilter getEvaluationFilter()
  * @package Evaluation\Controller\Report
  */
 final class VersionController extends AbstractActionController
@@ -76,7 +76,7 @@ final class VersionController extends AbstractActionController
     public function listAction()
     {
         $page         = $this->params('page', 1);
-        $filterPlugin = $this->getProjectFilter();
+        $filterPlugin = $this->getEvaluationFilter();
         $query        = $this->evaluationReportService->findFiltered(Version::class, $filterPlugin->getFilter());
 
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));

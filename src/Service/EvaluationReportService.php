@@ -43,9 +43,8 @@ use function round;
 use function sprintf;
 
 /**
- * Class EvaluationReport2Service
- *
- * @package Project\Service
+ * Class EvaluationReportService
+ * @package Evaluation\Service
  */
 final class EvaluationReportService extends AbstractService
 {
@@ -261,23 +260,21 @@ final class EvaluationReportService extends AbstractService
         return null;
     }
 
-    /**
+    /*
      * Prepare a full evaluation report Doctrine entity structure based on the review id (Project\Entity\Report\Review
      * or Project\Entity\Version\Review) for use in the Excel download or form for a new evaluation report.
-     *
-     * @param EvaluationReportVersion $evaluationReportVersion
-     * @param int $reviewerId
-     *
-     * @return EvaluationReport
      */
-    public function prepareEvaluationReport(EvaluationReportVersion $evaluationReportVersion, int $reviewerId): EvaluationReport
+    public function prepareEvaluationReport(
+        EvaluationReportVersion $evaluationReportVersion,
+        int                     $reviewerId
+    ): EvaluationReport
     {
         $evaluationReport = new EvaluationReport();
         $evaluationReport->setVersion($evaluationReportVersion);
         switch ($evaluationReportVersion->getReportType()->getId()) {
             case EvaluationReportType::TYPE_REPORT:
                 /** @var ReportReview $reportReviewer */
-                $reportReviewer = $this->find(ReportReview::class, $reviewerId);
+                $reportReviewer = $this->entityManager->getRepository(ReportReview::class)->find($reviewerId);
                 $projectReportReport = new EvaluationReport\ProjectReport();
                 $projectReportReport->setReviewer($reportReviewer);
                 $projectReportReport->setEvaluationReport($evaluationReport);
@@ -288,7 +285,7 @@ final class EvaluationReportService extends AbstractService
             case EvaluationReportType::TYPE_MINOR_CR_VERSION:
             case EvaluationReportType::TYPE_MAJOR_CR_VERSION:
                 /** @var VersionReview $versionReviewer */
-                $versionReviewer = $this->find(VersionReview::class, $reviewerId);
+                $versionReviewer = $this->entityManager->getRepository(VersionReview::class)->find($reviewerId);
                 $projectVersionReport = new EvaluationReport\ProjectVersion();
                 $projectVersionReport->setReviewer($versionReviewer);
                 $projectVersionReport->setEvaluationReport($evaluationReport);
@@ -315,12 +312,11 @@ final class EvaluationReportService extends AbstractService
         return $evaluationReport;
     }
 
-    /**
+    /*
      * Pre-fill the given FPP evaluation report with the PO evaluation report data for the linked project
+     *
      * Note: This function will only work for individual reports and in order to also accommodate final reports it
      * needs to be updated.
-     *
-     * @param EvaluationReport $fppEvaluationReport
      */
     public function preFillFppReport(EvaluationReport $fppEvaluationReport): void
     {

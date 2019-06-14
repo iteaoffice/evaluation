@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper;
 
-use Evaluation\Acl\Assertion\Report as EvaluationReportAssertion;
+use Evaluation\Acl\Assertion\ReportAssertion;
 use Evaluation\Entity\Report as EvaluationReport;
 use Project\Entity\Report\Review as ReportReview;
 use Project\Entity\Version\Review as VersionReview;
@@ -75,7 +75,7 @@ final class ReportLink extends AbstractLink
             $this->addRouterParam('id', $this->evaluationReport->getId());
         }
 
-        if (!$this->hasAccess($this->evaluationReport, EvaluationReportAssertion::class, $this->getAction())) {
+        if (!$this->hasAccess($this->evaluationReport, ReportAssertion::class, $this->getAction())) {
             return '';
         }
 

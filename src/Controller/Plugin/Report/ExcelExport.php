@@ -50,17 +50,17 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Criterion\Topic;
+use Evaluation\Entity\Report\Result;
+use Evaluation\Options\ModuleOptions;
+use Evaluation\Service\EvaluationReportService;
 use Project\Entity\Challenge;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Criterion\Topic;
-use Project\Entity\Evaluation\Report2\Result;
 use Project\Entity\Rationale;
 use Project\Entity\Report\Review as ReportReviewer;
 use Project\Entity\Version\Review as VersionReviewer;
 use Project\Entity\Version\Version;
-use Project\Options\ModuleOptions;
-use Project\Service\EvaluationReport2Service;
 use Project\Service\ProjectService;
 use Project\Service\ReviewService;
 use Project\Service\VersionService;
@@ -82,7 +82,7 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 final class ExcelExport extends AbstractPlugin
 {
     /**
-     * @var EvaluationReport2Service
+     * @var EvaluationReportService
      */
     private $evaluationReportService;
     /**
@@ -117,7 +117,7 @@ final class ExcelExport extends AbstractPlugin
     private $forDistribution = false;
 
     public function __construct(
-        EvaluationReport2Service $evaluationReportService,
+        EvaluationReportService $evaluationReportService,
         ProjectService          $projectService,
         VersionService          $versionService,
         ModuleOptions           $moduleOptions,
@@ -134,7 +134,7 @@ final class ExcelExport extends AbstractPlugin
         EvaluationReport $evaluationReport,
         bool             $isFinal = false,
         bool             $forDistribution = false
-    ): ReportExcelExport {
+    ): ExcelExport {
         $this->evaluationReport = $evaluationReport;
         $this->excel            = new Spreadsheet();
         $this->forDistribution  = $forDistribution;
@@ -316,7 +316,7 @@ final class ExcelExport extends AbstractPlugin
             $title .= ' ' . ucfirst($this->translator->translate('txt-distribution'));
         }
 
-        $this->excel->getProperties()->setCreator($this->moduleOptions->getEvaluationReportAuthor());
+        $this->excel->getProperties()->setCreator($this->moduleOptions->getReportAuthor());
         $this->excel->getProperties()->setTitle($title);
 
         return $this;

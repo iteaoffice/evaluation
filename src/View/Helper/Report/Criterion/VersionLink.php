@@ -18,16 +18,16 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report\Criterion;
 
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Criterion\Version as CriterionVersion;
-use Project\Entity\Evaluation\Report2\Version as ReportVersion;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Evaluation\Entity\Report\Version as ReportVersion;
+use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class VersionLink
  * @package Evaluation\View\Helper\Report\Criterion
  */
-final class VersionLink extends LinkAbstract
+final class VersionLink extends AbstractLink
 {
     /**
      * @var CriterionVersion

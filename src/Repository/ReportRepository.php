@@ -23,29 +23,29 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Program\Entity\Call\Call;
 use Program\Repository\Call\Call as CallRepository;
-use Project\Entity\ChangeRequest\Process;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Entity\Report\Version as EvaluationReportVersion;
+use Evaluation\Service\EvaluationReportService;
+use Project\Entity\ChangeRequest\Process;
 use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Report\Review as ReportReview;
 use Project\Entity\Version\Review as VersionReview;
 use Project\Entity\Version\Type as VersionType;
 use Project\Entity\Version\Version;
-use Project\Repository\FilteredObjectRepository;
-use Project\Service\EvaluationReportService;
 
 /**
- * Class Report2Repository
- * @package Project\Repository\Evaluation
+ * Class ReportRepository
+ * @package Evaluation\Repository
  */
 final class ReportRepository extends EntityRepository implements FilteredObjectRepository
 {
     public function findReviewReportsByContact(
         Contact $contact,
-        int $status = EvaluationReportService::STATUS_NEW,
-        bool $onlyActiveWindow = true
-    ): array {
+        int     $status = EvaluationReportService::STATUS_NEW,
+        bool    $onlyActiveWindow = true
+    ): array
+    {
         $return = [];
 
         // Get the open time windows with reports in them

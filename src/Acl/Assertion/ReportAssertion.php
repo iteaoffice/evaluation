@@ -28,10 +28,10 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
 /**
- * Class Report
- * @package Project\Acl\Assertion\Evaluation
+ * Class ReportAssertion
+ * @package Evaluation\Acl\Assertion
  */
-final class Report extends AbstractAssertion
+final class ReportAssertion extends AbstractAssertion
 {
     /**
      * @var EvaluationReportService

@@ -27,6 +27,7 @@ use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result as EvaluationReportResult;
 use Evaluation\Service\EvaluationReportService;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use function unlink;
 
 /**
  * Class ExcelImport
@@ -63,26 +64,30 @@ final class ExcelImport extends AbstractPlugin
         $this->evaluationReportService = $evaluationReportService;
     }
 
-    public function __invoke(string $file): ReportExcelImport
+    public function __invoke(string $file): ExcelImport
     {
-        $this->data = [];
-        try {
-            $fileType            = IOFactory::identify($file);
-            $reader              = IOFactory::createReader($fileType);
-            $excel               = $reader->load($file);
-            $sheet               = $excel->getSheet(2);
-            $highestRow          = $sheet->getHighestRow();
-            $this->data          = $sheet->rangeToArray('A1:E' . $highestRow, null, true, false);
-            // Will have to use the deprecated getCalculatedValue() as getOldCalculatedValue() gives an empty result
-            $finalScore          = $sheet->getCell('F1')->getCalculatedValue();
-            $this->finalScore    = (empty($finalScore) ? null : (int)$finalScore);
-            $projectStatus       = $sheet->getCell('G1')->getCalculatedValue();
-            $this->projectStatus = (empty($projectStatus) ? null : (int)$projectStatus);
-            unset($excel);
-        } catch (Exception $exception) {
-            $this->data = [];
-            $this->hasParseErrors = true;
+        $this->hasParseErrors = true;
+        if (file_exists($file)) {
+            try {
+                $fileType             = IOFactory::identify($file);
+                $reader               = IOFactory::createReader($fileType);
+                $excel                = $reader->load($file);
+                $sheet                = $excel->getSheet(2);
+                $highestRow           = $sheet->getHighestRow();
+                $this->data           = $sheet->rangeToArray('A1:E' . $highestRow, null, true, false);
+                // Will have to use the deprecated getCalculatedValue() as getOldCalculatedValue() gives an empty result
+                $finalScore           = $sheet->getCell('F1')->getCalculatedValue();
+                $this->finalScore     = (empty($finalScore) ? null : (int)$finalScore);
+                $projectStatus        = $sheet->getCell('G1')->getCalculatedValue();
+                $this->projectStatus  = (empty($projectStatus) ? null : (int)$projectStatus);
+                $excel                = null;
+                $this->hasParseErrors = false;
+            } catch (Exception $exception) {
+                $this->data = [];
+            }
+            unlink($file);
         }
+
         return $this;
     }
 

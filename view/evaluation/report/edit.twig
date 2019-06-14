@@ -1,0 +1,20 @@
+{% do headTitle().append(translate("txt-update-evaluation-report-for-%s")|format(label)) %}
+
+<h1>{{ translate("txt-update-evaluation-report-for-%s")|format(label) }}</h1>
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item active"><a class="nav-link active" href="#report" data-toggle="tab" role="tab">{{ translate("txt-evaluation-report") }}</a></li>
+    <li class="nav-item"><a class="nav-link" href="#project" data-toggle="tab" role="tab">{{ translate("txt-project") }}</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+    <div class="tab-pane active" id="report">
+        {% include 'project/evaluation/report/partial/report-stats' with {'action': 'edit'} %}
+        {% include 'project/partial/form/evaluation/report' %}
+    </div>
+    <div class="tab-pane" role="tabpanel" id="project">
+        {% include 'project/evaluation/report/partial/project-basics' %}
+    </div>
+</div>

@@ -18,9 +18,9 @@ declare(strict_types=1);
 namespace Evaluation\Form\Report\Criterion;
 
 use Doctrine\ORM\EntityManager;
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Criterion\Version as CriterionVersion;
-use Project\Form\ObjectFieldset;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Evaluation\Form\ObjectFieldset;
 use Zend\Form\Element\Select;
 use function sprintf;
 

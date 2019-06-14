@@ -19,9 +19,9 @@ namespace Evaluation\Form;
 
 use Doctrine\ORM\EntityManager;
 use Program\Entity\Call\Call;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
-use Project\Entity\Evaluation\Report2\Type as ReportType;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Entity\Report\Type as ReportType;
+use Evaluation\Service\EvaluationReportService;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
@@ -33,7 +33,7 @@ use function sprintf;
 
 /**
  * Class ReportFilter
- * @package Project\Form\Evaluation\Report2
+ * @package Evaluation\Form
  */
 final class ReportFilter extends Form
 {

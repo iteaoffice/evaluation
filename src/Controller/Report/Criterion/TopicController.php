@@ -36,7 +36,7 @@ use function urlencode;
 /**
  * Class TopicController
  *
- * @method GetFilter getProjectFilter()
+ * @method GetFilter getEvaluationFilter()
  * @method FlashMessenger flashMessenger()
  * @package Evaluation\Controller\Report
  */
@@ -70,7 +70,7 @@ final class TopicController extends AbstractActionController
     public function listAction()
     {
         $page         = $this->params()->fromRoute('page', 1);
-        $filterPlugin = $this->getProjectFilter();
+        $filterPlugin = $this->getEvaluationFilter();
         $query        = $this->evaluationReportService->findFiltered(Topic::class, $filterPlugin->getFilter());
 
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));

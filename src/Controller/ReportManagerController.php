@@ -63,25 +63,25 @@ use const PHP_INT_MAX;
 final class ReportManagerController extends AbstractActionController
 {
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-    /**
      * @var EvaluationReportService
      */
     private $evaluationReportService;
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
     public function __construct(
-        EntityManager           $entityManager,
         EvaluationReportService $evaluationReportService,
+        EntityManager           $entityManager,
         TranslatorInterface     $translator
     ) {
-        $this->entityManager           = $entityManager;
         $this->evaluationReportService = $evaluationReportService;
+        $this->entityManager           = $entityManager;
         $this->translator              = $translator;
     }
 
