@@ -16,9 +16,6 @@ use Zend\Form\Element;
 
 class EntityTest extends TestCase
 {
-    /**
-     *
-     */
     public function testCanCreateEntitiesAndSaveTxtFields(): void
     {
         $labels = [];

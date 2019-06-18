@@ -44,8 +44,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
         Contact $contact,
         int     $status = EvaluationReportService::STATUS_NEW,
         bool    $onlyActiveWindow = true
-    ): array
-    {
+    ): array {
         $return = [];
 
         // Get the open time windows with reports in them

@@ -10,9 +10,9 @@
 
 declare(strict_types=1);
 
-namespace CalendarTest;
+namespace EvaluationTest;
 
-use Calendar\Module;
+use Evaluation\Module;
 use Testing\Util\AbstractServiceTest;
 use Zend\Mvc\Application;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
@@ -22,7 +22,7 @@ use function is_string;
 /**
  * Class ModuleTest
  *
- * @package CalendarTest
+ * @package EvaluationTest
  */
 class ModuleTest extends AbstractServiceTest
 {

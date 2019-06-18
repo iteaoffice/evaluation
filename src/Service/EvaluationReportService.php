@@ -22,21 +22,21 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Evaluation\Entity\Report as EvaluationReport;
-use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Criterion\Type as CriterionType;
+use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\ProjectReport as ProjectReportReport;
 use Evaluation\Entity\Report\ProjectVersion as ProjectVersionReport;
 use Evaluation\Entity\Report\Result as EvaluationReportResult;
 use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Entity\Report\Version as EvaluationReportVersion;
-use Project\Entity\Project;
+use Evaluation\Repository\ReportRepository;
 use Project\Entity\ChangeRequest\Process;
+use Project\Entity\Project;
 use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Report\Review as ReportReview;
 use Project\Entity\Version\Review as VersionReview;
 use Project\Entity\Version\Type as VersionType;
 use Project\Entity\Version\Version;
-use Evaluation\Repository\ReportRepository;
 use function array_keys;
 use function reset;
 use function round;
@@ -44,13 +44,14 @@ use function sprintf;
 
 /**
  * Class EvaluationReportService
+ *
  * @package Evaluation\Service
  */
-final class EvaluationReportService extends AbstractService
+class EvaluationReportService extends AbstractService
 {
-    public const STATUS_NEW         = 1;
+    public const STATUS_NEW = 1;
     public const STATUS_IN_PROGRESS = 2;
-    public const STATUS_FINAL       = 3;
+    public const STATUS_FINAL = 3;
 
     public function findReviewReportsByContact(Contact $contact, int $status = self::STATUS_NEW): array
     {
@@ -61,7 +62,7 @@ final class EvaluationReportService extends AbstractService
     public function getReviewers(EvaluationReport $evaluationReport): Collection
     {
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
-        $projectReportReport  = $evaluationReport->getProjectReportReport();
+        $projectReportReport = $evaluationReport->getProjectReportReport();
 
         if ($projectVersionReport instanceof ProjectVersionReport) {
             if ($projectVersionReport->getReviewer() instanceof VersionReview) {
@@ -86,10 +87,10 @@ final class EvaluationReportService extends AbstractService
 
     public function parseLabel(EvaluationReport $evaluationReport, string $template = '%s - %s - %s'): string
     {
-        $project              = $this->getProject($evaluationReport);
-        $subject              = '';
+        $project = $this->getProject($evaluationReport);
+        $subject = '';
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
-        $projectReportReport  = $evaluationReport->getProjectReportReport();
+        $projectReportReport = $evaluationReport->getProjectReportReport();
 
         if ($projectVersionReport instanceof ProjectVersionReport) {
             if ($projectVersionReport->getReviewer() instanceof VersionReview) {
@@ -113,7 +114,7 @@ final class EvaluationReportService extends AbstractService
     public function getProject(EvaluationReport $evaluationReport): Project
     {
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
-        $projectReportReport  = $evaluationReport->getProjectReportReport();
+        $projectReportReport = $evaluationReport->getProjectReportReport();
 
         if ($projectVersionReport instanceof ProjectVersionReport) {
             if ($projectVersionReport->getReviewer() instanceof VersionReview) {
@@ -146,12 +147,14 @@ final class EvaluationReportService extends AbstractService
         }
 
         $resultCount = 0;
-        $key         = $evaluationReport->getVersion()->getId();
+        $key = $evaluationReport->getVersion()->getId();
         if (!isset($requiredCounts[$key])) {
-            $requiredCounts[$key] = $this->entityManager->getRepository(CriterionVersion::class)->count([
-                'reportVersion' => $evaluationReport->getVersion(),
-                'required' => true
-            ]);
+            $requiredCounts[$key] = $this->entityManager->getRepository(CriterionVersion::class)->count(
+                [
+                    'reportVersion' => $evaluationReport->getVersion(),
+                    'required'      => true
+                ]
+            );
         }
 
         /** @var EvaluationReport\Result $result */
@@ -170,11 +173,11 @@ final class EvaluationReportService extends AbstractService
     public function getSortedResults(EvaluationReport $evaluationReport): array
     {
         /** @var ReportRepository $repository */
-        $repository    = $this->entityManager->getRepository(EvaluationReport::class);
+        $repository = $this->entityManager->getRepository(EvaluationReport::class);
         $reportResults = $evaluationReport->getResults();
         /** @var EvaluationReport\Result|false $result */
-        $result       = $reportResults->first();
-        $newResults   = ($result && $result->isEmpty());
+        $result = $reportResults->first();
+        $newResults = ($result && $result->isEmpty());
 
         // No or new results
         if (!$result || $newResults) {
@@ -185,10 +188,10 @@ final class EvaluationReportService extends AbstractService
                 $sortedCriteria[$reportVersion->getId()] = $repository->getSortedCriteriaVersions($reportVersion);
             }
 
-            $results        = [];
+            $results = [];
             $resultTemplate = new EvaluationReport\Result();
-            $scoreValues    = array_keys(EvaluationReport\Result::getScoreValues());
-            $defaultScore   = reset($scoreValues);
+            $scoreValues = array_keys(EvaluationReport\Result::getScoreValues());
+            $defaultScore = reset($scoreValues);
             /** @var CriterionVersion $criterionVersion */
             foreach ($sortedCriteria[$reportVersion->getId()] as $criterionVersion) {
                 $result = clone $resultTemplate;
@@ -225,7 +228,7 @@ final class EvaluationReportService extends AbstractService
     public function parseEvaluationReportType(EvaluationReport $evaluationReport): ?int
     {
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
-        $projectReportReport  = $evaluationReport->getProjectReportReport();
+        $projectReportReport = $evaluationReport->getProjectReportReport();
 
         if ($projectReportReport instanceof ProjectReportReport) {
             return EvaluationReportType::TYPE_REPORT;
@@ -266,9 +269,8 @@ final class EvaluationReportService extends AbstractService
      */
     public function prepareEvaluationReport(
         EvaluationReportVersion $evaluationReportVersion,
-        int                     $reviewerId
-    ): EvaluationReport
-    {
+        int $reviewerId
+    ): EvaluationReport {
         $evaluationReport = new EvaluationReport();
         $evaluationReport->setVersion($evaluationReportVersion);
         switch ($evaluationReportVersion->getReportType()->getId()) {
@@ -296,7 +298,7 @@ final class EvaluationReportService extends AbstractService
         }
 
         // Prepare the empty results for the criteria
-        $scoreValues  = array_keys(EvaluationReportResult::getScoreValues());
+        $scoreValues = array_keys(EvaluationReportResult::getScoreValues());
         $defaultScore = reset($scoreValues);
         /** @var CriterionVersion $criterionVersion */
         foreach ($evaluationReportVersion->getCriterionVersions() as $criterionVersion) {
@@ -392,19 +394,23 @@ final class EvaluationReportService extends AbstractService
 
     public function typeIsConfidential(CriterionType $type, EvaluationReportVersion $reportVersion): bool
     {
-        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count([
-           'type'          => $type,
-           'reportVersion' => $reportVersion,
-           'confidential'  => false
-        ]);
+        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count(
+            [
+                'type'          => $type,
+                'reportVersion' => $reportVersion,
+                'confidential'  => false
+            ]
+        );
         return ($count === 0);
     }
 
     public function typeIsDeletable(CriterionType $type): bool
     {
-        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count([
-            'type' => $type,
-        ]);
+        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count(
+            [
+                'type' => $type,
+            ]
+        );
         return ($count === 0);
     }
 }

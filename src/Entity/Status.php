@@ -79,15 +79,10 @@ class Status extends AbstractEntity
         }
     }
 
-    /**
-     * Return a link to the Css Filename.
-     *
-     * @return string
-     */
-    public function getCacheCssFileName()
+    public function getCacheCssFileName(): string
     {
         return __DIR__ . '/../../../../../../public' . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR
-            . ITEAOFFICE_HOST . DIRECTORY_SEPARATOR . 'css/evaluation-status.css';
+            . (defined('ITEAOFFICE_HOST') ? ITEAOFFICE_HOST : 'test') . DIRECTORY_SEPARATOR . 'css/evaluation-status.css';
     }
 
     /**

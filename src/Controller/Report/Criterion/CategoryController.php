@@ -51,8 +51,7 @@ final class CategoryController extends AbstractActionController
     public function __construct(
         EvaluationReportService $evaluationReportService,
         FormService             $formService
-    )
-    {
+    ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
     }

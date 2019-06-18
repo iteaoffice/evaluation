@@ -19,27 +19,24 @@ namespace Evaluation\Options;
 
 use Zend\Stdlib\AbstractOptions;
 
-final class ModuleOptions extends AbstractOptions
+class ModuleOptions extends AbstractOptions
 {
     /**
      * @var string
      */
-    private $projectTemplate         = '';
-
-    /**
-     * @var string
-     */
-    protected $reportTemplate        = '';
-
+    protected $reportTemplate = '';
     /**
      * @var array
      */
     protected $presentationTemplates = [];
-
     /**
      * @var string
      */
-    protected $reportAuthor          = '';
+    protected $reportAuthor = '';
+    /**
+     * @var string
+     */
+    private $projectTemplate = '';
 
     public function getProjectTemplate(): string
     {

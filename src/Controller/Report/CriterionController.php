@@ -64,7 +64,6 @@ final class CriterionController extends AbstractActionController
         EntityManager           $entityManager,
         TranslatorInterface     $translator
     ) {
-
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
         $this->entityManager           = $entityManager;

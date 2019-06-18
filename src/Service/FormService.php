@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Evaluation\Service;
 
+use Doctrine\ORM\EntityManager;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Form\CreateObject;
-use Doctrine\ORM\EntityManager;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -26,9 +26,10 @@ use function is_string;
 
 /**
  * Class FormService
+ *
  * @package Evaluation\Service
  */
-final class FormService
+class FormService
 {
     /**
      * @var ServiceLocatorInterface
@@ -41,7 +42,7 @@ final class FormService
 
     public function __construct(ServiceLocatorInterface $container, EntityManager $entityManager)
     {
-        $this->container     = $container;
+        $this->container = $container;
         $this->entityManager = $entityManager;
     }
 
@@ -65,7 +66,7 @@ final class FormService
 
     private function getForm(AbstractEntity $entity, array $options = []): Form
     {
-        $formName   = $entity->get('entity_form_name');
+        $formName = $entity->get('entity_form_name');
         $filterName = $entity->get('entity_inputfilter_name');
 
         /**
