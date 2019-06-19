@@ -87,10 +87,10 @@ class EvaluationReportService extends AbstractService
 
     public function parseLabel(EvaluationReport $evaluationReport, string $template = '%s - %s - %s'): string
     {
-        $project = $this->getProject($evaluationReport);
-        $subject = '';
+        $project              = $this->getProject($evaluationReport);
+        $subject              = '';
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
-        $projectReportReport = $evaluationReport->getProjectReportReport();
+        $projectReportReport  = $evaluationReport->getProjectReportReport();
 
         if ($projectVersionReport instanceof ProjectVersionReport) {
             if ($projectVersionReport->getReviewer() instanceof VersionReview) {
@@ -114,7 +114,7 @@ class EvaluationReportService extends AbstractService
     public function getProject(EvaluationReport $evaluationReport): Project
     {
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
-        $projectReportReport = $evaluationReport->getProjectReportReport();
+        $projectReportReport  = $evaluationReport->getProjectReportReport();
 
         if ($projectVersionReport instanceof ProjectVersionReport) {
             if ($projectVersionReport->getReviewer() instanceof VersionReview) {
@@ -149,12 +149,10 @@ class EvaluationReportService extends AbstractService
         $resultCount = 0;
         $key = $evaluationReport->getVersion()->getId();
         if (!isset($requiredCounts[$key])) {
-            $requiredCounts[$key] = $this->entityManager->getRepository(CriterionVersion::class)->count(
-                [
-                    'reportVersion' => $evaluationReport->getVersion(),
-                    'required'      => true
-                ]
-            );
+            $requiredCounts[$key] = $this->entityManager->getRepository(CriterionVersion::class)->count([
+                'reportVersion' => $evaluationReport->getVersion(),
+                'required'      => true
+            ]);
         }
 
         /** @var EvaluationReport\Result $result */
@@ -173,11 +171,11 @@ class EvaluationReportService extends AbstractService
     public function getSortedResults(EvaluationReport $evaluationReport): array
     {
         /** @var ReportRepository $repository */
-        $repository = $this->entityManager->getRepository(EvaluationReport::class);
+        $repository    = $this->entityManager->getRepository(EvaluationReport::class);
         $reportResults = $evaluationReport->getResults();
         /** @var EvaluationReport\Result|false $result */
-        $result = $reportResults->first();
-        $newResults = ($result && $result->isEmpty());
+        $result        = $reportResults->first();
+        $newResults    = ($result && $result->isEmpty());
 
         // No or new results
         if (!$result || $newResults) {
@@ -188,10 +186,10 @@ class EvaluationReportService extends AbstractService
                 $sortedCriteria[$reportVersion->getId()] = $repository->getSortedCriteriaVersions($reportVersion);
             }
 
-            $results = [];
+            $results        = [];
             $resultTemplate = new EvaluationReport\Result();
-            $scoreValues = array_keys(EvaluationReport\Result::getScoreValues());
-            $defaultScore = reset($scoreValues);
+            $scoreValues    = array_keys(EvaluationReport\Result::getScoreValues());
+            $defaultScore   = reset($scoreValues);
             /** @var CriterionVersion $criterionVersion */
             foreach ($sortedCriteria[$reportVersion->getId()] as $criterionVersion) {
                 $result = clone $resultTemplate;
@@ -228,7 +226,7 @@ class EvaluationReportService extends AbstractService
     public function parseEvaluationReportType(EvaluationReport $evaluationReport): ?int
     {
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
-        $projectReportReport = $evaluationReport->getProjectReportReport();
+        $projectReportReport  = $evaluationReport->getProjectReportReport();
 
         if ($projectReportReport instanceof ProjectReportReport) {
             return EvaluationReportType::TYPE_REPORT;
@@ -238,10 +236,10 @@ class EvaluationReportService extends AbstractService
             $versionType = null;
             $version = null;
             if ($projectVersionReport->getReviewer() instanceof VersionReview) {
-                $version = $projectVersionReport->getReviewer()->getVersion();
+                $version     = $projectVersionReport->getReviewer()->getVersion();
                 $versionType = $version->getVersionType();
             } elseif ($projectVersionReport->getVersion() instanceof Version) {
-                $version = $projectVersionReport->getVersion();
+                $version     = $projectVersionReport->getVersion();
                 $versionType = $version->getVersionType();
             }
 
@@ -270,7 +268,8 @@ class EvaluationReportService extends AbstractService
     public function prepareEvaluationReport(
         EvaluationReportVersion $evaluationReportVersion,
         int $reviewerId
-    ): EvaluationReport {
+    ): EvaluationReport
+    {
         $evaluationReport = new EvaluationReport();
         $evaluationReport->setVersion($evaluationReportVersion);
         switch ($evaluationReportVersion->getReportType()->getId()) {
@@ -326,8 +325,8 @@ class EvaluationReportService extends AbstractService
         if (($fppEvaluationReport->getVersion()->getReportType()->getId() === EvaluationReportType::TYPE_FPP_VERSION)
             && ($fppEvaluationReport->getProjectVersionReport()->getVersion() === null)
         ) {
-            $now = new DateTime();
-            $project = $this->getProject($fppEvaluationReport);
+            $now       = new DateTime();
+            $project   = $this->getProject($fppEvaluationReport);
             $poVersion = null;
             /** @var Version $version */
             foreach ($project->getVersion() as $version) {
@@ -394,23 +393,19 @@ class EvaluationReportService extends AbstractService
 
     public function typeIsConfidential(CriterionType $type, EvaluationReportVersion $reportVersion): bool
     {
-        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count(
-            [
-                'type'          => $type,
-                'reportVersion' => $reportVersion,
-                'confidential'  => false
-            ]
-        );
+        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count([
+            'type'          => $type,
+            'reportVersion' => $reportVersion,
+            'confidential'  => false
+        ]);
         return ($count === 0);
     }
 
     public function typeIsDeletable(CriterionType $type): bool
     {
-        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count(
-            [
-                'type' => $type,
-            ]
-        );
+        $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count([
+            'type' => $type,
+        ]);
         return ($count === 0);
     }
 }

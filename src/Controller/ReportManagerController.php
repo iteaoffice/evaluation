@@ -138,7 +138,6 @@ final class ReportManagerController extends AbstractActionController
             'type'                    => $type,
             'paginator'               => $paginator,
             'form'                    => $form,
-            'evaluationReportService' => $this->evaluationReportService,
             'order'                   => $filterPlugin->getOrder(),
             'direction'               => $filterPlugin->getDirection(),
             'arguments'               => $arguments

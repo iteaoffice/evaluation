@@ -15,6 +15,58 @@ return [
              */
             Route::class => [
                 [
+                    'route' => 'zfcadmin/evaluation/review',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/import',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/export',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/roster',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/list',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/new',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/edit',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/delete',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/contact',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/contact/list',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/contact/view',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/contact/edit',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/review/contact/new',
+                    'roles' => ['office'],
+                ],
+                [
                     'route' => 'zfcadmin/project/evaluation/edit',
                     'roles' => ['office'],
                 ],

@@ -21,6 +21,8 @@ use Affiliation\Service\AffiliationService;
 use Contact\Service\SelectionContactService;
 use Doctrine\ORM\EntityManager;
 use General\Service\CountryService;
+use Program\Service\CallService;
+use Project\Search\Service\ProjectSearchService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -39,6 +41,13 @@ return [
         ],
         Controller\ReportManagerController::class             => [
             Service\EvaluationReportService::class,
+            EntityManager::class,
+            TranslatorInterface::class
+        ],
+        Controller\ReviewManagerController::class             => [
+            Service\ReviewService::class,
+            ProjectService::class,
+            Service\FormService::class,
             EntityManager::class,
             TranslatorInterface::class
         ],
@@ -80,6 +89,11 @@ return [
         ],
 
         // Controller plugins
+        Controller\Plugin\RosterGenerator::class              => [
+            Service\ReviewRosterService::class,
+            TranslatorInterface::class,
+            Options\ModuleOptions::class
+        ],
         Controller\Plugin\Report\ExcelExport::class           => [
             Service\EvaluationReportService::class,
             ProjectService::class,
@@ -126,10 +140,24 @@ return [
             ServiceManager::class,
             EntityManager::class
         ],
+        Service\ReviewService::class                          => [
+            EntityManager::class,
+            AffiliationService::class
+        ],
+        Service\ReviewRosterService::class                    => [
+            CallService::class,
+            ProjectService::class,
+            ProjectSearchService::class,
+            Service\ReviewService::class,
+            EntityManager::class,
+        ],
 
         // View helpers
         View\Helper\Report\Progress::class                    => [
             Service\EvaluationReportService::class,
+            TranslatorInterface::class
+        ],
+        View\Helper\Report\Score::class                       => [
             TranslatorInterface::class
         ],
     ]

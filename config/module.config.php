@@ -10,7 +10,9 @@
 
 namespace Evaluation;
 
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Evaluation\View\Factory\ViewHelperFactory;
+use Evaluation\View\Helper\Report\DownloadLink;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\Stdlib;
 
@@ -22,6 +24,7 @@ $config = [
             Controller\FeedbackController::class                  => ConfigAbstractFactory::class,
             Controller\ReportController::class                    => ConfigAbstractFactory::class,
             Controller\ReportManagerController::class             => ConfigAbstractFactory::class,
+            Controller\ReviewManagerController::class             => ConfigAbstractFactory::class,
             Controller\Report\CriterionController::class          => ConfigAbstractFactory::class,
             Controller\Report\VersionController::class            => ConfigAbstractFactory::class,
             Controller\Report\WindowController::class             => ConfigAbstractFactory::class,
@@ -38,6 +41,7 @@ $config = [
         ],
         'factories' => [
             Controller\Plugin\GetFilter::class                    => Factory\InvokableFactory::class,
+            Controller\Plugin\RosterGenerator::class              => ConfigAbstractFactory::class,
             Controller\Plugin\Report\ExcelExport::class           => ConfigAbstractFactory::class,
             Controller\Plugin\Report\ExcelDownload::class         => ConfigAbstractFactory::class,
             Controller\Plugin\Report\PdfExport::class             => ConfigAbstractFactory::class,
@@ -52,8 +56,10 @@ $config = [
     'view_helpers'       => [
         'aliases'    => [
             'evaluationReport2Link'            => View\Helper\ReportLink::class,
+            'evaluationReport2DownloadLink'    => View\Helper\Report\DownloadLink::class,
             'evaluationReport2FinalLink'       => View\Helper\Report\FinalLink::class,
             'evaluationReport2Progress'        => View\Helper\Report\Progress::class,
+            'evaluationReport2Score'           => View\Helper\Report\Score::class,
             'report2VersionLink'               => View\Helper\Report\VersionLink::class,
             'report2WindowLink'                => View\Helper\Report\WindowLink::class,
             'report2CriterionLink'             => View\Helper\Report\CriterionLink::class,
@@ -68,8 +74,10 @@ $config = [
         ],
         'factories'  => [
             View\Helper\ReportLink::class                    => ViewHelperFactory::class,
+            View\Helper\Report\DownloadLink::class           => ViewHelperFactory::class,
             View\Helper\Report\FinalLink::class              => ViewHelperFactory::class,
             View\Helper\Report\Progress::class               => ConfigAbstractFactory::class,
+            View\Helper\Report\Score::class                  => ConfigAbstractFactory::class,
             View\Helper\Report\VersionLink::class            => ViewHelperFactory::class,
             View\Helper\Report\WindowLink::class             => ViewHelperFactory::class,
             View\Helper\Report\CriterionLink::class          => ViewHelperFactory::class,
@@ -97,6 +105,8 @@ $config = [
             Service\EvaluationReportService::class                     => ConfigAbstractFactory::class,
             Service\EvaluationService::class                           => ConfigAbstractFactory::class,
             Service\FormService::class                                 => ConfigAbstractFactory::class,
+            Service\ReviewRosterService::class                         => ConfigAbstractFactory::class,
+            Service\ReviewService::class                               => ConfigAbstractFactory::class,
             // Navigation
             Navigation\Invokable\ReportLabel::class                    => Factory\InvokableFactory::class,
             Navigation\Invokable\Report\CriterionLabel::class          => Factory\InvokableFactory::class,
@@ -113,7 +123,7 @@ $config = [
     'doctrine'           => [
         'driver' => [
             'evaluation_annotation_driver' => [
-                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'class' => AnnotationDriver::class,
                 'paths' => [__DIR__ . '/../src/Entity/'],
             ],
             'orm_default'                    => [

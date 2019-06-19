@@ -1,0 +1,14 @@
+{% if form %}
+    {% do form.prepare() %}
+
+    {{ form().openTag(form)|raw }}
+
+    {{ ztbformelement(form.get('excel')) }}
+    <div class="form-group row">
+        <div class="col-sm-12">
+            {{ ztbformelement(form.get('upload')) }}
+        </div>
+    </div>
+
+    {{ form().closeTag()|raw }}
+{% endif %}

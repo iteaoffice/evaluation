@@ -1,0 +1,46 @@
+{% do form.prepare() %}
+
+{{ form().openTag(form)|raw }}
+
+<h2>{{ translate('txt-project-score') }}</h2>
+{{ ztbformelement(form.get('score')) }}
+
+{% set activeCategory = '' %}
+{% set activeType = '' %}
+{% for fieldset in form.get('report-result').getFieldsets() %}
+    {% set currentCategory = fieldset.getObject().criterion.type.category.category %}
+    {% if currentCategory != activeCategory %}
+        <h2>{{ currentCategory }}</h2>
+        {% set activeCategory = currentCategory %}
+    {% endif %}
+    {% set currentType = fieldset.getObject().criterion.type.type %}
+    {% if currentType != activeType %}
+        {% set activeType = currentType %}
+        {% if loop.index > 1 %}
+            </fieldset>
+        {% endif %}
+        <fieldset>
+        <legend>{{ currentType }}</legend>
+    {% endif %}
+    {% if fieldset.has('value') %}
+        {{ ztbformelement(fieldset.get('value')) }}
+    {% endif %}
+    {% if fieldset.has('score') %}
+        {{ ztbformelement(fieldset.get('score')) }}
+    {% endif %}
+    {% if fieldset.has('comment') %}
+        {{ ztbformelement(fieldset.get('comment')) }}
+    {% endif %}
+    {% if loop.last %}
+        </fieldset>
+    {% endif %}
+{% endfor %}
+<hr>
+<div class="form-group row">
+    <div class="col-sm-12">
+        {{ ztbformelement(form.get('submit')) }}
+        {{ ztbformelement(form.get('cancel')) }}
+    </div>
+</div>
+
+{{ form().closeTag()|raw }}

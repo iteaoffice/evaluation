@@ -19,33 +19,33 @@
             {% for review in container.reviews %}
             <tr>
                 {% if review.projectReport %}
-                    <td>{#{{ evaluationReportLink(null, 'new-list', 'name', true, review) }}#}
+                    <td>{#{{ evaluationReport2Link(null, 'new-list', 'name', true, review) }}#}
                         {{ "%s - %s - %s"|format(
                             review.projectReport.project.call,
                             review.projectReport.project.parseFullName(),
                             review.projectReport.parseName()
                         ) }}
-                        {{ evaluationReportLink(null, 'download-offline-form', 'icon', false, review) }}
+                        {{ evaluationReport2Link(null, 'download-offline-form', 'icon', false, review) }}
                     </td>
                 {% elseif review.version %}
-                    <td>{#{{ evaluationReportLink(null, 'new-list', 'name', true, null, review) }}#}
+                    <td>{#{{ evaluationReport2Link(null, 'new-list', 'name', true, null, review) }}#}
                         {{ "%s - %s - %s"|format(
                             review.version.project.call,
                             review.version.project.parseFullName(),
                             review.version.versionType
                         ) }}
-                        {{ evaluationReportLink(null, 'download-offline-form', 'icon', false, null, review) }}
+                        {{ evaluationReport2Link(null, 'download-offline-form', 'icon', false, null, review) }}
                     </td>
                 {% endif %}
                 {#<td>-</td>
                 <td>-</td>
-                <td>{{ evaluationReportProgress() }}</td>#}
+                <td>{{ evaluationReport2Progress() }}</td>#}
             </tr>
             {% endfor %}
             </tbody>
         </table>
     {% endfor %}
-    {{ evaluationReportDownloadLink(constant("Project\\Service\\EvaluationReportService::STATUS_NEW")) }}
+    {{ evaluationReport2DownloadLink(status) }}
 {% else %}
     {{ ztbalert().info(translate("txt-no-new-evaluation-reports-found"))|raw }}
 {% endif %}

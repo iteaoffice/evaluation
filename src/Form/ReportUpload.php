@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Evaluation\Form;
 
+use Project\Entity\Evaluation\Report as EvaluationReport;
+use Project\Entity\Report\Report;
+use Project\Entity\Version\Version;
 use Zend\Form\Element;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
@@ -23,13 +26,10 @@ use Zend\Validator\File\Extension;
  */
 final class ReportUpload extends Form
 {
-    /**
-     * ReportUpload constructor.
-     * @param string $action
-     */
-    public function __construct(string $action = '')
+    public function __construct(string $action)
     {
         parent::__construct('evaluation_report_upload');
+
         $this->setAttributes([
             'method' => 'post',
             'role'   => 'form',
