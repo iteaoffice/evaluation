@@ -20,8 +20,13 @@ namespace Evaluation;
 use Affiliation\Service\AffiliationService;
 use Contact\Service\SelectionContactService;
 use Doctrine\ORM\EntityManager;
+use Evaluation\Controller\ReviewManagerController;
+use Evaluation\Service\FormService;
+use Evaluation\Service\ReviewerService;
+use Evaluation\Service\ReviewService;
 use General\Service\CountryService;
 use Program\Service\CallService;
+use Project\Controller\ReviewContactManagerController;
 use Project\Search\Service\ProjectSearchService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
@@ -41,13 +46,6 @@ return [
         ],
         Controller\ReportManagerController::class             => [
             Service\EvaluationReportService::class,
-            EntityManager::class,
-            TranslatorInterface::class
-        ],
-        Controller\ReviewManagerController::class             => [
-            Service\ReviewService::class,
-            ProjectService::class,
-            Service\FormService::class,
             EntityManager::class,
             TranslatorInterface::class
         ],
@@ -86,6 +84,17 @@ return [
             Service\EvaluationReportService::class,
             Service\FormService::class,
             TranslatorInterface::class
+        ],
+        Controller\ReviewerManagerController::class             => [
+            Service\ReviewerService::class,
+            ProjectService::class,
+            Service\FormService::class,
+            EntityManager::class,
+            TranslatorInterface::class
+        ],
+        Controller\Reviewer\ContactManagerController::class   => [
+            Service\ReviewerService::class,
+            Service\FormService::class
         ],
 
         // Controller plugins
@@ -140,7 +149,7 @@ return [
             ServiceManager::class,
             EntityManager::class
         ],
-        Service\ReviewService::class                          => [
+        Service\ReviewerService::class                          => [
             EntityManager::class,
             AffiliationService::class
         ],
@@ -148,7 +157,7 @@ return [
             CallService::class,
             ProjectService::class,
             ProjectSearchService::class,
-            Service\ReviewService::class,
+            Service\ReviewerService::class,
             EntityManager::class,
         ],
 

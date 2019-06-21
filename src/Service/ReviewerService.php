@@ -45,10 +45,10 @@ use function sprintf;
 use function strtoupper;
 
 /**
- * Class ReviewService
+ * Class ReviewerService
  * @package Evaluation\Service
  */
-class ReviewService extends AbstractService
+class ReviewerService extends AbstractService
 {
     public const TYPE_PO  = 'PO';  // Project outline
     public const TYPE_FPP = 'FPP'; // Full project proposal
@@ -189,7 +189,7 @@ class ReviewService extends AbstractService
     public function getPreferredReviewers(Project $project): array
     {
         $preferredReviewers = [];
-        foreach ($project->getReview() as $projectReviewer) {
+        foreach ($project->getReviewers() as $projectReviewer) {
             $type = strtoupper($projectReviewer->getType()->getType());
             if ($type === self::TYPE_PR) {
                 $preferredReviewers[] = $this->getReviewHandle($projectReviewer->getContact(), $project);

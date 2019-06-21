@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Evaluation\Entity\Reviewer;
 
 use Doctrine\ORM\Mapping as ORM;
-use Project\Entity\AbstractEntity;
+use Evaluation\Entity\AbstractEntity;
 use Zend\Form\Annotation;
 
 /**
@@ -47,7 +47,7 @@ class Contact extends AbstractEntity
      */
     private $handle;
     /**
-     * @ORM\OneToOne(targetEntity="Contact\Entity\Contact", cascade={"persist"}, inversedBy="projectReviewContact")
+     * @ORM\OneToOne(targetEntity="Contact\Entity\Contact", cascade={"persist"}, inversedBy="projectReviewerContact")
      * @ORM\JoinColumn(name="contact_id", referencedColumnName="contact_id", nullable=false)
      * @Annotation\Type("Contact\Form\Element\Contact")
      * @Annotation\Options({"label":"txt-contact"})

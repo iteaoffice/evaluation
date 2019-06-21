@@ -24,7 +24,6 @@ $config = [
             Controller\FeedbackController::class                  => ConfigAbstractFactory::class,
             Controller\ReportController::class                    => ConfigAbstractFactory::class,
             Controller\ReportManagerController::class             => ConfigAbstractFactory::class,
-            Controller\ReviewManagerController::class             => ConfigAbstractFactory::class,
             Controller\Report\CriterionController::class          => ConfigAbstractFactory::class,
             Controller\Report\VersionController::class            => ConfigAbstractFactory::class,
             Controller\Report\WindowController::class             => ConfigAbstractFactory::class,
@@ -32,6 +31,8 @@ $config = [
             Controller\Report\Criterion\TypeController::class     => ConfigAbstractFactory::class,
             Controller\Report\Criterion\TopicController::class    => ConfigAbstractFactory::class,
             Controller\Report\Criterion\VersionController::class  => ConfigAbstractFactory::class,
+            Controller\ReviewerManagerController::class           => ConfigAbstractFactory::class,
+            Controller\Reviewer\ContactManagerController::class   => ConfigAbstractFactory::class,
         ],
     ],
     'controller_plugins' => [
@@ -67,6 +68,8 @@ $config = [
             'report2CriterionTypeLink'         => View\Helper\Report\Criterion\TypeLink::class,
             'report2CriterionTopicLink'        => View\Helper\Report\Criterion\TopicLink::class,
             'report2CriterionVersionLink'      => View\Helper\Report\Criterion\VersionLink::class,
+            'reviewerLink'                     => View\Helper\ReviewerLink::class,
+            'reviewerContactLink'              => View\Helper\Reviewer\ContactLink::class,
 
         ],
         'invokables' => [
@@ -85,6 +88,8 @@ $config = [
             View\Helper\Report\Criterion\TypeLink::class     => ViewHelperFactory::class,
             View\Helper\Report\Criterion\TopicLink::class    => ViewHelperFactory::class,
             View\Helper\Report\Criterion\VersionLink::class  => ViewHelperFactory::class,
+            View\Helper\ReviewerLink::class                  => ViewHelperFactory::class,
+            View\Helper\Reviewer\ContactLink::class          => ViewHelperFactory::class,
         ],
     ],
     'form_elements'      => [
@@ -101,12 +106,13 @@ $config = [
             Acl\Assertion\FeedbackAssertion::class                     => Factory\InvokableFactory::class,
             Acl\Assertion\EvaluationAssertion::class                   => Factory\InvokableFactory::class,
             Acl\Assertion\ReportAssertion::class                       => Factory\InvokableFactory::class,
+            Acl\Assertion\ReviewerAssertion::class                     => Factory\InvokableFactory::class,
             // Services
             Service\EvaluationReportService::class                     => ConfigAbstractFactory::class,
             Service\EvaluationService::class                           => ConfigAbstractFactory::class,
             Service\FormService::class                                 => ConfigAbstractFactory::class,
             Service\ReviewRosterService::class                         => ConfigAbstractFactory::class,
-            Service\ReviewService::class                               => ConfigAbstractFactory::class,
+            Service\ReviewerService::class                             => ConfigAbstractFactory::class,
             // Navigation
             Navigation\Invokable\ReportLabel::class                    => Factory\InvokableFactory::class,
             Navigation\Invokable\Report\CriterionLabel::class          => Factory\InvokableFactory::class,
@@ -116,6 +122,7 @@ $config = [
             Navigation\Invokable\Report\Criterion\TypeLabel::class     => Factory\InvokableFactory::class,
             Navigation\Invokable\Report\Criterion\TopicLabel::class    => Factory\InvokableFactory::class,
             Navigation\Invokable\Report\Criterion\VersionLabel::class  => Factory\InvokableFactory::class,
+            Navigation\Invokable\Reviewer\ContactLabel::class          => Factory\InvokableFactory::class,
             // Misc
             Options\ModuleOptions::class                               => Options\Factory\ModuleOptionsFactory::class
         ],

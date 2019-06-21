@@ -21,7 +21,7 @@ namespace Evaluation\View\Helper;
 use Evaluation\Acl\Assertion\ReportAssertion;
 use Evaluation\Entity\Report as EvaluationReport;
 use Project\Entity\Report\Review as ReportReview;
-use Project\Entity\Version\Review as VersionReview;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Evaluation\Service\EvaluationReportService;
 use function sprintf;
 
@@ -42,9 +42,9 @@ final class ReportLink extends AbstractLink
     private $reportReview;
 
     /**
-     * @var VersionReview
+     * @var VersionReviewer
      */
-    private $versionReview;
+    private $versionReviewer;
 
     /**
      * @var EvaluationReportService
@@ -62,12 +62,12 @@ final class ReportLink extends AbstractLink
         string           $show = 'text',
         bool             $shortLabel = false,
         ReportReview     $reportReview = null,
-        VersionReview    $versionReview = null
+        VersionReviewer  $versionReviewer = null
     ): string {
         $this->evaluationReport = $evaluationReport ?? new EvaluationReport();
         $this->shortLabel       = $shortLabel;
         $this->reportReview     = $reportReview ?? new ReportReview();
-        $this->versionReview    = $versionReview ?? new VersionReview();
+        $this->versionReviewer  = $versionReviewer ?? new VersionReviewer();
         $this->setAction($action);
         $this->setShow($show);
 
@@ -108,15 +108,15 @@ final class ReportLink extends AbstractLink
                         $this->reportReview->getProjectReport()->parseName()
                     );
                     $this->addRouterParam('reportReview', $this->reportReview->getId());
-                } elseif (!$this->versionReview->isEmpty()) {
+                } elseif (!$this->versionReviewer->isEmpty()) {
                     $route = 'community/evaluation/report2/create-from-version-review';
                     $subject = sprintf(
                         '%s - %s - %s',
-                        $this->versionReview->getVersion()->getProject()->getCall(),
-                        $this->versionReview->getVersion()->getProject()->parseFullName(),
-                        $this->versionReview->getVersion()->getVersionType()
+                        $this->versionReviewer->getVersion()->getProject()->getCall(),
+                        $this->versionReviewer->getVersion()->getProject()->parseFullName(),
+                        $this->versionReviewer->getVersion()->getVersionType()
                     );
-                    $this->addRouterParam('versionReview', $this->versionReview->getId());
+                    $this->addRouterParam('versionReview', $this->versionReviewer->getId());
                 }
                 $this->setRouter($route);
                 $fullLabel = sprintf($this->translator->translate('txt-create-evaluation-report-for-%s'), $subject);
@@ -133,9 +133,9 @@ final class ReportLink extends AbstractLink
                 if (!$this->reportReview->isEmpty()) {
                     $route = 'community/evaluation/report2/create-from-report-review';
                     $this->addRouterParam('reportReview', $this->reportReview->getId());
-                } elseif (!$this->versionReview->isEmpty()) {
+                } elseif (!$this->versionReviewer->isEmpty()) {
                     $route = 'community/evaluation/report2/create-from-version-review';
-                    $this->addRouterParam('versionReview', $this->versionReview->getId());
+                    $this->addRouterParam('versionReview', $this->versionReviewer->getId());
                 } elseif (!$this->evaluationReport->isEmpty()) {
                     $route = 'community/evaluation/report2/update';
                 }

@@ -84,13 +84,13 @@ final class ReviewRosterService
      * @var array
      */
     private static $scoreBoost = [
-        ReviewService::TYPE_PO  => 1,
-        ReviewService::TYPE_CR  => 2,
-        ReviewService::TYPE_FPP => 3,
-        ReviewService::TYPE_PPR => 3,
-        ReviewService::TYPE_R   => 5,
-        ReviewService::TYPE_FE  => 6,
-        ReviewService::TYPE_PR  => 10, // Preferred reviewers have the highest boost
+        ReviewerService::TYPE_PO  => 1,
+        ReviewerService::TYPE_CR  => 2,
+        ReviewerService::TYPE_FPP => 3,
+        ReviewerService::TYPE_PPR => 3,
+        ReviewerService::TYPE_R   => 5,
+        ReviewerService::TYPE_FE  => 6,
+        ReviewerService::TYPE_PR  => 10, // Preferred reviewers have the highest boost
     ];
 
     /**
@@ -121,9 +121,9 @@ final class ReviewRosterService
     private $projectSearchService;
 
     /**
-     * @var ReviewService
+     * @var ReviewerService
      */
-    private $reviewService;
+    private $reviewerService;
 
     /**
      * @var EntityManager
@@ -154,18 +154,18 @@ final class ReviewRosterService
         CallService          $callService,
         ProjectService       $projectService,
         ProjectSearchService $projectSearchService,
-        ReviewService        $reviewService,
+        ReviewerService      $reviewerService,
         EntityManager        $entityManager
     ) {
         $this->callService          = $callService;
         $this->projectService       = $projectService;
         $this->projectSearchService = $projectSearchService;
-        $this->reviewService        = $reviewService;
+        $this->reviewerService      = $reviewerService;
         $this->entityManager        = $entityManager;
     }
 
     /**
-     * @param string   $type                  Constants defined in Project\Service\ReviewService
+     * @param string   $type                  Constants defined in Evaluation\Service\ReviewerService
      * @param array    $config                Config data output by parseConfigFile()
      * @param int      $reviewersPerProject   Minimum number of reviewers assigned per project
      * @param bool     $includeSpareReviewers Include spare reviewers in the minimum number of reviewers assigned
@@ -203,9 +203,9 @@ final class ReviewRosterService
         ));
 
         // Generate the roster data
-        if ($type === ReviewService::TYPE_CR) {
+        if ($type === ReviewerService::TYPE_CR) {
             $rosterData = $this->generateCrRosterData($projectReviewerScores, $allReviewers);
-        } elseif (in_array($type, [ReviewService::TYPE_PO, ReviewService::TYPE_FPP, ReviewService::TYPE_PPR])) {
+        } elseif (in_array($type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP, ReviewerService::TYPE_PPR])) {
             // Basic round assignment. Just divide the projects over the rounds in the order they came.
             $reviewerCount    = $this->includeSpareReviewers ? count($allReviewers) : count($config['present']);
             $projectCount     = count($projects);
@@ -241,9 +241,9 @@ final class ReviewRosterService
             $try = 1;
             while ($try <= self::MAX_RETRIES) {
                 $this->log(__LINE__, sprintf('Retry %d of %d', $try, self::MAX_RETRIES));
-                if ($type === ReviewService::TYPE_CR) {
+                if ($type === ReviewerService::TYPE_CR) {
                     $rosterData = $this->generateCrRosterData($projectReviewerScores, $allReviewers);
-                } elseif (in_array($type, [ReviewService::TYPE_PO, ReviewService::TYPE_FPP, ReviewService::TYPE_PPR])) {
+                } elseif (in_array($type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP, ReviewerService::TYPE_PPR])) {
                     $rosterData = $this->generatePoFppPprRosterData($roundAssignments, $allReviewers);
                 }
                 if ($this->testRosterAssignments($rosterData)) {
@@ -309,7 +309,7 @@ final class ReviewRosterService
         $projects = [];
 
         // Progress report review
-        if ($type === ReviewService::TYPE_PPR) {
+        if ($type === ReviewerService::TYPE_PPR) {
             $now              = new DateTime();
             $previousSemester = (((int)$now->format('m')) < 6) ? 2 : 1;
             $year             = ($previousSemester === 2) ? ((int)$now->format('Y')-1) : ((int)$now->format('Y'));
@@ -324,7 +324,7 @@ final class ReviewRosterService
         }
 
         // Project version review
-        elseif (in_array($type, [ReviewService::TYPE_PO, ReviewService::TYPE_FPP], false)) {
+        elseif (in_array($type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP], false)) {
             $calls       = $this->callService->findOpenCall();
             $currentCall = $calls->getFirst() ?? $calls->getUpcoming();
             $filter      = [
@@ -349,7 +349,7 @@ final class ReviewRosterService
         }
 
         // Assignment for change requests
-        elseif ($type === ReviewService::TYPE_CR) {
+        elseif ($type === ReviewerService::TYPE_CR) {
             $projects = $this->projectService->findActiveProjectsForReviewRoster();
         }
 
@@ -471,9 +471,9 @@ final class ReviewRosterService
         $projectReviewActivity = [];
 
         foreach ($projects as $projectKey => $project) {
-            $ignoredReviewers   = $this->reviewService->getIgnoredReviewers($project);
-            $reviewHistory      = $this->reviewService->getReviewHistory($project);
-            $preferredReviewers = $this->reviewService->getPreferredReviewers($project);
+            $ignoredReviewers   = $this->reviewerService->getIgnoredReviewers($project);
+            $reviewHistory      = $this->reviewerService->getReviewHistory($project);
+            $preferredReviewers = $this->reviewerService->getPreferredReviewers($project);
 
             $projectReviewerScores[$projectKey] = [
                 'data' => [
@@ -514,7 +514,7 @@ final class ReviewRosterService
             foreach ($preferredReviewers as $reviewer) {
                 if (array_key_exists($reviewer, $projectReviewerScores[$projectKey]['scores'])) {
                     $projectReviewerScores[$projectKey]['scores'][$reviewer]
-                        += self::$scoreBoost[ReviewService::TYPE_PR];
+                        += self::$scoreBoost[ReviewerService::TYPE_PR];
                 }
             }
             // Assign a negative score to ignored reviewers
@@ -604,10 +604,10 @@ final class ReviewRosterService
                 // For the other FE reviewers the FE score boost can he undone and they should be assigned based on
                 // regular review history score.
                 $lastHistoryItem = end($projectData['data']['history']);
-                if ($lastHistoryItem && isset($lastHistoryItem[ReviewService::TYPE_FE])) {
+                if ($lastHistoryItem && isset($lastHistoryItem[ReviewerService::TYPE_FE])) {
                     $highestScore = 0;
                     $bestMatch    = null;
-                    $feHandles    = $lastHistoryItem[ReviewService::TYPE_FE];
+                    $feHandles    = $lastHistoryItem[ReviewerService::TYPE_FE];
                     shuffle($feHandles); // Add some randomization when FE reviewers have equal scores
                     foreach ($feHandles as $handle) {
                         // The FE handle could have been overruled by the ignored list
@@ -622,7 +622,7 @@ final class ReviewRosterService
                     foreach ($feHandles as $handle) {
                         if (isset($projectData['scores'][$handle]) && ($handle !== $bestMatch)) {
                             $projectData['scores'][$handle] -=
-                                (self::$scoreBoost[ReviewService::TYPE_FE] / $this->avgReviewActivityScore);
+                                (self::$scoreBoost[ReviewerService::TYPE_FE] / $this->avgReviewActivityScore);
                         }
                     }
                 }
@@ -959,8 +959,8 @@ final class ReviewRosterService
 
             // If future evaluation is set, get reviewers from there
             $lastHistoryItem = end($projectReviewerScores[$projectIndex]['data']['history']);
-            if ($lastHistoryItem && isset($lastHistoryItem[ReviewService::TYPE_FE])) {
-                foreach ($lastHistoryItem[ReviewService::TYPE_FE] as $handle) {
+            if ($lastHistoryItem && isset($lastHistoryItem[ReviewerService::TYPE_FE])) {
+                foreach ($lastHistoryItem[ReviewerService::TYPE_FE] as $handle) {
                     if (count($reviewersAssigned) === $this->reviewersPerProject) {
                         break;
                     }

@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Entity\Report as EvaluationReport;
-use Project\Entity\Version\Review;
+use Project\Entity\Version\Reviewer;
 use Project\Entity\Version\Version;
 use Zend\Form\Annotation;
 
@@ -54,11 +54,11 @@ class ProjectVersion extends AbstractEntity
     /**
      * Only set for individual review reports (so is nullable)
      *
-     * @ORM\OneToOne(targetEntity="Project\Entity\Version\Review", cascade={"persist"}, inversedBy="projectVersionReport2")
+     * @ORM\OneToOne(targetEntity="Project\Entity\Version\Reviewer", cascade={"persist"}, inversedBy="projectVersionReport2")
      * @ORM\JoinColumn(name="project_version_review_id", referencedColumnName="review_id", nullable=true)
      * @Annotation\Exclude()
      *
-     * @var Review|null
+     * @var Reviewer|null
      */
     private $reviewer;
     /**

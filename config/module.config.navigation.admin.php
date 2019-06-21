@@ -260,6 +260,40 @@ return [
                             ],
                         ],
                     ],
+                    'review-contact-list'        => [
+                        'label' => _('txt-nav-review-contact-list'),
+                        'route' => 'zfcadmin/evaluation/reviewer/contact/list',
+                        'pages' => [
+                            'view' => [
+                                'route'   => 'zfcadmin/evaluation/reviewer/contact/view',
+                                'visible' => false,
+                                'params'  => [
+                                    'entities'   => [
+                                        'id' => Entity\Reviewer\Contact::class,
+                                    ],
+                                    'invokables' => [
+                                        Navigation\Invokable\Reviewer\ContactLabel::class,
+                                    ],
+                                ],
+                                'pages'   => [
+                                    'edit' => [
+                                        'label'   => _('txt-nav-edit'),
+                                        'route'   => 'zfcadmin/evaluation/reviewer/contact/edit',
+                                        'visible' => false,
+                                        'params'  => [
+                                            'entities' => [
+                                                'id' => Entity\Reviewer\Contact::class,
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'new'  => [
+                                'label' => _('txt-nav-new-review-contact'),
+                                'route' => 'zfcadmin/evaluation/reviewer/contact/new',
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],

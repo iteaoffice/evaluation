@@ -15,55 +15,51 @@ return [
              */
             Route::class => [
                 [
-                    'route' => 'zfcadmin/evaluation/review',
+                    'route' => 'zfcadmin/evaluation/reviewer',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/import',
+                    'route' => 'zfcadmin/evaluation/reviewer/export',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/export',
+                    'route' => 'zfcadmin/evaluation/reviewer/roster',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/roster',
+                    'route' => 'zfcadmin/evaluation/reviewer/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/list',
+                    'route' => 'zfcadmin/evaluation/reviewer/new',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/new',
+                    'route' => 'zfcadmin/evaluation/reviewer/edit',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/edit',
+                    'route' => 'zfcadmin/evaluation/reviewer/delete',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/delete',
+                    'route' => 'zfcadmin/evaluation/reviewer/contact',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/contact',
+                    'route' => 'zfcadmin/evaluation/reviewer/contact/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/contact/list',
+                    'route' => 'zfcadmin/evaluation/reviewer/contact/view',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/contact/view',
+                    'route' => 'zfcadmin/evaluation/reviewer/contact/edit',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/review/contact/edit',
-                    'roles' => ['office'],
-                ],
-                [
-                    'route' => 'zfcadmin/evaluation/review/contact/new',
+                    'route' => 'zfcadmin/evaluation/reviewer/contact/new',
                     'roles' => ['office'],
                 ],
                 [

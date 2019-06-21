@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Evaluation\Form;
 
-use Evaluation\Service\ReviewService;
+use Evaluation\Service\ReviewerService;
 use Zend\Form\Element;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
@@ -67,10 +67,10 @@ final class ReviewRoster extends Form
                 'label'          => _('txt-type'),
                 'help-block'    => _('txt-select-the-review-type'),
                 'value_options' => [
-                    ReviewService::TYPE_PPR => _('txt-progress-report'),
-                    ReviewService::TYPE_PO  => _('txt-project-outline'),
-                    ReviewService::TYPE_FPP => _('txt-full-project-proposal'),
-                    ReviewService::TYPE_CR  => _('txt-change-request')
+                    ReviewerService::TYPE_PPR => _('txt-progress-report'),
+                    ReviewerService::TYPE_PO  => _('txt-project-outline'),
+                    ReviewerService::TYPE_FPP => _('txt-full-project-proposal'),
+                    ReviewerService::TYPE_CR  => _('txt-change-request')
                 ],
             ],
         ]);
