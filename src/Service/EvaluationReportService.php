@@ -268,8 +268,7 @@ class EvaluationReportService extends AbstractService
     public function prepareEvaluationReport(
         EvaluationReportVersion $evaluationReportVersion,
         int $reviewerId
-    ): EvaluationReport
-    {
+    ): EvaluationReport {
         $evaluationReport = new EvaluationReport();
         $evaluationReport->setVersion($evaluationReportVersion);
         switch ($evaluationReportVersion->getReportType()->getId()) {

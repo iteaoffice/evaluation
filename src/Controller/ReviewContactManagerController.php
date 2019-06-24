@@ -51,8 +51,7 @@ final class ReviewContactManagerController extends AbstractActionController
     public function __construct(
         ProjectService $projectService,
         FormService    $formService
-    )
-    {
+    ) {
         $this->projectService = $projectService;
         $this->formService    = $formService;
     }

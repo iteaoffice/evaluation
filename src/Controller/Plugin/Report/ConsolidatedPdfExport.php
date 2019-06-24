@@ -21,10 +21,12 @@ namespace Evaluation\Controller\Plugin\Report;
 use Affiliation\Service\AffiliationService;
 use DateTime;
 use Evaluation\Controller\Plugin\ReportPdf;
-use Evaluation\Service\EvaluationReportService;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result;
+use Evaluation\Options\ModuleOptions;
+use Evaluation\Service\EvaluationReportService;
+use Evaluation\Service\EvaluationService;
 use General\Service\CountryService;
 use InvalidArgumentException;
 use Organisation\Entity\Organisation;
@@ -37,8 +39,6 @@ use Project\Entity\Version\Review as VersionReviewer;
 use Project\Entity\Version\Type;
 use Project\Entity\Version\Version;
 use Project\Form\MatrixFilter;
-use Project\Options\ModuleOptions;
-use Project\Service\EvaluationService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
 use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
@@ -63,22 +63,24 @@ use function sprintf;
 
 /**
  * Class ConsolidatedPdfExport
+ *
  * @package Evaluation\Controller\Plugin\Report
  */
 final class ConsolidatedPdfExport extends AbstractPlugin
 {
-    private static $colWidths    = [1 => 60, 2 => 60, 3 => 60];
-    private static $lineHeights  = [
-        'category' => 8, 'type' => 6, 'line' => 5, 'bigLine' => 15
-    ];
-    private static $topMargin    = ITEAOFFICE_HOST === 'itea' ? 30 : 70;
+    private static $colWidths = [1 => 60, 2 => 60, 3 => 60];
+    private static $lineHeights
+        = [
+            'category' => 8, 'type' => 6, 'line' => 5, 'bigLine' => 15
+        ];
+    private static $topMargin = ITEAOFFICE_HOST === 'itea' ? 30 : 70;
     private static $bottomMargin = ITEAOFFICE_HOST === 'itea' ? 30 : 20;
-    private static $orientation  = 'P';
-    private static $fontSize     = 9;
+    private static $orientation = 'P';
+    private static $fontSize = 9;
 
-    private static $mainColor    = ITEAOFFICE_HOST === 'itea' ? [0, 166, 81] : [142, 198, 80];
-    private static $subColor     = ITEAOFFICE_HOST === 'itea' ? [128, 130, 133] : [8, 118, 183];
-    private static $gray         = [151, 151, 151];
+    private static $mainColor = ITEAOFFICE_HOST === 'itea' ? [0, 166, 81] : [142, 198, 80];
+    private static $subColor = ITEAOFFICE_HOST === 'itea' ? [128, 130, 133] : [8, 118, 183];
+    private static $gray = [151, 151, 151];
 
     /**
      * @var EvaluationReportService
@@ -160,26 +162,26 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ProjectService          $projectService,
-        VersionService          $versionService,
-        EvaluationService       $evaluationService,
-        AffiliationService      $affiliationService,
-        CountryService          $countryService,
-        ModuleOptions           $moduleOptions,
-        PluginManager           $controllerPluginManager,
-        TwigRenderer            $renderer,
-        TranslatorInterface     $translator
+        ProjectService $projectService,
+        VersionService $versionService,
+        EvaluationService $evaluationService,
+        AffiliationService $affiliationService,
+        CountryService $countryService,
+        ModuleOptions $moduleOptions,
+        PluginManager $controllerPluginManager,
+        TwigRenderer $renderer,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->projectService          = $projectService;
-        $this->versionService          = $versionService;
-        $this->evaluationService       = $evaluationService;
-        $this->affiliationService      = $affiliationService;
-        $this->countryService          = $countryService;
-        $this->moduleOptions           = $moduleOptions;
+        $this->projectService = $projectService;
+        $this->versionService = $versionService;
+        $this->evaluationService = $evaluationService;
+        $this->affiliationService = $affiliationService;
+        $this->countryService = $countryService;
+        $this->moduleOptions = $moduleOptions;
         $this->controllerPluginManager = $controllerPluginManager;
-        $this->renderer                = $renderer;
-        $this->translator              = $translator;
+        $this->renderer = $renderer;
+        $this->translator = $translator;
     }
 
     public function __invoke(EvaluationReport $evaluationReport, bool $forDistribution = false): self
@@ -257,7 +259,8 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         /** @var Result $result */
         foreach ($this->results as $result) {
             /** @var Criterion\Type $type */
-            $type     = $result->getCriterion()->getType();
+            $type = $result->getCriterion()->getType();
+            /** @var Criterion\Category $category */
             $category = $type->getCategory();
 
             if ($category->getCategory() !== $currentCategory) {
@@ -589,13 +592,13 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 null === $latestVersion
                     ? ''
                     : number_format(
-                    $this->versionService
+                        $this->versionService
                         ->findTotalEffortVersionByAffiliationAndVersion(
                             $affiliation,
                             $latestVersion
                         ),
-                    2
-                ),
+                        2
+                    ),
             ];
         }
 
@@ -606,12 +609,12 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             null === $latestVersion
                 ? ''
                 : number_format(
-                $this->versionService
+                    $this->versionService
                     ->findTotalEffortVersionByProjectVersion(
                         $latestVersion
                     ),
-                2
-            )];
+                    2
+                )];
 
 
         $this->parseCountryOverviewTable($affCountries, [239, 239, 239]);
@@ -888,11 +891,11 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             'M'
         );
 
-        $conclusion = (string) $this->version->getFeedback()->getEvaluationConclusion();
+        $conclusion = (string)$this->version->getFeedback()->getEvaluationConclusion();
 
         // Some explansion
         $lineHeight = self::$lineHeights['line'];
-        $cellWidth  = 3 * self::$colWidths[2];
+        $cellWidth = 3 * self::$colWidths[2];
         $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $conclusion) + 10;
 
         $this->pdf->MultiCell(

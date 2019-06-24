@@ -21,8 +21,7 @@ final class DownloadLink extends AbstractLink
         int    $status = null,
         string $action = 'download-combined',
         string $show = 'button'
-    ): string
-    {
+    ): string {
         $this->status = $status;
         $this->action = $action;
         $this->show   = $show;

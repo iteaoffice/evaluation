@@ -12,7 +12,6 @@ namespace Evaluation;
 
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Evaluation\View\Factory\ViewHelperFactory;
-use Evaluation\View\Helper\Report\DownloadLink;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\Stdlib;
 
@@ -36,8 +35,9 @@ $config = [
     ],
     'controller_plugins' => [
         'aliases'   => [
-            'getEvaluationFilter'          => Controller\Plugin\GetFilter::class,
-            'evaluationReport2ExcelExport' => Controller\Plugin\Report\ExcelExport::class,
+            'getEvaluationFilter'             => Controller\Plugin\GetFilter::class,
+            'evaluationReport2ExcelExport'    => Controller\Plugin\Report\ExcelExport::class,
+            'evaluationConsolidatedPdfExport' => Controller\Plugin\Report\ConsolidatedPdfExport::class,
         ],
         'factories' => [
             Controller\Plugin\GetFilter::class                    => Factory\InvokableFactory::class,
@@ -55,18 +55,18 @@ $config = [
     ],
     'view_helpers'       => [
         'aliases'    => [
-            'evaluationReport2Link'            => View\Helper\ReportLink::class,
-            'evaluationReport2DownloadLink'    => View\Helper\Report\DownloadLink::class,
-            'evaluationReport2FinalLink'       => View\Helper\Report\FinalLink::class,
-            'evaluationReport2Progress'        => View\Helper\Report\Progress::class,
-            'evaluationReport2Score'           => View\Helper\Report\Score::class,
-            'report2VersionLink'               => View\Helper\Report\VersionLink::class,
-            'report2WindowLink'                => View\Helper\Report\WindowLink::class,
-            'report2CriterionLink'             => View\Helper\Report\CriterionLink::class,
-            'report2CriterionCategoryLink'     => View\Helper\Report\Criterion\CategoryLink::class,
-            'report2CriterionTypeLink'         => View\Helper\Report\Criterion\TypeLink::class,
-            'report2CriterionTopicLink'        => View\Helper\Report\Criterion\TopicLink::class,
-            'report2CriterionVersionLink'      => View\Helper\Report\Criterion\VersionLink::class,
+            'evaluationReport2Link'         => View\Helper\ReportLink::class,
+            'evaluationReport2DownloadLink' => View\Helper\Report\DownloadLink::class,
+            'evaluationReport2FinalLink'    => View\Helper\Report\FinalLink::class,
+            'evaluationReport2Progress'     => View\Helper\Report\Progress::class,
+            'evaluationReport2Score'        => View\Helper\Report\Score::class,
+            'report2VersionLink'            => View\Helper\Report\VersionLink::class,
+            'report2WindowLink'             => View\Helper\Report\WindowLink::class,
+            'report2CriterionLink'          => View\Helper\Report\CriterionLink::class,
+            'report2CriterionCategoryLink'  => View\Helper\Report\Criterion\CategoryLink::class,
+            'report2CriterionTypeLink'      => View\Helper\Report\Criterion\TypeLink::class,
+            'report2CriterionTopicLink'     => View\Helper\Report\Criterion\TopicLink::class,
+            'report2CriterionVersionLink'   => View\Helper\Report\Criterion\VersionLink::class,
 
         ],
         'invokables' => [
@@ -126,7 +126,7 @@ $config = [
                 'class' => AnnotationDriver::class,
                 'paths' => [__DIR__ . '/../src/Entity/'],
             ],
-            'orm_default'                    => [
+            'orm_default'                  => [
                 'drivers' => [
                     'Evaluation\Entity' => 'evaluation_annotation_driver',
                 ],

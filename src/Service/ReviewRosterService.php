@@ -179,8 +179,7 @@ final class ReviewRosterService
         int    $reviewersPerProject = self::MIN_REVIEWERS_ASSIGNED,
         bool   $includeSpareReviewers = false,
         ?int   $forceProjectsPerRound = null
-    ): array
-    {
+    ): array {
         $this->reviewersPerProject    = $reviewersPerProject;
         $this->includeSpareReviewers  = $includeSpareReviewers;
         $this->avgReviewActivityScore = 1;
@@ -1255,8 +1254,7 @@ final class ReviewRosterService
         int  $minReviewersAssigned,
         int  $totalReviewers,
         ?int $forceProjectsPerRound = null
-    ): array
-    {
+    ): array {
         $projectsPerRound = [];
         $maxProjectsPerRound = floor($totalReviewers / $minReviewersAssigned);
         if (($forceProjectsPerRound !== null) && ($forceProjectsPerRound < $maxProjectsPerRound)) {

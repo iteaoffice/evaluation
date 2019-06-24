@@ -41,3 +41,5 @@ _("txt-score-middle-");
 _("txt-score-low-quality");
 _("txt-approved");
 _("txt-rejected");
+_("txt-contact");
+_("txt-reviewer-type");

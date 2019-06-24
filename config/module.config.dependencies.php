@@ -132,6 +132,9 @@ return [
         ],
 
         // Services
+        Service\EvaluationService::class                      => [
+            EntityManager::class
+        ],
         Service\EvaluationReportService::class                => [
             EntityManager::class,
             SelectionContactService::class,
