@@ -31,11 +31,11 @@ use Project\Entity\Calendar\Calendar as ProjectCalendar;
 use Project\Entity\Calendar\Review as CalendarReview;
 use Project\Entity\Project;
 use Project\Entity\Report\Report as ProjectReport;
-use Project\Entity\Review\Contact as ReviewContact;
-use Project\Entity\Review\Review as ProjectReview;
-use Project\Entity\Version\Review as VersionReview;
+use Evaluation\Entity\Reviewer\Contact as ReviewContact;
+use Evaluation\Entity\Reviewer as ProjectReview;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Version;
-use Project\Repository\Review\Contact as ReviewContactRepository;
+use Evaluation\Repository\Reviewer\ContactRepository as ReviewContactRepository;
 use function count;
 use function implode;
 use function in_array;
@@ -45,10 +45,10 @@ use function sprintf;
 use function strtoupper;
 
 /**
- * Class ReviewService
+ * Class ReviewerService
  * @package Evaluation\Service
  */
-class ReviewService extends AbstractService
+class ReviewerService extends AbstractService
 {
     public const TYPE_PO  = 'PO';  // Project outline
     public const TYPE_FPP = 'FPP'; // Full project proposal
@@ -83,6 +83,7 @@ class ReviewService extends AbstractService
         $startDate = '-1';
 
         if (null !== $project->getDateStartActual()) {
+            /** @var DateTime $actualStartDate */
             $actualStartDate = $project->getDateStartActual();
             $startDate = $actualStartDate->format('y') . "\t"
                 . $actualStartDate->format('m') . "\t"
@@ -97,7 +98,7 @@ class ReviewService extends AbstractService
          *
          * @return string
          */
-        $parseRow = function (array $reviewers, string $type) use ($lineBreak): string {
+        $parseRow = static function (array $reviewers, string $type) use ($lineBreak): string {
             $reviewerCount = count($reviewers);
             // Skip empty FE lines
             if (($type === self::TYPE_FE) && ($reviewerCount === 0)) {
@@ -189,7 +190,7 @@ class ReviewService extends AbstractService
     public function getPreferredReviewers(Project $project): array
     {
         $preferredReviewers = [];
-        foreach ($project->getReview() as $projectReviewer) {
+        foreach ($project->getReviewers() as $projectReviewer) {
             $type = strtoupper($projectReviewer->getType()->getType());
             if ($type === self::TYPE_PR) {
                 $preferredReviewers[] = $this->getReviewHandle($projectReviewer->getContact(), $project);
@@ -210,7 +211,7 @@ class ReviewService extends AbstractService
      */
     private function getReviewHandle(Contact $contact, Project $project): string
     {
-        if ($contact->getProjectReviewContact() === null) {
+        if ($contact->getProjectReviewerContact() === null) {
             throw new Exception(
                 sprintf(
                     'Unable to get the project review handle for %s. Has one been defined? - Project: %s',
@@ -219,7 +220,7 @@ class ReviewService extends AbstractService
                 )
             );
         }
-        return $contact->getProjectReviewContact()->getHandle();
+        return $contact->getProjectReviewerContact()->getHandle();
     }
 
     /**
@@ -240,11 +241,6 @@ class ReviewService extends AbstractService
         return $preferredReviewers;
     }
 
-    /**
-     * @param Project $project
-     *
-     * @return array
-     */
     public function getReviewHistory(Project $project): array
     {
         // Get project version reviewers
@@ -255,8 +251,8 @@ class ReviewService extends AbstractService
             $type = strtoupper($version->getVersionType()->getType());
             $sortKey = $version->getDateSubmitted()->format('Y-m-d|H:i:s') . '|' . $type;
             $projectVersionReviewers[$sortKey][$type] = [];
-            /** @var VersionReview $versionReview */
-            foreach ($version->getVersionReview() as $versionReview) {
+            /** @var VersionReviewer $versionReview */
+            foreach ($version->getReviewers() as $versionReview) {
                 $projectVersionReviewers[$sortKey][$type][]
                     = $this->getReviewHandle($versionReview->getContact(), $project);
             }
@@ -316,7 +312,7 @@ class ReviewService extends AbstractService
             $sortKey = $projectReport->getDateCreated()->format('Y-m-d|H:i:s') . '|' . self::TYPE_PPR;
             $projectReportReviewers[$sortKey][self::TYPE_PPR] = [];
             /** @var ProjectReview $projectReview */
-            foreach ($projectReport->getReview() as $reportReview) {
+            foreach ($projectReport->getReviewers() as $reportReview) {
                 $projectReportReviewers[$sortKey][self::TYPE_PPR][]
                     = $this->getReviewHandle($reportReview->getContact(), $project);
             }

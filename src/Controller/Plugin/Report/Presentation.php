@@ -18,6 +18,10 @@ declare(strict_types=1);
 
 namespace Evaluation\Controller\Plugin\Report;
 
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Entity\Report\Result;
+use Evaluation\Options\ModuleOptions;
+use Evaluation\Service\EvaluationReportService;
 use PhpOffice\PhpPresentation\IOFactory;
 use PhpOffice\PhpPresentation\PhpPresentation;
 use PhpOffice\PhpPresentation\Shape\RichText;
@@ -30,13 +34,7 @@ use PhpOffice\PhpPresentation\Style\Border;
 use PhpOffice\PhpPresentation\Style\Bullet;
 use PhpOffice\PhpPresentation\Style\Color;
 use PhpOffice\PhpPresentation\Style\Fill;
-use Evaluation\Entity\Report as EvaluationReport;
-use Evaluation\Entity\Report\Result;
-use Evaluation\Service\EvaluationReportService;
-use Evaluation\Options\ModuleOptions;
 use Project\Entity\Rationale;
-use Project\Service\ProjectService;
-use Project\Service\VersionService;
 use Zend\Http\Headers;
 use Zend\Http\Response;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -57,35 +55,23 @@ use function strlen;
 
 /**
  * Class Presentation
+ *
  * @package Evaluation\Controller\Plugin\Report
  */
 final class Presentation extends AbstractPlugin
 {
     private const FONT = 'Arial';
-    /**
-     * @var array
-     */
-    private static $scoreColors = [
-        EvaluationReport::SCORE_LOW          => 'FFFF0000',
-        EvaluationReport::SCORE_MIDDLE_MINUS => 'FFC6EfCE',
-        EvaluationReport::SCORE_MIDDLE       => 'FFC6EfCE',
-        EvaluationReport::SCORE_MIDDLE_PLUS  => 'FFC6EfCE',
-        EvaluationReport::SCORE_TOP          => 'FF00A651',
-        EvaluationReport::SCORE_APPROVED     => 'FF00A651',
-        EvaluationReport::SCORE_REJECTED     => 'FFFF0000'
-    ];
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var VersionService
-     */
-    private $versionService;
+
+    private static $scoreColors
+        = [
+            EvaluationReport::SCORE_LOW          => 'FFFF0000',
+            EvaluationReport::SCORE_MIDDLE_MINUS => 'FFC6EfCE',
+            EvaluationReport::SCORE_MIDDLE       => 'FFC6EfCE',
+            EvaluationReport::SCORE_MIDDLE_PLUS  => 'FFC6EfCE',
+            EvaluationReport::SCORE_TOP          => 'FF00A651',
+            EvaluationReport::SCORE_APPROVED     => 'FF00A651',
+            EvaluationReport::SCORE_REJECTED     => 'FFFF0000'
+        ];
     /**
      * @var ModuleOptions
      */
@@ -104,27 +90,21 @@ final class Presentation extends AbstractPlugin
     private $fileName;
 
     public function __construct(
-        EvaluationReportService $evaluationReportService,
-        ProjectService          $projectService,
-        VersionService          $versionService,
-        ModuleOptions           $moduleOptions,
-        TranslatorInterface     $translator
+        ModuleOptions $moduleOptions,
+        TranslatorInterface $translator
     ) {
-        $this->evaluationReportService = $evaluationReportService;
-        $this->projectService          = $projectService;
-        $this->versionService          = $versionService;
-        $this->moduleOptions           = $moduleOptions;
-        $this->translator              = $translator;
+        $this->moduleOptions = $moduleOptions;
+        $this->translator = $translator;
     }
 
-    public function __invoke(array $evaluationReports): ReportPresentation
+    public function __invoke(array $evaluationReports): Presentation
     {
         $presentation = new PhpPresentation();
-        $presentation->getDocumentProperties()->setCreator($this->moduleOptions->getEvaluationReportAuthor());
+        $presentation->getDocumentProperties()->setCreator($this->moduleOptions->getReportAuthor());
 
         // Add title slide
         $titleBackground = new Image();
-        $titleBackground->setPath($this->moduleOptions->getEvaluationPresentationTemplates()['title']);
+        $titleBackground->setPath($this->moduleOptions->getPresentationTemplates()['title']);
         $titleSlide = $presentation->getActiveSlide();
         $titleSlide->setBackground($titleBackground);
         $titleShape = $titleSlide->createRichTextShape();
@@ -132,7 +112,7 @@ final class Presentation extends AbstractPlugin
 
         // Title
         $whiteColor = new Color(Color::COLOR_WHITE);
-        $titleRun   = $titleShape->createTextRun($this->translator->translate('txt-title-here'));
+        $titleRun = $titleShape->createTextRun($this->translator->translate('txt-title-here'));
         $titleRun->getFont()->setBold(true)->setSize(34)->setColor($whiteColor)
             ->setName(self::FONT);
 
@@ -153,13 +133,10 @@ final class Presentation extends AbstractPlugin
         return $this;
     }
 
-    /**
-     * @param EvaluationReport $evaluationReport
-     */
-    private function parseProjectSlide(EvaluationReport $evaluationReport)
+    private function parseProjectSlide(EvaluationReport $evaluationReport): void
     {
         $background = new Image();
-        $background->setPath($this->moduleOptions->getEvaluationPresentationTemplates()['background']);
+        $background->setPath($this->moduleOptions->getPresentationTemplates()['background']);
         $slide = $this->presentation->createSlide();
         $slide->setBackground($background);
 
@@ -170,18 +147,18 @@ final class Presentation extends AbstractPlugin
             $scoreShape->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor($scoreColor);
         }
 
-        $project = $this->evaluationReportService->getProject($evaluationReport);
+        $project = EvaluationReportService::getProject($evaluationReport);
 
         // Title
-        $challenge    = $project->getProjectChallenge()->first()->getChallenge()->getChallenge();
+        $challenge = $project->getProjectChallenge()->first()->getChallenge()->getChallenge();
         $projectLabel = sprintf('%s - %s (%s)', $project->getProject(), $project->getNumber(), $challenge);
-        $headerShape  = $slide->createRichTextShape();
+        $headerShape = $slide->createRichTextShape();
         $headerShape->setWidthAndHeight(885, 70)->setOffsetX(50)->setOffsetY(30);
         $labelRun = $headerShape->createTextRun($projectLabel);
         $labelRun->getFont()->setBold(true)->setSize(24)->setColor(new Color('FF00A651'))
             ->setName(self::FONT);
         $headerShape->createBreak();
-        $titleRun    = $headerShape->createTextRun($project->getTitle());
+        $titleRun = $headerShape->createTextRun($project->getTitle());
         $titleLength = strlen($project->getTitle());
         // Crude way to make the full name fit
         $fontSize = 18;
@@ -313,7 +290,8 @@ final class Presentation extends AbstractPlugin
 
         $text = str_replace("\r", '', $text);
         $parts = explode("\n", $text);
-        for ($i = 0; $i < count($parts); $i++) {
+        $total = count($parts);
+        for ($i = 0; $i < $total; $i++) {
             $paragraph = ($i === 0) ? $cell->getActiveParagraph() : $cell->createParagraph();
             $run = $paragraph->createTextRun($parts[$i]);
             $run->getFont()->setSize(11)->setName(self::FONT);
@@ -347,9 +325,6 @@ final class Presentation extends AbstractPlugin
         return $tableShapeRecommendations;
     }
 
-    /**
-     * @return Response
-     */
     public function parseResponse(): Response
     {
         $response = new Response();
@@ -390,9 +365,6 @@ final class Presentation extends AbstractPlugin
         return $response;
     }
 
-    /**
-     * @return PhpPresentation
-     */
     public function getPresentation(): PhpPresentation
     {
         return $this->presentation;

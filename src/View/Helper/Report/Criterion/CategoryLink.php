@@ -23,62 +23,60 @@ use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class CategoryLink
+ *
  * @package Evaluation\View\Helper\Report\Criterion
  */
 final class CategoryLink extends AbstractLink
 {
-    /**
-     * @var Category
-     */
-    private $category;
-
     public function __invoke(
         Category $category = null,
-        string   $action = 'view',
-        string   $show = 'name'
+        string $action = 'view',
+        string $show = 'name'
     ): string {
-        $this->category = $category ?? new Category();
-        $this->setAction($action);
-        $this->setShow($show);
+        $this->reset();
 
-        $this->addRouterParam('id', $this->category->getId());
-        $this->setShowOptions([
-            'name' => $this->category->getCategory()
-        ]);
+        $this->extractRouterParams($category, ['id']);
 
-        return $this->createLink();
+        if (null !== $category) {
+            $this->addShowOption('name', $category->getCategory());
+        }
+
+        $this->parseAction($action, $category ?? new Category());
+
+        return $this->createLink($show);
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function parseAction(): void
+    public function parseAction(string $action, Category $category): void
     {
-        switch ($this->getAction()) {
+        $this->action = $action;
+
+        switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/category/new');
-                $this->setText($this->translator->translate("txt-new-evaluation-report-critertion-category"));
+                $this->setRouter('zfcadmin/evaluation/report/criterion/category/new');
+                $this->setText($this->translator->translate('txt-new-evaluation-report-criterion-category'));
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/category/list');
-                $this->setText($this->translator->translate("txt-list-evaluation-report-critertion-categories"));
+                $this->setRouter('zfcadmin/evaluation/report/criterion/category/list');
+                $this->setText($this->translator->translate('txt-list-evaluation-report-criterion-categories'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/category/view');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-view-evaluation-report-critertion-category-%s"),
-                    $this->category->getCategory()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/criterion/category/view');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-view-evaluation-report-criterion-category-%s'),
+                        $category->getCategory()
+                    )
+                );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/category/edit');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-edit-evaluation-report-critertion-category-%s"),
-                    $this->category->getCategory()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/criterion/category/edit');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-edit-evaluation-report-criterion-category-%s'),
+                        $category->getCategory()
+                    )
+                );
                 break;
-            default:
-                throw new \Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
         }
     }
 }

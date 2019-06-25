@@ -19,22 +19,25 @@ namespace Evaluation\Controller;
 
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
-use Project\Entity\Evaluation\Feedback;
+use Evaluation\Entity\Feedback;
+use Project\Controller\Plugin\GetFilter;
 use Project\Entity\Version\Version;
 use Project\Form\FeedbackFilter;
 use Project\Service\FormService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
 use Zend\I18n\Translator\TranslatorInterface;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class FeedbackController
- *
  * @package Project\Controller
+ * @method GetFilter getProjectFilter()
+ * @method FlashMessenger flashMessenger()
  */
-final class FeedbackController extends ProjectAbstractController
+final class FeedbackController extends AbstractActionController
 {
     /**
      * @var ProjectService

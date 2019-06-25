@@ -29,8 +29,8 @@ use Evaluation\Entity\Report\Result;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Options\ModuleOptions;
 use Project\Entity\Rationale;
-use Project\Entity\Report\Review as ReportReviewer;
-use Project\Entity\Version\Review as VersionReviewer;
+use Project\Entity\Report\Reviewer as ReportReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Version;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
@@ -180,10 +180,10 @@ final class PdfExport extends AbstractPlugin
         //@todo Change this so the template is taken from the program
         if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
             $originalTemplate = $this->moduleOptions->getReportTemplate();
-            $project          = $this->evaluationReportService->getProject($this->evaluationReport);
+            $project          = EvaluationReportService::getProject($this->evaluationReport);
 
             $template = $originalTemplate;
-            if (in_array('Penta', $project->parsePrograms())) {
+            if (in_array('Penta', $project->parsePrograms(), true)) {
                 $template = str_replace(
                     'evaluation-report-template',
                     'evaluation-report-template.penta',
@@ -191,7 +191,7 @@ final class PdfExport extends AbstractPlugin
                 );
             }
 
-            if (in_array('EURIPIDES', $project->parsePrograms())) {
+            if (in_array('EURIPIDES', $project->parsePrograms(), true)) {
                 $template = str_replace(
                     'evaluation-report-template',
                     'evaluation-report-template.euripides',
@@ -199,8 +199,8 @@ final class PdfExport extends AbstractPlugin
                 );
             }
 
-            if (in_array('Penta', $project->parsePrograms())
-                && in_array('EURIPIDES', $project->parsePrograms())
+            if (in_array('Penta', $project->parsePrograms(), true)
+                && in_array('EURIPIDES', $project->parsePrograms(), true)
             ) {
                 $template = str_replace(
                     'evaluation-report-template',
@@ -220,7 +220,7 @@ final class PdfExport extends AbstractPlugin
         $pdf->SetAuthor($this->moduleOptions->getReportAuthor());
         $title = sprintf(
             $this->translator->translate('txt-final-evaluation-report-for-%s'),
-            $this->evaluationReportService->parseLabel($evaluationReport)
+            EvaluationReportService::parseLabel($evaluationReport)
         );
         $pdf->setTitle($title);
         $this->fileName = $title . '.pdf';
@@ -238,12 +238,13 @@ final class PdfExport extends AbstractPlugin
 
         // No STG decision in export PO/FPP evaluation
         $hideDetailsFor = [EvaluationReport\Type::TYPE_PO_VERSION, EvaluationReport\Type::TYPE_FPP_VERSION];
-        $showDetails    = (!$this->forDistribution || !in_array($reportType, $hideDetailsFor));
+        $showDetails    = (!$this->forDistribution || !in_array($reportType, $hideDetailsFor, true));
 
         /** @var Result $result */
         foreach ($this->results as $result) {
             /** @var Criterion\Type $type */
             $type     = $result->getCriterion()->getType();
+            /** @var Criterion\Category $category */
             $category = $type->getCategory();
 
             if ($category->getCategory() !== $currentCategory) {

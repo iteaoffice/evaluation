@@ -18,108 +18,97 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper;
 
+use Evaluation\Acl\Assertion\FeedbackAssertion;
 use Evaluation\Entity\Feedback;
-use InvalidArgumentException;
-use Project\Acl\Assertion\Evaluation\Feedback as FeedbackAssertion;
 use Project\Entity\Version\Version;
 use function sprintf;
 use function strtoupper;
 
 /**
  * Class FeedbackLink
+ *
  * @package Evaluation\View\Helper
  */
 final class FeedbackLink extends AbstractLink
 {
-    /**
-     * @var Feedback
-     */
-    private $feedback;
-
-    /**
-     * @var Version
-     */
-    private $version;
-
     public function __invoke(
         Feedback $feedback = null,
-        string   $action = 'view',
-        string   $show = 'text',
-        Version  $version = null
-    ):string {
-        $this->feedback = $feedback ?? new Feedback();
-        $this->setAction($action);
-        $this->setShow($show);
-        $this->version = $version ?? new Version();
+        string $action = 'view',
+        string $show = 'text',
+        Version $version = null
+    ): string {
+        $this->reset();
 
         // Set the non-standard options needed to give an other link value
-        if (!$this->hasAccess($this->feedback, FeedbackAssertion::class, $this->getAction())) {
+        if (!$this->hasAccess($feedback ?? new Feedback(), FeedbackAssertion::class, $action)) {
             return '';
         }
 
-        if (!$this->feedback->isEmpty()) {
-            $this->setShowOptions([
-                'project'  => $this->feedback->getVersion()->getProject(),
-                'status'   => $this->feedback->getStatus()->getStatus(),
-                'feedback' => $this->translator->translate("txt-feedback"),
-            ]);
+        if (null !== $feedback) {
+            $this->addShowOption('project', (string)$feedback->getVersion()->getProject());
+            $this->addShowOption('status', (string)$feedback->getStatus()->getStatus());
+            $this->addShowOption('feedback', $this->translator->translate('txt-feedback'));
         }
 
-        $this->addRouterParam('id', $this->feedback->getId());
-        $this->addRouterParam('entity', 'Evaluation\Feedback');
+        $this->extractRouterParams($feedback, ['id']);
 
-        return $this->createLink();
+        if (null !== $version) {
+            $this->addRouteParam('version', $version->getId());
+        }
+
+        $this->parseAction($action, $feedback ?? new Feedback());
+
+        return $this->createLink($show);
     }
 
-    /**
-     * Extract the relevant parameters based on the action.
-     */
-    public function parseAction(): void
+    public function parseAction(string $action, Feedback $feedback): void
     {
-        switch ($this->getAction()) {
+        $this->action = $action;
+
+        switch ($action) {
             case 'new':
                 $this->setRouter('zfcadmin/project/feedback/new');
-                $this->addRouterParam('version', $this->version->getId());
-                $this->setText(sprintf($this->translator->translate("txt-add-feedback")));
+                $this->setLinkIcon('fa-plus');
+                $this->setText($this->translator->translate('txt-add-feedback'));
                 break;
             case 'edit-admin':
                 $this->setRouter('zfcadmin/project/feedback/edit');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-edit-%s-feedback-of-project-%s"),
-                    strtoupper($this->feedback->getVersion()->getVersionType()->getType()),
-                    $this->feedback->getVersion()->getProject()
-                ));
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),
+                        strtoupper($feedback->getVersion()->getVersionType()->getType()),
+                        $feedback->getVersion()->getProject()
+                    )
+                );
                 break;
             case 'view-admin':
                 $this->setRouter('zfcadmin/project/feedback/view');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-view-%s-feedback-of-project-%s"),
-                    strtoupper($this->feedback->getVersion()->getVersionType()->getType()),
-                    $this->feedback->getVersion()->getProject()
-                ));
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-view-%s-feedback-of-project-%s'),
+                        strtoupper($feedback->getVersion()->getVersionType()->getType()),
+                        $feedback->getVersion()->getProject()
+                    )
+                );
                 break;
             case 'edit':
                 $this->setRouter('community/project/edit/feedback');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-edit-%s-feedback"),
-                    strtoupper($this->feedback->getVersion()->getVersionType()->getType())
-                ));
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-edit-%s-feedback'),
+                        strtoupper($feedback->getVersion()->getVersionType()->getType())
+                    )
+                );
                 break;
             case 'view':
                 $this->setRouter('community/project/feedback');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-give-%s-feedback"),
-                    strtoupper($this->feedback->getVersion()->getVersionType()->getType())
-                ));
-                break;
-            default:
-                throw new InvalidArgumentException(
+                $this->setText(
                     sprintf(
-                        "%s is an incorrect action for %s",
-                        $this->getAction(),
-                        __CLASS__
+                        $this->translator->translate('txt-give-%s-feedback'),
+                        strtoupper($feedback->getVersion()->getVersionType()->getType())
                     )
                 );
+                break;
         }
     }
 }

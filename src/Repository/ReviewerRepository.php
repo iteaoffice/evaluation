@@ -23,10 +23,7 @@ use Evaluation\Entity\Reviewer;
 
 final class ReviewerRepository extends EntityRepository
 {
-    /**
-     * @return QueryBuilder
-     */
-    public function findReviewContactByProjectQueryBuilder()
+    public function findReviewContactByProjectQueryBuilder(): QueryBuilder
     {
         $limitQueryBuilder = $this->_em->createQueryBuilder();
         $limitQueryBuilder->select('c');

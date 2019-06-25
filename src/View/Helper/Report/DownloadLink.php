@@ -7,40 +7,25 @@ namespace Evaluation\View\Helper\Report;
 use Evaluation\View\Helper\AbstractLink;
 
 /**
- * Class ReportDownloadLink
- * @package Evaluation\View\Helper\Evaluation
+ * Class DownloadLink
+ *
+ * @package Evaluation\View\Helper\Report
  */
 final class DownloadLink extends AbstractLink
 {
-    /**
-     * @var int
-     */
-    private $status;
-
     public function __invoke(
-        int    $status = null,
+        int $status = null,
         string $action = 'download-combined',
         string $show = 'button'
     ): string {
-        $this->status = $status;
-        $this->action = $action;
-        $this->show   = $show;
+        $this->reset();
 
-        return $this->createLink();
-    }
-
-    public function parseAction(): void
-    {
-        switch ($this->getAction()) {
-            case 'download-combined':
-                $this->setRouter('community/evaluation/report2/download-combined');
-                if ($this->status !== null) {
-                    $this->addRouterParam('status', $this->status);
-                }
-                $this->setText($this->translator->translate('txt-download-all'));
-                break;
-            default:
-                throw new \Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
+        $this->setRouter('community/evaluation/report/download-combined');
+        if (null !== $status) {
+            $this->addRouteParam('status', $status);
         }
+        $this->setText($this->translator->translate('txt-download-all'));
+
+        return $this->createLink($show);
     }
 }

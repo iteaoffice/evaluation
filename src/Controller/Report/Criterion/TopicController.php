@@ -113,7 +113,7 @@ final class TopicController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/topic/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/topic/list');
             }
 
             if ($form->isValid()) {
@@ -124,7 +124,7 @@ final class TopicController extends AbstractActionController
                     $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
                 );
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/topic/view',
+                    'zfcadmin/evaluation/report/criterion/topic/view',
                     ['id' => $topic->getId()]
                 );
             }
@@ -152,7 +152,7 @@ final class TopicController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/topic/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/topic/list');
             }
 
             if (isset($data['delete'])) {
@@ -160,7 +160,7 @@ final class TopicController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-deleted')
                 );
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/topic/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/topic/list');
             }
 
             if ($form->isValid()) {
@@ -171,7 +171,7 @@ final class TopicController extends AbstractActionController
                     $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
                 );
                 $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/topic/view',
+                    'zfcadmin/evaluation/report/criterion/topic/view',
                     ['id' => $topic->getId()]
                 );
             }

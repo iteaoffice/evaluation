@@ -20,22 +20,22 @@ namespace Evaluation\Controller\Plugin\Report;
 
 use Affiliation\Service\AffiliationService;
 use DateTime;
+use Evaluation\Controller\Plugin\CreateEvaluation;
 use Evaluation\Controller\Plugin\ReportPdf;
+use Evaluation\Entity\Evaluation;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result;
+use Evaluation\Entity\Type as EvaluationType;
 use Evaluation\Options\ModuleOptions;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\EvaluationService;
 use General\Service\CountryService;
 use InvalidArgumentException;
 use Organisation\Entity\Organisation;
-use Project\Controller\Plugin\CreateEvaluation;
 use Project\Entity\Challenge;
-use Project\Entity\Evaluation\Evaluation;
-use Project\Entity\Evaluation\Type as EvaluationType;
 use Project\Entity\Rationale;
-use Project\Entity\Version\Review as VersionReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Type;
 use Project\Entity\Version\Version;
 use Project\Form\MatrixFilter;
@@ -52,6 +52,8 @@ use ZfcTwig\View\TwigRenderer;
 use function array_map;
 use function array_sum;
 use function ceil;
+use function define;
+use function getenv;
 use function implode;
 use function in_array;
 use function number_format;
@@ -60,6 +62,8 @@ use function ob_get_clean;
 use function ob_get_length;
 use function ob_start;
 use function sprintf;
+
+define('ITEAOFFICE_HOST', getenv('ITEAOFFICE_HOST')); // itea, aeneas
 
 /**
  * Class ConsolidatedPdfExport
@@ -202,12 +206,12 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         $pdf = new ReportPdf();
         //Doe some nasty hardcoded stuff for AENEAS
-        $pdf->setTemplate($this->moduleOptions->getEvaluationProjectTemplate());
+        $pdf->setTemplate($this->moduleOptions->getProjectTemplate());
 
         //@todo Change this so the template is taken from the program
         if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
-            $project = $this->evaluationReportService->getProject($this->evaluationReport);
-            $originalTemplate = $this->moduleOptions->getEvaluationProjectTemplate();
+            $project = EvaluationReportService::getProject($this->evaluationReport);
+            $originalTemplate = $this->moduleOptions->getProjectTemplate();
 
             $template = $originalTemplate;
             if (in_array('Penta', $project->parsePrograms(), true)) {
@@ -237,10 +241,10 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $pdf->setFooterMargin(0);
         $pdf->SetDisplayMode('real');
         $pdf->SetAutoPageBreak(true, 10);
-        $pdf->SetAuthor($this->moduleOptions->getEvaluationReportAuthor());
+        $pdf->SetAuthor($this->moduleOptions->getReportAuthor());
         $title = sprintf(
             $this->translator->translate('txt-consolidated-feedback-for-%s'),
-            $this->evaluationReportService->parseLabel($evaluationReport)
+            EvaluationReportService::parseLabel($evaluationReport)
         );
         $pdf->setTitle($title);
         $this->fileName = $title . '.pdf';
@@ -307,7 +311,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
     private function parseHeader(): void
     {
-        $project = $this->evaluationReportService->getProject($this->evaluationReport);
+        $project = EvaluationReportService::getProject($this->evaluationReport);
 
         $this->parseHeading($project->parseCalls(), 20);
 
@@ -415,10 +419,10 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $thirdColumnWidth = $this->forDistribution ? self::$colWidths[3] : self::$colWidths[2];
 
         // Project name + report/version
-        $project = $this->evaluationReportService->getProject($this->evaluationReport);
+        $project = EvaluationReportService::getProject($this->evaluationReport);
         $this->parseCriterionLabel($this->translator->translate('txt-project-name'));
         $this->pdf->Cell(self::$colWidths[2], $lineHeight, $project->parseFullName());
-        $reportOrVersion = $this->evaluationReportService->parseLabel($this->evaluationReport, '%3$s');
+        $reportOrVersion = EvaluationReportService::parseLabel($this->evaluationReport, '%3$s');
         $this->pdf->Cell($thirdColumnWidth, $lineHeight, $reportOrVersion, 0, 1);
 
         // Project title
@@ -800,12 +804,13 @@ final class ConsolidatedPdfExport extends AbstractPlugin
     private function parseFunderFeedbackOverview(): void
     {
         // Project name + report/version
-        $project = $this->evaluationReportService->getProject($this->evaluationReport);
+        $project = EvaluationReportService::getProject($this->evaluationReport);
 
         $countries = $this->countryService->findCountryByProject($project);
         /*
          * Check to see if we have an active version
          */
+        /** @var Type $versionType */
         $versionType = $this->evaluationReport->getProjectVersionReport()->getVersion()->getVersionType();
 
         /** @var EvaluationType $evaluationType */

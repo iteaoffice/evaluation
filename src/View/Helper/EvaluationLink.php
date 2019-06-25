@@ -18,144 +18,86 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper;
 
-use Contact\Entity\Contact;
+use Evaluation\Acl\Assertion\EvaluationAssertion;
 use Evaluation\Entity\Evaluation;
 use Evaluation\Entity\Type;
 use General\Entity\Country;
-use InvalidArgumentException;
-use Project\Acl\Assertion\Evaluation\Evaluation as EvaluationAssertion;
 use Project\Entity\Project;
 
 /**
  * Class EvaluationLink
+ *
  * @package Evaluation\View\Helper
  */
 final class EvaluationLink extends AbstractLink
 {
-    /**
-     * @var Evaluation
-     */
-    private $evaluation;
-
-    /**
-     * @var Project
-     */
-    private $project;
-
-    /**
-     * @var Type
-     */
-    private $type;
-
-    /**
-     * @var Country
-     */
-    private $country;
-
     public function __invoke(
         Evaluation $evaluation = null,
-        Project    $project = null,
-        Type       $evaluationType = null,
-        Country    $country = null,
-        string     $action = 'evaluate-project',
-        string     $show = 'text',
-        array      $classes = []
+        Project $project = null,
+        Type $type = null,
+        Country $country = null,
+        string $action = 'evaluate-project',
+        string $show = 'text'
     ): string {
-        $this->project    = $project ?? new Project();
-        $this->type       = $type ?? new Type();
-        $this->country    = $country ?? new Country();
-        $this->evaluation = $evaluation ?? $this->initEvaluation();
-        $this->setAction($action);
-        $this->setShow($show);
+        $this->reset();
 
-        $this->classes = [];
-        $this->addClasses($classes);
+        if (null === $evaluation) {
+            $evaluation = new Evaluation();
+            $evaluation->setProject($project ?? new Project());
+            $evaluation->setType($type ?? new Type());
+            $evaluation->setCountry($country ?? new Country());
+        }
 
-        $this->addRouterParam('id', $this->evaluation->getId());
-        $this->addRouterParam('project', $this->project->getId());
-        $this->addRouterParam('type', $this->type->getId());
-        $this->addRouterParam('country', $this->country->getId());
+        if ($evaluation->getId()) {
+            $this->addRouteParam('id', $evaluation->getId());
+        }
+        if (null !== $project) {
+            $this->addRouteParam('project', $project->getId());
+        }
+        if (null !== $type) {
+            $this->addRouteParam('type', $type->getId());
+        }
+        if (null !== $country) {
+            $this->addRouteParam('country', $country->getId());
+        }
 
-        if (!$this->hasAccess($this->evaluation, EvaluationAssertion::class, $this->getAction())) {
+
+        if (!$this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
             return '';
         }
 
-        return $this->createLink();
+        return $this->createLink($show);
     }
 
-    /**
-     * @return Evaluation
-     */
-    public function initEvaluation(): Evaluation
+    public function parseAction(string $action, Evaluation $evaluation): void
     {
-        /*
-         * $projectService, $evaluationType, $country cannot be null when we want to create a new evaluation
-         */
-        if ($this->project->isEmpty()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    "Project cannot be null to give evaluation in %s",
-                    __CLASS__
-                )
-            );
-        }
-        if ($this->type->isEmpty()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    "Evaluation type cannot be null to give evaluation in %s",
-                    __CLASS__
-                )
-            );
-        }
-        if ($this->country->isEmpty()) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    "The country cannot be null to give evaluation in %s",
-                    __CLASS__
-                )
-            );
-        }
-        $this->evaluation = new Evaluation();
-        $this->evaluation->setProject($this->project);
-        /** @var Contact $contact */
-        $contact = $this->getAuthorizeService()->getIdentity();
-        $this->evaluation->setContact($contact);
-        $this->evaluation->setType($this->type);
-        $this->evaluation->setCountry($this->country);
+        $this->action = $action;
 
-        return $this->evaluation;
-    }
-
-    /**
-     * Parse the action.
-     */
-    public function parseAction(): void
-    {
-        switch ($this->getAction()) {
+        switch ($action) {
             case 'evaluate-project':
                 //Evaluate and overview are the same actions
             case 'overview-project':
                 /*
                  * The parameters are the same but the router and the text change
                  */
-                if ($this->getAction() === 'overview-project') {
+                if ($action === 'overview-project') {
                     $this->setRouter('community/evaluation/overview-project');
                     $this->setText(
                         sprintf(
-                            $this->translator->translate("txt-overview-%s-evaluation-for-project-%s-in-%s"),
-                            $this->type,
-                            $this->project->parseFullName(),
-                            $this->country
+                            $this->translator->translate('txt-overview-%s-evaluation-for-project-%s-in-%s'),
+                            $evaluation->getType(),
+                            $evaluation->getProject(),
+                            $evaluation->getCountry()
                         )
                     );
                 } else {
                     $this->setRouter('community/evaluation/evaluate-project');
                     $this->setText(
                         sprintf(
-                            $this->translator->translate("txt-give-%s-evaluation-for-project-%s-in-%s"),
-                            $this->type,
-                            $this->project->parseFullName(),
-                            $this->country
+                            $this->translator->translate('txt-give-%s-evaluation-for-project-%s-in-%s'),
+                            $evaluation->getType(),
+                            $evaluation->getProject(),
+                            $evaluation->getCountry()
                         )
                     );
                 }
@@ -164,10 +106,10 @@ final class EvaluationLink extends AbstractLink
                 $this->setRouter('community/evaluation/download-project');
                 $this->setText(
                     sprintf(
-                        $this->translator->translate("txt-download-overview-%s-evaluation-for-project-%s-in-%s"),
-                        $this->type,
-                        $this->project->parseFullName(),
-                        $this->country
+                        $this->translator->translate('txt-download-overview-%s-evaluation-for-project-%s-in-%s'),
+                        $evaluation->getType(),
+                        $evaluation->getProject(),
+                        $evaluation->getCountry()
                     )
                 );
                 break;
@@ -175,10 +117,10 @@ final class EvaluationLink extends AbstractLink
                 $this->setRouter('zfcadmin/project/evaluation/edit');
                 $this->setText(
                     sprintf(
-                        $this->translator->translate("txt-edit-%s-evaluation-for-project-%s-in-%s"),
-                        $this->evaluation->getType(),
-                        $this->evaluation->getProject(),
-                        $this->evaluation->getCountry()
+                        $this->translator->translate('txt-edit-%s-evaluation-for-project-%s-in-%s'),
+                        $evaluation->getType(),
+                        $evaluation->getProject(),
+                        $evaluation->getCountry()
                     )
                 );
                 break;
@@ -186,19 +128,11 @@ final class EvaluationLink extends AbstractLink
                 $this->setRouter('zfcadmin/project/evaluation/new');
                 $this->setText(
                     sprintf(
-                        $this->translator->translate("txt-add-evaluation-for-project-%s"),
-                        $this->project->parseFullName()
+                        $this->translator->translate('txt-add-evaluation-for-project-%s'),
+                        $evaluation->getProject()
                     )
                 );
                 break;
-            default:
-                throw new InvalidArgumentException(
-                    sprintf(
-                        "%s is an incorrect action for %s",
-                        $this->getAction(),
-                        __CLASS__
-                    )
-                );
         }
     }
 }

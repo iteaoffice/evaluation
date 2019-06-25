@@ -23,64 +23,60 @@ use Evaluation\View\Helper\AbstractLink;
 
 /**
  * Class WindowLink
+ *
  * @package Evaluation\View\Helper\Report
  */
 final class WindowLink extends AbstractLink
 {
-    /**
-     * @var Window
-     */
-    private $window;
-
     public function __invoke(
         Window $window = null,
         string $action = 'view',
         string $show = 'name'
     ): string {
-        $this->window = $window ?? new Window();
-        $this->setAction($action);
-        $this->setShow($show);
+        $this->reset();
 
-        if ($this->window instanceof Window) {
-            $this->addRouterParam('id', $this->window->getId());
-            $this->setShowOptions([
-                'name' => $this->window->getTitle()
-            ]);
+        $this->extractRouterParams($window, ['id']);
+
+        if (null !== $window) {
+            $this->addShowOption('name', $window->getTitle());
         }
 
-        return $this->createLink();
+        $this->parseAction($action, $window ?? new Window());
+
+        return $this->createLink($show);
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function parseAction(): void
+    public function parseAction(string $action, Window $window): void
     {
-        switch ($this->getAction()) {
+        $this->action = $action;
+
+        switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report2/window/new');
-                $this->setText($this->translator->translate("txt-new-evaluation-report-window"));
+                $this->setRouter('zfcadmin/evaluation/report/window/new');
+                $this->setText($this->translator->translate('txt-new-evaluation-report-window'));
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report2/window/list');
-                $this->setText($this->translator->translate("txt-list-evaluation-report-window-list"));
+                $this->setRouter('zfcadmin/evaluation/report/window/list');
+                $this->setText($this->translator->translate('txt-list-evaluation-report-window-list'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report2/window/view');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-view-evaluation-report-window-%s"),
-                    $this->window->getTitle()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/window/view');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-view-evaluation-report-window-%s'),
+                        $window->getTitle()
+                    )
+                );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report2/window/edit');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-edit-evaluation-report-window-%s"),
-                    $this->window->getTitle()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/window/edit');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-edit-evaluation-report-window-%s'),
+                        $window->getTitle()
+                    )
+                );
                 break;
-            default:
-                throw new \Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
         }
     }
 }

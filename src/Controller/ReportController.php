@@ -29,8 +29,11 @@ use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Form\Report as EvaluationReportForm;
 use Evaluation\Form\ReportUpload;
 use Evaluation\Service\EvaluationReportService;
+use Project\Entity\Report\Report;
+use Project\Entity\Report\Reviewer as ReportReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
+use Project\Entity\Version\Version;
 use Project\Service\ProjectService;
-use Project\Entity\Version\Review as VersionReview;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -42,12 +45,10 @@ use function array_merge;
 use function sprintf;
 
 /**
- * Project evaluation report controller.
- *
  * @method Identity|Contact identity()
  * @method FlashMessenger flashMessenger()
- * @method ExcelExport evaluationReport2ExcelExport(EvaluationReport $evaluationReport, bool $isFinal = false, bool $forDistribution = false)
- * @method ExcelImport evaluationReport2ExcelImport(string $file)
+ * @method ExcelExport evaluationReportExcelExport(EvaluationReport $evaluationReport, bool $isFinal = false, bool $forDistribution = false)
+ * @method ExcelImport evaluationReportExcelImport(string $file)
  * @method ExcelDownload evaluationReport2ExcelDownload(Contact $contact, int $status)
  *
  */
@@ -72,21 +73,21 @@ final class ReportController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ProjectService          $projectService,
-        EntityManager           $entityManager,
-        TranslatorInterface     $translator
+        ProjectService $projectService,
+        EntityManager $entityManager,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->projectService          = $projectService;
-        $this->entityManager           = $entityManager;
-        $this->translator              = $translator;
+        $this->projectService = $projectService;
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
     }
 
     public function listAction()
     {
-        $status     = EvaluationReportService::STATUS_NEW;
+        $status = EvaluationReportService::STATUS_NEW;
         $reportsNew = $this->evaluationReportService->findReviewReportsByContact($this->identity(), $status);
-        $hasNew     = false;
+        $hasNew = false;
         foreach ($reportsNew as $container) {
             if (!empty($container['reviews'])) {
                 $hasNew = true;
@@ -114,9 +115,9 @@ final class ReportController extends AbstractActionController
 
         return new ViewModel(
             [
-                'reportsNew'              => $reportsNew,
-                'hasNew'                  => $hasNew,
-                'status'                  => $status,
+                'reportsNew' => $reportsNew,
+                'hasNew'     => $hasNew,
+                'status'     => $status,
                 //'reportsInProgress'       => $reportsInProgress,
                 //'hasInProgress'           => $hasInProgress,
                 //'reportsFinal'            => $reportsFinal,
@@ -139,19 +140,26 @@ final class ReportController extends AbstractActionController
         }
 
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
+        /** @var EvaluationReport\ProjectReport $projectReportReport */
         $projectReportReport = $evaluationReport->getProjectReportReport();
         if ($projectVersionReport !== null) {
-            $type      = EvaluationReportType::TYPE_GENERAL_VERSION;
-            $reviewer  = $projectVersionReport->getReviewer();
-            $reviewers = $reviewer->getVersion()->getVersionReview();
-            $project   = $reviewer->getVersion()->getProject();
-            $label     = $reviewer->getVersion()->getVersionType()->getDescription();
+            $type = EvaluationReportType::TYPE_GENERAL_VERSION;
+            /** @var VersionReviewer $reviewer */
+            $reviewer = $projectVersionReport->getReviewer();
+            /** @var Version $version */
+            $version = $reviewer->getVersion();
+            $reviewers = $version->getReviewers();
+            $project = $version->getProject();
+            $label = $version->getVersionType()->getDescription();
         } elseif ($projectReportReport !== null) {
-            $type      = EvaluationReportType::TYPE_GENERAL_REPORT;
-            $reviewer  = $projectReportReport->getReviewer();
-            $reviewers = $reviewer->getProjectReport()->getReview();
-            $project   = $reviewer->getProjectReport()->getProject();
-            $label     = $reviewer->getProjectReport()->parseName();
+            $type = EvaluationReportType::TYPE_GENERAL_REPORT;
+            /** @var ReportReviewer $reviewer */
+            $reviewer = $projectReportReport->getReviewer();
+            /** @var Report $report */
+            $report = $reviewer->getProjectReport();
+            $reviewers = $report->getReviewers();
+            $project = $report->getProject();
+            $label = $report->parseName();
         } else {
             return $this->notFoundAction();
         }
@@ -166,29 +174,31 @@ final class ReportController extends AbstractActionController
 
         $uploadForm = new ReportUpload($uploadFormAction);
 
-        return new ViewModel([
-            'label'          => $label,
-            'projectService' => $this->projectService,
-            'project'        => $project,
-            'type'           => $type,
-            'review'         => $reviewer,
-            'reviewers'      => $reviewers,
-            'report'         => $evaluationReport,
-            'results'        => $this->evaluationReportService->getSortedResults($evaluationReport),
-            'scoreValues'    => Result::getScoreValues(),
-            'complete'       => $percentageComplete === (float)100,
-            'uploadForm'     => $uploadForm
-        ]);
+        return new ViewModel(
+            [
+                'label'          => $label,
+                'projectService' => $this->projectService,
+                'project'        => $project,
+                'type'           => $type,
+                'review'         => $reviewer,
+                'reviewers'      => $reviewers,
+                'report'         => $evaluationReport,
+                'results'        => $this->evaluationReportService->getSortedResults($evaluationReport),
+                'scoreValues'    => Result::getScoreValues(),
+                'complete'       => $percentageComplete === (float)100,
+                'uploadForm'     => $uploadForm
+            ]
+        );
     }
 
     public function newAction()
     {
         /** @var Request $request */
-        $request         = $this->getRequest();
-        $offlineMode     = ($request->getQuery('mode') === 'offline');
-        $versionReviewId = $this->params()->fromRoute('versionReview');
-        $reportReviewId  = $this->params()->fromRoute('reportReview');
-        $reviewId        = ($versionReviewId === null) ? $reportReviewId : $versionReviewId;
+        $request = $this->getRequest();
+        $offlineMode = ($request->getQuery('mode') === 'offline');
+        $versionReviewId = $this->params()->fromRoute('versionReviewer');
+        $reportReviewId = $this->params()->fromRoute('reportReviewer');
+        $reviewId = $versionReviewId ?? $reportReviewId;
 
         if (($versionReviewId === null) && ($reportReviewId === null)) {
             return $this->notFoundAction();
@@ -196,9 +206,9 @@ final class ReportController extends AbstractActionController
 
         // Check for non-archived evaluation report versions and use the most recent when there are multiple
         if ($versionReviewId !== null) {
-            /** @var VersionReview $versionReview */
-            $versionReview = $this->projectService->find(VersionReview::class, (int) $reviewId);
-            if ($versionReview instanceof VersionReview) {
+            /** @var VersionReviewer $versionReview */
+            $versionReview = $this->projectService->find(VersionReviewer::class, (int)$reviewId);
+            if ($versionReview instanceof VersionReviewer) {
                 $reportVersion = $this->evaluationReportService
                     ->findReportVersionForProjectVersion($versionReview->getVersion());
             } else {
@@ -212,17 +222,17 @@ final class ReportController extends AbstractActionController
             $this->flashMessenger()->addErrorMessage(
                 $this->translator->translate('txt-no-active-evaluation-report-template-found')
             );
-            return $this->redirect()->toRoute('community/evaluation/report2/list');
+            return $this->redirect()->toRoute('community/evaluation/report/list');
         }
 
         // Create an evaluation report so that new and edit can be handled by the same form
         $evaluationReport = $this->evaluationReportService->prepareEvaluationReport($reportVersion, (int)$reviewId);
-        $label            = $this->evaluationReportService->parseLabel($evaluationReport);
-        $reviewers        = $this->evaluationReportService->getReviewers($evaluationReport);
-        $project          = $this->evaluationReportService->getProject($evaluationReport);
-        $reportReview     = ($evaluationReport->getProjectReportReport() !== null)
+        $label = EvaluationReportService::parseLabel($evaluationReport);
+        $reviewers = $this->evaluationReportService->getReviewers($evaluationReport);
+        $project = EvaluationReportService::getProject($evaluationReport);
+        $reportReview = ($evaluationReport->getProjectReportReport() !== null)
             ? $evaluationReport->getProjectReportReport()->getReviewer() : null;
-        $versionReview    = ($evaluationReport->getProjectVersionReport() !== null)
+        $versionReview = ($evaluationReport->getProjectVersionReport() !== null)
             ? $evaluationReport->getProjectVersionReport()->getReviewer() : null;
 
         // Pre-fill FPP form with PO data
@@ -233,8 +243,8 @@ final class ReportController extends AbstractActionController
 
         $uploadFormAction = $this->url()->fromRoute(
             $this->getEvent()->getRouteMatch()->getMatchedRouteName(),
-            (isset($reportReview) ? ['reportReview' => $reportReview->getId()]
-                : ['versionReview' => $versionReview->getId()]),
+            (isset($reportReview) ? ['reportReviewer' => $reportReview->getId()]
+                : ['versionReviewer' => $versionReview->getId()]),
             ['query' => ['mode' => 'offline'], 'fragment' => 'offline']
         );
 
@@ -248,7 +258,7 @@ final class ReportController extends AbstractActionController
                 $excel = $uploadForm->get('excel')->getValue();
                 if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
                     $success = false;
-                    $importHelper = $this->evaluationReport2ExcelImport($excel['tmp_name']);
+                    $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
                     if (!$importHelper->hasParseErrors()) {
                         $success = $importHelper->import($evaluationReport);
                     }
@@ -270,7 +280,7 @@ final class ReportController extends AbstractActionController
                     }
 
                     return $this->redirect()->toRoute(
-                        'community/evaluation/report2/view',
+                        'community/evaluation/report/view',
                         ['id' => $evaluationReport->getId()],
                         ['fragment' => 'report']
                     );
@@ -282,11 +292,11 @@ final class ReportController extends AbstractActionController
                         )
                     );
 
-                    return $this->redirect()->toRoute('community/evaluation/report2/list');
+                    return $this->redirect()->toRoute('community/evaluation/report/list');
                 }
             } // Download excel
             else {
-                return $this->evaluationReport2ExcelExport($evaluationReport)->parseResponse();
+                return $this->evaluationReportExcelExport($evaluationReport)->parseResponse();
             }
         }
 
@@ -296,7 +306,7 @@ final class ReportController extends AbstractActionController
             $data = $request->getPost()->toArray();
 
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('community/evaluation/report2/list');
+                return $this->redirect()->toRoute('community/evaluation/report/list');
             }
 
             $form->setData($data);
@@ -313,23 +323,25 @@ final class ReportController extends AbstractActionController
                 );
 
                 return $this->redirect()->toRoute(
-                    'community/evaluation/report2/view',
+                    'community/evaluation/report/view',
                     ['id' => $evaluationReport->getId()],
                     ['fragment' => 'report']
                 );
             }
         }
 
-        return new ViewModel([
-            'projectService' => $this->projectService,
-            'review'         => $reportReview ?? $versionReview,
-            //'type'           => $type,
-            'project'        => $project,
-            'reviewers'      => $reviewers,
-            'form'           => $form,
-            'uploadForm'     => $uploadForm,
-            'report'         => $evaluationReport,
-        ]);
+        return new ViewModel(
+            [
+                'projectService' => $this->projectService,
+                'review'         => $reportReview ?? $versionReview,
+                //'type'           => $type,
+                'project'        => $project,
+                'reviewers'      => $reviewers,
+                'form'           => $form,
+                'uploadForm'     => $uploadForm,
+                'report'         => $evaluationReport,
+            ]
+        );
     }
 
     public function editAction()
@@ -355,23 +367,30 @@ final class ReportController extends AbstractActionController
                 $this->translator->translate('txt-evaluation-report-is-final-and-cant-be-edited-any-more')
             );
 
-            return $this->redirect()->toRoute('community/evaluation/report2/view', ['id' => $evaluationReport->getId()]);
+            return $this->redirect()->toRoute('community/evaluation/report/view', ['id' => $evaluationReport->getId()]);
         }
 
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
+        /** @var EvaluationReport\ProjectReport $projectReportReport */
         $projectReportReport = $evaluationReport->getProjectReportReport();
         if ($projectVersionReport !== null) {
-            $type      = EvaluationReportType::TYPE_GENERAL_VERSION;
-            $reviewer  = $projectVersionReport->getReviewer();
-            $reviewers = $reviewer->getVersion()->getVersionReview();
-            $project   = $reviewer->getVersion()->getProject();
-            $label     = $reviewer->getVersion()->getVersionType()->getDescription();
+            $type = EvaluationReportType::TYPE_GENERAL_VERSION;
+            /** @var VersionReviewer $reviewer */
+            $reviewer = $projectVersionReport->getReviewer();
+            /** @var Version $version */
+            $version = $reviewer->getVersion();
+            $reviewers = $version->getReviewers();
+            $project = $version->getProject();
+            $label = $version->getVersionType()->getDescription();
         } elseif ($projectReportReport !== null) {
-            $type      = EvaluationReportType::TYPE_GENERAL_REPORT;
-            $reviewer  = $projectReportReport->getReviewer();
-            $reviewers = $reviewer->getProjectReport()->getReview();
-            $project   = $reviewer->getProjectReport()->getProject();
-            $label     = $reviewer->getProjectReport()->parseName();
+            $type = EvaluationReportType::TYPE_GENERAL_REPORT;
+            /** @var ReportReviewer $reviewer */
+            $reviewer = $projectReportReport->getReviewer();
+            /** @var Report $report */
+            $report = $reviewer->getProjectReport();
+            $reviewers = $report->getReviewers();
+            $project = $report->getProject();
+            $label = $report->parseName();
         } else {
             return $this->notFoundAction();
         }
@@ -393,7 +412,7 @@ final class ReportController extends AbstractActionController
                 $excel = $uploadForm->get('excel')->getValue();
                 if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
                     $success = false;
-                    $importHelper = $this->evaluationReport2ExcelImport($excel['tmp_name']);
+                    $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
                     if (!$importHelper->hasParseErrors()) {
                         // Prevent duplicate entries by clearing old results when an outdated Excel is used
                         if ($importHelper->excelIsOutdated($evaluationReport)) {
@@ -420,7 +439,7 @@ final class ReportController extends AbstractActionController
                     }
 
                     return $this->redirect()->toRoute(
-                        'community/evaluation/report2/view',
+                        'community/evaluation/report/view',
                         ['id' => $evaluationReport->getId()],
                         ['fragment' => 'report']
                     );
@@ -433,14 +452,14 @@ final class ReportController extends AbstractActionController
                     );
 
                     return $this->redirect()->toRoute(
-                        'community/evaluation/report2/update',
+                        'community/evaluation/report/update',
                         ['id' => $evaluationReport->getId()],
                         ['fragment' => 'offline']
                     );
                 }
             } // Download excel
             else {
-                return $this->evaluationReport2ExcelExport($evaluationReport)->parseResponse();
+                return $this->evaluationReportExcelExport($evaluationReport)->parseResponse();
             }
         }
 
@@ -451,7 +470,7 @@ final class ReportController extends AbstractActionController
 
             if (isset($data['cancel'])) {
                 return $this->redirect()->toRoute(
-                    'community/evaluation/report2/view',
+                    'community/evaluation/report/view',
                     ['id' => $evaluationReport->getId()]
                 );
             }
@@ -471,24 +490,26 @@ final class ReportController extends AbstractActionController
                 );
 
                 return $this->redirect()->toRoute(
-                    'community/evaluation/report2/view',
+                    'community/evaluation/report/view',
                     ['id' => $report->getId()],
                     ['fragment' => 'report']
                 );
             }
         }
 
-        return new ViewModel([
-            'projectService' => $this->projectService,
-            'project'        => $project,
-            'type'           => $type,
-            'review'         => $reviewer,
-            'reviewers'      => $reviewers,
-            'form'           => $form,
-            'uploadForm'     => $uploadForm,
-            'label'          => $label,
-            'report'         => $evaluationReport,
-        ]);
+        return new ViewModel(
+            [
+                'projectService' => $this->projectService,
+                'project'        => $project,
+                'type'           => $type,
+                'review'         => $reviewer,
+                'reviewers'      => $reviewers,
+                'form'           => $form,
+                'uploadForm'     => $uploadForm,
+                'label'          => $label,
+                'report'         => $evaluationReport,
+            ]
+        );
     }
 
     public function finaliseAction()
@@ -504,7 +525,7 @@ final class ReportController extends AbstractActionController
         }
 
         $percentageComplete = $this->evaluationReportService->parseCompletedPercentage($evaluationReport);
-        $label = $this->evaluationReportService->parseLabel($evaluationReport);
+        $label = EvaluationReportService::parseLabel($evaluationReport);
 
         if ($percentageComplete === (float)100) {
             $evaluationReport->setFinal(true);

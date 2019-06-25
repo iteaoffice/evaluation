@@ -93,7 +93,7 @@ final class VersionController extends AbstractActionController
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $reportVersion->getId()]
                 );
             }
@@ -106,7 +106,7 @@ final class VersionController extends AbstractActionController
                     $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-saved')
                 );
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $reportVersion->getId()]
                 );
             }
@@ -142,7 +142,7 @@ final class VersionController extends AbstractActionController
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $criterionVersion->getReportVersion()->getId()]
                 );
             }
@@ -153,7 +153,7 @@ final class VersionController extends AbstractActionController
                     $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-deleted')
                 );
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $criterionVersion->getReportVersion()->getId()]
                 );
             }
@@ -166,7 +166,7 @@ final class VersionController extends AbstractActionController
                     $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-saved')
                 );
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $criterionVersion->getReportVersion()->getId()]
                 );
             }

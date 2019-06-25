@@ -15,6 +15,7 @@ namespace EvaluationTest;
 use Evaluation\Module;
 use Testing\Util\AbstractServiceTest;
 use Zend\Mvc\Application;
+use Zend\Mvc\Controller\PluginManager;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\View\HelperPluginManager;
 use function is_string;
@@ -61,6 +62,9 @@ class ModuleTest extends AbstractServiceTest
                 }
                 if ($dependency === 'ViewHelperManager') {
                     $dependency = HelperPluginManager::class;
+                }
+                if ($dependency === 'ControllerPluginManager') {
+                    $dependency = PluginManager::class;
                 }
 
                 if (is_string($dependency)) {

@@ -22,6 +22,7 @@ use Contact\Service\SelectionContactService;
 use Doctrine\ORM\EntityManager;
 use General\Service\CountryService;
 use Program\Service\CallService;
+use Project\Options\ModuleOptions;
 use Project\Search\Service\ProjectSearchService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
@@ -41,13 +42,6 @@ return [
         ],
         Controller\ReportManagerController::class             => [
             Service\EvaluationReportService::class,
-            EntityManager::class,
-            TranslatorInterface::class
-        ],
-        Controller\ReviewManagerController::class             => [
-            Service\ReviewService::class,
-            ProjectService::class,
-            Service\FormService::class,
             EntityManager::class,
             TranslatorInterface::class
         ],
@@ -87,6 +81,17 @@ return [
             Service\FormService::class,
             TranslatorInterface::class
         ],
+        Controller\ReviewerManagerController::class           => [
+            Service\ReviewerService::class,
+            ProjectService::class,
+            Service\FormService::class,
+            EntityManager::class,
+            TranslatorInterface::class
+        ],
+        Controller\Reviewer\ContactManagerController::class   => [
+            Service\ReviewerService::class,
+            Service\FormService::class
+        ],
 
         // Controller plugins
         Controller\Plugin\RosterGenerator::class              => [
@@ -124,11 +129,18 @@ return [
             TranslatorInterface::class
         ],
         Controller\Plugin\Report\Presentation::class          => [
-            Service\EvaluationReportService::class,
-            ProjectService::class,
-            VersionService::class,
             Options\ModuleOptions::class,
             TranslatorInterface::class
+        ],
+        Controller\Plugin\RenderProjectEvaluation::class             => [
+            ModuleOptions::class,
+            TwigRenderer::class,
+            Service\EvaluationService::class
+        ],
+
+        //Input filter
+        InputFilter\Report\Criterion\CategoryFilter::class => [
+            EntityManager::class
         ],
 
         // Services
@@ -143,7 +155,7 @@ return [
             ServiceManager::class,
             EntityManager::class
         ],
-        Service\ReviewService::class                          => [
+        Service\ReviewerService::class                        => [
             EntityManager::class,
             AffiliationService::class
         ],
@@ -151,7 +163,7 @@ return [
             CallService::class,
             ProjectService::class,
             ProjectSearchService::class,
-            Service\ReviewService::class,
+            Service\ReviewerService::class,
             EntityManager::class,
         ],
 

@@ -10,6 +10,7 @@ use Zend\View\Helper\AbstractHelper;
 
 /**
  * Class Score
+ *
  * @package Evaluation\View\Helper\Report
  */
 final class Score extends AbstractHelper

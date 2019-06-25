@@ -24,15 +24,13 @@ use Evaluation\Entity\Reviewer;
 use Zend\Form\Annotation;
 
 /**
- * Project reviewer type.
- *
  * @ORM\Table(name="project_review_type")
  * @ORM\Entity
  */
 class Type extends AbstractEntity
 {
-    public const TYPE_PREFERRED         = 1;
-    public const TYPE_IGNORED           = 2;
+    public const TYPE_PREFERRED = 1;
+    public const TYPE_IGNORED = 2;
     public const TYPE_FUTURE_EVALUATION = 3;
 
     /**
@@ -63,9 +61,6 @@ class Type extends AbstractEntity
      */
     private $reviewers;
 
-    /**
-     * Class constructor.
-     */
     public function __construct()
     {
         $this->reviewers = new Collections\ArrayCollection();
@@ -73,7 +68,7 @@ class Type extends AbstractEntity
 
     public function __toString(): string
     {
-        return (string) $this->type;
+        return (string)$this->type;
     }
 
     public function getId(): ?int

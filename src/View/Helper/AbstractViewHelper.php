@@ -1,128 +1,90 @@
 <?php
 /**
- * ITEA Office all rights reserved
+ * Jield BV All rights reserved
  *
- * PHP Version 7
- *
- * @category    Project
- *
- * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
- * @license     https://itea3.org/license.txt proprietary
- *
- * @link        http://github.com/iteaoffice/project for the canonical source repository
+ * @category    Safety Form
+ * @package     Substrate
+ * @subpackage  Entity
+ * @author      Dr. ir. Johan van der Heide <info@jield.nl>
+ * @copyright   Copyright (c) 2004-2017 Jield BV (https://jield.nl)
+ * @version     5.0
  */
 
 declare(strict_types=1);
 
 namespace Evaluation\View\Helper;
 
-use Interop\Container\ContainerInterface;
+use Application\Service\AssertionService;
+use Zend\Http\Request;
 use Zend\I18n\Translator\TranslatorInterface;
+use Zend\Mvc\Application;
 use Zend\Router\Http\RouteMatch;
 use Zend\View\Helper\AbstractHelper;
+use Zend\View\Helper\Url;
 use Zend\View\HelperPluginManager;
 use ZfcTwig\View\TwigRenderer;
 
 /**
  * Class AbstractViewHelper
- * @package Evaluation\View\Helper
+ *
+ * @package Calender\View\Helper
  */
 abstract class AbstractViewHelper extends AbstractHelper
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $serviceManager;
     /**
      * @var HelperPluginManager
      */
     protected $helperPluginManager;
     /**
-     * @var RouteMatch
+     * @var AssertionService
      */
-    protected $routeMatch = null;
+    protected $assertionService;
+    /**
+     * @var TwigRenderer
+     */
+    protected $renderer;
+    /**
+     * @var RouteMatch|null
+     */
+    protected $routeMatch;
+    /**
+     * @var Request
+     */
+    protected $request;
     /**
      * @var TranslatorInterface
      */
     protected $translator;
-
     /**
-     * RouteInterface match returned by the router.
-     * Use a test on is_null to have the possibility to overrule the serviceLocator lookup for unit tets reasons.
-     *
-     * @return RouteMatch.
+     * @var array
      */
-    public function getRouteMatch(): RouteMatch
-    {
-        if (null === $this->routeMatch) {
-            $this->routeMatch = $this->getServiceManager()->get('application')->getMvcEvent()->getRouteMatch();
-        }
+    private $config;
 
-        return $this->routeMatch;
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    public function getServiceManager(): ContainerInterface
-    {
-        return $this->serviceManager;
-    }
-
-    /**
-     * @param ContainerInterface $serviceManager
-     *
-     * @return AbstractViewHelper
-     */
-    public function setServiceManager($serviceManager): AbstractViewHelper
-    {
-        $this->serviceManager = $serviceManager;
-
-        return $this;
-    }
-
-    /**
-     * @return TwigRenderer
-     */
-    public function getRenderer(): TwigRenderer
-    {
-        return $this->getServiceManager()->get('ZfcTwigRenderer');
-    }
-
-    /**
-     * @return HelperPluginManager
-     */
-    public function getHelperPluginManager()
-    {
-        return $this->helperPluginManager;
-    }
-
-    /**
-     * @param HelperPluginManager $helperPluginManager
-     *
-     * @return AbstractViewHelper
-     */
-    public function setHelperPluginManager($helperPluginManager): AbstractViewHelper
-    {
+    public function __construct(
+        Application $application,
+        HelperPluginManager $helperPluginManager,
+        AssertionService $assertionService,
+        TwigRenderer $renderer,
+        TranslatorInterface $translator
+    ) {
         $this->helperPluginManager = $helperPluginManager;
-
-        return $this;
-    }
-
-    /**
-     * @return TranslatorInterface
-     */
-    public function getTranslator()
-    {
-        return $this->translator;
-    }
-
-    /**
-     * @param TranslatorInterface $translator
-     */
-    public function setTranslator(TranslatorInterface $translator): void
-    {
+        $this->assertionService = $assertionService;
+        $this->renderer = $renderer;
         $this->translator = $translator;
+
+        $this->routeMatch = $application->getMvcEvent()->getRouteMatch();
+        $this->request = $application->getMvcEvent()->getRequest();
+        $this->config = $application->getServiceManager()->get('config');
+    }
+
+    public function getUrl(): Url
+    {
+        return $this->helperPluginManager->get('url');
+    }
+
+    public function getServerUrl(): string
+    {
+        //Grab the ServerURL from the config to avoid problems with CLI code
+        return $this->config['deeplink']['serverUrl'];
     }
 }

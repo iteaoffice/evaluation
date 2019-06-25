@@ -23,7 +23,7 @@ use Contact\Entity\Contact;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Evaluation\Entity\Report as EvaluationReport;
-use Project\Entity\Version\Review as VersionReview;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Evaluation\Service\EvaluationReportService;
 use Zend\Http\Headers;
 use Zend\Http\Response;
@@ -82,7 +82,7 @@ final class ExcelDownload extends AbstractPlugin
             foreach ($window['reviews'] as $content) {
                 $report = $content;
                 if (!($content instanceof EvaluationReport)) {
-                    if ($content instanceof VersionReview) {
+                    if ($content instanceof VersionReviewer) {
                         $reportVersion = $this->evaluationReportService->findReportVersionForProjectVersion(
                             $content->getVersion()
                         );

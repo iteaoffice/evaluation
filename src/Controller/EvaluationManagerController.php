@@ -21,18 +21,17 @@ use Contact\Entity\Contact;
 use Doctrine\ORM\EntityManager;
 use Evaluation\Entity\Evaluation;
 use Evaluation\Entity\Type;
+use Evaluation\Service\EvaluationService;
 use Program\Entity\Call\Call;
 use Program\Service\CallService;
-use Project\Form;
-use Evaluation\Service\EvaluationService;
 use Project\Entity\Version\Type as VersionType;
+use Project\Form;
 use Project\Service\ProjectService;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 /**
- * Class EvaluationManagerController
  * @package Evaluation\Controller
  * @method array createEvaluation(array $projects, Type $evaluationType, int $display, int $source)
  * @method Contact identity()
@@ -57,30 +56,30 @@ final class EvaluationManagerController extends AbstractActionController
     private $entityManager;
 
     public function __construct(
-        ProjectService    $projectService,
+        ProjectService $projectService,
         EvaluationService $evaluationService,
-        CallService       $callService,
-        EntityManager     $entityManager
+        CallService $callService,
+        EntityManager $entityManager
     ) {
-        $this->projectService    = $projectService;
+        $this->projectService = $projectService;
         $this->evaluationService = $evaluationService;
-        $this->callService       = $callService;
-        $this->entityManager     = $entityManager;
+        $this->callService = $callService;
+        $this->entityManager = $entityManager;
     }
 
     public function matrixAction()
     {
         /** @var Request $request */
         $request = $this->getRequest();
-        $display = (int) $this->params('display', Evaluation::DISPLAY_PARTNERS);
+        $display = (int)$this->params('display', Evaluation::DISPLAY_PARTNERS);
 
         $callId = (int)$this->getEvent()->getRouteMatch()
             ->getParam('call', $this->callService->findFirstAndLastCall()->lastCall->getId());
 
-        $source          = (int) $this->params('source', Form\MatrixFilter::SOURCE_VERSION);
-        $typeId          = (int)$this->params('type', Type::TYPE_FUNDING_STATUS);
+        $source = (int)$this->params('source', Form\MatrixFilter::SOURCE_VERSION);
+        $typeId = (int)$this->params('type', Type::TYPE_FUNDING_STATUS);
         $evaluationTypes = $this->projectService->findAll(Type::class);
-        $versionTypes    = $this->projectService->findAll(VersionType::class);
+        $versionTypes = $this->projectService->findAll(VersionType::class);
 
         /*
          * The form can be used to overrule some parameters. We therefore need to check if the form is set
@@ -103,10 +102,12 @@ final class EvaluationManagerController extends AbstractActionController
             );
         }
 
-        $form->setData([
-            'call'   => $callId,
-            'source' => $source,
-        ]);
+        $form->setData(
+            [
+                'call'   => $callId,
+                'source' => $source,
+            ]
+        );
 
         /** @var Call $call */
         $call = $this->callService->findCallById((int)$callId);

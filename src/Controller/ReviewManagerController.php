@@ -8,14 +8,15 @@ use Calendar\Entity\ContactRole;
 use Contact\Form\Element\Contact as ContactFormElement;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Evaluation\Controller\Plugin\RosterGenerator;
+use Evaluation\Entity\Reviewer;
+use Evaluation\Entity\Reviewer\Contact;
+use Evaluation\Entity\Reviewer\Type as ReviewerType;
 use Evaluation\Form\ReviewRoster;
+use Evaluation\Repository\Reviewer\ContactRepository as ContactRepository;
 use Evaluation\Service\FormService;
-use Evaluation\Service\ReviewService;
-use Project\Controller\Plugin\Evaluation\RosterGenerator;
-use Project\Entity\Review\Contact;
-use Project\Entity\Review\Review;
-use Project\Entity\Review\Type as ReviewType;
-use Project\Repository\Review\Contact as ContactRepository;
+use Evaluation\Service\ReviewerService;
+use Project\Entity\Project;
 use Project\Service\ProjectService;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -29,6 +30,7 @@ use function unlink;
 
 /**
  * Class ReviewManagerController
+ *
  * @package Evaluation\Controller
  * @method FlashMessenger flashMessenger()
  * @method RosterGenerator rosterGenerator(string $type, string $configFile, int $reviewersPerProject, bool $includeSpareReviewers = false, ?int $forceProjectsPerRound = null)
@@ -36,9 +38,9 @@ use function unlink;
 final class ReviewManagerController extends AbstractActionController
 {
     /**
-     * @var ReviewService
+     * @var ReviewerService
      */
-    private $reviewService;
+    private $reviewerService;
     /**
      * @var ProjectService
      */
@@ -57,29 +59,29 @@ final class ReviewManagerController extends AbstractActionController
     private $translator;
 
     public function __construct(
-        ReviewService       $reviewService,
-        ProjectService      $projectService,
-        FormService         $formService,
-        EntityManager       $entityManager,
+        ReviewerService $reviewerService,
+        ProjectService $projectService,
+        FormService $formService,
+        EntityManager $entityManager,
         TranslatorInterface $translator
     ) {
-        $this->reviewService  = $reviewService;
+        $this->reviewerService = $reviewerService;
         $this->projectService = $projectService;
-        $this->formService    = $formService;
-        $this->entityManager  = $entityManager;
-        $this->translator     = $translator;
+        $this->formService = $formService;
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
     }
 
     public function listAction(): ViewModel
     {
-        $projectReviewType = $this->reviewService->find(ReviewType::class, ReviewType::TYPE_PREFERRED);
+        $projectReviewType = $this->reviewerService->find(ReviewerType::class, ReviewerType::TYPE_PREFERRED);
         $project = $this->projectService->findProjectById((int)$this->params()->fromRoute('projectId'));
 
         if (null === $project) {
             return $this->notFoundAction();
         }
 
-        $projectPreferredReviewers = $this->entityManager->getRepository(Review::class)->findBy(
+        $projectPreferredReviewers = $this->entityManager->getRepository(Reviewer::class)->findBy(
             ['project' => $project, 'type' => $projectReviewType]
         );
 
@@ -97,7 +99,7 @@ final class ReviewManagerController extends AbstractActionController
                     // Include steering group reviewers and spare reviewers
                     $stgRoles = [ContactRole::ROLE_STG_REVIEWER, ContactRole::ROLE_STG_SPARE_REVIEWER];
                     if (in_array($attendee->getRole()->getId(), $stgRoles, true)) {
-                        $projectFutureReviewers[] = $attendee->getContact()->getProjectReviewContact();
+                        $projectFutureReviewers[] = $attendee->getContact()->getProjectReviewerContact();
                     }
                 }
                 // Just list the reviewers for the first future calendar item
@@ -105,27 +107,29 @@ final class ReviewManagerController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'projectPreferredReviewers' => $projectPreferredReviewers,
-            'projectIgnoredReviewers'   => $reviewContactRepository->findIgnoredReviewers($project),
-            'projectFutureReviewers'    => $projectFutureReviewers,
-            'calendarItem'              => $calendarItem,
-            'project'                   => $project,
-        ]);
+        return new ViewModel(
+            [
+                'projectPreferredReviewers' => $projectPreferredReviewers,
+                'projectIgnoredReviewers'   => $reviewContactRepository->findIgnoredReviewers($project),
+                'projectFutureReviewers'    => $projectFutureReviewers,
+                'calendarItem'              => $calendarItem,
+                'project'                   => $project,
+            ]
+        );
     }
 
     public function newAction()
     {
         /** @var Request $request */
         $request = $this->getRequest();
-        $data    = $request->getPost()->toArray();
+        $data = $request->getPost()->toArray();
         $project = $this->projectService->findProjectById((int)$this->params()->fromRoute('projectId'));
 
         if (null === $project) {
             return $this->notFoundAction();
         }
 
-        $form = $this->formService->prepare(new Review(), $data);
+        $form = $this->formService->prepare(Reviewer::class, $data);
         $form->remove('delete');
 
         if ($request->isPost()) {
@@ -137,11 +141,11 @@ final class ReviewManagerController extends AbstractActionController
             }
 
             if ($form->isValid()) {
-                /** @var Review $projectReview */
+                /** @var Reviewer $projectReview */
                 $projectReview = $form->getData();
                 $projectReview->setProject($project);
 
-                $projectReview = $this->projectService->save($projectReview);
+                $projectReview = $this->reviewerService->save($projectReview);
                 $this->flashMessenger()->addSuccessMessage(
                     sprintf(
                         $this->translator->translate('txt-project-reviewer-%s-has-been-successfully-added'),
@@ -156,21 +160,24 @@ final class ReviewManagerController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'form'    => $form,
-            'project' => $project,
-        ]);
+        return new ViewModel(
+            [
+                'form'    => $form,
+                'project' => $project,
+            ]
+        );
     }
 
     public function editAction()
     {
         /** @var Request $request */
-        $request        = $this->getRequest();
-        /** @var Review $projectReview */
-        $projectReview  = $this->projectService->find(Review::class, (int)$this->params('id'));
-        $project        = $projectReview->getProject();
-        $data           = $request->getPost()->toArray();
-        $form           = $this->formService->prepare($projectReview, $data);
+        $request = $this->getRequest();
+        /** @var Reviewer $projectReview */
+        $projectReview = $this->projectService->find(Reviewer::class, (int)$this->params('id'));
+        /** @var Project $project */
+        $project = $projectReview->getProject();
+        $data = $request->getPost()->toArray();
+        $form = $this->formService->prepare($projectReview, $data);
         /** @var ContactFormElement $contactElement */
         $contactElement = $form->get($projectReview->get('underscore_entity_name'))->get('contact');
         $contactElement->setValueOptions(
@@ -193,9 +200,9 @@ final class ReviewManagerController extends AbstractActionController
             }
 
             if ($form->isValid()) {
-                /** @var Review $projectReview */
+                /** @var Reviewer $projectReview */
                 $projectReview = $form->getData();
-                $this->projectService->save($projectReview);
+                $this->reviewerService->save($projectReview);
                 $this->flashMessenger()->addSuccessMessage(
                     sprintf(
                         $this->translator->translate('txt-project-reviewer-%s-has-been-successfully-modified'),
@@ -210,17 +217,19 @@ final class ReviewManagerController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'form'    => $form,
-            'project' => $project,
-        ]);
+        return new ViewModel(
+            [
+                'form'    => $form,
+                'project' => $project,
+            ]
+        );
     }
 
     public function deleteAction(): Response
     {
-        /** @var Review $projectReview */
-        $projectReview = $this->projectService->find(Review::class, (int)$this->params('id'));
-        $this->projectService->delete($projectReview);
+        /** @var Reviewer $projectReview */
+        $projectReview = $this->projectService->find(Reviewer::class, (int)$this->params('id'));
+        $this->reviewerService->delete($projectReview);
         $this->flashMessenger()->addSuccessMessage(
             sprintf(
                 $this->translator->translate('txt-project-reviewer-%s-has-been-successfully-removed-from-this-project'),
@@ -238,7 +247,7 @@ final class ReviewManagerController extends AbstractActionController
     {
         /** @var Request $request */
         $request = $this->getRequest();
-        $form    = new ReviewRoster();
+        $form = new ReviewRoster();
 
         if ($request->isPost()) {
             $data = array_merge_recursive($request->getPost()->toArray(), $request->getFiles()->toArray());
@@ -250,8 +259,8 @@ final class ReviewManagerController extends AbstractActionController
                     $rosterGenerator = $this->rosterGenerator(
                         $form->get('type')->getValue(),
                         $excelFile['tmp_name'],
-                        (int) $form->get('nr')->getValue(),
-                        (bool) $form->get('include-spare')->getValue(),
+                        (int)$form->get('nr')->getValue(),
+                        (bool)$form->get('include-spare')->getValue(),
                         (empty($form->get('projects')->getValue()) ? null : (int)$form->get('projects')->getValue())
                     );
                     unlink($excelFile['tmp_name']);
@@ -260,8 +269,10 @@ final class ReviewManagerController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'form' => $form
-        ]);
+        return new ViewModel(
+            [
+                'form' => $form
+            ]
+        );
     }
 }

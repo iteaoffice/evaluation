@@ -18,24 +18,25 @@ declare(strict_types=1);
 namespace Evaluation\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
+use Evaluation\Controller\Plugin\GetFilter;
 use Evaluation\Controller\Plugin\Report\ConsolidatedPdfExport;
 use Evaluation\Controller\Plugin\Report\ExcelExport;
 use Evaluation\Controller\Plugin\Report\ExcelImport;
 use Evaluation\Controller\Plugin\Report\PdfExport;
 use Evaluation\Controller\Plugin\Report\Presentation;
-use Evaluation\Controller\Plugin\GetFilter;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\ProjectReport as ProjectReportReport;
 use Evaluation\Entity\Report\ProjectVersion as ProjectVersionReport;
 use Evaluation\Entity\Report\Result as ReportResult;
 use Evaluation\Entity\Report\Type as ReportType;
-use Project\Entity\Report\Report as ProjectReport;
-use Project\Entity\Version\Version as ProjectVersion;
 use Evaluation\Form\ReportFilter;
 use Evaluation\Form\ReportUpload;
 use Evaluation\Service\EvaluationReportService;
+use Project\Entity\Report\Report as ProjectReport;
+use Project\Entity\Version\Version as ProjectVersion;
 use Zend\Http\Request;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -77,12 +78,12 @@ final class ReportManagerController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        EntityManager           $entityManager,
-        TranslatorInterface     $translator
+        EntityManager $entityManager,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->entityManager           = $entityManager;
-        $this->translator              = $translator;
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
     }
 
     public function listAction()
@@ -90,16 +91,17 @@ final class ReportManagerController extends AbstractActionController
         /** @var Request $request */
         $request = $this->getRequest();
         if ($request->getQuery('clear') !== null) {
-            return $this->redirect()->toRoute('zfcadmin/evaluation/report2/list');
+            return $this->redirect()->toRoute('zfcadmin/evaluation/report/list');
         }
 
-        $page         = $this->params()->fromRoute('page', 1);
+        $page = $this->params()->fromRoute('page', 1);
         $filterPlugin = $this->getEvaluationFilter();
         $filterValues = $filterPlugin->getFilter();
-        $subject      = $filterValues['subject'] ?? null;
-        $type         = $filterValues['type'] ?? EvaluationReport::TYPE_INDIVIDUAL;
-        $versionType  = $filterValues['version'] ?? null;
-        $reportQuery  = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
+        $subject = $filterValues['subject'] ?? null;
+        $type = $filterValues['type'] ?? EvaluationReport::TYPE_INDIVIDUAL;
+        $versionType = $filterValues['version'] ?? null;
+        /** @var QueryBuilder $reportQuery */
+        $reportQuery = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
 
         // Download presentation
         if (($request->getQuery('presentation') !== null) && ($type === EvaluationReport::TYPE_FINAL)) {
@@ -132,25 +134,27 @@ final class ReportManagerController extends AbstractActionController
             $arguments = $filterPlugin->parseFilteredSortQuery(['version']);
         }
 
-        return new ViewModel([
-            'subject'                 => $subject,
-            'versionType'             => $versionType,
-            'type'                    => $type,
-            'paginator'               => $paginator,
-            'form'                    => $form,
-            'order'                   => $filterPlugin->getOrder(),
-            'direction'               => $filterPlugin->getDirection(),
-            'arguments'               => $arguments
-        ]);
+        return new ViewModel(
+            [
+                'subject' => $subject,
+                'versionType' => $versionType,
+                'type' => $type,
+                'paginator' => $paginator,
+                'form' => $form,
+                'order' => $filterPlugin->getOrder(),
+                'direction' => $filterPlugin->getDirection(),
+                'arguments' => $arguments
+            ]
+        );
     }
 
     public function newFinalAction()
     {
         /** @var Request $request */
-        $request     = $this->getRequest();
+        $request = $this->getRequest();
         $offlineMode = ($request->getQuery('mode') === 'offline');
-        $versionId   = $this->params()->fromRoute('version');
-        $reportId    = $this->params()->fromRoute('report');
+        $versionId = $this->params()->fromRoute('version');
+        $reportId = $this->params()->fromRoute('report');
 
         if (($versionId === null) && ($reportId === null)) {
             return $this->notFoundAction();
@@ -162,8 +166,8 @@ final class ReportManagerController extends AbstractActionController
 
         // Create upon starting the form so that create and edit can be handled by the same form
         $evaluationReport = new EvaluationReport();
-        $report           = null;
-        $version          = null;
+        $report = null;
+        $version = null;
 
         // In offline mode, produce an Excel download instead of the form
         if ($offlineMode) {
@@ -213,7 +217,9 @@ final class ReportManagerController extends AbstractActionController
             // Upload Excel
             if ($request->isPost()) {
                 $data = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
-                $uploadForm = new ReportUpload();
+                $uploadForm = new ReportUpload(
+                    ''
+                ); //@bart, could the action be '' as you only use the form here for validation
                 $uploadForm->setData($data);
                 $excel = $uploadForm->get('excel')->getValue();
                 if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
@@ -232,7 +238,7 @@ final class ReportManagerController extends AbstractActionController
                         $this->flashMessenger()->addSuccessMessage(
                             sprintf(
                                 $this->translator->translate(
-                                    "txt-%s-final-evaluation-report-has-successfully-been-created"
+                                    'txt-%s-final-evaluation-report-has-successfully-been-created'
                                 ),
                                 $label
                             )
@@ -293,7 +299,7 @@ final class ReportManagerController extends AbstractActionController
         // Upload offline Excel
         if ($offlineMode && $request->isPost()) {
             $data = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
-            $uploadForm = new ReportUpload();
+            $uploadForm = new ReportUpload('');//@bart, could the action be '' as you only use the form here for validation
             $uploadForm->setData($data);
             $excel = $uploadForm->get('excel')->getValue();
             if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
@@ -313,14 +319,14 @@ final class ReportManagerController extends AbstractActionController
                     $this->flashMessenger()->addSuccessMessage(
                         sprintf(
                             $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-updated'),
-                            $this->evaluationReportService->parseLabel($evaluationReport)
+                            EvaluationReportService::parseLabel($evaluationReport)
                         )
                     );
                 } else {
                     $this->flashMessenger()->setNamespace('error')->addMessage(
                         sprintf(
                             $this->translator->translate('txt-failed-importing-evaluation-report-for-%s'),
-                            $this->evaluationReportService->parseLabel($evaluationReport)
+                            EvaluationReportService::parseLabel($evaluationReport)
                         )
                     );
                 }
@@ -332,13 +338,13 @@ final class ReportManagerController extends AbstractActionController
                     ['id' => $evaluationReport->getProjectReportReport()->getReport()->getId()],
                     ['fragment' => 'evaluation']
                 );
-            } else {
-                return $this->redirect()->toRoute(
-                    'zfcadmin/project/version/view',
-                    ['id' => $evaluationReport->getProjectVersionReport()->getVersion()->getId()],
-                    ['fragment' => 'evaluation']
-                );
             }
+
+            return $this->redirect()->toRoute(
+                'zfcadmin/project/version/view',
+                ['id' => $evaluationReport->getProjectVersionReport()->getVersion()->getId()],
+                ['fragment' => 'evaluation']
+            );
         }
 
         // Online mode not implemented yet
@@ -389,7 +395,7 @@ final class ReportManagerController extends AbstractActionController
             return $this->notFoundAction();
         }
 
-        $label = $this->evaluationReportService->parseLabel($evaluationReport);
+        $label = EvaluationReportService::parseLabel($evaluationReport);
         $evaluationReport->setFinal(true);
         $this->evaluationReportService->save($evaluationReport);
 
@@ -442,7 +448,9 @@ final class ReportManagerController extends AbstractActionController
                 ['fragment' => 'evaluation']
             );
         } // Final PO/FPP/CR evaluation report
-        elseif ($evaluationReport->getProjectVersionReport() instanceof ProjectVersionReport) {
+
+
+        if ($evaluationReport->getProjectVersionReport() instanceof ProjectVersionReport) {
             return $this->redirect()->toRoute(
                 'zfcadmin/project/version/view',
                 ['id' => $evaluationReport->getProjectVersionReport()->getVersion()->getId()],

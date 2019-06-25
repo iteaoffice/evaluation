@@ -27,7 +27,7 @@ return [
                         ],
                         'may_terminate' => false,
                         'child_routes'  => [
-                            'matrix'  => [
+                            'matrix'   => [
                                 'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/matrix[/source-:source][/call-:call[/type-[:type[/display-:display]]]].html',
@@ -36,7 +36,7 @@ return [
                                     ],
                                 ],
                             ],
-                            'report2' => [
+                            'report2'  => [
                                 'type'          => Literal::class,
                                 'options'       => [
                                     'route'    => '/report2',
@@ -480,27 +480,17 @@ return [
                                     ],
                                 ],
                             ],
-                            'review'  => [
+                            'reviewer' => [
                                 'type'          => 'Segment',
                                 'options'       => [
-                                    'route'    => '/review',
+                                    'route'    => '/reviewer',
                                     'defaults' => [
-                                        'controller' => Controller\ReviewManagerController::class,
+                                        'controller' => Controller\ReviewerManagerController::class,
                                         'action'     => 'list',
                                     ],
                                 ],
                                 'may_terminate' => true,
                                 'child_routes'  => [
-                                    'import'  => [
-                                        'type'     => 'Segment',
-                                        'priority' => 1001,
-                                        'options'  => [
-                                            'route'    => '/import.html',
-                                            'defaults' => [
-                                                'action' => 'import',
-                                            ],
-                                        ],
-                                    ],
                                     'export'  => [
                                         'type'    => 'Segment',
                                         'options' => [
@@ -560,7 +550,7 @@ return [
                                         'options'       => [
                                             'route'    => '/contact',
                                             'defaults' => [
-                                                'controller' => Controller\ReviewContactManagerController::class,
+                                                'controller' => Controller\Reviewer\ContactManagerController::class,
                                                 'action'     => 'list',
                                             ],
                                         ],

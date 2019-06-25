@@ -32,8 +32,8 @@ final class FeedbackRepository extends EntityRepository implements FilteredObjec
     public function findFiltered(array $filter = []): QueryBuilder
     {
         $queryBuilder = $this->_em->createQueryBuilder();
-        $queryBuilder->select('project_entity_evaluation_feedback');
-        $queryBuilder->from(Feedback::class, 'project_entity_evaluation_feedback');
+        $queryBuilder->select('evaluation_entity_feedback');
+        $queryBuilder->from(Feedback::class, 'evaluation_entity_feedback');
 
         $direction = 'DESC';
         if (isset($filter['direction'])
@@ -44,27 +44,27 @@ final class FeedbackRepository extends EntityRepository implements FilteredObjec
 
         switch ($filter['order']) {
             case 'id':
-                $queryBuilder->addOrderBy('project_entity_evaluation_feedback.id', $direction);
+                $queryBuilder->addOrderBy('evaluation_entity_feedback.id', $direction);
                 break;
             case 'status':
-                $queryBuilder->join('project_entity_evaluation_feedback.status', 'project_entity_evaluation_status');
+                $queryBuilder->join('evaluation_entity_feedback.status', 'project_entity_evaluation_status');
                 $queryBuilder->addOrderBy('project_entity_evaluation_status.status', $direction);
                 break;
             case 'project':
-                $queryBuilder->join('project_entity_evaluation_feedback.version', 'project_entity_version_version');
+                $queryBuilder->join('evaluation_entity_feedback.version', 'project_entity_version_version');
                 $queryBuilder->join('project_entity_version_version.project', 'project_entity_project');
                 $queryBuilder->addOrderBy('project_entity_project.project', $direction);
                 break;
             case 'version-type':
-                $queryBuilder->join('project_entity_evaluation_feedback.version', 'project_entity_version_version');
+                $queryBuilder->join('evaluation_entity_feedback.version', 'project_entity_version_version');
                 $queryBuilder->join('project_entity_version_version.type', 'project_entity_version_type');
                 $queryBuilder->addOrderBy('project_entity_version_type.type', $direction);
                 break;
             case 'last-update':
-                $queryBuilder->addOrderBy('project_entity_evaluation_feedback.dateUpdated', $direction);
+                $queryBuilder->addOrderBy('evaluation_entity_feedback.dateUpdated', $direction);
                 break;
             default:
-                $queryBuilder->addOrderBy('project_entity_evaluation_feedback.dateCreated', $direction);
+                $queryBuilder->addOrderBy('evaluation_entity_feedback.dateCreated', $direction);
         }
 
         return $queryBuilder;

@@ -18,6 +18,9 @@ declare(strict_types=1);
 
 namespace Evaluation\Controller\Plugin;
 
+use Evaluation\Options\ModuleOptions;
+use Evaluation\Service\ReviewerService;
+use Evaluation\Service\ReviewRosterService;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -28,9 +31,6 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use Evaluation\Options\ModuleOptions;
-use Evaluation\Service\ReviewRosterService;
-use Evaluation\Service\ReviewService;
 use Zend\Http\Headers;
 use Zend\Http\Response;
 use Zend\I18n\Translator\TranslatorInterface;
@@ -48,6 +48,7 @@ use function ucfirst;
 
 /**
  * Class RosterGenerator
+ *
  * @package Evaluation\Controller\Plugin
  */
 final class RosterGenerator extends AbstractPlugin
@@ -104,13 +105,13 @@ final class RosterGenerator extends AbstractPlugin
     private $log;
 
     public function __construct(
-        ReviewRosterService  $reviewRosterService,
-        TranslatorInterface  $translator,
-        ModuleOptions        $moduleOptions
+        ReviewRosterService $reviewRosterService,
+        TranslatorInterface $translator,
+        ModuleOptions $moduleOptions
     ) {
         $this->reviewRosterService = $reviewRosterService;
-        $this->translator          = $translator;
-        $this->moduleOptions       = $moduleOptions;
+        $this->translator = $translator;
+        $this->moduleOptions = $moduleOptions;
     }
 
     /**
@@ -125,12 +126,12 @@ final class RosterGenerator extends AbstractPlugin
     public function __invoke(
         string $type,
         string $configFile,
-        int    $reviewersPerProject,
-        bool   $includeSpareReviewers = false,
-        ?int   $forceProjectsPerRound = null
+        int $reviewersPerProject,
+        bool $includeSpareReviewers = false,
+        ?int $forceProjectsPerRound = null
     ): RosterGenerator {
-        $this->type       = $type;
-        $this->config     = $this->reviewRosterService->parseConfigFile($configFile);
+        $this->type = $type;
+        $this->config = $this->reviewRosterService->parseConfigFile($configFile);
         $this->rosterData = $this->reviewRosterService->generateRosterData(
             $type,
             $this->config,
@@ -138,8 +139,8 @@ final class RosterGenerator extends AbstractPlugin
             $includeSpareReviewers,
             $forceProjectsPerRound
         );
-        $this->log        = $this->reviewRosterService->getLog();
-        $this->reviewers  = array_merge($this->config['present'], $this->config['spare']);
+        $this->log = $this->reviewRosterService->getLog();
+        $this->reviewers = array_merge($this->config['present'], $this->config['spare']);
         ksort($this->reviewers);
         $this->generateSpreadsheet();
 
@@ -154,10 +155,12 @@ final class RosterGenerator extends AbstractPlugin
         // General setup
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getProperties()->setCreator($this->moduleOptions->getReportAuthor());
-        $spreadsheet->getProperties()->setTitle(sprintf(
-            $this->translator->translate('txt-review-roster-for-%s'),
-            $this->type
-        ));
+        $spreadsheet->getProperties()->setTitle(
+            sprintf(
+                $this->translator->translate('txt-review-roster-for-%s'),
+                $this->type
+            )
+        );
 
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle(ucfirst($this->translator->translate('txt-review-roster')));
@@ -180,7 +183,9 @@ final class RosterGenerator extends AbstractPlugin
             $sheet->setCellValue($col . '2', sprintf('%s (%d)', $handle, $assignments[$handle]));
         }
         $lastColumn = $col;
-        $sheet->getStyle('A2:'.$lastColumn.'2')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('DDDDDD');
+        $sheet->getStyle('A2:' . $lastColumn . '2')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB(
+            'DDDDDD'
+        );
 
         // Collapse row 1
         $sheet->getRowDimension(1)
@@ -199,9 +204,9 @@ final class RosterGenerator extends AbstractPlugin
         // Freeze the header
         $sheet->freezePane('A3');
 
-        if (in_array($this->type, [ReviewService::TYPE_PO, ReviewService::TYPE_FPP, ReviewService::TYPE_PPR])) {
+        if (in_array($this->type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP, ReviewerService::TYPE_PPR])) {
             $this->fillPoFppPprSpreadsheet($sheet, $lastColumn);
-        } elseif ($this->type === ReviewService::TYPE_CR) {
+        } elseif ($this->type === ReviewerService::TYPE_CR) {
             $this->fillCrSpreadsheet($sheet, $lastColumn);
         }
 
@@ -214,8 +219,39 @@ final class RosterGenerator extends AbstractPlugin
     }
 
     /**
+     * Get the assignment totals for each handle
+     *
+     * @return array
+     */
+    private function getAssignmentTotals(): array
+    {
+        $assignments = [];
+        $assigned = [
+            ReviewRosterService::REVIEWER_ASSIGNED,
+            ReviewRosterService::REVIEWER_PRIMARY,
+            ReviewRosterService::REVIEWER_SPARE,
+            ReviewRosterService::REVIEWER_EXTRA
+        ];
+        foreach ($this->rosterData as $projects) {
+            foreach ($projects as $project) {
+                foreach ($project['scores'] as $handle => $ignoredOrAssigned) {
+                    if (!isset($assignments[$handle])) {
+                        $assignments[$handle] = 0;
+                    }
+                    if (in_array($ignoredOrAssigned, $assigned)) {
+                        $assignments[$handle]++;
+                    }
+                }
+            }
+        }
+
+        return $assignments;
+    }
+
+    /**
      * @param Worksheet $sheet
-     * @param string $lastColumn
+     * @param string    $lastColumn
+     *
      * @throws Exception
      */
     private function fillPoFppPprSpreadsheet(Worksheet $sheet, string $lastColumn): void
@@ -239,7 +275,7 @@ final class RosterGenerator extends AbstractPlugin
                 );
                 $col = 'E';
                 foreach (array_keys($this->reviewers) as $handle) {
-                    $cell = $col.$row;
+                    $cell = $col . $row;
                     $this->parseCell($sheet, $cell, $project['scores'][$handle]);
                     $col++;
                 }
@@ -250,43 +286,10 @@ final class RosterGenerator extends AbstractPlugin
 
     /**
      * @param Worksheet $sheet
-     * @param string $lastColumn
-     */
-    private function fillCrSpreadsheet(Worksheet $sheet, string $lastColumn): void
-    {
-        $row = 3;
-        foreach ($this->rosterData as $call => $projects) {
-            $this->parseSection($sheet, $row, $lastColumn, $call);
-            foreach ($projects as $project) {
-                // Add review history
-                $this->parseReviewHistory($sheet, $row, $project['data']);
-
-                // Add current roster
-                $sheet->setCellValue('A' . $row, $project['data']['call']);
-                $sheet->setCellValue('B' . $row, $project['data']['number']);
-                $sheet->setCellValue('C' . $row, $project['data']['name']);
-                $sheet->getStyle('D' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setRGB('EEEEEE');
-                $sheet->setCellValue(
-                    'D' . $row,
-                    $this->type . sprintf(' (%s)', $this->translator->translate('txt-upcoming'))
-                );
-                $col = 'E';
-                foreach (array_keys($this->reviewers) as $handle) {
-                    $cell = $col.$row;
-                    $this->parseCell($sheet, $cell, $project['scores'][$handle]);
-                    $col++;
-                }
-                $row++;
-            }
-        }
-    }
-
-    /**
-     * @param Worksheet $sheet
-     * @param int    $row
-     * @param string $lastColumn
-     * @param string $section
+     * @param int       $row
+     * @param string    $lastColumn
+     * @param string    $section
+     *
      * @throws Exception
      */
     private function parseSection(Worksheet $sheet, int &$row, string $lastColumn, string $section): void
@@ -297,70 +300,24 @@ final class RosterGenerator extends AbstractPlugin
         $sheet->getStyle($cellA)->getAlignment()->setIndent(1);
         $sheet->getStyle($cellRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
         $sheet->getStyle($cellA)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('A7D8B8');
-        if ($this->type === ReviewService::TYPE_CR) {
+        if ($this->type === ReviewerService::TYPE_CR) {
             $sheet->setCellValue($cellA, sprintf('%s %s', ucfirst($this->translator->translate('txt-call')), $section));
         } else {
-            $sheet->setCellValue($cellA, sprintf('%s %d', ucfirst($this->translator->translate('txt-round')), $section));
+            $sheet->setCellValue(
+                $cellA,
+                sprintf('%s %d', ucfirst($this->translator->translate('txt-round')), $section)
+            );
         }
         $row++;
-    }
-
-    /**
-     * @param Worksheet $sheet
-     * @param string $cell
-     * @param int $ignoredOrAssigned
-     */
-    private function parseCell(Worksheet $sheet, string $cell, int $ignoredOrAssigned): void
-    {
-        // Assigned reviewer
-        if ($ignoredOrAssigned === ReviewRosterService::REVIEWER_ASSIGNED) {
-            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('33AA33');
-            $sheet->setCellValue($cell, 'R');
-        }
-        // Primary reviewer
-        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_PRIMARY) {
-            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('118811');
-            $sheet->getStyle($cell)->getFont()->setColor(new Color(Color::COLOR_WHITE));
-            $sheet->setCellValue($cell, 'P');
-        }
-        // Spare reviewer
-        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_SPARE) {
-            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('77EE77');
-            $sheet->setCellValue($cell, 'S');
-        }
-        // Extra spare reviewer
-        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_EXTRA_SPARE) {
-            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('77EE77');
-            $sheet->setCellValue($cell, 'ES');
-        }
-        // Extra present reviewer
-        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_EXTRA) {
-            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()->setRGB('77EE77');
-            $sheet->setCellValue($cell, 'E');
-        }
-        // Ignored reviewer
-        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_IGNORED) {
-            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_PATTERN_DARKDOWN)
-                ->setRotation(45)->getEndColor()->setRGB('FF8888');
-        }
     }
 
     /**
      * Add review history to a project
      *
      * @param Worksheet $sheet
-     * @param int $row
-     * @param array $projectData
+     * @param int       $row
+     * @param array     $projectData
+     *
      * @throws Exception
      */
     private function parseReviewHistory(Worksheet $sheet, int &$row, array $projectData): void
@@ -374,7 +331,7 @@ final class RosterGenerator extends AbstractPlugin
                     $sheet->setCellValue('D' . $row, $type);
                     $col = 'E';
                     foreach (array_keys($this->reviewers) as $handle) {
-                        $cell = $col.$row;
+                        $cell = $col . $row;
                         if (in_array($handle, $reviewers)) {
                             $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                             $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
@@ -398,33 +355,82 @@ final class RosterGenerator extends AbstractPlugin
     }
 
     /**
-     * Get the assignment totals for each handle
-     *
-     * @return array
+     * @param Worksheet $sheet
+     * @param string    $cell
+     * @param int       $ignoredOrAssigned
      */
-    private function getAssignmentTotals(): array
+    private function parseCell(Worksheet $sheet, string $cell, int $ignoredOrAssigned): void
     {
-        $assignments = [];
-        $assigned    = [
-            ReviewRosterService::REVIEWER_ASSIGNED,
-            ReviewRosterService::REVIEWER_PRIMARY,
-            ReviewRosterService::REVIEWER_SPARE,
-            ReviewRosterService::REVIEWER_EXTRA
-        ];
-        foreach ($this->rosterData as $projects) {
+        // Assigned reviewer
+        if ($ignoredOrAssigned === ReviewRosterService::REVIEWER_ASSIGNED) {
+            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('33AA33');
+            $sheet->setCellValue($cell, 'R');
+        } // Primary reviewer
+        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_PRIMARY) {
+            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('118811');
+            $sheet->getStyle($cell)->getFont()->setColor(new Color(Color::COLOR_WHITE));
+            $sheet->setCellValue($cell, 'P');
+        } // Spare reviewer
+        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_SPARE) {
+            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('77EE77');
+            $sheet->setCellValue($cell, 'S');
+        } // Extra spare reviewer
+        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_EXTRA_SPARE) {
+            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('77EE77');
+            $sheet->setCellValue($cell, 'ES');
+        } // Extra present reviewer
+        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_EXTRA) {
+            $sheet->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('77EE77');
+            $sheet->setCellValue($cell, 'E');
+        } // Ignored reviewer
+        elseif ($ignoredOrAssigned === ReviewRosterService::REVIEWER_IGNORED) {
+            $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_PATTERN_DARKDOWN)
+                ->setRotation(45)->getEndColor()->setRGB('FF8888');
+        }
+    }
+
+    /**
+     * @param Worksheet $sheet
+     * @param string    $lastColumn
+     */
+    private function fillCrSpreadsheet(Worksheet $sheet, string $lastColumn): void
+    {
+        $row = 3;
+        foreach ($this->rosterData as $call => $projects) {
+            $this->parseSection($sheet, $row, $lastColumn, $call);
             foreach ($projects as $project) {
-                foreach ($project['scores'] as $handle => $ignoredOrAssigned) {
-                    if (!isset($assignments[$handle])) {
-                        $assignments[$handle] = 0;
-                    }
-                    if (in_array($ignoredOrAssigned, $assigned)) {
-                        $assignments[$handle]++;
-                    }
+                // Add review history
+                $this->parseReviewHistory($sheet, $row, $project['data']);
+
+                // Add current roster
+                $sheet->setCellValue('A' . $row, $project['data']['call']);
+                $sheet->setCellValue('B' . $row, $project['data']['number']);
+                $sheet->setCellValue('C' . $row, $project['data']['name']);
+                $sheet->getStyle('D' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('EEEEEE');
+                $sheet->setCellValue(
+                    'D' . $row,
+                    $this->type . sprintf(' (%s)', $this->translator->translate('txt-upcoming'))
+                );
+                $col = 'E';
+                foreach (array_keys($this->reviewers) as $handle) {
+                    $cell = $col . $row;
+                    $this->parseCell($sheet, $cell, $project['scores'][$handle]);
+                    $col++;
                 }
+                $row++;
             }
         }
-
-        return $assignments;
     }
 
     /**
@@ -456,14 +462,17 @@ final class RosterGenerator extends AbstractPlugin
         $response->setContent(ob_get_clean());
         $response->setStatusCode(Response::STATUS_CODE_200);
         $headers = new Headers();
-        $headers->addHeaders([
-            'Content-Disposition' => 'attachment; filename="' . $this->spreadsheet->getProperties()->getTitle() . '.xlsx"',
-            'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Length'      => $contentLength,
-            'Expires'             => '@0', // @0, because ZF2 parses date as string to \DateTime() object
-            'Cache-Control'       => 'must-revalidate',
-            'Pragma'              => 'public',
-        ]);
+        $headers->addHeaders(
+            [
+                'Content-Disposition' => 'attachment; filename="' . $this->spreadsheet->getProperties()->getTitle()
+                    . '.xlsx"',
+                'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Length'      => $contentLength,
+                'Expires'             => '@0', // @0, because ZF2 parses date as string to \DateTime() object
+                'Cache-Control'       => 'must-revalidate',
+                'Pragma'              => 'public',
+            ]
+        );
         if ($gzip) {
             $headers->addHeaders(['Content-Encoding' => 'gzip']);
         }

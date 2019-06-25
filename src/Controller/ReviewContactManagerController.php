@@ -23,7 +23,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
 use Evaluation\Controller\Plugin\GetFilter;
 use Evaluation\Form\Reviewer\ContactFilter;
 use Evaluation\Service\FormService;
-use Project\Entity\Review\Contact;
+use Evaluation\Entity\Reviewer\Contact;
 use Project\Service\ProjectService;
 use Zend\Http\Request;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -102,7 +102,7 @@ final class ReviewContactManagerController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/project/review/contact/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/review/contact/list');
             }
 
             if ($form->isValid()) {
@@ -138,12 +138,12 @@ final class ReviewContactManagerController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/project/review/contact/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/review/contact/list');
             }
 
             if (isset($data['delete'])) {
                 $this->projectService->delete($reviewContact);
-                return $this->redirect()->toRoute('zfcadmin/project/review/contact/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/review/contact/list');
             }
 
             if ($form->isValid()) {
@@ -151,7 +151,7 @@ final class ReviewContactManagerController extends AbstractActionController
                 $reviewContact = $form->getData();
                 $this->projectService->save($reviewContact);
                 $this->redirect()->toRoute(
-                    'zfcadmin/project/review/contact/view',
+                    'zfcadmin/evaluation/review/contact/view',
                     ['id' => $reviewContact->getId()]
                 );
             }

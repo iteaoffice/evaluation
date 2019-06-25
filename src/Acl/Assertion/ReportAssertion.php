@@ -20,12 +20,13 @@ namespace Evaluation\Acl\Assertion;
 use Admin\Entity\Access;
 use Interop\Container\ContainerInterface;
 use Evaluation\Entity\Report as EvaluationReport;
-use Project\Entity\Report\Review as ReportReview;
-use Project\Entity\Version\Review as VersionReview;
+use Project\Entity\Report\Reviewer as ReportReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Evaluation\Service\EvaluationReportService;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
+use function count;
 
 /**
  * Class ReportAssertion
@@ -64,21 +65,21 @@ final class ReportAssertion extends AbstractAssertion
                     return true;
                 }
 
-                $reportReviewId  = $this->getRouteMatch()->getParam('reportReview');
-                $versionReviewId = $this->getRouteMatch()->getParam('versionReview');
+                $reportReviewId  = $this->getRouteMatch()->getParam('reportReviewer');
+                $versionReviewId = $this->getRouteMatch()->getParam('versionReviewer');
 
                 if ($reportReviewId) {
-                    /** @var ReportReview $reportReview */
+                    /** @var ReportReviewer $reportReview */
                     $reportReview = $this->evaluationReportService
-                        ->find(ReportReview::class, (int)$reportReviewId);
+                        ->find(ReportReviewer::class, (int)$reportReviewId);
 
                     return (($reportReview !== null) && ($reportReview->getContact()->getId() === $contact->getId()));
                 }
 
                 if ($versionReviewId) {
-                    /** @var VersionReview $versionReview */
+                    /** @var VersionReviewer $versionReview */
                     $versionReview = $this->evaluationReportService
-                        ->find(VersionReview::class, (int)$versionReviewId);
+                        ->find(VersionReviewer::class, (int)$versionReviewId);
 
                     return (($versionReview !== null) && ($versionReview->getContact()->getId() === $contact->getId()));
                 }
@@ -95,10 +96,10 @@ final class ReportAssertion extends AbstractAssertion
                     return true;
                 }
 
-                $reportReviews  = $contact->getProjectReportReview();
-                $versionReviews = $contact->getProjectVersionReview();
+                $reportReviews  = $contact->getProjectReportReviewer();
+                $versionReviews = $contact->getProjectVersionReviewer();
 
-                return ((\count($reportReviews) + \count($versionReviews)) > 0);
+                return ((count($reportReviews) + count($versionReviews)) > 0);
 
             case 'view':
             case 'download':

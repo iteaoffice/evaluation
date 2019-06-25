@@ -25,8 +25,6 @@ use Evaluation\Entity\AbstractEntity;
 use Zend\Form\Annotation;
 
 /**
- * Evaluation report criterion
- *
  * @ORM\Table(name="evaluation_report2_criterion")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\CriterionRepository")
  */

@@ -19,16 +19,14 @@ namespace Evaluation\Entity\Report;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Entity\Report as EvaluationReport;
-use Project\Entity\Version\Review;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Project\Entity\Version\Reviewer;
 use Project\Entity\Version\Version;
 use Zend\Form\Annotation;
 
 /**
- * Evaluation Report Project Version
- *
  * @ORM\Table(name="evaluation_report2_project_version")
  * @ORM\Entity
  */
@@ -54,17 +52,17 @@ class ProjectVersion extends AbstractEntity
     /**
      * Only set for individual review reports (so is nullable)
      *
-     * @ORM\OneToOne(targetEntity="Project\Entity\Version\Review", cascade={"persist"}, inversedBy="projectVersionReport2")
+     * @ORM\OneToOne(targetEntity="Project\Entity\Version\Reviewer", cascade={"persist"}, inversedBy="projectVersionReport")
      * @ORM\JoinColumn(name="project_version_review_id", referencedColumnName="review_id", nullable=true)
      * @Annotation\Exclude()
      *
-     * @var Review|null
+     * @var Reviewer|null
      */
     private $reviewer;
     /**
      * Only set for final evaluations (so is nullable)
      *
-     * @ORM\OneToOne(targetEntity="Project\Entity\Version\Version", cascade={"persist"}, inversedBy="projectVersionReport2")
+     * @ORM\OneToOne(targetEntity="Project\Entity\Version\Version", cascade={"persist"}, inversedBy="projectVersionReport")
      * @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=true)
      * @Annotation\Exclude()
      *
@@ -110,12 +108,12 @@ class ProjectVersion extends AbstractEntity
         return $this;
     }
 
-    public function getReviewer(): ?Review
+    public function getReviewer(): ?Reviewer
     {
         return $this->reviewer;
     }
 
-    public function setReviewer(Review $reviewer): ProjectVersion
+    public function setReviewer(Reviewer $reviewer): ProjectVersion
     {
         $this->reviewer = $reviewer;
         return $this;

@@ -37,9 +37,9 @@ use Zend\Permissions\Acl\Role\RoleInterface;
 use function in_array;
 
 /**
- * Class Evaluation
+ * Class EvaluationAssertion
  *
- * @package Project\Acl\Assertion\Evaluation
+ * @package Evaluation\Acl\Assertion
  */
 final class EvaluationAssertion extends AbstractAssertion
 {

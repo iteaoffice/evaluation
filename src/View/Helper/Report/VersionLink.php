@@ -20,71 +20,73 @@ namespace Evaluation\View\Helper\Report;
 
 use Evaluation\Entity\Report\Version;
 use Evaluation\View\Helper\AbstractLink;
+use function sprintf;
 
 /**
  * Class VersionLink
+ *
  * @package Evaluation\View\Helper\Report
  */
 final class VersionLink extends AbstractLink
 {
-    /**
-     * @var Version
-     */
-    private $reportVersion;
-
     public function __invoke(
         Version $reportVersion = null,
-        string  $action = 'view',
-        string  $show = 'name'
+        string $action = 'view',
+        string $show = 'name'
     ): string {
-        $this->reportVersion = $reportVersion ?? new Version();
-        $this->setAction($action);
-        $this->setShow($show);
-        $this->addRouterParam('id', $this->reportVersion->getId());
-        $this->setShowOptions([
-            'name' => $this->reportVersion->getLabel()
-        ]);
+        $this->reset();
 
-        return $this->createLink();
+        $this->extractRouterParams($reportVersion, ['id']);
+
+        if (null !== $reportVersion) {
+            $this->addShowOption('name', $reportVersion->getLabel());
+        }
+
+        $this->parseAction($action, $reportVersion ?? new Version());
+
+        return $this->createLink($show);
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function parseAction(): void
+    public function parseAction(string $action, Version $version): void
     {
-        switch ($this->getAction()) {
+        $this->action = $action;
+
+        switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report2/version/new');
-                $this->setText($this->translator->translate("txt-new-evaluation-report-version"));
+                $this->setRouter('zfcadmin/evaluation/report/version/new');
+                $this->setText($this->translator->translate('txt-new-evaluation-report-version'));
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report2/version/list');
-                $this->setText($this->translator->translate("txt-evaluation-report-version-list"));
+                $this->setRouter('zfcadmin/evaluation/report/version/list');
+                $this->setText($this->translator->translate('txt-evaluation-report-version-list'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report2/version/view');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-view-%s"),
-                    $this->reportVersion->getLabel()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/version/view');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-view-%s'),
+                        $version->getLabel()
+                    )
+                );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report2/version/edit');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-edit-%s"),
-                    $this->reportVersion->getLabel()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/version/edit');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-edit-%s'),
+                        $version->getLabel()
+                    )
+                );
                 break;
             case 'copy':
-                $this->setRouter('zfcadmin/evaluation/report2/version/copy');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-copy-%s"),
-                    $this->reportVersion->getLabel()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/version/copy');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-copy-%s'),
+                        $version->getLabel()
+                    )
+                );
                 break;
-            default:
-                throw new \Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
         }
     }
 }

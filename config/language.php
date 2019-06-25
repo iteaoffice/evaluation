@@ -30,6 +30,8 @@ _("txt-review-feedback");
 _("txt-review-feedback-explanation");
 _("txt-evaluation-feedback");
 _("txt-evaluation-feedback-explanation");
+_("txt-evaluation-conclusion");
+_("txt-evaluation-conclusion-explanation");
 _("txt-evaluation-report-final");
 _("txt-evaluation-report-final-help-block");
 _("txt-evaluation-report-score-label");

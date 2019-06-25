@@ -25,9 +25,6 @@ use Zend\InputFilter\InputFilter;
  */
 final class CriterionFilter extends InputFilter
 {
-    /**
-     * CriterionFilter constructor.
-     */
     public function __construct()
     {
         $inputFilter = new InputFilter();

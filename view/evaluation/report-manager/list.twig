@@ -34,12 +34,12 @@
                     {% if type == constant("Project\\Entity\\Evaluation\\Report::TYPE_INDIVIDUAL") %}
                         <thead>
                         <tr>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'project', 'text': translate('txt-project')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'version', 'text': translate('txt-version')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'reviewer', 'text': translate('txt-reviewer')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate('txt-project')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'version', 'text': translate('txt-version')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'reviewer', 'text': translate('txt-reviewer')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
                             <th>{{ translate("txt-status") }}</th>
                             <th>{{ translate("txt-action") }}</th>
                         </tr>
@@ -81,11 +81,11 @@
                     {% elseif type == constant("Project\\Entity\\Evaluation\\Report::TYPE_FINAL") %}
                         <thead>
                         <tr>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'project', 'text': translate('txt-project')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'version', 'text': translate('txt-version')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate('txt-project')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'version', 'text': translate('txt-version')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
                             <th>{{ translate("txt-status") }}</th>
                             <th>{{ translate("txt-action") }}</th>
                         </tr>
@@ -122,12 +122,12 @@
                     {% if type == constant("Project\\Entity\\Evaluation\\Report::TYPE_INDIVIDUAL") %}
                         <thead>
                         <tr>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'project', 'text': translate('txt-project')} %}</a></th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'report', 'text': translate('txt-report')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'reviewer', 'text': translate('txt-reviewer')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate('txt-project')} %}</a></th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'report', 'text': translate('txt-report')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'reviewer', 'text': translate('txt-reviewer')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
                             <th>{{ translate("txt-status") }}</th>
                             <th>{{ translate("txt-action") }}</th>
                         </tr>
@@ -162,11 +162,11 @@
                         <thead>
                         <tr>
                         <tr>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'project', 'text': translate('txt-project')} %}</a></th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'report', 'text': translate('txt-report')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate('txt-project')} %}</a></th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'report', 'text': translate('txt-report')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'final', 'text': translate('txt-final')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'created', 'text': translate('txt-date-created')} %}</th>
+                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'updated', 'text': translate('txt-date-last-update')} %}</th>
                             <th>{{ translate("txt-status") }}</th>
                             <th>{{ translate("txt-action") }}</th>
                         </tr>

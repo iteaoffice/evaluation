@@ -109,7 +109,7 @@ final class TypeController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+                $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/type/list');
             }
 
             if ($form->isValid()) {
@@ -117,7 +117,7 @@ final class TypeController extends AbstractActionController
                 $type = $form->getData();
                 $this->evaluationReportService->save($type);
                 $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/type/view',
+                    'zfcadmin/evaluation/report/criterion/type/view',
                     ['id' => $type->getId()]
                 );
             }
@@ -146,12 +146,12 @@ final class TypeController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/type/list');
             }
 
             if (isset($data['delete'])) {
                 $this->evaluationReportService->delete($type);
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/type/list');
             }
 
             if ($form->isValid()) {
@@ -159,7 +159,7 @@ final class TypeController extends AbstractActionController
                 $type = $form->getData();
                 $this->evaluationReportService->save($type);
                 $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/type/view',
+                    'zfcadmin/evaluation/report/criterion/type/view',
                     ['id' => $type->getId()]
                 );
             }

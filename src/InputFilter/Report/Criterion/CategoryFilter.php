@@ -19,18 +19,16 @@ namespace Evaluation\InputFilter\Report\Criterion;
 
 use Doctrine\ORM\EntityManager;
 use DoctrineModule\Validator\UniqueObject;
-use Project\Entity\Evaluation\Report\Criterion\Category;
+use Evaluation\Entity\Report\Criterion\Category;
 use Zend\InputFilter\InputFilter;
 
 /**
  * Class CategoryFilter
+ *
  * @package Evaluation\InputFilter\Report\Criterion
  */
 final class CategoryFilter extends InputFilter
 {
-    /**
-     * @param EntityManager $entityManager
-     */
     public function __construct(EntityManager $entityManager)
     {
         $inputFilter = new InputFilter();
@@ -51,7 +49,7 @@ final class CategoryFilter extends InputFilter
                             'max'      => 100,
                         ],
                     ],
-                    /*[
+                    [
                         'name'    => UniqueObject::class,
                         'options' => [
                             'object_repository' => $entityManager->getRepository(Category::class),
@@ -59,7 +57,7 @@ final class CategoryFilter extends InputFilter
                             'use_context'       => true,
                             'fields'            => 'category',
                         ],
-                    ],*/
+                    ],
                 ],
             ]
         );

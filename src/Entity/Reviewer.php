@@ -24,8 +24,6 @@ use Project\Entity\Project;
 use Zend\Form\Annotation;
 
 /**
- * Project reviewer.
- *
  * @ORM\Table(name="project_review")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\ReviewerRepository")
  */
@@ -40,23 +38,23 @@ class Reviewer extends AbstractEntity
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Project", cascade="persist", inversedBy="review")
+     * @ORM\ManyToOne(targetEntity="Project\Entity\Project", cascade="persist", inversedBy="reviewers")
      * @ORM\JoinColumn(name="project_id", referencedColumnName="project_id", nullable=false)
      *
-     * @var \Project\Entity\Project
+     * @var Project
      */
     private $project;
     /**
-     * @ORM\ManyToOne(targetEntity="Contact\Entity\Contact", cascade="persist", inversedBy="projectReview")
+     * @ORM\ManyToOne(targetEntity="Contact\Entity\Contact", cascade="persist", inversedBy="projectReviewer")
      * @ORM\JoinColumn(name="contact_id", referencedColumnName="contact_id", nullable=false)
      * @Annotation\Type("Contact\Form\Element\Contact")
      * @Annotation\Options({"label":"txt-contact"})
      *
-     * @var \Contact\Entity\Contact
+     * @var Contact
      */
     private $contact;
     /**
-     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Reviewer\Type", cascade="persist", inversedBy="reviewer")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Reviewer\Type", cascade="persist", inversedBy="reviewers")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="type_id")
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({

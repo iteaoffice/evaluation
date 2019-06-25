@@ -18,13 +18,14 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report\Criterion;
 
-use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Version as ReportVersion;
 use Evaluation\View\Helper\AbstractLink;
+use function sprintf;
 
 /**
  * Class VersionLink
+ *
  * @package Evaluation\View\Helper\Report\Criterion
  */
 final class VersionLink extends AbstractLink
@@ -36,53 +37,51 @@ final class VersionLink extends AbstractLink
 
     public function __invoke(
         CriterionVersion $criterionVersion = null,
-        string           $action = 'view',
-        string           $show = 'name',
-        ReportVersion    $reportVersion = null
+        string $action = 'view',
+        string $show = 'name',
+        ReportVersion $reportVersion = null
     ): string {
-        $this->criterionVersion = $criterionVersion ?? new CriterionVersion();
-        if ($this->criterionVersion->getCriterion() === null) {
-            $this->criterionVersion->setCriterion(new Criterion());
+        $this->reset();
+
+        $this->extractRouterParams($criterionVersion, ['id']);
+
+        if (null !== $reportVersion) {
+            $this->addRouteParam('reportVersionId', $reportVersion->getId());
+        }
+        if (null !== $criterionVersion) {
+            $this->addShowOption('name', (string)$criterionVersion->getCriterion());
         }
 
-        $this->setAction($action);
-        $this->setShow($show);
-
-        $this->addRouterParam('id', $this->criterionVersion->getId());
-        if ($reportVersion instanceof ReportVersion) {
-            $this->addRouterParam('reportVersionId', $reportVersion->getId());
-        }
-        $this->setShowOptions(['name' => (string) $this->criterionVersion->getCriterion()]);
-
-        return $this->createLink();
+        return $this->createLink($show);
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function parseAction(): void
+    public function parseAction(string $action, CriterionVersion $version): void
     {
-        switch ($this->getAction()) {
+        $this->action = $action;
+
+        switch ($action) {
             case 'add':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/version/add');
-                $this->setText($this->translator->translate("txt-add-new-evaluation-report-criterion"));
+                $this->setRouter('zfcadmin/evaluation/report/criterion/version/add');
+                $this->setText($this->translator->translate('txt-add-new-evaluation-report-criterion'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/version/view');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-view-evaluation-report-criterion-%s"),
-                    $this->criterionVersion->getCriterion()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/criterion/version/view');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-view-evaluation-report-criterion-%s'),
+                        $version->getCriterion()
+                    )
+                );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/version/edit');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-edit-evaluation-report-criterion-%s"),
-                    $this->criterionVersion->getCriterion()
-                ));
+                $this->setRouter('zfcadmin/evaluation/report/criterion/version/edit');
+                $this->setText(
+                    sprintf(
+                        $this->translator->translate('txt-edit-evaluation-report-criterion-%s'),
+                        $version->getCriterion()
+                    )
+                );
                 break;
-            default:
-                throw new \Exception(\sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
         }
     }
 }

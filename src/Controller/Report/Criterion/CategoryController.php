@@ -98,7 +98,7 @@ final class CategoryController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/category/list');
+                $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/category/list');
             }
 
             if ($form->isValid()) {
@@ -107,7 +107,7 @@ final class CategoryController extends AbstractActionController
 
                 $this->evaluationReportService->save($category);
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/category/view',
+                    'zfcadmin/evaluation/report/criterion/category/view',
                     ['id' => $category->getId()]
                 );
             }
@@ -136,12 +136,12 @@ final class CategoryController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/category/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/category/list');
             }
 
             if (isset($data['delete']) && $category->getTypes()->isEmpty()) {
                 $this->evaluationReportService->delete($category);
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/category/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/category/list');
             }
 
             if ($form->isValid()) {
@@ -149,7 +149,7 @@ final class CategoryController extends AbstractActionController
                 $category = $form->getData();
                 $this->evaluationReportService->save($category);
                 $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/category/view',
+                    'zfcadmin/evaluation/report/criterion/category/view',
                     ['id' => $category->getId()]
                 );
             }

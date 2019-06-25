@@ -21,118 +21,89 @@ namespace Evaluation\View\Helper\Report;
 use Evaluation\Acl\Assertion\ReportAssertion;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\View\Helper\AbstractLink;
-use Exception;
 use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Version\Version as ProjectVersion;
 
 /**
  * Class FinalLink
+ *
  * @package Evaluation\View\Helper\Report
  */
 final class FinalLink extends AbstractLink
 {
-    /**
-     * @var EvaluationReport
-     */
-    protected $evaluationReport;
-
-    /**
-     * @var ProjectReport
-     */
-    private $projectReport;
-
-    /**
-     * @var ProjectVersion
-     */
-    private $projectVersion;
-
-    /**
-     * @param EvaluationReport|null $evaluationReport
-     * @param string $action
-     * @param string $show
-     * @param ProjectReport|null $projectReport
-     * @param ProjectVersion|null $projectVersion
-     * @return string
-     * @throws Exception
-     */
     public function __invoke(
         EvaluationReport $evaluationReport = null,
-        string           $action = 'view',
-        string           $show = 'text',
-        ProjectReport    $projectReport = null,
-        ProjectVersion   $projectVersion = null
+        string $action = 'view',
+        string $show = 'text',
+        ProjectReport $projectReport = null,
+        ProjectVersion $projectVersion = null
     ): string {
-        $this->evaluationReport = $evaluationReport ?? new EvaluationReport();
-        $this->setAction($action);
-        $this->setShow($show);
-        $this->projectReport = $projectReport ?? new ProjectReport();
-        $this->projectVersion = $projectVersion ?? new ProjectVersion();
+        $this->reset();
 
-        if (!$this->evaluationReport->isEmpty()) {
-            $this->addRouterParam('id', $this->evaluationReport->getId());
-        }
+        $this->extractRouterParams($evaluationReport, ['id']);
 
-        if (!$this->hasAccess($this->evaluationReport, ReportAssertion::class, $this->getAction())) {
+        if (!$this->hasAccess($evaluationReport ?? new EvaluationReport(), ReportAssertion::class, $action)) {
             return '';
         }
 
-        return $this->createLink();
+        $this->parseAction($action, $evaluationReport, $projectReport, $projectVersion);
+
+        return $this->createLink($show);
     }
 
-    /**
-     * @throws Exception
-     * @return void
-     */
-    public function parseAction(): void
-    {
-        switch ($this->getAction()) {
+    public function parseAction(
+        string $action,
+        ?EvaluationReport $evaluationReport,
+        ?ProjectReport $projectReport,
+        ?ProjectVersion $version
+    ): void {
+        $this->action = $action;
+
+        switch ($action) {
             case 'download-offline-form':
-                $route = 'zfcadmin/evaluation/report2/list';
-                if (!$this->projectReport->isEmpty()) {
-                    $route = 'zfcadmin/evaluation/report2/create-from-report';
+                $route = 'zfcadmin/evaluation/report/list';
+                if (null !== $projectReport) {
+                    $route = 'zfcadmin/evaluation/report/create-from-report';
                     $this->setText($this->translator->translate('txt-download-offline-form'));
-                    $this->addRouterParam('report', $this->projectReport->getId());
-                } elseif (!$this->projectVersion->isEmpty()) {
-                    $route = 'zfcadmin/evaluation/report2/create-from-version';
+                    $this->addRouteParam('report', $projectReport->getId());
+                } elseif (null !== $version) {
+                    $route = 'zfcadmin/evaluation/report/create-from-version';
                     $this->setText($this->translator->translate('txt-download-offline-form'));
-                    $this->addRouterParam('version', $this->projectVersion->getId());
-                } elseif (!$this->evaluationReport->isEmpty()) {
+                    $this->addRouteParam('version', $version->getId());
+                } elseif (null !== $evaluationReport) {
                     $this->setText($this->translator->translate('txt-download'));
-                    $route = 'zfcadmin/evaluation/report2/update';
+                    $route = 'zfcadmin/evaluation/report/update';
                 }
                 $this->setRouter($route);
-                $this->setQuery(['mode' => 'offline']);
+                $this->addQueryParam('mode', 'offline');
                 break;
             case 'finalise':
-                $this->setRouter('zfcadmin/evaluation/report2/finalise');
+                $this->setRouter('zfcadmin/evaluation/report/finalise');
                 $this->setText($this->translator->translate('txt-finalise-evaluation-report'));
                 break;
             case 'undo-final':
-                $this->setRouter('zfcadmin/evaluation/report2/undo-final');
+                $this->setRouter('zfcadmin/evaluation/report/undo-final');
                 $this->setText($this->translator->translate('txt-undo-finalisation'));
                 break;
             case 'download':
-                $this->setRouter('zfcadmin/evaluation/report2/download');
+                $this->setRouter('zfcadmin/evaluation/report/download');
                 $this->setText($this->translator->translate('txt-download-original-version'));
                 break;
             case 'download-distributable':
-                $this->setRouter('zfcadmin/evaluation/report2/download');
-                $this->setQuery(['format' => 'distributable']);
+                $this->setRouter('zfcadmin/evaluation/report/download');
+                $this->addQueryParam('format', 'distributable');
                 $this->setText($this->translator->translate('txt-download-distributable-version'));
                 break;
             case 'download-pdf':
-                $this->setRouter('zfcadmin/evaluation/report2/download');
-                $this->setQuery(['format' => 'pdf']);
+                $this->setRouter('zfcadmin/evaluation/report/download');
+                $this->addQueryParam('format', 'pdf');
                 $this->setText($this->translator->translate('txt-download-as-pdf'));
                 break;
             case 'download-distributable-pdf':
-                $this->setRouter('zfcadmin/evaluation/report2/download');
-                $this->setQuery(['format' => 'distributable-pdf']);
+                $this->setRouter('zfcadmin/evaluation/report/download');
+                $this->addQueryParam('format', 'distributable-pdf');
                 $this->setText($this->translator->translate('txt-download-distributable-version-as-pdf'));
                 break;
-
-            default:
-                throw new Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
         }
     }
 }

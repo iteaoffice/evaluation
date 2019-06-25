@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Evaluation\Repository;
 
 use Contact\Entity\Contact;
+use DateTime;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -29,10 +30,12 @@ use Evaluation\Entity\Report\Version as EvaluationReportVersion;
 use Evaluation\Service\EvaluationReportService;
 use Project\Entity\ChangeRequest\Process;
 use Project\Entity\Report\Report as ProjectReport;
-use Project\Entity\Report\Review as ReportReview;
-use Project\Entity\Version\Review as VersionReview;
+use Project\Entity\Report\Reviewer as ReportReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Type as VersionType;
 use Project\Entity\Version\Version;
+use function array_merge;
+use function in_array;
 
 /**
  * Class ReportRepository
@@ -64,7 +67,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                     )
                 )
             );
-            $qbWindow->setParameter('now', new \DateTime());
+            $qbWindow->setParameter('now', new DateTime());
         }
         $windows = $qbWindow->getQuery()->getResult();
 
@@ -82,10 +85,10 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                         $versionType = $reportVersion->getReportType()->getVersionType();
 
                         // Window is for a version
-                        if (($versionType !== null) && !\in_array($versionType->getId(), $versionTypes)) {
+                        if (($versionType !== null) && !in_array($versionType->getId(), $versionTypes)) {
                             $qb1 = $this->_em->createQueryBuilder();
                             $qb1->select('vr');
-                            $qb1->from(VersionReview::class, 'vr');
+                            $qb1->from(VersionReviewer::class, 'vr');
                             $qb1->innerJoin('vr.version', 'v');
                             $qb1->innerJoin('v.versionType', 'vt');
                             $qb1->leftJoin('vr.projectVersionReport2', 'pvr');
@@ -103,7 +106,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb1->setParameter('versionType', $versionType);
                             $qb1->setParameter('dateStartSelection', $window->getDateStartSelection());
 
-                            $return[$window->getId()]['reviews'] = \array_merge(
+                            $return[$window->getId()]['reviews'] = array_merge(
                                 $return[$window->getId()]['reviews'],
                                 $qb1->getQuery()->useQueryCache(true)->getResult()
                             );
@@ -113,7 +116,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                         elseif ($reportVersion->getReportType()->getId() === EvaluationReportType::TYPE_REPORT) {
                             $qb2 = $this->_em->createQueryBuilder();
                             $qb2->select('rr');
-                            $qb2->from(ReportReview::class, 'rr');
+                            $qb2->from(ReportReviewer::class, 'rr');
                             $qb2->innerJoin('rr.projectReport', 'pr');
                             $qb2->leftJoin('rr.projectReportReport2', 'prr');
                             $qb2->where($qb2->expr()->eq('rr.contact', ':contact'));
@@ -127,7 +130,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb2->setParameter('contact', $contact);
                             $qb2->setParameter('dateStartSelection', $window->getDateStartSelection());
 
-                            $return[$window->getId()]['reviews'] = \array_merge(
+                            $return[$window->getId()]['reviews'] = array_merge(
                                 $return[$window->getId()]['reviews'],
                                 $qb2->getQuery()->useQueryCache(true)->getResult()
                             );
@@ -149,12 +152,12 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                         $versionType = $reportVersion->getReportType()->getVersionType();
 
                         // Window is for a version
-                        if (($versionType !== null) && !\in_array($versionType->getId(), $versionTypes)) {
+                        if (($versionType !== null) && !in_array($versionType->getId(), $versionTypes)) {
                             $qb1 = $this->_em->createQueryBuilder();
                             $qb1->select('er');
                             $qb1->from(EvaluationReport::class, 'er');
                             $qb1->innerJoin('er.projectVersionReport', 'pvr');
-                            $qb1->innerJoin('pvr.review', 'vr');
+                            $qb1->innerJoin('pvr.reviewer', 'vr');
                             $qb1->innerJoin('vr.version', 'v');
                             $qb1->innerJoin('v.versionType', 'vt');
                             $qb1->where($qb1->expr()->eq('vr.contact', ':contact'));
@@ -181,7 +184,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb2->select('er');
                             $qb2->from(EvaluationReport::class, 'er');
                             $qb2->innerJoin('er.projectReportReport', 'prr');
-                            $qb2->innerJoin('prr.review', 'rr');
+                            $qb2->innerJoin('prr.reviewer', 'rr');
                             $qb2->innerJoin('rr.projectReport', 'pr');
                             $qb2->where($qb2->expr()->eq('rr.contact', ':contact'));
                             $qb2->andWhere($qb2->expr()->eq('er.final', ':final'));
@@ -206,9 +209,9 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $qb->select('er');
                 $qb->from(EvaluationReport::class, 'er');
                 $qb->leftJoin('er.projectVersionReport', 'pvr');
-                $qb->leftJoin('pvr.review', 'vr');
+                $qb->leftJoin('pvr.reviewer', 'vr');
                 $qb->leftJoin('er.projectReportReport', 'prr');
-                $qb->leftJoin('prr.review', 'rr');
+                $qb->leftJoin('prr.reviewer', 'rr');
                 $qb->where($qb->expr()->orX(
                     $qb->expr()->eq('vr.contact', ':contact'),
                     $qb->expr()->eq('rr.contact', ':contact')
@@ -258,7 +261,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
             // Individual evaluation report
             else {
                 $queryBuilder->select('rr');
-                $queryBuilder->from(ReportReview::class, 'rr');
+                $queryBuilder->from(ReportReviewer::class, 'rr');
                 $queryBuilder->innerJoin('rr.contact', 'c');
                 $queryBuilder->innerJoin('rr.projectReport', 'pr');
                 $queryBuilder->innerJoin('pr.project', 'p');
@@ -341,7 +344,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $queryBuilder->from(Version::class, 'v');
                 $queryBuilder->innerJoin('v.versionType', 'vt');
                 $queryBuilder->innerJoin('v.project', 'p');
-                $queryBuilder->innerJoin('v.versionReview', 'vr');
+                $queryBuilder->innerJoin('v.versionReviewer', 'vr');
                 $queryBuilder->leftJoin('v.projectVersionReport2', 'vrr');
                 $queryBuilder->leftJoin('vrr.evaluationReport', 'rr');
                 $queryBuilder->groupBy('v.id');
@@ -350,7 +353,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
             // Individual evaluation report
             else {
                 $queryBuilder->select('vr');
-                $queryBuilder->from(VersionReview::class, 'vr');
+                $queryBuilder->from(VersionReviewer::class, 'vr');
                 $queryBuilder->innerJoin('vr.contact', 'c');
                 $queryBuilder->innerJoin('vr.version', 'v');
                 $queryBuilder->innerJoin('v.versionType', 'vt');

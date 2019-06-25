@@ -24,20 +24,16 @@ use Project\Entity\Version\Type as VersionType;
 use Zend\Form\Annotation;
 
 /**
- * EvaluationType.
- *
  * @ORM\Table(name="evaluation_type")
  * @ORM\Entity
  */
 class Type extends AbstractEntity
 {
-    public const TYPE_PO_EVALUATION  = 1;
+    public const TYPE_PO_EVALUATION = 1;
     public const TYPE_FPP_EVALUATION = 2;
     public const TYPE_FUNDING_STATUS = 3;
 
     /**
-     * @var integer
-     *
      * @ORM\Column(name="type_id", type="integer", options={"unsigned":true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -50,16 +46,13 @@ class Type extends AbstractEntity
      */
     private $type;
     /**
-     * @ORM\OneToMany(targetEntity="Project\Entity\Evaluation\Evaluation", cascade={"persist"}, mappedBy="type")
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Evaluation", cascade={"persist"}, mappedBy="type")
      * @Annotation\Exclude()
      *
-     * @var \Project\Entity\Evaluation\Evaluation[]
+     * @var Evaluation[]
      */
     private $evaluation;
 
-    /**
-     * Class constructor.
-     */
     public function __construct()
     {
         $this->evaluation = new Collections\ArrayCollection();
@@ -83,59 +76,41 @@ class Type extends AbstractEntity
         }
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return (string)$this->type;
     }
 
-    /**
-     * @return \Project\Entity\Evaluation\Evaluation[]
-     */
-    public function getEvaluation()
-    {
-        return $this->evaluation;
-    }
-
-    /**
-     * @param \Project\Entity\Evaluation\Evaluation[] $evaluation
-     */
-    public function setEvaluation($evaluation)
-    {
-        $this->evaluation = $evaluation;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId($id): Type
     {
         $this->id = $id;
+        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type): Type
     {
         $this->type = $type;
+        return $this;
+    }
+
+    public function getEvaluation(): ?array
+    {
+        return $this->evaluation;
+    }
+
+    public function setEvaluation(array $evaluation): Type
+    {
+        $this->evaluation = $evaluation;
+        return $this;
     }
 }

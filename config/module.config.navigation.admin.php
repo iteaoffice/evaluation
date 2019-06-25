@@ -10,10 +10,10 @@ return [
                 'pages' => [
                     'report2-criterion-category' => [
                         'label' => _("txt-nav-evaluation-report-criterion-category-list"),
-                        'route' => 'zfcadmin/evaluation/report2/criterion/category/list',
+                        'route' => 'zfcadmin/evaluation/report/criterion/category/list',
                         'pages' => [
                             'view' => [
-                                'route'   => 'zfcadmin/evaluation/report2/criterion/category/view',
+                                'route'   => 'zfcadmin/evaluation/report/criterion/category/view',
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
@@ -26,7 +26,7 @@ return [
                                 'pages'   => [
                                     'edit' => [
                                         'label'   => _('txt-nav-edit'),
-                                        'route'   => 'zfcadmin/evaluation/report2/criterion/category/edit',
+                                        'route'   => 'zfcadmin/evaluation/report/criterion/category/edit',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -38,16 +38,16 @@ return [
                             ],
                             'new'  => [
                                 'label' => _('txt-nav-new-evaluation-report-criterion-category'),
-                                'route' => 'zfcadmin/evaluation/report2/criterion/category/new',
+                                'route' => 'zfcadmin/evaluation/report/criterion/category/new',
                             ],
                         ],
                     ],
                     'report2-criterion-type'     => [
                         'label' => _("txt-nav-evaluation-report-criterion-type-list"),
-                        'route' => 'zfcadmin/evaluation/report2/criterion/type/list',
+                        'route' => 'zfcadmin/evaluation/report/criterion/type/list',
                         'pages' => [
                             'view' => [
-                                'route'   => 'zfcadmin/evaluation/report2/criterion/type/view',
+                                'route'   => 'zfcadmin/evaluation/report/criterion/type/view',
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
@@ -60,7 +60,7 @@ return [
                                 'pages'   => [
                                     'edit' => [
                                         'label'   => _('txt-nav-edit'),
-                                        'route'   => 'zfcadmin/evaluation/report2/criterion/type/edit',
+                                        'route'   => 'zfcadmin/evaluation/report/criterion/type/edit',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -72,16 +72,16 @@ return [
                             ],
                             'new'  => [
                                 'label' => _('txt-nav-new-evaluation-report-criterion-type'),
-                                'route' => 'zfcadmin/evaluation/report2/criterion/type/new',
+                                'route' => 'zfcadmin/evaluation/report/criterion/type/new',
                             ],
                         ],
                     ],
                     'report2-criterion-topic'    => [
                         'label' => _("txt-nav-evaluation-report-criterion-topic-list"),
-                        'route' => 'zfcadmin/evaluation/report2/criterion/topic/list',
+                        'route' => 'zfcadmin/evaluation/report/criterion/topic/list',
                         'pages' => [
                             'view' => [
-                                'route'   => 'zfcadmin/evaluation/report2/criterion/topic/view',
+                                'route'   => 'zfcadmin/evaluation/report/criterion/topic/view',
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
@@ -94,7 +94,7 @@ return [
                                 'pages'   => [
                                     'edit' => [
                                         'label'   => _('txt-nav-edit'),
-                                        'route'   => 'zfcadmin/evaluation/report2/criterion/topic/edit',
+                                        'route'   => 'zfcadmin/evaluation/report/criterion/topic/edit',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -106,16 +106,16 @@ return [
                             ],
                             'new'  => [
                                 'label' => _('txt-nav-new-evaluation-report-criterion-topic'),
-                                'route' => 'zfcadmin/evaluation/report2/criterion/topic/new',
+                                'route' => 'zfcadmin/evaluation/report/criterion/topic/new',
                             ],
                         ],
                     ],
                     'report2-criterion'          => [
                         'label' => _("txt-nav-evaluation-report-criterion-list"),
-                        'route' => 'zfcadmin/evaluation/report2/criterion/list',
+                        'route' => 'zfcadmin/evaluation/report/criterion/list',
                         'pages' => [
                             'view' => [
-                                'route'   => 'zfcadmin/evaluation/report2/criterion/view',
+                                'route'   => 'zfcadmin/evaluation/report/criterion/view',
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
@@ -128,7 +128,7 @@ return [
                                 'pages'   => [
                                     'edit' => [
                                         'label'   => _('txt-nav-edit'),
-                                        'route'   => 'zfcadmin/evaluation/report2/criterion/edit',
+                                        'route'   => 'zfcadmin/evaluation/report/criterion/edit',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -140,16 +140,16 @@ return [
                             ],
                             'new'  => [
                                 'label' => _('txt-nav-new-evaluation-report-criterion'),
-                                'route' => 'zfcadmin/evaluation/report2/criterion/new',
+                                'route' => 'zfcadmin/evaluation/report/criterion/new',
                             ],
                         ],
                     ],
                     'report2-version'            => [
                         'label' => _("txt-nav-evaluation-report-version-list"),
-                        'route' => 'zfcadmin/evaluation/report2/version/list',
+                        'route' => 'zfcadmin/evaluation/report/version/list',
                         'pages' => [
                             'view' => [
-                                'route'   => 'zfcadmin/evaluation/report2/version/view',
+                                'route'   => 'zfcadmin/evaluation/report/version/view',
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
@@ -162,7 +162,7 @@ return [
                                 'pages'   => [
                                     'edit' => [
                                         'label'   => _('txt-nav-edit'),
-                                        'route'   => 'zfcadmin/evaluation/report2/version/edit',
+                                        'route'   => 'zfcadmin/evaluation/report/version/edit',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -172,7 +172,7 @@ return [
                                     ],
                                     'copy' => [
                                         'label'   => _('txt-nav-copy'),
-                                        'route'   => 'zfcadmin/evaluation/report2/version/copy',
+                                        'route'   => 'zfcadmin/evaluation/report/version/copy',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -182,7 +182,7 @@ return [
                                     ],
                                     'view-criterion-version' => [
                                         'label'   => _('txt-nav-view'),
-                                        'route'   => 'zfcadmin/evaluation/report2/criterion/version/view',
+                                        'route'   => 'zfcadmin/evaluation/report/criterion/version/view',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -195,7 +195,7 @@ return [
                                         'pages'   => [
                                             'edit' => [
                                                 'label'   => _('txt-nav-edit'),
-                                                'route'   => 'zfcadmin/evaluation/report2/criterion/version/edit',
+                                                'route'   => 'zfcadmin/evaluation/report/criterion/version/edit',
                                                 'visible' => false,
                                                 'params'  => [
                                                     'entities' => [
@@ -207,7 +207,7 @@ return [
                                     ],
                                     'add-criterion-version'  => [
                                         'label' => _('txt-add-new-evaluation-report-criterion'),
-                                        'route' => 'zfcadmin/evaluation/report2/criterion/version/add',
+                                        'route' => 'zfcadmin/evaluation/report/criterion/version/add',
                                         'visible' => false,
                                         'params'  => [
                                             'entities'   => [
@@ -222,16 +222,16 @@ return [
                             ],
                             'new'  => [
                                 'label' => _('txt-nav-new-evaluation-report-version'),
-                                'route' => 'zfcadmin/evaluation/report2/version/new',
+                                'route' => 'zfcadmin/evaluation/report/version/new',
                             ],
                         ],
                     ],
                     'report2-window'             => [
                         'label' => _('txt-nav-evaluation-report-window-list'),
-                        'route' => 'zfcadmin/evaluation/report2/window/list',
+                        'route' => 'zfcadmin/evaluation/report/window/list',
                         'pages' => [
                             'view' => [
-                                'route'   => 'zfcadmin/evaluation/report2/window/view',
+                                'route'   => 'zfcadmin/evaluation/report/window/view',
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
@@ -244,7 +244,7 @@ return [
                                 'pages'   => [
                                     'edit' => [
                                         'label'   => _('txt-nav-edit'),
-                                        'route'   => 'zfcadmin/evaluation/report2/window/edit',
+                                        'route'   => 'zfcadmin/evaluation/report/window/edit',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -256,7 +256,41 @@ return [
                             ],
                             'new'  => [
                                 'label' => _('txt-nav-new-evaluation-report-window'),
-                                'route' => 'zfcadmin/evaluation/report2/window/new',
+                                'route' => 'zfcadmin/evaluation/report/window/new',
+                            ],
+                        ],
+                    ],
+                    'review-contact-list'        => [
+                        'label' => _('txt-nav-review-contact-list'),
+                        'route' => 'zfcadmin/evaluation/reviewer/contact/list',
+                        'pages' => [
+                            'view' => [
+                                'route'   => 'zfcadmin/evaluation/reviewer/contact/view',
+                                'visible' => false,
+                                'params'  => [
+                                    'entities'   => [
+                                        'id' => Entity\Reviewer\Contact::class,
+                                    ],
+                                    'invokables' => [
+                                        Navigation\Invokable\Reviewer\ContactLabel::class,
+                                    ],
+                                ],
+                                'pages'   => [
+                                    'edit' => [
+                                        'label'   => _('txt-nav-edit'),
+                                        'route'   => 'zfcadmin/evaluation/reviewer/contact/edit',
+                                        'visible' => false,
+                                        'params'  => [
+                                            'entities' => [
+                                                'id' => Entity\Reviewer\Contact::class,
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'new'  => [
+                                'label' => _('txt-nav-new-review-contact'),
+                                'route' => 'zfcadmin/evaluation/reviewer/contact/new',
                             ],
                         ],
                     ],

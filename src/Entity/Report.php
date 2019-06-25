@@ -25,43 +25,36 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Zend\Form\Annotation;
 
 /**
- * @ORM\Table(name="evaluation_report2")
+ * @ORM\Table(name="evaluation_report")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\ReportRepository")
  */
 class Report extends AbstractEntity
 {
-    public const SCORE_LOW          = 1; // Low score project
+    public const SCORE_LOW = 1; // Low score project
     public const SCORE_MIDDLE_MINUS = 2; // Middle- score project
-    public const SCORE_MIDDLE       = 3; // Middle score project
-    public const SCORE_MIDDLE_PLUS  = 4; // Middle+ score project
-    public const SCORE_TOP          = 5; // Top score project
-    public const SCORE_APPROVED     = 6; // Approved project report
-    public const SCORE_REJECTED     = 7; // Rejected project report
+    public const SCORE_MIDDLE = 3; // Middle score project
+    public const SCORE_MIDDLE_PLUS = 4; // Middle+ score project
+    public const SCORE_TOP = 5; // Top score project
+    public const SCORE_APPROVED = 6; // Approved project report
+    public const SCORE_REJECTED = 7; // Rejected project report
 
     public const TYPE_INDIVIDUAL = 'individual'; // Individual review
-    public const TYPE_FINAL      = 'final'; // Final review
+    public const TYPE_FINAL = 'final'; // Final review
 
-    /**
-     * Templates for the version-based report scores.
-     *
-     * @var array
-     */
-    private static $versionScores = [
-        self::SCORE_TOP          => 'txt-score-top-project',
-        self::SCORE_MIDDLE_PLUS  => 'txt-score-middle+',
-        self::SCORE_MIDDLE       => 'txt-score-middle',
-        self::SCORE_MIDDLE_MINUS => 'txt-score-middle-',
-        self::SCORE_LOW          => 'txt-score-low-quality'
-    ];
-    /**
-     * Templates for the report-based evaluation report scores.
-     *
-     * @var array
-     */
-    private static $reportScores = [
-        self::SCORE_APPROVED => 'txt-approved',
-        self::SCORE_REJECTED => 'txt-rejected'
-    ];
+    private static $versionScores
+        = [
+            self::SCORE_TOP          => 'txt-score-top-project',
+            self::SCORE_MIDDLE_PLUS  => 'txt-score-middle+',
+            self::SCORE_MIDDLE       => 'txt-score-middle',
+            self::SCORE_MIDDLE_MINUS => 'txt-score-middle-',
+            self::SCORE_LOW          => 'txt-score-low-quality'
+        ];
+
+    private static $reportScores
+        = [
+            self::SCORE_APPROVED => 'txt-approved',
+            self::SCORE_REJECTED => 'txt-rejected'
+        ];
     /**
      * @ORM\Column(name="evaluation_report_id", type="integer", options={"unsigned":true})
      * @ORM\Id
@@ -79,6 +72,13 @@ class Report extends AbstractEntity
      * @var Report\Version
      */
     private $version;
+    /**
+     * @ORM\Column(name="type_id", type="integer", options={"unsigned":true}, nullable=false)
+     * @Annotation\Exclude()
+     *
+     * Keep a type for legacy reasons (to avoid that doctrine removes the type_id column)
+     */
+    private $type;
     /**
      * @ORM\Column(name="final", length=1, type="boolean", nullable=false)
      * @Annotation\Type("Zend\Form\Element\Checkbox")

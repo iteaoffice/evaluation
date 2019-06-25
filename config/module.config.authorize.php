@@ -18,47 +18,56 @@ namespace Evaluation;
 
 use BjyAuthorize\Guard\Route;
 use Evaluation\Acl\Assertion\ReportAssertion;
+use Evaluation\Acl\Assertion\EvaluationAssertion;
+use Project\Acl\Assertion\Project as ProjectAssertion;
 
 return [
     'bjyauthorize' => [
         'guards' => [
-            /* If this guard is specified here (i.e. it is enabled], it will block
-             * access to all routes unless they are specified here.
-             */
             Route::class => [
                 [
-                    'route'     => 'community/evaluation/report2/list',
+                    'route'     => 'community/evaluation/report/list',
                     'roles'     => [],
                     'assertion' => ReportAssertion::class,
                 ],
                 [
-                    'route'     => 'community/evaluation/report2/view',
+                    'route'     => 'community/evaluation/report/view',
                     'roles'     => [],
                     'assertion' => ReportAssertion::class,
                 ],
                 [
-                    'route'     => 'community/evaluation/report2/update',
+                    'route'     => 'community/evaluation/report/update',
                     'roles'     => [],
                     'assertion' => ReportAssertion::class,
                 ],
                 [
-                    'route'     => 'community/evaluation/report2/finalise',
+                    'route'     => 'community/evaluation/report/finalise',
                     'roles'     => [],
                     'assertion' => ReportAssertion::class,
                 ],
                 [
-                    'route'     => 'community/evaluation/report2/create-from-report-review',
+                    'route'     => 'community/evaluation/report/create-from-report-review',
                     'roles'     => [],
                     'assertion' => ReportAssertion::class,
                 ],
                 [
-                    'route'     => 'community/evaluation/report2/create-from-version-review',
+                    'route'     => 'community/evaluation/report/create-from-version-review',
                     'roles'     => [],
                     'assertion' => ReportAssertion::class,
                 ],
                 [
-                    'route' => 'community/evaluation/report2/download-combined',
+                    'route' => 'community/evaluation/report/download-combined',
                     'roles' => ['user'],
+                ],
+                [
+                    'route'     => 'json/evaluation',
+                    'roles'     => [],
+                    'assertion' => EvaluationAssertion::class,
+                ],
+                [
+                    'route'     => 'json/update-evaluation',
+                    'roles'     => [],
+                    'assertion' => ProjectAssertion::class,
                 ],
             ],
         ],

@@ -4,9 +4,113 @@ declare(strict_types=1);
 
 namespace Evaluation;
 
+use Evaluation\Controller;
+
 return [
     'router' => [
         'routes' => [
+            'json'      => [
+                'type'          => 'Literal',
+                'options'       => [
+                    'route'    => '/json',
+                    'defaults' => [
+                        'controller' => Controller\JsonController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes'  => [
+                    'evaluation'                       => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/evaluation.json',
+                            'defaults' => [
+                                'action'    => 'evaluation',
+                                'privilege' => 'overview',
+                            ],
+                        ],
+                    ],
+                    'update-effort'                    => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/update-effort.json',
+                            'defaults' => [
+                                'action'    => 'update-effort',
+                                'privilege' => 'update-effort',
+                            ],
+                        ],
+                    ],
+                    'update-cost'                      => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/update-cost.json',
+                            'defaults' => [
+                                'action'    => 'update-cost',
+                                'privilege' => 'update-cost',
+                            ],
+                        ],
+                    ],
+                    'update-funded'                    => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/update-funded.json',
+                            'defaults' => [
+                                'action'    => 'update-funded',
+                                'privilege' => 'update-funded',
+                            ],
+                        ],
+                    ],
+                    'get-achievement-type-information' => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/achievement-type-information.json',
+                            'defaults' => [
+                                'action' => 'achievement-type-information',
+                            ],
+                        ],
+                    ],
+                    'update-evaluation'                => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/update-evaluation.json',
+                            'defaults' => [
+                                'action'    => 'update-evaluation',
+                                'privilege' => 'update-evaluation',
+                            ],
+                        ],
+                    ],
+                    'update-funding'                   => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/update-funding.json',
+                            'defaults' => [
+                                'action'    => 'update-funding',
+                                'privilege' => 'update-funding',
+                            ],
+                        ],
+                    ],
+                    'update-funding-affiliation'       => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/update-funding-affiliation.json',
+                            'defaults' => [
+                                'action'    => 'update-funding-affiliation',
+                                'privilege' => 'update-funding-affiliation',
+                            ],
+                        ],
+                    ],
+                    'get-project-links'                => [
+                        'type'    => 'Literal',
+                        'options' => [
+                            'route'    => '/get-project-links.json',
+                            'defaults' => [
+                                'action'    => 'get-project-links',
+                                'privilege' => 'get-project-links',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             'community' => [
                 'child_routes'  => [
                     'evaluation' => [
@@ -15,7 +119,7 @@ return [
                         'options'       => [
                             'route'    => '/evaluation',
                             'defaults' => [
-                                //'controller' => Controller\EvaluationController::class,
+                                'controller' => Controller\EvaluationController::class,
                                 'action'     => 'overview',
                                 'privilege'  => 'overview',
                             ],
@@ -142,7 +246,7 @@ return [
                                     'create-from-version-review' => [
                                         'type'    => 'Segment',
                                         'options' => [
-                                            'route'    => '/create/version-[:versionReview].html',
+                                            'route'    => '/create/version-[:versionReviewer].html',
                                             'defaults' => [
                                                 'action'    => 'new',
                                                 'privilege' => 'create',
@@ -152,7 +256,7 @@ return [
                                     'create-from-report-review'  => [
                                         'type'    => 'Segment',
                                         'options' => [
-                                            'route'    => '/create/report-[:reportReview].html',
+                                            'route'    => '/create/report-[:reportReviewer].html',
                                             'defaults' => [
                                                 'action'    => 'new',
                                                 'privilege' => 'create',

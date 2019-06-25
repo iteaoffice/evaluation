@@ -17,13 +17,16 @@ declare(strict_types=1);
 
 namespace Evaluation\Entity;
 
+use Contact\Entity\Contact;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use General\Entity\Country;
+use Project\Entity\Funding\Status;
+use Project\Entity\Project;
 use Zend\Form\Annotation;
 
 /**
- * Evaluation.
- *
  * @ORM\Table(name="evaluation")
  * @ORM\Entity()
  */
@@ -77,14 +80,12 @@ class Evaluation extends AbstractEntity
      * @Gedmo\Timestampable(on="update")
      * @Annotation\Exclude()
      *
-     * @var \DateTime
+     * @var DateTime
      */
     private $dateUpdated;
     /**
      * @ORM\ManyToOne(targetEntity="Project\Entity\Funding\Status", cascade="persist", inversedBy="evaluation")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="status_id", referencedColumnName="status_id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="status_id", referencedColumnName="status_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
      *      "help-block":"txt-evaluation-status-explanation",
@@ -101,26 +102,22 @@ class Evaluation extends AbstractEntity
      * )
      * @Annotation\Attributes({"label":"txt-evaluation-status"})
      *
-     * @var \Project\Entity\Funding\Status
+     * @var Status
      */
     private $status;
     /**
      * @ORM\ManyToOne(targetEntity="Contact\Entity\Contact", cascade="persist", inversedBy="evaluation")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="contact_id", referencedColumnName="contact_id")
-     * })
+     * @ORM\JoinColumn(name="contact_id", referencedColumnName="contact_id")
      * @Annotation\Type("Contact\Form\Element\Contact")
      * @Annotation\Attributes({"label":"txt-evaluation-contact-label"})
      * @Annotation\Options({"help-block":"txt-evaluation-contact-help-block"})
      *
-     * @var \Contact\Entity\Contact
+     * @var Contact
      */
     private $contact;
     /**
      * @ORM\ManyToOne(targetEntity="General\Entity\Country", cascade="persist", inversedBy="evaluation")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="country_id", referencedColumnName="country_id")
-     * })
+     * @ORM\JoinColumn(name="country_id", referencedColumnName="country_id")
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
      *      "help-block":"txt-evaluation-country-explanation",
@@ -137,18 +134,16 @@ class Evaluation extends AbstractEntity
      * )
      * @Annotation\Attributes({"label":"txt-country"})
      *
-     * @var \General\Entity\Country
+     * @var Country
      */
     private $country;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Evaluation\Type", cascade="persist", inversedBy="evaluation")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="type_id", referencedColumnName="type_id", nullable=false)
-     * })
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Type", cascade="persist", inversedBy="evaluation")
+     * @ORM\JoinColumn(name="type_id", referencedColumnName="type_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntityRadio")
      * @Annotation\Options({
      *      "help-block":"txt-evaluation-type-explanation",
-     *      "target_class":"Project\Entity\Evaluation\Type",
+     *      "target_class":"Evaluation\Entity\Type",
      *      "find_method":{
      *          "name":"findBy",
      *          "params": {
@@ -161,14 +156,12 @@ class Evaluation extends AbstractEntity
      * )
      * @Annotation\Attributes({"label":"txt-type"})
      *
-     * @var \Project\Entity\Evaluation\Type
+     * @var \Evaluation\Entity\Type
      */
     private $type;
     /**
      * @ORM\ManyToOne(targetEntity="Project\Entity\Project", cascade="persist", inversedBy="evaluation")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="project_id", referencedColumnName="project_id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="project_id", referencedColumnName="project_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
      *      "help-block":"txt-evaluation-project-explanation",
@@ -185,7 +178,7 @@ class Evaluation extends AbstractEntity
      * )
      * @Annotation\Attributes({"label":"txt-project"})
      *
-     * @var \Project\Entity\Project
+     * @var Project
      */
     private $project;
     /**
@@ -213,190 +206,122 @@ class Evaluation extends AbstractEntity
         return self::$displayTemplates;
     }
 
-    /**
-     * Magic Getter.
-     *
-     * @param $property
-     *
-     * @return mixed
-     */
     public function __get($property)
     {
         return $this->$property;
     }
 
-    /**
-     * Magic Setter.
-     *
-     * @param $property
-     * @param $value
-     */
     public function __set($property, $value)
     {
         $this->$property = $value;
     }
 
-    /**
-     * @param $property
-     *
-     * @return bool
-     */
     public function __isset($property)
     {
         return isset($this->$property);
     }
 
-    /**
-     * @return \Contact\Entity\Contact
-     */
-    public function getContact()
+    public function getId(): ?int
     {
-        return $this->contact;
+        return $this->id;
     }
 
-    /**
-     * @param \Contact\Entity\Contact $contact
-     */
-    public function setContact($contact)
+    public function setId(int $id): Evaluation
     {
-        $this->contact = $contact;
+        $this->id = $id;
+        return $this;
     }
 
-    /**
-     * @return \General\Entity\Country
-     */
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param \General\Entity\Country $country
-     */
-    public function setCountry($country)
-    {
-        $this->country = $country;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getDateUpdated()
-    {
-        return $this->dateUpdated;
-    }
-
-    /**
-     * @param \DateTime $dateUpdated
-     */
-    public function setDateUpdated($dateUpdated)
-    {
-        $this->dateUpdated = $dateUpdated;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): Evaluation
     {
         $this->description = $description;
+        return $this;
     }
 
-    /**
-     * @param bool $textual
-     *
-     * @return int
-     */
+    public function getDateUpdated(): ?DateTime
+    {
+        return $this->dateUpdated;
+    }
+
+    public function setDateUpdated(DateTime $dateUpdated): Evaluation
+    {
+        $this->dateUpdated = $dateUpdated;
+        return $this;
+    }
+
+    public function getContact(): ?Contact
+    {
+        return $this->contact;
+    }
+
+    public function setContact(Contact $contact): Evaluation
+    {
+        $this->contact = $contact;
+        return $this;
+    }
+
+    public function getCountry(): ?Country
+    {
+        return $this->country;
+    }
+
+    public function setCountry(Country $country): Evaluation
+    {
+        $this->country = $country;
+        return $this;
+    }
+
+    public function getType(): ?\Evaluation\Entity\Type
+    {
+        return $this->type;
+    }
+
+    public function setType(\Evaluation\Entity\Type $type): Evaluation
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(Project $project): Evaluation
+    {
+        $this->project = $project;
+        return $this;
+    }
+
     public function getEligible(bool $textual = false)
     {
         if ($textual) {
-            if (null === $this->eligible) {
-                return '-';
-            }
-
-            return self::$eligibleTemplates[$this->eligible];
+            return self::$eligibleTemplates[$this->eligible] ?? '-';
         }
 
         return $this->eligible;
     }
 
-    /**
-     * @param int $eligible
-     */
-    public function setEligible($eligible)
+    public function setEligible($eligible): Evaluation
     {
         $this->eligible = $eligible;
+
+        return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return \Project\Entity\Project
-     */
-    public function getProject()
-    {
-        return $this->project;
-    }
-
-    /**
-     * @param \Project\Entity\Project $project
-     */
-    public function setProject($project)
-    {
-        $this->project = $project;
-    }
-
-    /**
-     * @return \Project\Entity\Funding\Status
-     */
-    public function getStatus()
+    public function getStatus(): ?Status
     {
         return $this->status;
     }
 
-    /**
-     * @param \Project\Entity\Funding\Status $status
-     */
-    public function setStatus($status)
+    public function setStatus(Status $status): Evaluation
     {
         $this->status = $status;
-    }
-
-    /**
-     * @return Type
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param Type $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
+        return $this;
     }
 }

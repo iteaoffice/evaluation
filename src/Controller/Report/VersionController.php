@@ -128,7 +128,7 @@ final class VersionController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                $this->redirect()->toRoute('zfcadmin/evaluation/report2/version/list');
+                $this->redirect()->toRoute('zfcadmin/evaluation/report/version/list');
             }
 
             if ($form->isValid()) {
@@ -136,7 +136,7 @@ final class VersionController extends AbstractActionController
                 $reportVersion = $form->getData();
                 $this->evaluationReportService->save($reportVersion);
                 $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $reportVersion->getId()]
                 );
             }
@@ -169,13 +169,13 @@ final class VersionController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/version/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/version/list');
             }
 
             if (isset($data['delete']) && !$hasReports) {
                 $this->evaluationReportService->delete($reportVersion);
 
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/version/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/version/list');
             }
 
             if ($form->isValid()) {
@@ -183,7 +183,7 @@ final class VersionController extends AbstractActionController
                 $reportVersion = $form->getData();
                 $this->evaluationReportService->save($reportVersion);
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $reportVersion->getId()]
                 );
             }
@@ -216,7 +216,7 @@ final class VersionController extends AbstractActionController
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $reportVersion->getId()]
                 );
             }
@@ -226,7 +226,7 @@ final class VersionController extends AbstractActionController
                 $reportVersionCopy = $form->getData();
                 $this->evaluationReportService->save($reportVersionCopy);
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/version/view',
+                    'zfcadmin/evaluation/report/version/view',
                     ['id' => $reportVersionCopy->getId()]
                 );
             }

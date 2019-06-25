@@ -117,7 +117,7 @@ final class CriterionController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/list');
             }
 
             if ($form->isValid()) {
@@ -125,7 +125,7 @@ final class CriterionController extends AbstractActionController
                 $criterion = $form->getData();
                 $this->evaluationReportService->save($criterion);
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/view',
+                    'zfcadmin/evaluation/report/criterion/view',
                     ['id' => $criterion->getId()]
                 );
             }
@@ -159,12 +159,12 @@ final class CriterionController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/list');
             }
 
             if (isset($data['delete']) && !$hasVersions) {
                 $this->evaluationReportService->delete($criterion);
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/list');
             }
 
             if ($form->isValid()) {
@@ -172,7 +172,7 @@ final class CriterionController extends AbstractActionController
                 $criterion = $form->getData();
                 $this->evaluationReportService->save($criterion);
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/view',
+                    'zfcadmin/evaluation/report/criterion/view',
                     ['id' => $criterion->getId()]
                 );
             }

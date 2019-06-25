@@ -110,7 +110,7 @@ final class WindowController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                $this->redirect()->toRoute('zfcadmin/evaluation/report2/window/list');
+                $this->redirect()->toRoute('zfcadmin/evaluation/report/window/list');
             }
 
             if ($form->isValid()) {
@@ -121,7 +121,7 @@ final class WindowController extends AbstractActionController
                     $this->translator->translate('txt-evaluation-report-window-has-successfully-been-saved')
                 );
                 $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/window/view',
+                    'zfcadmin/evaluation/report/window/view',
                     ['id' => $window->getId()]
                 );
             }
@@ -148,7 +148,7 @@ final class WindowController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/window/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/window/list');
             }
 
             if ($form->isValid()) {
@@ -159,7 +159,7 @@ final class WindowController extends AbstractActionController
                     $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
                 );
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/window/view',
+                    'zfcadmin/evaluation/report/window/view',
                     ['id' => $window->getId()]
                 );
             }

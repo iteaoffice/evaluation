@@ -1,0 +1,18 @@
+{% do form.prepare() %}
+{{ form().openTag(form)|raw }}
+
+{% set projectReview = form.get('evaluation_entity_reviewer') %}
+
+{{ ztbformelement(projectReview.get('type')) }}
+{{ contactformelement(projectReview.get('contact')) }}
+{{ formelement(form.get('csrf')) }}
+
+<div class="form-group row">
+    <div class="offset-sm-3 col-sm-9">
+        {{ ztbformelement(form.get('submit')) }}
+        {% if form.has('delete') %}{{ ztbformelement(form.get('delete')) }}{% endif %}
+        {{ ztbformelement(form.get('cancel')) }}
+    </div>
+</div>
+
+{{ form().closeTag()|raw }}

@@ -6,7 +6,7 @@ namespace Evaluation;
 
 use Program\Entity\Call\Call;
 use Project\Entity\Project;
-use Project\Entity\Version\Review;
+use Project\Entity\Version\Reviewer;
 
 return [
     'navigation' => [
@@ -21,7 +21,7 @@ return [
                             'project-version' => [
                                 'pages' => [
                                     'create-project-version-evaluation-report2' => [
-                                        'route'   => 'community/evaluation/report2/create-from-version-review',
+                                        'route'   => 'community/evaluation/report/create-from-version-review',
                                         'visible' => false,
                                         'label'   => _('txt-new-evaluation-report'),
                                         'params'  => [
@@ -29,7 +29,7 @@ return [
                                                 'id' => Review::class,
                                             ],
                                             'routeParam' => [
-                                                'id' => 'versionReview',
+                                                'id' => 'versionReviewer',
                                             ],
                                             'invokables' => [
                                                 Navigation\Invokable\ReportLabel::class,
@@ -42,13 +42,13 @@ return [
                     ],
                     'report2'        => [
                         'label'     => _('txt-stg-evaluation-template'),
-                        'route'     => 'community/evaluation/report2/list',
-                        'resource'  => 'route/community/evaluation/report2/list',
+                        'route'     => 'community/evaluation/report/list',
+                        'resource'  => 'route/community/evaluation/report/list',
                         'privilege' => 'list',
                         'visible'   => true,
                         'pages'     => [
                             'view' => [
-                                'route'   => 'community/evaluation/report2/view',
+                                'route'   => 'community/evaluation/report/view',
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
@@ -61,7 +61,7 @@ return [
                                 'pages'   => [
                                     'update' => [
                                         'label'   => _('txt-nav-update'),
-                                        'route'   => 'community/evaluation/report2/update',
+                                        'route'   => 'community/evaluation/report/update',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [
@@ -140,13 +140,13 @@ return [
                     ],
                     'report2'   => [
                         'label'     => _('txt-evaluation-reports'),
-                        'route'     => 'community/evaluation/report2/list',
-                        'resource'  => 'route/community/evaluation/report2/list',
+                        'route'     => 'community/evaluation/report/list',
+                        'resource'  => 'route/community/evaluation/report/list',
                         'privilege' => 'list',
                         'visible'   => true,
                         'pages'     => [
                             'view' => [
-                                'route'   => 'community/evaluation/report2/view',
+                                'route'   => 'community/evaluation/report/view',
                                 'visible' => false,
                                 'params'  => [
                                     'entities'   => [
@@ -159,7 +159,7 @@ return [
                                 'pages'   => [
                                     'update' => [
                                         'label'   => _('txt-nav-update'),
-                                        'route'   => 'community/evaluation/report2/update',
+                                        'route'   => 'community/evaluation/report/update',
                                         'visible' => false,
                                         'params'  => [
                                             'entities' => [

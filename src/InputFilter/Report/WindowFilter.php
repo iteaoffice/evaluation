@@ -25,9 +25,6 @@ use Zend\InputFilter\InputFilter;
  */
 final class WindowFilter extends InputFilter
 {
-    /**
-     * WindowFilter constructor.
-     */
     public function __construct()
     {
         $inputFilter = new InputFilter();
