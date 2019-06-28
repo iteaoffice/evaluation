@@ -143,15 +143,27 @@ class Version extends AbstractEntity
      */
     private $windows;
 
-    /**
-     * Version constructor.
-     */
     public function __construct()
     {
         $this->evaluationReports = new ArrayCollection();
         $this->criterionVersions = new ArrayCollection();
         $this->topics            = new ArrayCollection();
         $this->windows           = new ArrayCollection();
+    }
+
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    public function __isset($property)
+    {
+        return isset($this->$property);
     }
 
     public function __toString(): string

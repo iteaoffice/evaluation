@@ -37,6 +37,8 @@ use Evaluation\Form\ReportUpload;
 use Evaluation\Service\EvaluationReportService;
 use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Version\Version as ProjectVersion;
+use Project\Service\ReportService;
+use Project\Service\VersionService;
 use Zend\Http\Request;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -68,6 +70,14 @@ final class ReportManagerController extends AbstractActionController
      */
     private $evaluationReportService;
     /**
+     * @var VersionService
+     */
+    private $versionService;
+    /**
+     * @var ReportService
+     */
+    private $reportService;
+    /**
      * @var EntityManager
      */
     private $entityManager;
@@ -78,10 +88,14 @@ final class ReportManagerController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
+        VersionService $versionService,
+        ReportService $reportService,
         EntityManager $entityManager,
         TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
+        $this->versionService = $versionService;
+        $this->reportService = $reportService;
         $this->entityManager = $entityManager;
         $this->translator = $translator;
     }
@@ -174,7 +188,7 @@ final class ReportManagerController extends AbstractActionController
             switch ($type) {
                 case ReportType::TYPE_GENERAL_REPORT:
                     /** @var ProjectReport $report */
-                    $report = $this->evaluationReportService->find(ProjectReport::class, (int)$reportId);
+                    $report = $this->reportService->find(ProjectReport::class, (int)$reportId);
                     $label = $report->parseName();
                     $projectReportReport = new EvaluationReport\ProjectReport();
                     $projectReportReport->setReport($report);
@@ -186,7 +200,7 @@ final class ReportManagerController extends AbstractActionController
 
                 case ReportType::TYPE_GENERAL_VERSION:
                     /** @var ProjectVersion $version */
-                    $version = $this->evaluationReportService->find(ProjectVersion::class, (int)$versionId);
+                    $version = $this->versionService->find(ProjectVersion::class, (int)$versionId);
                     $label = $version->getVersionType()->getDescription();
                     $projectVersionReport = new EvaluationReport\ProjectVersion();
                     $projectVersionReport->setVersion($version);
@@ -195,7 +209,6 @@ final class ReportManagerController extends AbstractActionController
                     /** @var EvaluationReport\Version $reportVersion */
                     $reportVersion = $this->evaluationReportService->findReportVersionForProjectVersion($version);
                     break;
-
                 default:
                     return $this->notFoundAction();
             }

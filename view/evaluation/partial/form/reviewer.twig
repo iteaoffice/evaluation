@@ -1,10 +1,10 @@
 {% do form.prepare() %}
 {{ form().openTag(form)|raw }}
 
-{% set projectReview = form.get('evaluation_entity_reviewer') %}
+{% set projectReviewer = form.get('evaluation_entity_reviewer') %}
 
-{{ ztbformelement(projectReview.get('type')) }}
-{{ contactformelement(projectReview.get('contact')) }}
+{{ ztbformelement(projectReviewer.get('type')) }}
+{{ contactformelement(projectReviewer.get('contact')) }}
 {{ formelement(form.get('csrf')) }}
 
 <div class="form-group row">

@@ -49,7 +49,7 @@ use function sprintf;
  * @method FlashMessenger flashMessenger()
  * @method ExcelExport evaluationReportExcelExport(EvaluationReport $evaluationReport, bool $isFinal = false, bool $forDistribution = false)
  * @method ExcelImport evaluationReportExcelImport(string $file)
- * @method ExcelDownload evaluationReport2ExcelDownload(Contact $contact, int $status)
+ * @method ExcelDownload evaluationReportExcelDownload(Contact $contact, int $status)
  *
  */
 final class ReportController extends AbstractActionController
@@ -555,7 +555,7 @@ final class ReportController extends AbstractActionController
 
     public function downloadCombinedAction(): Response
     {
-        return $this->evaluationReport2ExcelDownload(
+        return $this->evaluationReportExcelDownload(
             $this->identity(),
             (int)$this->params('status', EvaluationReportService::STATUS_NEW)
         )->parseResponse();

@@ -20,7 +20,7 @@
                         <span class="input-group-btn">{{ formelement(form.get('submit')) }}</span>
                     </div>
                 </div>
-                {% if type == constant("Project\\Entity\\Evaluation\\Report::TYPE_FINAL") %}
+                {% if type == constant("Evaluation\\Entity\\Report::TYPE_FINAL") %}
                 <div class="form-group">
                     {{ formelement(form.get('presentation')) }}
                 </div>
@@ -30,8 +30,8 @@
 
         {% if paginator.pageRange > 0 %}
             <table class="table table-hover table-striped table-sm">
-                {% if subject != constant("Project\\Entity\\Evaluation\\Report\\Type::TYPE_REPORT") %}
-                    {% if type == constant("Project\\Entity\\Evaluation\\Report::TYPE_INDIVIDUAL") %}
+                {% if subject != constant("Evaluation\\Entity\\Report\\Type::TYPE_REPORT") %}
+                    {% if type == constant("Evaluation\\Entity\\Report::TYPE_INDIVIDUAL") %}
                         <thead>
                         <tr>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate('txt-project')} %}</th>
@@ -59,26 +59,26 @@
                                 {% endif %}
                                 </td>
                                 <td>{{ contactLink(versionReviewer.contact, 'view-admin', 'name') }}</td>
-                                {% if versionReviewer.projectVersionReport2 %}
-                                    {% set report = versionReviewer.projectVersionReport2.evaluationReport %}
+                                {% if versionReviewer.projectVersionReport %}
+                                    {% set report = versionReviewer.projectVersionReport.evaluationReport %}
                                     <td>{% if report.final %}{{ translate('txt-yes') }}{% else %}{{ translate('txt-no') }}{% endif %}</td>
                                     <td>{{ report.dateCreated|string_date }}</td>
                                     <td>{{ report.dateUpdated|string_date }}</td>
-                                    <td>{{ evaluationReport2Progress(report) }}</td>
-                                    <td>{{ evaluationReport2Link(report, 'view', 'icon') }}
-                                        {{ evaluationReport2Link(report, 'download-offline-form', 'icon') }}
+                                    <td>{{ evaluationReportProgress(report) }}</td>
+                                    <td>{{ evaluationReportLink(report, 'view', 'icon') }}
+                                        {{ evaluationReportLink(report, 'download-offline-form', 'icon') }}
                                     </td>
                                 {% else %}
                                     <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>{{ evaluationReport2Progress() }}</td>
-                                    <td>{{ evaluationReport2Link(null, 'download-offline-form', 'icon', false, null, versionReviewer) }}</td>
+                                    <td>{{ evaluationReportProgress() }}</td>
+                                    <td>{{ evaluationReportLink(null, 'download-offline-form', 'icon', false, null, versionReviewer) }}</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
                         </tbody>
-                    {% elseif type == constant("Project\\Entity\\Evaluation\\Report::TYPE_FINAL") %}
+                    {% elseif type == constant("Evaluation\\Entity\\Report::TYPE_FINAL") %}
                         <thead>
                         <tr>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate('txt-project')} %}</th>
@@ -96,21 +96,21 @@
                             <tr>
                                 <td>{{ projectLink(version.project, 'view-admin', 'name') }}</td>
                                 <td>{{ versionLink(version, 'view-admin', 'description') }}</td>
-                                {% if version.projectVersionReport2 %}
-                                    {% set report = version.projectVersionReport2.evaluationReport %}
+                                {% if version.projectVersionReport %}
+                                    {% set report = version.projectVersionReport.evaluationReport %}
                                     <td>{% if report.final %}{{ translate('txt-yes') }}{% else %}{{ translate('txt-no') }}{% endif %}</td>
                                     <td>{{ report.dateCreated|string_date }}</td>
                                     <td>{{ report.dateUpdated|string_date }}</td>
-                                    <td>{{ evaluationReport2Progress(report) }}</td>
-                                    <td>{{ evaluationReport2FinalLink(report, 'download', 'icon') }}
-                                        {{ evaluationReport2FinalLink(report, 'download-distributable', 'icon') }}
-                                        {{ evaluationReport2FinalLink(report, 'download-distributable-pdf', 'icon') }}
+                                    <td>{{ evaluationReportProgress(report) }}</td>
+                                    <td>{{ evaluationReportFinalLink(report, 'download', 'icon') }}
+                                        {{ evaluationReportFinalLink(report, 'download-distributable', 'icon') }}
+                                        {{ evaluationReportFinalLink(report, 'download-distributable-pdf', 'icon') }}
                                     </td>
                                 {% else %}
                                     <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>{{ evaluationReport2Progress() }}</td>
+                                    <td>{{ evaluationReportProgress() }}</td>
                                     <td></td>
                                 {% endif %}
                             </tr>
@@ -119,7 +119,7 @@
                     {% endif %}
 
                 {% else %}
-                    {% if type == constant("Project\\Entity\\Evaluation\\Report::TYPE_INDIVIDUAL") %}
+                    {% if type == constant("Evaluation\\Entity\\Report::TYPE_INDIVIDUAL") %}
                         <thead>
                         <tr>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate('txt-project')} %}</a></th>
@@ -139,26 +139,26 @@
                                 <td>{{ projectLink(reportReviewer.projectReport.project, 'view-admin', 'name') }}</td>
                                 <td>{{ reportLink(reportReviewer.projectReport,'report-admin','name') }}</td>
                                 <td>{{ contactLink(reportReviewer.contact, 'view-admin', 'name') }}</td>
-                                {% if reportReviewer.projectReportReport2 %}
-                                    {% set report = reportReviewer.projectReportReport2.evaluationReport %}
+                                {% if reportReviewer.projectReportReport %}
+                                    {% set report = reportReviewer.projectReportReport.evaluationReport %}
                                     <td>{% if report.final %}{{ translate('txt-yes') }}{% else %}{{ translate('txt-no') }}{% endif %}</td>
                                     <td>{{ report.dateCreated|string_date }}</td>
                                     <td>{{ report.dateUpdated|string_date }}</td>
-                                    <td>{{ evaluationReport2Progress(report) }}</td>
-                                    <td>{{ evaluationReport2Link(report, 'view', 'icon') }}
-                                        {{ evaluationReport2Link(report, 'download-offline-form', 'icon') }}
+                                    <td>{{ evaluationReportProgress(report) }}</td>
+                                    <td>{{ evaluationReportLink(report, 'view', 'icon') }}
+                                        {{ evaluationReportLink(report, 'download-offline-form', 'icon') }}
                                     </td>
                                 {% else %}
                                     <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>{{ evaluationReport2Progress() }}</td>
-                                    <td>{{ evaluationReport2Link(null, 'download-offline-form', 'icon', false, reportReviewer) }}</td>
+                                    <td>{{ evaluationReportProgress() }}</td>
+                                    <td>{{ evaluationReportLink(null, 'download-offline-form', 'icon', false, reportReviewer) }}</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
                         </tbody>
-                    {% elseif type == constant("Project\\Entity\\Evaluation\\Report::TYPE_FINAL") %}
+                    {% elseif type == constant("Evaluation\\Entity\\Report::TYPE_FINAL") %}
                         <thead>
                         <tr>
                         <tr>
@@ -177,21 +177,21 @@
                             <tr>
                                 <td>{{ projectLink(report.project, 'view-admin', 'name') }}</td>
                                 <td>{{ reportLink(report,'report-admin','name') }}</td>
-                                {% if report.projectReportReport2 %}
-                                    {% set evaluationReport = report.projectReportReport2.evaluationReport %}
+                                {% if report.projectReportReport %}
+                                    {% set evaluationReport = report.projectReportReport.evaluationReport %}
                                     <td>{% if evaluationReport.final %}{{ translate('txt-yes') }}{% else %}{{ translate('txt-no') }}{% endif %}</td>
                                     <td>{{ evaluationReport.dateCreated|string_date }}</td>
                                     <td>{{ evaluationReport.dateUpdated|string_date }}</td>
-                                    <td>{{ evaluationReport2Progress(evaluationReport) }}</td>
-                                    <td>{{ evaluationReport2FinalLink(evaluationReport, 'download', 'icon') }}
-                                        {{ evaluationReport2FinalLink(evaluationReport, 'download-distributable', 'icon') }}
-                                        {{ evaluationReport2FinalLink(evaluationReport, 'download-distributable-pdf', 'icon') }}
+                                    <td>{{ evaluationReportProgress(evaluationReport) }}</td>
+                                    <td>{{ evaluationReportFinalLink(evaluationReport, 'download', 'icon') }}
+                                        {{ evaluationReportFinalLink(evaluationReport, 'download-distributable', 'icon') }}
+                                        {{ evaluationReportFinalLink(evaluationReport, 'download-distributable-pdf', 'icon') }}
                                     </td>
                                 {% else %}
                                     <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>{{ evaluationReport2Progress() }}</td>
+                                    <td>{{ evaluationReportProgress() }}</td>
                                     <td></td>
                                 {% endif %}
                             </tr>
@@ -215,7 +215,7 @@
                     {{ ztbformelement(filter.get('type'), true) }}
                     {{ ztbformelement(filter.get('status'), true) }}
                     {{ ztbformelement(filter.get('subject'), true) }}
-                    {% if subject == constant("Project\\Entity\\Evaluation\\Report\\Type::TYPE_REPORT") %}
+                    {% if subject == constant("Evaluation\\Entity\\Report\\Type::TYPE_REPORT") %}
                         {{ ztbformelement(filter.get('year'), true) }}
                         {{ ztbformelement(filter.get('period'), true) }}
                     {% endif %}

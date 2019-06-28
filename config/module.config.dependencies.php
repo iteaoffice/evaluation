@@ -18,13 +18,18 @@ declare(strict_types=1);
 namespace Evaluation;
 
 use Affiliation\Service\AffiliationService;
+use Contact\Service\ContactService;
 use Contact\Service\SelectionContactService;
 use Doctrine\ORM\EntityManager;
+use Evaluation\Options\ModuleOptions;
+use Evaluation\Service\EvaluationService;
+use Evaluation\Service\FormService;
 use General\Service\CountryService;
+use General\Service\GeneralService;
 use Program\Service\CallService;
-use Project\Options\ModuleOptions;
 use Project\Search\Service\ProjectSearchService;
 use Project\Service\ProjectService;
+use Project\Service\ReportService;
 use Project\Service\VersionService;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
@@ -40,8 +45,34 @@ return [
             EntityManager::class,
             TranslatorInterface::class,
         ],
+        Controller\FeedbackController::class                  => [
+            Service\EvaluationService::class,
+            VersionService::class,
+            Service\FormService::class,
+            TranslatorInterface::class
+        ],
+        Controller\EvaluationController::class                => [
+            ProjectService::class,
+            VersionService::class,
+            EvaluationService::class,
+            CallService::class,
+            ContactService::class,
+            GeneralService::class,
+            CountryService::class,
+            FormService::class,
+            EntityManager::class,
+            TranslatorInterface::class,
+        ],
+        Controller\EvaluationManagerController::class         => [
+            ProjectService::class,
+            EvaluationService::class,
+            CallService::class,
+            EntityManager::class
+        ],
         Controller\ReportManagerController::class             => [
             Service\EvaluationReportService::class,
+            VersionService::class,
+            ReportService::class,
             EntityManager::class,
             TranslatorInterface::class
         ],
@@ -92,8 +123,21 @@ return [
             Service\ReviewerService::class,
             Service\FormService::class
         ],
-
+        Controller\JsonController::class                      => [
+            CallService::class,
+            EvaluationService::class,
+            ProjectService::class,
+            CountryService::class,
+            'ViewHelperManager'
+        ],
         // Controller plugins
+        Controller\Plugin\CreateEvaluation::class             => [
+            ProjectService::class,
+            VersionService::class,
+            EvaluationService::class,
+            AffiliationService::class,
+            CountryService::class
+        ],
         Controller\Plugin\RosterGenerator::class              => [
             Service\ReviewRosterService::class,
             TranslatorInterface::class,
@@ -132,14 +176,14 @@ return [
             Options\ModuleOptions::class,
             TranslatorInterface::class
         ],
-        Controller\Plugin\RenderProjectEvaluation::class             => [
+        Controller\Plugin\RenderProjectEvaluation::class      => [
             ModuleOptions::class,
             TwigRenderer::class,
             Service\EvaluationService::class
         ],
 
         //Input filter
-        InputFilter\Report\Criterion\CategoryFilter::class => [
+        InputFilter\Report\Criterion\CategoryFilter::class    => [
             EntityManager::class
         ],
 

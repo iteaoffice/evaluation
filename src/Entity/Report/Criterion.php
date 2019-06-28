@@ -35,11 +35,6 @@ class Criterion extends AbstractEntity
     public const INPUT_TYPE_TEXT   = 3; // Input type is a multi-line textarea
     public const INPUT_TYPE_SELECT = 4; // Input type is select box
 
-    /**
-     * Templates for the input types.
-     *
-     * @var array
-     */
     protected static $inputTypeTemplates = [
         self::INPUT_TYPE_BOOL   => 'txt-input-type-bool',
         self::INPUT_TYPE_STRING => 'txt-input-type-string',
@@ -166,6 +161,21 @@ class Criterion extends AbstractEntity
     {
         $this->versions    = new ArrayCollection();
         $this->reportTypes = new ArrayCollection();
+    }
+
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    public function __isset($property)
+    {
+        return isset($this->$property);
     }
 
     public function __toString(): string

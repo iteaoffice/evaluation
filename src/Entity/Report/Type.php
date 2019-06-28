@@ -20,25 +20,23 @@ namespace Evaluation\Entity\Report;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Project\Entity\Version\Type as VersionType;
 use Zend\Form\Annotation;
 
 /**
- * Evaluation report type
- *
  * @ORM\Table(name="evaluation_report2_type")
  * @ORM\Entity(repositoryClass="Gedmo\Sortable\Entity\Repository\SortableRepository")
  */
 class Type extends AbstractEntity
 {
-    public const TYPE_GENERAL_REPORT  = 'report';
+    public const TYPE_GENERAL_REPORT = 'report';
     public const TYPE_GENERAL_VERSION = 'version';
 
-    public const TYPE_REPORT           = 1;
-    public const TYPE_PO_VERSION       = 2;
-    public const TYPE_FPP_VERSION      = 3;
+    public const TYPE_REPORT = 1;
+    public const TYPE_PO_VERSION = 2;
+    public const TYPE_FPP_VERSION = 3;
     public const TYPE_MINOR_CR_VERSION = 4;
     public const TYPE_MAJOR_CR_VERSION = 5;
 
@@ -98,15 +96,30 @@ class Type extends AbstractEntity
      */
     private $criteria;
 
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    public function __isset($property)
+    {
+        return isset($this->$property);
+    }
+
     public function __construct()
     {
         $this->reportVersions = new ArrayCollection();
-        $this->criteria       = new ArrayCollection();
+        $this->criteria = new ArrayCollection();
     }
 
     public function __toString(): string
     {
-        return (string) $this->type;
+        return (string)$this->type;
     }
 
     public function getId(): ?int

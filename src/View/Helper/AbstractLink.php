@@ -244,7 +244,7 @@ abstract class AbstractLink extends AbstractViewHelper
     public function getLinkIcon(): string
     {
         if (null === $this->linkIcon) {
-            return self::$linkIcons[$this->action] ?? '';
+            return self::$linkIcons[$this->action] ?? 'fa-exclamation';
         }
 
         return $this->linkIcon;
@@ -252,7 +252,7 @@ abstract class AbstractLink extends AbstractViewHelper
 
     public function setLinkIcon(string $linkIcon): void
     {
-        $this->linkIcon = self::$linkIcons[$linkIcon] ?? 'fa-exclamation';
+        $this->linkIcon = $linkIcon;
     }
 
     public function addClass(string $class): void

@@ -163,6 +163,21 @@ class Version extends AbstractEntity
         $this->versionTopics = new ArrayCollection();
     }
 
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    public function __isset($property)
+    {
+        return isset($this->$property);
+    }
+
     public function __toString(): string
     {
         return ($this->criterion instanceof Criterion) ? (string) $this->criterion : '';
@@ -195,7 +210,7 @@ class Version extends AbstractEntity
         return $this->reportVersion;
     }
 
-    public function setReportVersion(ReportVersion $reportVersion): Version
+    public function setReportVersion(?ReportVersion $reportVersion): Version
     {
         $this->reportVersion = $reportVersion;
         return $this;
@@ -206,7 +221,7 @@ class Version extends AbstractEntity
         return $this->type;
     }
 
-    public function setType(Type $type): Version
+    public function setType(?Type $type): Version
     {
         $this->type = $type;
         return $this;
@@ -261,7 +276,7 @@ class Version extends AbstractEntity
         return $this->versionTopics;
     }
 
-    public function setVersionTopics(Collection $versionTopics): Version
+    public function setVersionTopics($versionTopics): Version
     {
         $this->versionTopics = $versionTopics;
         return $this;
@@ -281,12 +296,12 @@ class Version extends AbstractEntity
         }
     }
 
-    public function getResults(): Collection
+    public function getResults(): ?Collection
     {
         return $this->results;
     }
 
-    public function setResults(Collection $results): Version
+    public function setResults(?Collection $results): Version
     {
         $this->results = $results;
         return $this;

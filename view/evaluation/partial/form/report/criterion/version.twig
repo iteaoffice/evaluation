@@ -61,7 +61,7 @@
             <div class="col">
                 <div class="form-group">
                     <label for="topic-__index__">{{ translate("txt-topic") }}</label>
-                    <select id="topic-__index__" name="project_entity_evaluation_report2_criterion_version[versionTopics][__index__][topic]"
+                    <select id="topic-__index__" name="evaluation_entity_report_criterion_version[versionTopics][__index__][topic]"
                             class="form-control">
                         {% for topic in topics %}
                             <option value="{{ topic.id }}">{{ topic.topic }}</option>
@@ -72,7 +72,7 @@
             <div class="col">
                 <div class="form-group">
                     <label for="weight-__index__">{{ translate("txt-weight") }}</label>
-                    <input id="weight-__index__" name="project_entity_evaluation_report2_criterion_version[versionTopics][__index__][weight]"
+                    <input id="weight-__index__" name="evaluation_entity_report_criterion_version[versionTopics][__index__][weight]"
                            class="form-control" value="" type="number">
                 </div>
             </div>

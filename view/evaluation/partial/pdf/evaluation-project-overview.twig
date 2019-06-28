@@ -1,0 +1,41 @@
+{% if not omitHeader %}
+    <h1 style="font-size: 24px; color: #00a651;">{{ project.parseFullName() }}</h1>
+
+    <p style="font-size: 16px; color: #808285;">{{ project.parseCalls() }}
+        - {{ translate("txt-meeting-%s-evaluation")|format(versionType.type|upper) }}</p>
+{% endif %}
+
+<table border="1" cellpadding="4">
+    <thead>
+    <tr>
+        <th style="width:75px;">{{ project.parseFullName() }}</th>
+        <th style="width:425px;">{{ translate("txt-description") }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for country in countries %}
+        {% set projectEvaluation = evaluationResult[country.id][project.id] %}
+        {% set evaluation = projectEvaluation['evaluation'] %}
+        {% set value = projectEvaluation['value'] %}
+        <tr nobr="true">
+            <td style="padding: 3px; width:75px; background-color: #{{ evaluation.status.color }}">{% if country.id == project.contact.contactOrganisation.organisation.country.id %}
+                    <u>{{ country }}</u>{% else %}{{ country }}{% endif %}</td>
+            <td style="padding: 3px; width:425px;">{{ evaluation.getDescription()|raw|nl2br }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% if isEvaluation %}
+    <h3>{{ translate("txt-evaluation-status-legend") }}</h3>
+{% else %}
+    <h3>{{ translate("txt-funding-status-legend") }}</h3>
+{% endif %}
+<table border="1" cellpadding="2px">
+    {% for status in fundingStatuses %}
+        <tr cellpadding="2">
+            <td style="width:250px; background-color: #{{ status.color }}">{% if isEvaluation %}{{ status.statusEvaluation }}{% else %}{{ status.statusFunding }}{% endif %}</td>
+        </tr>
+    {% endfor %}
+</table>

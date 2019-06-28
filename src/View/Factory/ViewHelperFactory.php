@@ -1,41 +1,42 @@
 <?php
 /**
- * ITEA Office all rights reserved
+ * Jield BV All rights reserved
  *
- * PHP Version 7
- *
- * @category    Project
- *
- * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
- * @license     https://itea3.org/license.txt proprietary
- *
- * @link        http://github.com/iteaoffice/project for the canonical source repository
+ * @category    Safety Form
+ * @package     Substrate
+ * @subpackage  Entity
+ * @author      Dr. ir. Johan van der Heide <info@jield.nl>
+ * @copyright   Copyright (c) 2004-2017 Jield BV (https://jield.nl)
+ * @version     5.0
  */
 
 declare(strict_types=1);
 
 namespace Evaluation\View\Factory;
 
-use Interop\Container\ContainerInterface;
+use Application\Service\AssertionService;
 use Evaluation\View\Helper\AbstractViewHelper;
+use Interop\Container\ContainerInterface;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
+use ZfcTwig\View\TwigRenderer;
 
 /**
  * Class ViewHelperFactory
+ *
  * @package Evaluation\View\Factory
  */
 final class ViewHelperFactory implements FactoryInterface
 {
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): AbstractViewHelper
     {
         /** @var AbstractViewHelper $viewHelper */
-        $viewHelper = new $requestedName($options);
-        $viewHelper->setServiceManager($container);
-        $viewHelper->setHelperPluginManager($container->get('ViewHelperManager'));
-        $viewHelper->setTranslator($container->get(TranslatorInterface::class));
-
-        return $viewHelper;
+        return new $requestedName(
+            $container->get('application'),
+            $container->get('ViewHelperManager'),
+            $container->get(AssertionService::class),
+            $container->get(TwigRenderer::class),
+            $container->get(TranslatorInterface::class)
+        );
     }
 }

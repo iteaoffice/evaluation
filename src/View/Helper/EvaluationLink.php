@@ -37,7 +37,8 @@ final class EvaluationLink extends AbstractLink
         Type $type = null,
         Country $country = null,
         string $action = 'evaluate-project',
-        string $show = 'text'
+        string $show = 'text',
+        array $classes = []
     ): string {
         $this->reset();
 
@@ -61,10 +62,13 @@ final class EvaluationLink extends AbstractLink
             $this->addRouteParam('country', $country->getId());
         }
 
-
         if (!$this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
             return '';
         }
+
+        $this->addClasses($classes);
+
+        $this->parseAction($action, $evaluation);
 
         return $this->createLink($show);
     }
@@ -77,6 +81,7 @@ final class EvaluationLink extends AbstractLink
             case 'evaluate-project':
                 //Evaluate and overview are the same actions
             case 'overview-project':
+                $this->setLinkIcon('fa-list-ul');
                 /*
                  * The parameters are the same but the router and the text change
                  */
@@ -103,6 +108,7 @@ final class EvaluationLink extends AbstractLink
                 }
                 break;
             case 'download-project':
+                $this->setLinkIcon('fa-file-pdf-o');
                 $this->setRouter('community/evaluation/download-project');
                 $this->setText(
                     sprintf(

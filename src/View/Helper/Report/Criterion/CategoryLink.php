@@ -71,11 +71,8 @@ final class CategoryLink extends AbstractLink
             case 'edit':
                 $this->setRouter('zfcadmin/evaluation/report/criterion/category/edit');
                 $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-edit-evaluation-report-criterion-category-%s'),
-                        $category->getCategory()
-                    )
-                );
+                    $this->translator->translate('txt-edit-evaluation-report-criterion-category'),
+                    );
                 break;
         }
     }

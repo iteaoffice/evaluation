@@ -62,7 +62,7 @@ final class ReportLink extends AbstractLink
     ): void {
         $this->action = $action;
 
-        switch ($$action) {
+        switch ($action) {
             case 'overview':
                 $this->setRouter('community/evaluation/report/list');
                 $this->addShowOption(
@@ -114,6 +114,7 @@ final class ReportLink extends AbstractLink
                     $route = 'community/evaluation/report/update';
                 }
 
+                $this->setLinkIcon('fa-file-excel-o');
                 $this->setRouter($route);
                 $this->addQueryParam('mode', 'offline');
                 $this->setText($this->translator->translate('txt-download-offline-form'));

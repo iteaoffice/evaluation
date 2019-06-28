@@ -2,13 +2,13 @@
 {% do headTitle().append(translate("txt-evaluation")) %}
 {% do headTitle().append(translate("txt-evaluation-report-criterion-type-%s")|format(type)) %}
 
-<h1>{{ translate("txt-evaluation-report-criterion-type-%s")|format(type) }} {{ report2CriterionTypeLink(type,'edit','button') }}</h1>
+<h1>{{ type }} {{ reportCriterionTypeLink(type,'edit','button') }}</h1>
 
 <dl class="dl-horizontal">
     <dt>{{ translate("txt-type-id") }}</dt>
     <dd>{{ type.id }}</dd>
     <dt>{{ translate("txt-category") }}</dt>
-    <dd>{{ report2CriterionCategoryLink(type.category) }}</dd>
+    <dd>{{ reportCriterionCategoryLink(type.category) }}</dd>
 </dl>
 
-{{ report2CriterionTypeLink(null,'new','button',type) }}
+{{ reportCriterionTypeLink(null,'new','button',type) }}

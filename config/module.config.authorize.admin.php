@@ -222,7 +222,19 @@ return [
                     'route' => 'zfcadmin/evaluation/report/criterion/version/view',
                     'roles' => ['office'],
                 ],
-                
+                [
+                    'route' => 'zfcadmin/feedback/new',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/feedback/view',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/feedback/edit',
+                    'roles' => ['office'],
+                ],
+
             ],
         ],
     ],

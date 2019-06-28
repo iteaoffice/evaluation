@@ -78,7 +78,7 @@ final class EvaluationManagerController extends AbstractActionController
 
         $source = (int)$this->params('source', Form\MatrixFilter::SOURCE_VERSION);
         $typeId = (int)$this->params('type', Type::TYPE_FUNDING_STATUS);
-        $evaluationTypes = $this->projectService->findAll(Type::class);
+        $evaluationTypes = $this->evaluationService->findAll(Type::class);
         $versionTypes = $this->projectService->findAll(VersionType::class);
 
         /*

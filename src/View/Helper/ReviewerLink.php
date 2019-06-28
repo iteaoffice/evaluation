@@ -57,6 +57,7 @@ final class ReviewerLink extends AbstractLink
 
         switch ($action) {
             case 'list-contacts':
+                $this->setLinkIcon('fa fa-users');
                 $this->setRouter('zfcadmin/evaluation/reviewer/list');
                 $this->setText($this->translator->translate('txt-show-review-contacts'));
                 break;
@@ -79,6 +80,7 @@ final class ReviewerLink extends AbstractLink
                 break;
             case 'export':
                 $this->setRouter('zfcadmin/evaluation/reviewer/export');
+                $this->setLinkIcon('fa-file-text-o');
                 $this->setText($this->translator->translate('txt-export-review-roster-text-file'));
                 break;
         }

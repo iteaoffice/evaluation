@@ -67,12 +67,12 @@ final class FeedbackLink extends AbstractLink
 
         switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/project/feedback/new');
+                $this->setRouter('zfcadmin/feedback/new');
                 $this->setLinkIcon('fa-plus');
                 $this->setText($this->translator->translate('txt-add-feedback'));
                 break;
             case 'edit-admin':
-                $this->setRouter('zfcadmin/project/feedback/edit');
+                $this->setRouter('zfcadmin/feedback/edit');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),
@@ -82,7 +82,7 @@ final class FeedbackLink extends AbstractLink
                 );
                 break;
             case 'view-admin':
-                $this->setRouter('zfcadmin/project/feedback/view');
+                $this->setRouter('zfcadmin/feedback/view');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-view-%s-feedback-of-project-%s'),

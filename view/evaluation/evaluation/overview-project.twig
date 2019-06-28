@@ -1,0 +1,137 @@
+{% do headTitle().append(translate("txt-project-evaluation")) %}
+{% do headLink().appendStylesheet(url('assets/funding-status-css')) %}
+
+
+<h1>{{ translate("txt-evaluation-of-type-%s-for-project-%s-in-%s")|format(evaluationType, project.parseFullName(), country) }}</h1>
+<ul class="nav nav-tabs" role="tablist">
+    {% for type in evaluationTypes if type.id in [1,2] %}
+        <li class="nav-item {% if evaluationType.id is same as(type.id) %}active{% endif %}">
+
+            {% set classes = ['nav-link'] %}
+            {% if evaluationType.id is same as(type.id) %}
+                {% set classes = classes|merge(['active']) %}
+            {% endif %}
+
+            {{ evaluationLink(null, project, type, country,'overview-project', 'text',classes ) }}
+        </li>
+    {% endfor %}
+</ul>
+
+{% if version %}
+    <div class="row">
+        <div class="col-md-4">
+            <h2>{{ translate("txt-version-information") }}</h2>
+            <dl class="dl-horizontal">
+                <dt>{{ translate("txt-project-name") }}</dt>
+                <dd>{{ projectLink(project,'view-community','name') }}</dd>
+                <dt>{{ translate("txt-version-type") }}</dt>
+                <dd>{{ version.versionType }}</dd>
+                <dt>{{ translate("txt-version-status") }}</dt>
+                <dd>{{ versionService.parseStatus(version) }}</dd>
+            </dl>
+        </div>
+        <div class="col-md-8">
+            <h2>{{ translate("txt-version-documents") }}</h2>
+
+            <table class="table table-hover table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>{{ translate("txt-document-name") }}</th>
+                    <th>{{ translate("txt-document-type") }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for document in version.versionDocument %}
+                    <tr>
+                        <td>
+                            {{ contentTypeIcon(document.contentType) }}
+                            {{ versionDocumentLink(document,'view-community', 'name') }}
+                            {{ versionDocumentLink(document,'download', 'icon') }}
+                        </td>
+                        <td>{{ document.type }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {{ versionLink(version, 'download-version-document-binder', 'button') }}
+        </div>
+    </div>
+
+    {% set hasCountry = false %}
+    {% for country in countries if contactCountry.id == country.id %}
+        {% set hasCountry = true %}
+    {% endfor %}
+
+
+    <h2>{{ translate("txt-evaluation-in-%s")|format(contactCountry) }}</h2>
+
+    {% if hasCountry %}
+        <table class="table table-sm table-striped my-2">
+            <thead>
+            <tr>
+                <th>{{ translate("txt-country") }}</th>
+                <th>{{ translate("txt-eligibility") }}</th>
+                <th>{{ translate("txt-effort") }}</th>
+                <th>{{ translate("txt-status") }}</th>
+                <th>{{ translate("txt-description") }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for country in countries if contactCountry.id == country.id %}
+                {% set projectEvaluation = evaluationResult[country.id][project.id] %}
+                {% set evaluation = projectEvaluation['evaluation'] %}
+                {% set value = projectEvaluation['value'] %}
+                <tr {% if contactCountry.id == country.id %}class="ownCountry"{% endif %}>
+                    <td> {% if contactCountry.id == country.id %}
+                            <span class="fa fa-user-o ownCountry"></span>
+                        {% endif %} {{ country }}
+                    </td>
+                    <td>{{ translate(evaluation.getEligible(true)) }}</td>
+                    <td>{{ value }} ({{ (value / totalEffort * 100)|number_format(1, ',','.') }}%)</td>
+                    <td class="{{ evaluation.getStatus().parseCssName() }}">{{ evaluation.getStatus().getStatusFunding() }}</td>
+                    <td>{{ evaluation.getDescription()|raw|nl2br }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        {{ ztbalert().info(translate("txt-no-evaluation-given-in-%s")|format(contactCountry))|raw }}
+    {% endif %}
+
+    {{ evaluationLink(evaluation, project, evaluationType, contactCountry, 'evaluate-project','button') }}
+
+    <h2>{{ translate("txt-other-evaluation") }}</h2>
+
+    <table class="table table-sm table-striped">
+        <thead>
+        <tr>
+            <th>{{ translate("txt-country") }}</th>
+            <th>{{ translate("txt-eligibility") }}</th>
+            <th>{{ translate("txt-effort") }}</th>
+            <th>{{ translate("txt-status") }}</th>
+            <th>{{ translate("txt-description") }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for country in countries if contactCountry.id != country.id %}
+            {% set projectEvaluation = evaluationResult[country.id][project.id] %}
+            {% set evaluation = projectEvaluation['evaluation'] %}
+            {% set value = projectEvaluation['value'] %}
+            <tr {% if contactCountry.id == country.id %}class="ownCountry"{% endif %}>
+                <td> {% if contactCountry.id == country.id %}
+                        <i class="fa fa-user ownCountry"></i>
+                    {% endif %} {{ country }}
+                </td>
+                <td>{{ translate(evaluation.getEligible(true)) }}</td>
+                <td>{{ value }} {% if totalEffort != 0 %}({{ (value / totalEffort * 100)|number_format(1, ',','.') }}%){% endif %}</td>
+                <td class="{{ evaluation.getStatus().parseCssName() }}">{{ evaluation.getStatus().getStatusFunding() }}</td>
+                <td>{{ evaluation.getDescription()|raw|nl2br }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <h2>{{ translate("txt-no-version") }}</h2>
+    {{ ztbalert().info(translate("txt-there-is-no-version-of-type-%s-submitted-for-%s")|format(versionType, project))|raw }}
+{% endif %}

@@ -32,7 +32,7 @@ use Project\Entity\Calendar\Review as CalendarReview;
 use Project\Entity\Project;
 use Project\Entity\Report\Report as ProjectReport;
 use Evaluation\Entity\Reviewer\Contact as ReviewContact;
-use Evaluation\Entity\Reviewer as ProjectReview;
+use Evaluation\Entity\Reviewer as ProjectReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Version;
 use Evaluation\Repository\Reviewer\ContactRepository as ReviewContactRepository;
@@ -311,7 +311,7 @@ class ReviewerService extends AbstractService
         foreach ($project->getReport() as $projectReport) {
             $sortKey = $projectReport->getDateCreated()->format('Y-m-d|H:i:s') . '|' . self::TYPE_PPR;
             $projectReportReviewers[$sortKey][self::TYPE_PPR] = [];
-            /** @var ProjectReview $projectReview */
+            /** @var ProjectReviewer $projectReview */
             foreach ($projectReport->getReviewers() as $reportReview) {
                 $projectReportReviewers[$sortKey][self::TYPE_PPR][]
                     = $this->getReviewHandle($reportReview->getContact(), $project);

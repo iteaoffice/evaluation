@@ -6,7 +6,7 @@
 {{ form().openTag(form)|raw }}
 {% set filter = form.get('filter') %}
 
-<h1>{{ translate("txt-evaluation-report-window-list") }} {{ report2WindowLink(null,'new','button') }}</h1>
+<h1>{{ translate("txt-evaluation-report-window-list") }} {{ reportWindowLink(null,'new','button') }}</h1>
 
 <div class="row">
     <div class="col-md-6">
@@ -38,10 +38,10 @@
         <tbody>
         {% for window in paginator.getCurrentItems() %}
             <tr>
-                <td>{{ window.id }} {{ report2WindowLink(window,'edit','icon') }}</td>
-                <td>{{ report2WindowLink(window,'view','name') }}</td>
+                <td>{{ window.id }} {{ reportWindowLink(window,'edit','icon') }}</td>
+                <td>{{ reportWindowLink(window,'view','name') }}</td>
                 <td>{% for reportVersion in window.reportVersions %}
-                        {{ report2VersionLink(reportVersion, 'view') }}
+                        {{ reportVersionLink(reportVersion, 'view') }}
                         {% if not loop.last %}<br>{% endif %}
                     {% else %}
                         -

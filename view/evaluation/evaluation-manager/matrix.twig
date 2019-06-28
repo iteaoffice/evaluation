@@ -1,0 +1,242 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-evaluation-matrix")) %}
+{% do headLink().appendStylesheet(url('assets/funding-status-css')) %}
+
+<div class="row">
+    <div class="col-md-10">
+        <h1>{{ translate("txt-project-evaluation-call-%s")|format(call) }}</h1>
+
+        <ul class="nav nav-tabs" role="tablist">
+            {% for type in evaluationTypes %}
+                <li class="nav-item {% if typeId == type.id %}active{% endif %}">
+                    <a class="nav-link {% if typeId == type.id %}active{% endif %}"
+                       href="{{ url('zfcadmin/evaluation/matrix', {'call': call.id,  'show': 'matrix', 'type': type.id} ) }}">{{ type }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="tab-content">
+
+
+            <div class="tab-pane active" id="home">
+
+                <h3>{{ evaluationType }}</h3>
+
+                <ul class="nav nav-pills nav-nos-menu">
+                    {% for displayId, value in evaluation.getDisplayTemplates %}
+                        <li class="nav-item {% if displayId is same as(display) %}active{% endif %}">
+                            <a class="nav-link {% if displayId is same as(display) %}active{% endif %}"
+                               href="{{ url('zfcadmin/evaluation/matrix', {'call': call.id, 'type': typeId, 'show': 'matrix', 'display': displayId} ) }}">{{ translate(value) }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <hr>
+
+                {% if projects|length > 0 %}
+                <table class="table table-sm table-bordered funding">
+
+                    <tr>
+                        <td colspan="2"></td>
+                        <th class="text-center"
+                            colspan="{{ evaluationResult['countries']|length }}">{{ translate("txt-date-national-application") }} {% if call %}{{ callLink(call,'view-admin','icon') }}{% endif %}</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="note note-submitted legend">
+                                {{ translate("txt-application-submitted") }}
+                            </div>
+
+                            <div class="note note-expected legend">
+                                {{ translate("txt-expected-national-application") }}
+                            </div>
+                        </td>
+                        {% if isEvaluation %}
+                            <th colspan="2" class="rotate evaluation"></th>
+                        {% endif %}
+                        {% for country in evaluationResult['countries'] %}
+                            <th class="rotate">
+                                {% for callCountry in country.object.callCountry if callCountry.call.id == call.id %}
+                                    <div><span>{{ callCountry.dateNationalApplication }}</span></div>
+                                {% endfor %}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td colspan="2">{{ translate("txt-project-name") }}</td>
+                        {% if isEvaluation %}
+                            <td colspan="2">{{ translate("txt-eval") }}</td>
+                        {% endif %}
+                        {% for country in evaluationResult['countries'] %}
+                            <td><abbr title="{{ country.country }}" class="country">{{ country.iso3 }}</td>
+                        {% endfor %}
+                    </tr>
+
+                    <tfoot>
+                    <tr>
+                        <td colspan="2">{% endif %}</td>
+                        {% if isEvaluation %}
+                            <td colspan="2" class="evaluation"></td>
+                        {% endif %}
+                        {% for country in evaluationResult['countries'] %}
+                            <th class="rotate-reverse">
+                                {% for callCountry in country.object.callCountry if callCountry.call.id == call.id %}
+                                    <div><span>{{ callCountry.dateExpectedFundingDecision }}</span></div>
+                                {% endfor %}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                        <th class="text-center"
+                            colspan="{{ evaluationResult['countries']|length }}">{{ translate("txt-date-expected-funding-decision") }} {% if call %}{{ callLink(call,'view-admin','icon') }}</th>
+                    </tr>
+                    </tfoot>
+
+
+                    <tbody>
+
+                    {% for project in projects %}
+                        <tr>
+                            <td>{{ projectStatusIcon(project) }}</td>
+                            <td class="ellipsis">{{ projectLink(project,'view-admin','name') }}</td>
+                            {% if isEvaluation %}
+                                <td class="funding-status {{ project.evaluationFeedbackCss }}">{{ project.evaluationLink }}</td>
+                                <td class="evaluation">{{ project.evaluationDownload }}</td>
+                            {% endif %}
+
+                            {% for country in evaluationResult['countries'] %}
+
+                                <td class="funding-status {{ evaluationResult[country.id][project.id].result.cssName }}
+
+                                     {% if not evaluationResult[country.id][project.id].result.is_decision %}
+                                        {% for rationale in project.rationale if rationale.country.id == country.id %}
+                                            {% if rationale.dateNationalApplicationSubmitted|length > 0 %}
+                                                note note-submitted
+                                            {% elseif rationale.dateNationalApplicationExpected|length > 0 %}
+                                                note note-expected
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    "
+
+                                        {% if not evaluationResult[country.id][project.id].result.is_decision %}
+                                            {% for rationale in project.rationale if rationale.country.id == country.id %}
+                                                {% if rationale.dateNationalApplicationSubmitted|length > 0 %}
+                                                    title="{{ translate("txt-submitted-on-%s")|format(rationale.dateNationalApplicationSubmitted|date('d-m-Y')) }}"
+                                                {% elseif rationale.dateNationalApplicationExpected|length > 0 %}
+                                                    title="{{ translate("txt-national-application-expected-on-%s")|format(rationale.dateNationalApplicationExpected) }}"
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                >
+
+                                    {% if evaluationResult[country.id][project.id].isProjectLeader %}
+                                        <u title="{{ translate("txt-project-leader") }}">{{ evaluationResult[country.id][project.id].value }}</u>
+                                    {% else %}
+                                        {{ evaluationResult[country.id][project.id].value }}
+                                    {% endif %}
+
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+
+                {# do not use the evaluationLink helper as that is fully built to produce evaluation links#}
+                <a class="btn btn-primary"
+                   href="{{ url('community/evaluation/download', {'call': call.id, 'type': typeId}) }}"><i
+                            class="fa fa-file-excel-o"></i>
+                    {{ translate("txt-download-%s-evaluation-overview-of-call-%s")|format(evaluationType, call) }}
+                </a>
+                {% else %}
+
+                    {{ ztbalert().info(translate("txt-there-are-no-projects-matching-your-criterea"))|raw }}
+
+                {% endif %}
+            </div>
+
+            {% if isEvaluation %}
+                <h3>{{ translate("txt-evaluation-status-legend") }}</h3>
+            {% else %}
+                <h3>{{ translate("txt-funding-status-legend") }}</h3>
+            {% endif %}
+            <div class="card-deck">
+                {% for status in fundingStatuses %}
+                    <div class="card {{ status.parseCssName() }}">
+                        <div class="card-body">
+                            {% if isEvaluation %}{{ status.statusEvaluation }}{% else %}{{ status.statusFunding }}{% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        {% include 'evaluation/partial/form/matrix-filter' %}
+    </div>
+</div>
+
+<style type="text/css">
+    th.rotate, th.rotate-reverse {
+        /* Something you can count on */
+        height: 160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+    }
+
+    th.rotate > div {
+        transform: /* Magic Numbers */ translate(5px, 140px) /* 45 is really 360 - 90 */ rotate(270deg);
+        width: 20px;
+    }
+
+    th.rotate-reverse > div {
+        transform: /* Magic Numbers */ translate(5px, 0px) /* 45 is really 360 - 90 */ rotate(90deg);
+        width: 20px;
+        text-overflow: ellipsis;
+    }
+
+    th.rotate > div > span {
+        padding: 5px 10px;
+    }
+
+    td.ellipsis {
+        width: 180px !important;
+    }
+
+    .note {
+        position: relative;
+    }
+
+    .note:after { /* Magic Happens Here!!! */
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        display: block;
+        border-left: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+    }
+
+    .note-expected:after { /* Magic Happens Here!!! */
+        border-top: 20px solid var(--pink);
+    }
+
+    .note-submitted:after { /* Magic Happens Here!!! */
+        border-top: 20px solid var(--purple);
+    }
+
+    .legend {
+        border: 1px solid darkgray;
+        margin: 5px;
+        padding: 5px;
+    }
+
+    /* </magic> */
+</style>

@@ -79,6 +79,7 @@ final class VersionLink extends AbstractLink
                 );
                 break;
             case 'copy':
+                $this->setLinkIcon('fa-copy');
                 $this->setRouter('zfcadmin/evaluation/report/version/copy');
                 $this->setText(
                     sprintf(

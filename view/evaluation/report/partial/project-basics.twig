@@ -80,7 +80,7 @@
         <h2>{{ translate("txt-project") }} {{ translate("txt-description")|lower }}</h2>
         <p>{{ project.description }}</p>
 
-        {% if type is constant("Project\\Entity\\Evaluation\\Report\\Type::TYPE_GENERAL_VERSION") %}
+        {% if type is constant("Evaluation\\Entity\\Report\\Type::TYPE_GENERAL_VERSION") %}
             <h2>{{ review.version.versionType }} {{ translate("txt-documents")|lower }}</h2>
             {% if review.version.versionDocument.count() > 0 %}
                 <table class="table table-hover table-sm table-striped">

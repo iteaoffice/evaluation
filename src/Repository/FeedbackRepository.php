@@ -47,8 +47,8 @@ final class FeedbackRepository extends EntityRepository implements FilteredObjec
                 $queryBuilder->addOrderBy('evaluation_entity_feedback.id', $direction);
                 break;
             case 'status':
-                $queryBuilder->join('evaluation_entity_feedback.status', 'project_entity_evaluation_status');
-                $queryBuilder->addOrderBy('project_entity_evaluation_status.status', $direction);
+                $queryBuilder->join('evaluation_entity_feedback.status', 'evaluation_entity_status');
+                $queryBuilder->addOrderBy('evaluation_entity_status.status', $direction);
                 break;
             case 'project':
                 $queryBuilder->join('evaluation_entity_feedback.version', 'project_entity_version_version');

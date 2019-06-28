@@ -1,0 +1,6 @@
+{% do headTitle().append(translate("txt-project-evaluation")) %}
+{% do headLink().appendStylesheet(url('assets/funding-status-css')) %}
+
+<h1>{{ translate("txt-evaluation-of-type-%s-for-project-%s-in-%s")|format(evaluation.type, evaluation.project, evaluation.country) }}</h1>
+
+{% include 'evaluation/partial/form/evaluate' %}

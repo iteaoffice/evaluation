@@ -38,6 +38,7 @@ final class FeedbackLabel extends AbstractNavigationInvokable
             /** @var Feedback $feedback */
             $feedback = $entities->get(Feedback::class);
 
+            /** @var Version $version */
             $version = $feedback->getVersion();
             $entities->set(Version::class, $version);
 
@@ -50,7 +51,7 @@ final class FeedbackLabel extends AbstractNavigationInvokable
             ));
             $entities->set(Project::class, $feedback->getVersion()->getProject());
             $label = sprintf(
-                $this->translator->translate("txt-feedback-on-%s"),
+                $this->translator->translate('txt-feedback-on-%s'),
                 $feedback->getVersion()->getVersionType()->getDescription()
             );
         }
@@ -68,7 +69,7 @@ final class FeedbackLabel extends AbstractNavigationInvokable
             ));
             $entities->set(Project::class, $version->getProject());
             $label = sprintf(
-                $this->translator->translate("txt-create-feedback-on-%s"),
+                $this->translator->translate('txt-create-feedback-on-%s'),
                 $version->getVersionType()->getDescription()
             );
         }

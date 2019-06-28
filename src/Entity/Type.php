@@ -19,7 +19,6 @@ namespace Evaluation\Entity;
 
 use Doctrine\Common\Collections;
 use Doctrine\ORM\Mapping as ORM;
-use Project\Entity\AbstractEntity;
 use Project\Entity\Version\Type as VersionType;
 use Zend\Form\Annotation;
 
@@ -74,6 +73,21 @@ class Type extends AbstractEntity
             default:
                 return self::TYPE_FPP_EVALUATION;
         }
+    }
+
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    public function __isset($property)
+    {
+        return isset($this->$property);
     }
 
     public function __toString(): string

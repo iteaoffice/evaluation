@@ -9,7 +9,7 @@
     <dd>{{ window.id }}</dd>
     <dt>{{ translate("txt-report-versions") }}</dt>
     {% for reportVersion in window.reportVersions %}
-        <dd>{{ report2VersionLink(reportVersion, 'view') }}</dd>
+        <dd>{{ reportVersionLink(reportVersion, 'view') }}</dd>
     {%  endfor %}
     <dt>{{ translate("txt-title") }}</dt>
     <dd>{{ window.title }}</dd>
@@ -25,4 +25,4 @@
     <dd>{% if window.dateEndSelection %}{{ window.dateEndSelection|date('d-m-Y') }}{% else %}-{% endif %}</dd>
 </dl>
 
-{{ report2WindowLink(window,'edit','button') }}
+{{ reportWindowLink(window,'edit','button') }}

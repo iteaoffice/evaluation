@@ -20,13 +20,13 @@ return [
                         'pages' => [
                             'project-version' => [
                                 'pages' => [
-                                    'create-project-version-evaluation-report2' => [
+                                    'create-project-version-evaluation-report' => [
                                         'route'   => 'community/evaluation/report/create-from-version-review',
                                         'visible' => false,
                                         'label'   => _('txt-new-evaluation-report'),
                                         'params'  => [
                                             'entities'   => [
-                                                'id' => Review::class,
+                                                'id' => Reviewer::class,
                                             ],
                                             'routeParam' => [
                                                 'id' => 'versionReviewer',
@@ -40,7 +40,7 @@ return [
                             ],
                         ],
                     ],
-                    'report2'        => [
+                    'report'        => [
                         'label'     => _('txt-stg-evaluation-template'),
                         'route'     => 'community/evaluation/report/list',
                         'resource'  => 'route/community/evaluation/report/list',
@@ -138,7 +138,7 @@ return [
                             ],
                         ],
                     ],
-                    'report2'   => [
+                    'report'   => [
                         'label'     => _('txt-evaluation-reports'),
                         'route'     => 'community/evaluation/report/list',
                         'resource'  => 'route/community/evaluation/report/list',

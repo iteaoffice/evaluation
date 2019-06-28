@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-10">
-        <h1>{{ translate("txt-evaluation-report-criterion-list") }} {{ report2CriterionLink(null,'new','button') }}</h1>
+        <h1>{{ translate("txt-evaluation-report-criterion-list") }} {{ reportCriterionLink(null,'new','button') }}</h1>
         <div class="row">
             <div class="col-md-6">
                 <p class="lead">{{ translate("txt-evaluation-report-criterion-list-explanation") }}</p>
@@ -41,10 +41,10 @@
                     <tr>
                         <td>
                             {{ criterion.id }}
-                            {{ report2CriterionLink(criterion,'edit','icon') }}
+                            {{ reportCriterionLink(criterion,'edit','icon') }}
                         </td>
                         <td>{{ criterion.sequence }}</td>
-                        <td>{{ report2CriterionLink(criterion,'view','name') }}</td>
+                        <td>{{ reportCriterionLink(criterion,'view','name') }}</td>
                         <td>{{ translate(criterion.parseInputType()) }}</td>
                         <td>{% for reportType in criterion.reportTypes %}
                                 {{ reportType }}

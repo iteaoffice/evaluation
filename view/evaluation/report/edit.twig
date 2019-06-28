@@ -11,10 +11,10 @@
 <!-- Tab panes -->
 <div class="tab-content">
     <div class="tab-pane active" id="report">
-        {% include 'project/evaluation/report/partial/report-stats' with {'action': 'edit'} %}
-        {% include 'project/partial/form/evaluation/report' %}
+        {% include 'evaluation/report/partial/report-stats' with {'action': 'edit'} %}
+        {% include 'evaluation/partial/form/evaluation' %}
     </div>
     <div class="tab-pane" role="tabpanel" id="project">
-        {% include 'project/evaluation/report/partial/project-basics' %}
+        {% include 'evaluation/report/partial/project-basics' %}
     </div>
 </div>

@@ -19,33 +19,33 @@
             {% for review in container.reviews %}
             <tr>
                 {% if review.projectReport %}
-                    <td>{#{{ evaluationReport2Link(null, 'new-list', 'name', true, review) }}#}
+                    <td>{#{{ evaluationReportLink(null, 'new-list', 'name', true, review) }}#}
                         {{ "%s - %s - %s"|format(
                             review.projectReport.project.call,
                             review.projectReport.project.parseFullName(),
                             review.projectReport.parseName()
                         ) }}
-                        {{ evaluationReport2Link(null, 'download-offline-form', 'icon', false, review) }}
+                        {{ evaluationReportLink(null, 'download-offline-form', 'icon', false, review) }}
                     </td>
                 {% elseif review.version %}
-                    <td>{#{{ evaluationReport2Link(null, 'new-list', 'name', true, null, review) }}#}
+                    <td>{#{{ evaluationReportLink(null, 'new-list', 'name', true, null, review) }}#}
                         {{ "%s - %s - %s"|format(
                             review.version.project.call,
                             review.version.project.parseFullName(),
                             review.version.versionType
                         ) }}
-                        {{ evaluationReport2Link(null, 'download-offline-form', 'icon', false, null, review) }}
+                        {{ evaluationReportLink(null, 'download-offline-form', 'icon', false, null, review) }}
                     </td>
                 {% endif %}
                 {#<td>-</td>
                 <td>-</td>
-                <td>{{ evaluationReport2Progress() }}</td>#}
+                <td>{{ evaluationReportProgress() }}</td>#}
             </tr>
             {% endfor %}
             </tbody>
         </table>
     {% endfor %}
-    {{ evaluationReport2DownloadLink(status) }}
+    {{ evaluationReportDownloadLink(status) }}
 {% else %}
     {{ ztbalert().info(translate("txt-no-new-evaluation-reports-found"))|raw }}
 {% endif %}

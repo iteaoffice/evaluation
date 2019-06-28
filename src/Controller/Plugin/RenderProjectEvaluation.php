@@ -19,10 +19,10 @@ namespace Evaluation\Controller\Plugin;
 
 use Evaluation\Entity\Feedback;
 use Evaluation\Entity\Type as EvaluationType;
+use Evaluation\Options\ModuleOptions;
 use Evaluation\Service\EvaluationService;
 use Project\Entity\Project;
 use Project\Entity\Version\Type;
-use Project\Options\ModuleOptions;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use ZfcTwig\View\TwigRenderer;
 use function defined;
@@ -69,13 +69,13 @@ final class RenderProjectEvaluation extends AbstractPlugin
         $pdf = new ReportPdf();
 
         //Doe some nasty hardcoded stuff for AENEAS
-        $pdf->setTemplate($this->moduleOptions->getEvaluationProjectTemplate());
+        $pdf->setTemplate($this->moduleOptions->getProjectTemplate());
 
         $y = 35;
 
         //@todo Change this so the template is taken from the program
         if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
-            $originalTemplate = $this->moduleOptions->getEvaluationProjectTemplate();
+            $originalTemplate = $this->moduleOptions->getProjectTemplate();
 
             $template = $originalTemplate;
             if (in_array('Penta', $project->parsePrograms(), true)) {
@@ -110,7 +110,7 @@ final class RenderProjectEvaluation extends AbstractPlugin
 
 
         $projectEvaluationOverview = $this->renderer->render(
-            'project/pdf/evaluation-project-overview',
+            'evaluation/partial/pdf/evaluation-project-overview',
             [
                 'countries'        => $countries,
                 'project'          => $project,

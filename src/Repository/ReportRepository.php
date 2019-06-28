@@ -91,7 +91,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb1->from(VersionReviewer::class, 'vr');
                             $qb1->innerJoin('vr.version', 'v');
                             $qb1->innerJoin('v.versionType', 'vt');
-                            $qb1->leftJoin('vr.projectVersionReport2', 'pvr');
+                            $qb1->leftJoin('vr.projectVersionReport', 'pvr');
                             $qb1->where($qb1->expr()->eq('vr.contact', ':contact'));
                             $qb1->andWhere($qb1->expr()->isNull('pvr.id'));
                             $qb1->andWhere($qb1->expr()->eq('v.versionType', ':versionType'));
@@ -118,7 +118,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb2->select('rr');
                             $qb2->from(ReportReviewer::class, 'rr');
                             $qb2->innerJoin('rr.projectReport', 'pr');
-                            $qb2->leftJoin('rr.projectReportReport2', 'prr');
+                            $qb2->leftJoin('rr.projectReportReport', 'prr');
                             $qb2->where($qb2->expr()->eq('rr.contact', ':contact'));
                             $qb2->andWhere($qb2->expr()->isNull('prr.id'));
                             $qb2->andWhere($qb2->expr()->gte('pr.dateFinal', ':dateStartSelection'));
@@ -253,7 +253,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $queryBuilder->from(ProjectReport::class, 'pr');
                 $queryBuilder->innerJoin('pr.project', 'p');
                 $queryBuilder->innerJoin('pr.review', 'rr');
-                $queryBuilder->leftJoin('pr.projectReportReport2', 'prr');
+                $queryBuilder->leftJoin('pr.projectReportReport', 'prr');
                 $queryBuilder->leftJoin('prr.evaluationReport', 'er');
                 $queryBuilder->groupBy('pr.id');
                 $queryBuilder->addGroupBy('prr.id');
@@ -265,7 +265,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $queryBuilder->innerJoin('rr.contact', 'c');
                 $queryBuilder->innerJoin('rr.projectReport', 'pr');
                 $queryBuilder->innerJoin('pr.project', 'p');
-                $queryBuilder->leftJoin('rr.projectReportReport2', 'prr');
+                $queryBuilder->leftJoin('rr.projectReportReport', 'prr');
                 $queryBuilder->leftJoin('prr.evaluationReport', 'er');
             }
 
@@ -344,8 +344,8 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $queryBuilder->from(Version::class, 'v');
                 $queryBuilder->innerJoin('v.versionType', 'vt');
                 $queryBuilder->innerJoin('v.project', 'p');
-                $queryBuilder->innerJoin('v.versionReviewer', 'vr');
-                $queryBuilder->leftJoin('v.projectVersionReport2', 'vrr');
+                $queryBuilder->innerJoin('v.reviewers', 'vr');
+                $queryBuilder->leftJoin('v.projectVersionReport', 'vrr');
                 $queryBuilder->leftJoin('vrr.evaluationReport', 'rr');
                 $queryBuilder->groupBy('v.id');
                 $queryBuilder->addGroupBy('vrr.id');
@@ -358,7 +358,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $queryBuilder->innerJoin('vr.version', 'v');
                 $queryBuilder->innerJoin('v.versionType', 'vt');
                 $queryBuilder->innerJoin('v.project', 'p');
-                $queryBuilder->leftJoin('vr.projectVersionReport2', 'vrr');
+                $queryBuilder->leftJoin('vr.projectVersionReport', 'vrr');
                 $queryBuilder->leftJoin('vrr.evaluationReport', 'rr');
             }
 

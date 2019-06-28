@@ -8,7 +8,7 @@ return [
         'admin' => [
             'config'  => [
                 'pages' => [
-                    'report2-criterion-category' => [
+                    'report-criterion-category' => [
                         'label' => _("txt-nav-evaluation-report-criterion-category-list"),
                         'route' => 'zfcadmin/evaluation/report/criterion/category/list',
                         'pages' => [
@@ -42,7 +42,7 @@ return [
                             ],
                         ],
                     ],
-                    'report2-criterion-type'     => [
+                    'report-criterion-type'     => [
                         'label' => _("txt-nav-evaluation-report-criterion-type-list"),
                         'route' => 'zfcadmin/evaluation/report/criterion/type/list',
                         'pages' => [
@@ -76,7 +76,7 @@ return [
                             ],
                         ],
                     ],
-                    'report2-criterion-topic'    => [
+                    'report-criterion-topic'    => [
                         'label' => _("txt-nav-evaluation-report-criterion-topic-list"),
                         'route' => 'zfcadmin/evaluation/report/criterion/topic/list',
                         'pages' => [
@@ -110,7 +110,7 @@ return [
                             ],
                         ],
                     ],
-                    'report2-criterion'          => [
+                    'report-criterion'          => [
                         'label' => _("txt-nav-evaluation-report-criterion-list"),
                         'route' => 'zfcadmin/evaluation/report/criterion/list',
                         'pages' => [
@@ -144,7 +144,7 @@ return [
                             ],
                         ],
                     ],
-                    'report2-version'            => [
+                    'report-version'            => [
                         'label' => _("txt-nav-evaluation-report-version-list"),
                         'route' => 'zfcadmin/evaluation/report/version/list',
                         'pages' => [
@@ -226,7 +226,7 @@ return [
                             ],
                         ],
                     ],
-                    'report2-window'             => [
+                    'report-window'             => [
                         'label' => _('txt-nav-evaluation-report-window-list'),
                         'route' => 'zfcadmin/evaluation/report/window/list',
                         'pages' => [

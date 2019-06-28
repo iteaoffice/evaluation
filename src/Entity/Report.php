@@ -171,7 +171,7 @@ class Report extends AbstractEntity
         return $this->version;
     }
 
-    public function setVersion(Report\Version $version): Report
+    public function setVersion(?Report\Version $version): Report
     {
         $this->version = $version;
         return $this;
@@ -226,7 +226,7 @@ class Report extends AbstractEntity
         return $this->projectReportReport;
     }
 
-    public function setProjectReportReport(Report\ProjectReport $projectReportReport): Report
+    public function setProjectReportReport(?Report\ProjectReport $projectReportReport): Report
     {
         $this->projectReportReport = $projectReportReport;
         return $this;
@@ -237,18 +237,18 @@ class Report extends AbstractEntity
         return $this->projectVersionReport;
     }
 
-    public function setProjectVersionReport(Report\ProjectVersion $projectVersionReport): Report
+    public function setProjectVersionReport(?Report\ProjectVersion $projectVersionReport): Report
     {
         $this->projectVersionReport = $projectVersionReport;
         return $this;
     }
 
-    public function getResults(): Collection
+    public function getResults()
     {
         return $this->results;
     }
 
-    public function setResults(Collection $results)
+    public function setResults($results)
     {
         $this->results = $results;
         return $this;

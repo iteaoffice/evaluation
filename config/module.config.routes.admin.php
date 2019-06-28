@@ -9,8 +9,8 @@
  */
 
 use Evaluation\Controller;
-use Zend\Router\Http\Segment;
 use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'router' => [
@@ -36,10 +36,10 @@ return [
                                     ],
                                 ],
                             ],
-                            'report2'  => [
+                            'report'   => [
                                 'type'          => Literal::class,
                                 'options'       => [
-                                    'route'    => '/report2',
+                                    'route'    => '/report',
                                     'defaults' => [
                                         'action'     => 'list',
                                         'controller' => Controller\ReportManagerController::class,
@@ -172,7 +172,7 @@ return [
                                                     ],
                                                 ],
                                             ],
-                                            'copy'  => [
+                                            'copy' => [
                                                 'type'    => Segment::class,
                                                 'options' => [
                                                     'route'    => '/copy/[:id].html',
@@ -593,6 +593,46 @@ return [
                                                 ],
                                             ],
                                         ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'feedback'   => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'    => '/feedback',
+                            'defaults' => [
+                                'controller' => Controller\FeedbackController::class,
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'new'  => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/new/version-[:version].html',
+                                    'defaults' => [
+                                        'action' => 'new',
+                                    ],
+                                ],
+                            ],
+                            'view' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/view/[:id].html',
+                                    'defaults' => [
+                                        'action' => 'view',
+
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/edit/[:id].html',
+                                    'defaults' => [
+                                        'action' => 'edit',
                                     ],
                                 ],
                             ],

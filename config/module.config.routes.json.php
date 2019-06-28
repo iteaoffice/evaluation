@@ -9,34 +9,47 @@ use Evaluation\Controller;
 return [
     'router' => [
         'routes' => [
-            'json'      => [
-                'type'          => 'Literal',
-                'options'       => [
+            'json' => [
+                'type'    => 'Literal',
+                'options' => [
                     'route'    => '/json',
                     'defaults' => [
-                        'controller' => Controller\JsonController::class,
+                        'controller' => Controller\EvaluationController::class,
                         'action'     => 'index',
                     ],
                 ],
-                'may_terminate' => true,
+                'may_terminate' => false,
                 'child_routes'  => [
-                    'evaluation'                       => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/evaluation.json',
+                    'evaluation' => [
+                        'type'          => 'Literal',
+                        'options'       => [
+                            'route'    => '/evaluation',
                             'defaults' => [
-                                'action'    => 'evaluation',
-                                'privilege' => 'overview',
+                                'controller' => Controller\JsonController::class,
+                                'action'     => 'index',
                             ],
                         ],
-                    ],
-                    'update-evaluation'                => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/update-evaluation.json',
-                            'defaults' => [
-                                'action'    => 'update-evaluation',
-                                'privilege' => 'update-evaluation',
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'evaluation'        => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/evaluation.json',
+                                    'defaults' => [
+                                        'action'    => 'evaluation',
+                                        'privilege' => 'overview',
+                                    ],
+                                ],
+                            ],
+                            'update-evaluation' => [
+                                'type'    => 'Literal',
+                                'options' => [
+                                    'route'    => '/update-evaluation.json',
+                                    'defaults' => [
+                                        'action'    => 'update-evaluation',
+                                        'privilege' => 'update-evaluation',
+                                    ],
+                                ],
                             ],
                         ],
                     ],

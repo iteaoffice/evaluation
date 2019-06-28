@@ -30,45 +30,6 @@ return [
                             ],
                         ],
                     ],
-                    'update-effort'                    => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/update-effort.json',
-                            'defaults' => [
-                                'action'    => 'update-effort',
-                                'privilege' => 'update-effort',
-                            ],
-                        ],
-                    ],
-                    'update-cost'                      => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/update-cost.json',
-                            'defaults' => [
-                                'action'    => 'update-cost',
-                                'privilege' => 'update-cost',
-                            ],
-                        ],
-                    ],
-                    'update-funded'                    => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/update-funded.json',
-                            'defaults' => [
-                                'action'    => 'update-funded',
-                                'privilege' => 'update-funded',
-                            ],
-                        ],
-                    ],
-                    'get-achievement-type-information' => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/achievement-type-information.json',
-                            'defaults' => [
-                                'action' => 'achievement-type-information',
-                            ],
-                        ],
-                    ],
                     'update-evaluation'                => [
                         'type'    => 'Literal',
                         'options' => [
@@ -76,36 +37,6 @@ return [
                             'defaults' => [
                                 'action'    => 'update-evaluation',
                                 'privilege' => 'update-evaluation',
-                            ],
-                        ],
-                    ],
-                    'update-funding'                   => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/update-funding.json',
-                            'defaults' => [
-                                'action'    => 'update-funding',
-                                'privilege' => 'update-funding',
-                            ],
-                        ],
-                    ],
-                    'update-funding-affiliation'       => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/update-funding-affiliation.json',
-                            'defaults' => [
-                                'action'    => 'update-funding-affiliation',
-                                'privilege' => 'update-funding-affiliation',
-                            ],
-                        ],
-                    ],
-                    'get-project-links'                => [
-                        'type'    => 'Literal',
-                        'options' => [
-                            'route'    => '/get-project-links.json',
-                            'defaults' => [
-                                'action'    => 'get-project-links',
-                                'privilege' => 'get-project-links',
                             ],
                         ],
                     ],
@@ -192,10 +123,10 @@ return [
                                     ],
                                 ],
                             ],
-                            'report2'           => [
+                            'report'           => [
                                 'type'          => 'Segment',
                                 'options'       => [
-                                    'route'    => '/report2',
+                                    'route'    => '/report',
                                     'defaults' => [
                                         'controller' => Controller\ReportController::class,
                                         'action'     => 'list',

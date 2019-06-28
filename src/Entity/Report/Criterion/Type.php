@@ -12,8 +12,6 @@ use Evaluation\Entity\AbstractEntity;
 use Zend\Form\Annotation;
 
 /**
- * Evaluation report criterion type
- *
  * @ORM\Table(name="evaluation_report2_criterion_type")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\Criterion\TypeRepository")
  */
@@ -73,12 +71,24 @@ class Type extends AbstractEntity
      */
     private $criterionVersions;
 
-    /**
-     * Type constructor.
-     */
     public function __construct()
     {
         $this->criterionVersions = new ArrayCollection();
+    }
+
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    public function __isset($property)
+    {
+        return isset($this->$property);
     }
 
     public function __toString(): string
@@ -86,18 +96,11 @@ class Type extends AbstractEntity
         return (string) $this->type;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     * @return Type
-     */
     public function setId(int $id): Type
     {
         $this->id = $id;

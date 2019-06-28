@@ -12,37 +12,37 @@
             {% set activeCategory = currentCategory %}
         {% endif %}
         <h4><span class="badge badge-secondary">{{ currentType }}</span></h4>
-            <table class="table table-hover table-sm">
-                <thead>
-                    <tr>
-                        <th>{{ translate("txt-id") }}</th>
-                        <th>{{ translate("txt-sequence") }}</th>
-                        <th>{{ translate("txt-criterion") }}</th>
-                        <th>{{ translate("txt-topics") }}</th>
-                        <th>{{ translate("txt-input-type") }}</th>
-                        <th>{{ translate("txt-has-score") }}</th>
-                        <th>{{ translate("txt-required") }}</th>
-                        <th>{{ translate("txt-confidential") }}</th>
-                        <th>{{ translate("txt-highlighted") }}</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <table class="table table-hover table-striped table-sm">
+        <thead>
+        <tr>
+            <th>{{ translate("txt-id") }}</th>
+            <th>{{ translate("txt-sequence") }}</th>
+            <th>{{ translate("txt-criterion") }}</th>
+            <th>{{ translate("txt-topics") }}</th>
+            <th>{{ translate("txt-input-type") }}</th>
+            <th>{{ translate("txt-has-score") }}</th>
+            <th>{{ translate("txt-required") }}</th>
+            <th>{{ translate("txt-confidential") }}</th>
+            <th>{{ translate("txt-highlighted") }}</th>
+        </tr>
+        </thead>
+        <tbody>
     {% endif %}
     <tr{% if criterionVersion.highlighted %} class="table-warning"{% endif %}>
         <td>{{ criterionVersion.id }}
             {% if not reportVersion.archived and not readonly %}
-                {{ report2CriterionVersionLink(criterionVersion, 'edit', 'icon') }}
+                {{ reportCriterionVersionLink(criterionVersion, 'edit', 'icon') }}
             {% endif %}
         </td>
         <td>{{ criterionVersion.sequence }}</td>
         <td>{% if criterionVersion.criterion.archived %}
-                <del>{{ report2CriterionVersionLink(criterionVersion, 'view', 'name') }}</del>
+                <del>{{ reportCriterionVersionLink(criterionVersion, 'view', 'name') }}</del>
             {% else %}
-                {{ report2CriterionVersionLink(criterionVersion, 'view', 'name') }}
+                {{ reportCriterionVersionLink(criterionVersion, 'view', 'name') }}
             {% endif %}
         </td>
         <td>{% for versionTopic in criterionVersion.versionTopics %}
-                {{ report2CriterionTopicLink(versionTopic.topic, 'view', 'name') }} ({{ versionTopic.weight }})
+                {{ reportCriterionTopicLink(versionTopic.topic, 'view', 'name') }} ({{ versionTopic.weight }})
                 {% if not loop.last %}<br>{% endif %}
             {% else %}
                 -

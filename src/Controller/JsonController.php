@@ -70,7 +70,6 @@ final class JsonController extends AbstractActionController
      */
     private $viewHelperManager;
 
-
     public function __construct(
         CallService $callService,
         EvaluationService $evaluationService,
@@ -212,7 +211,7 @@ final class JsonController extends AbstractActionController
             /**
              * @var $status Status
              */
-            $status = $this->evaluationService->find(Status::class, (int)$statusId);
+            $status = $this->projectService->find(Status::class, (int)$statusId);
             $evaluation->setStatus($status);
             $this->evaluationService->save($evaluation);
 

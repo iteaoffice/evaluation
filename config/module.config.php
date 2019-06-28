@@ -32,15 +32,16 @@ $config = [
             Controller\Report\Criterion\VersionController::class  => ConfigAbstractFactory::class,
             Controller\ReviewerManagerController::class           => ConfigAbstractFactory::class,
             Controller\Reviewer\ContactManagerController::class   => ConfigAbstractFactory::class,
+            Controller\JsonController::class                      => ConfigAbstractFactory::class,
         ],
     ],
     'controller_plugins' => [
         'aliases'   => [
             'createEvaluation'                => Controller\Plugin\CreateEvaluation::class,
             'getEvaluationFilter'             => Controller\Plugin\GetFilter::class,
-            'evaluationReportExcelExport'    => Controller\Plugin\Report\ExcelExport::class,
+            'evaluationReportExcelExport'     => Controller\Plugin\Report\ExcelExport::class,
             'evaluationConsolidatedPdfExport' => Controller\Plugin\Report\ConsolidatedPdfExport::class,
-            'renderProjectEvaluation'             => Controller\Plugin\RenderProjectEvaluation::class,
+            'renderProjectEvaluation'         => Controller\Plugin\RenderProjectEvaluation::class,
 
         ],
         'factories' => [
@@ -53,7 +54,7 @@ $config = [
             Controller\Plugin\Report\ConsolidatedPdfExport::class => ConfigAbstractFactory::class,
             Controller\Plugin\Report\ExcelImport::class           => ConfigAbstractFactory::class,
             Controller\Plugin\Report\Presentation::class          => ConfigAbstractFactory::class,
-            Controller\Plugin\RenderProjectEvaluation::class             => ConfigAbstractFactory::class,
+            Controller\Plugin\RenderProjectEvaluation::class      => ConfigAbstractFactory::class,
 
         ],
     ],
@@ -62,26 +63,30 @@ $config = [
     ],
     'view_helpers'       => [
         'aliases'    => [
-            'evaluationReport2Link'         => View\Helper\ReportLink::class,
-            'evaluationReport2DownloadLink' => View\Helper\Report\DownloadLink::class,
-            'evaluationReport2FinalLink'    => View\Helper\Report\FinalLink::class,
-            'evaluationReport2Progress'     => View\Helper\Report\Progress::class,
-            'evaluationReport2Score'        => View\Helper\Report\Score::class,
-            'report2VersionLink'            => View\Helper\Report\VersionLink::class,
-            'report2WindowLink'             => View\Helper\Report\WindowLink::class,
-            'report2CriterionLink'          => View\Helper\Report\CriterionLink::class,
-            'report2CriterionCategoryLink'  => View\Helper\Report\Criterion\CategoryLink::class,
-            'report2CriterionTypeLink'      => View\Helper\Report\Criterion\TypeLink::class,
-            'report2CriterionTopicLink'     => View\Helper\Report\Criterion\TopicLink::class,
-            'report2CriterionVersionLink'   => View\Helper\Report\Criterion\VersionLink::class,
-            'reviewerLink'                  => View\Helper\ReviewerLink::class,
-            'reviewerContactLink'           => View\Helper\Reviewer\ContactLink::class
+            'feedbackLink'                 => View\Helper\FeedbackLink::class,
+            'evaluationLink'               => View\Helper\EvaluationLink::class,
+            'evaluationReportLink'         => View\Helper\ReportLink::class,
+            'evaluationReportDownloadLink' => View\Helper\Report\DownloadLink::class,
+            'evaluationReportFinalLink'    => View\Helper\Report\FinalLink::class,
+            'evaluationReportProgress'     => View\Helper\Report\Progress::class,
+            'evaluationReportScore'        => View\Helper\Report\Score::class,
+            'reportVersionLink'            => View\Helper\Report\VersionLink::class,
+            'reportWindowLink'             => View\Helper\Report\WindowLink::class,
+            'reportCriterionLink'          => View\Helper\Report\CriterionLink::class,
+            'reportCriterionCategoryLink'  => View\Helper\Report\Criterion\CategoryLink::class,
+            'reportCriterionTypeLink'      => View\Helper\Report\Criterion\TypeLink::class,
+            'reportCriterionTopicLink'     => View\Helper\Report\Criterion\TopicLink::class,
+            'reportCriterionVersionLink'   => View\Helper\Report\Criterion\VersionLink::class,
+            'reviewerLink'                 => View\Helper\ReviewerLink::class,
+            'reviewerContactLink'          => View\Helper\Reviewer\ContactLink::class
 
         ],
         'invokables' => [
 
         ],
         'factories'  => [
+            View\Helper\FeedbackLink::class                  => ViewHelperFactory::class,
+            View\Helper\EvaluationLink::class                => ViewHelperFactory::class,
             View\Helper\ReportLink::class                    => ViewHelperFactory::class,
             View\Helper\Report\DownloadLink::class           => ViewHelperFactory::class,
             View\Helper\Report\FinalLink::class              => ViewHelperFactory::class,

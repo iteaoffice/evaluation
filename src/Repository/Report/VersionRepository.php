@@ -32,6 +32,7 @@ use function strtoupper;
 
 /**
  * Class VersionRepository
+ *
  * @package Evaluation\Repository\Report
  */
 final class VersionRepository extends EntityRepository implements FilteredObjectRepository
@@ -105,7 +106,7 @@ final class VersionRepository extends EntityRepository implements FilteredObject
         $queryBuilder->setParameter('archived', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
-        if (!empty($results)) {
+        if (!empty($result)) {
             return reset($result);
         }
 

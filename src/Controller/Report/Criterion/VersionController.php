@@ -59,7 +59,7 @@ final class VersionController extends AbstractActionController
         $this->translator              = $translator;
     }
 
-    public function viewAction()
+    public function viewAction(): ViewModel
     {
         $criterionVersion = $this->evaluationReportService->find(
             CriterionVersion::class,

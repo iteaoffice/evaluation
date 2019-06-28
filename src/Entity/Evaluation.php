@@ -156,7 +156,7 @@ class Evaluation extends AbstractEntity
      * )
      * @Annotation\Attributes({"label":"txt-type"})
      *
-     * @var \Evaluation\Entity\Type
+     * @var Type
      */
     private $type;
     /**
@@ -259,7 +259,7 @@ class Evaluation extends AbstractEntity
         return $this->contact;
     }
 
-    public function setContact(Contact $contact): Evaluation
+    public function setContact(?Contact $contact): Evaluation
     {
         $this->contact = $contact;
         return $this;
@@ -270,18 +270,18 @@ class Evaluation extends AbstractEntity
         return $this->country;
     }
 
-    public function setCountry(Country $country): Evaluation
+    public function setCountry(?Country $country): Evaluation
     {
         $this->country = $country;
         return $this;
     }
 
-    public function getType(): ?\Evaluation\Entity\Type
+    public function getType(): ?Type
     {
         return $this->type;
     }
 
-    public function setType(\Evaluation\Entity\Type $type): Evaluation
+    public function setType(?Type $type): Evaluation
     {
         $this->type = $type;
         return $this;
@@ -292,7 +292,7 @@ class Evaluation extends AbstractEntity
         return $this->project;
     }
 
-    public function setProject(Project $project): Evaluation
+    public function setProject(?Project $project): Evaluation
     {
         $this->project = $project;
         return $this;

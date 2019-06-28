@@ -30,27 +30,24 @@ use function sprintf;
  */
 final class VersionLink extends AbstractLink
 {
-    /**
-     * @var CriterionVersion
-     */
-    private $criterionVersion;
-
     public function __invoke(
-        CriterionVersion $criterionVersion = null,
+        CriterionVersion $version = null,
         string $action = 'view',
         string $show = 'name',
         ReportVersion $reportVersion = null
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($criterionVersion, ['id']);
+        $this->extractRouterParams($version, ['id']);
 
         if (null !== $reportVersion) {
             $this->addRouteParam('reportVersionId', $reportVersion->getId());
         }
-        if (null !== $criterionVersion) {
-            $this->addShowOption('name', (string)$criterionVersion->getCriterion());
+        if (null !== $version) {
+            $this->addShowOption('name', (string)$version->getCriterion());
         }
+
+        $this->parseAction($action, $version ?? new CriterionVersion());
 
         return $this->createLink($show);
     }
@@ -61,6 +58,7 @@ final class VersionLink extends AbstractLink
 
         switch ($action) {
             case 'add':
+                $this->setLinkIcon('fa-plus');
                 $this->setRouter('zfcadmin/evaluation/report/criterion/version/add');
                 $this->setText($this->translator->translate('txt-add-new-evaluation-report-criterion'));
                 break;

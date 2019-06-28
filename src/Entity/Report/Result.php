@@ -19,10 +19,10 @@ namespace Evaluation\Entity\Report;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Zend\Form\Annotation;
 
 /**
@@ -37,23 +37,25 @@ class Result extends AbstractEntity
 {
     public const SCORE_NOT_EVALUATED = -1;
 
-    protected static $scoreValues = [
-        self::SCORE_NOT_EVALUATED => 'txt-not-evaluated-yet',
-                                0 => 'txt-very-low:-unacceptable-or-missing',
-                                1 => 'txt-low:-insufficient-lacking-or-inadequate',
-                                2 => 'txt-medium:-minimum-required',
-                                3 => 'txt-good:-expected-quality',
-                                4 => 'txt-excellent:-outstanding-work'
-    ];
+    protected static $scoreValues
+        = [
+            self::SCORE_NOT_EVALUATED => 'txt-not-evaluated-yet',
+            0                         => 'txt-very-low:-unacceptable-or-missing',
+            1                         => 'txt-low:-insufficient-lacking-or-inadequate',
+            2                         => 'txt-medium:-minimum-required',
+            3                         => 'txt-good:-expected-quality',
+            4                         => 'txt-excellent:-outstanding-work'
+        ];
 
-    protected static $scoreColors = [
-        self::SCORE_NOT_EVALUATED => 'FFFFFF',
-                                0 => 'FF0000',
-                                1 => 'FF8C00',
-                                2 => 'D3D3D3',
-                                3 => 'B0E0E6',
-                                4 => '008000'
-    ];
+    protected static $scoreColors
+        = [
+            self::SCORE_NOT_EVALUATED => 'FFFFFF',
+            0                         => 'FF0000',
+            1                         => 'FF8C00',
+            2                         => 'D3D3D3',
+            3                         => 'B0E0E6',
+            4                         => '008000'
+        ];
 
     /**
      * @ORM\Column(name="result_id", type="integer", options={"unsigned":true})
@@ -123,6 +125,21 @@ class Result extends AbstractEntity
      * @var string
      */
     private $comment;
+
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    public function __isset($property)
+    {
+        return isset($this->$property);
+    }
 
     public static function getScoreValues(): array
     {

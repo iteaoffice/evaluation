@@ -28,14 +28,14 @@
         <dl class="dl-horizontal">
             <dt>{{ translate("txt-topics") }}</dt>
             <dd>{% for topic in reportVersion.topics %}
-                    {{ report2CriterionTopicLink(topic) }}{% if not loop.last %}, {% endif %}
+                    {{ reportCriterionTopicLink(topic) }}{% if not loop.last %}, {% endif %}
                 {% else %}
                     -
                 {% endfor %}
             </dd>
             <dt>{{ translate("txt-active-windows") }}</dt>
             <dd>{% for window in activeWindows %}
-                    {{ report2WindowLink(window) }} ({{ translate("txt-from") }} {{ window.dateStartReport|string_date }}{% if window.dateEndReport %}
+                    {{ reportWindowLink(window) }} ({{ translate("txt-from") }} {{ window.dateStartReport|string_date }}{% if window.dateEndReport %}
                         {{ translate("txt-to")|lower }} {{ window.dateEndReport|string_date|default('-') }}
                     {% endif %})
                     {% if not loop.last %}<br>{% endif %}
@@ -51,12 +51,13 @@
     </div>
 </div>
 
-{{ report2VersionLink(reportVersion,'edit','button') }} {{ report2VersionLink(reportVersion,'copy','button') }}
+{{ reportVersionLink(reportVersion,'edit','button') }} {{ reportVersionLink(reportVersion,'copy','button') }}
 
 <hr>
 <h2>{{ translate("txt-criteria") }}</h2>
-{% include 'project/evaluation/report2-version/partial/criteria' with {'readonly': false} %}
+{% include 'evaluation/report/version/partial/criteria' with {'readonly': false} %}
+
 
 {% if not reportVersion.archived %}
-    {{ report2CriterionVersionLink(null, 'add', 'button', reportVersion) }}
+    {{ reportCriterionVersionLink(null, 'add', 'button', reportVersion) }}
 {% endif %}

@@ -1,0 +1,204 @@
+{% do headTitle().append(translate("txt-project-evaluation")) %}
+{% do headLink().appendStylesheet(url('assets/funding-status-css')) %}
+
+<div class="row">
+    <div class="col-md-10">
+        <h1>{{ translate("txt-project-evaluation-call-%s")|format(call) }}</h1>
+
+        <ul class="nav nav-tabs" role="tablist">
+            {% for type in versionTypes if type.id in [1,2] %}
+                <li class="nav-item {% if show == 'proposals' and typeId == type.id %}active{% endif %}">
+                    <a class="nav-link {% if show == 'proposals' and typeId == type.id %}active{% endif %}"
+                       role="tab"
+                       href="{{ url('community/evaluation/overview', {'source': source, 'call': call.id,  'show': 'proposals', 'type': type.id} ) }}">{{ type }}</a>
+                </li>
+            {% endfor %}
+            {% for type in evaluationTypes %}
+                <li class="nav-item {% if show == 'matrix' and  typeId == type.id %}active{% endif %}">
+                    <a class="nav-link {% if show == 'matrix' and  typeId == type.id %}active{% endif %}"
+                       role="tab"
+                       href="{{ url('community/evaluation/overview', {'source': source, 'call': call.id,  'show': 'matrix', 'type': type.id} ) }}">{{ type }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="tab-content">
+            {% if show == 'proposals' %}
+                {% if typeId == constant("Project\\Entity\\Version\\Type::TYPE_PO") %}
+                    <h2 class="pt-3">{{ translate("txt-po-proposals") }}</h2>
+                {% else %}
+                    <h2 class="pt-3">{{ translate("txt-fpp-proposals") }}</h2>
+                {% endif %}
+
+                {% if projects|length > 0 %}
+                    <table class="table table-hover table-striped table-sm">
+                        <thead>
+                        <tr>
+                            <th>{{ translate("txt-project-name") }}</th>
+                            <th>{{ translate("txt-country-involved") }}</th>
+                            <th>{{ translate("txt-status") }}</th>
+                            <th>{{ translate("txt-start-date") }}</th>
+                            <th>{{ translate("txt-end-date") }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for project in projects %}
+
+                            {% set userCountryInProject = false %}
+                            {% for country in countryService.findCountryByProject(project)
+                                if country.id == contactCountry.id %}
+                                {% set userCountryInProject = true %}
+                            {% endfor %}
+
+
+                            <tr {% if userCountryInProject %}class="ownCountry"{% endif %}>
+                                {# take the projectLink separate to check if a user has access
+                                            create the link first to have the resource
+                                        #}
+                                {% set projectLinkResult = projectLink(project, 'view-community', 'name') %}
+                                {% if not isAllowed(project,'view-community') %}
+                                    <td>{{ project }}</td>
+                                {% else %}
+                                    <td>{{ projectLinkResult|raw }}</td>
+                                {% endif %}
+                                <td>
+                                    {% if userCountryInProject %}
+                                        <i class="fa fa-user text-highlight ownCountry"
+                                           title="{{ translate("txt-your-country-is-active-in-this-project") }}"></i>
+                                        {{ translate("txt-yes") }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ projectService.parseStatus(project) }}</td>
+                                <td>{{ project.startDate|string_date }}</td>
+                                <td>{{ project.endDate|string_date }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <a class="btn btn-primary"
+                       href="{{ url('community/project/version/document/download-proposals', {'call': call.id, 'type': versionType.id} ) }}">{{ translate("txt-download-%s-proposals-in-call-%s")|format(versionType.type|upper,call) }}</a>
+
+                {% else %}
+                    {{ ztbalert().info(translate("txt-there-are-no-projects-matching-you-criteria"))|raw }}
+                {% endif %}
+
+
+            {% else %}
+
+                <div class="tab-pane active" id="home">
+
+                    <h3>{{ evaluationType }}</h3>
+
+                    <ul class="nav nav-pills nav-nos-menu">
+                        {% for displayId, value in evaluation.getDisplayTemplates %}
+                            <li class="nav-item {% if displayId is same as(display) %}active{% endif %}">
+                                <a class="nav-link {% if displayId is same as(display) %}active{% endif %}"
+                                   href="{{ url('community/evaluation/overview', {'source': source, 'call': call.id, 'type': typeId, 'show': 'matrix', 'display': displayId} ) }}">{{ translate(value) }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <hr>
+
+                    {% if projects|length > 0 %}
+
+                        <table class="table table-sm funding"
+                               ng-controller="EvaluationController as evaluation"
+                               ng-init="loadEvaluation({{ call.id }},{{ display }}, {{ typeId }}, {{ source }}, {{ contactCountry.id }})">
+                            <thead>
+                            <tr>
+                                <th colspan="2">{{ translate("txt-project-name") }}
+                                </th>
+                                {% if isEvaluation %}
+                                    <th colspan="2" class="evaluation">{{ translate("txt-eval") }}</th>
+                                {% endif %}
+                                <th ng-repeat="country in evaluation.countries"
+                                    ng-click="highLightCountry(country.id)"
+                                    ng-class="{{ '{' }}ownCountry:country.id == highlightCountry{{ '}' }}"
+                                    class="country">
+                                    <abbr title="[[ country.country ]]">[[ country.iso3 ]]</abbr>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                <th colspan="2"></th>
+                                {% if isEvaluation %}
+                                    <th colspan="2" class="evaluation"></th>
+                                {% endif %}
+                                <th ng-repeat="country in evaluation.countries"
+                                    ng-click="highLightCountry(country.id)"
+                                    ng-class="{{ '{' }}ownCountry:country.id == highlightCountry{{ '}' }}"
+                                    class="country">
+                                    <abbr title="[[ country.country ]]">[[ country.iso3 ]]</abbr>
+                                </th>
+                            </tr>
+                            </tfoot>
+
+                            <tbody>
+                            <tr ng-repeat="project in evaluation.projects">
+                                <td ng-bind-html="project.icon | unsafe"></td>
+                                <td class="ellipsis" ng-bind-html="project.link | unsafe"></td>
+                                {% if isEvaluation %}
+                                    <td ng-bind-html="project.evaluationLink | unsafe"></td>
+                                    <td ng-bind-html="project.evaluationDownload | unsafe" class="evaluation"></td>
+                                {% endif %}
+
+                                <td ng-class="{{ '{' }}ownCountry:country.id == highlightCountry{{ '}' }}"
+                                    ng-repeat="country in evaluation.countries"
+                                    class="funding-status [[ evaluation.evaluationResult[country.id][project.id].result.cssName ]]">
+                                    <div popover-placement="right"
+                                         popover-title="[[ evaluation.evaluationResult[country.id][project.id].result.title ]]"
+                                         popover="[[ evaluation.evaluationResult[country.id][project.id].result.description ]]">
+                                        <div class="evaluation-feedback"
+                                             ng-if="evaluation.evaluationResult[country.id][project.id].isProjectLeader">
+                                            <u title="{{ translate("txt-project-leader") }}">[[
+                                                evaluation.evaluationResult[country.id][project.id].value ]]</u>
+                                        </div>
+                                        <div class="evaluation-feedback"
+                                             ng-if="!evaluation.evaluationResult[country.id][project.id].isProjectLeader">
+                                            [[ evaluation.evaluationResult[country.id][project.id].value ]]
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+
+                        {# do not use the evaluationLink helper as that is fully built to produce evaluation links#}
+                        <a class="btn btn-primary"
+                           href="{{ url('community/evaluation/download', {'call': call.id, 'type': typeId}) }}"><i
+                                    class="fa fa-file-excel-o"></i>
+                            {{ translate("txt-download-%s-evaluation-overview-of-call-%s")|format(evaluationType, call) }}
+                        </a>
+                    {% else %}
+
+                        {{ ztbalert().info(translate("txt-there-are-no-projects-matching-your-criterea"))|raw }}
+
+                    {% endif %}
+                </div>
+
+                {% if isEvaluation %}
+                    <h2 class="pt-3">{{ translate("txt-evaluation-status-legend") }}</h2>
+                {% else %}
+                    <h2 class="pt-3">{{ translate("txt-funding-status-legend") }}</h2>
+                {% endif %}
+                <div class="card-deck">
+                    {% for status in fundingStatuses %}
+                        <div class="card {{ status.parseCssName() }}">
+                            <div class="card-body">
+                                {% if isEvaluation %}{{ status.statusEvaluation }}{% else %}{{ status.statusFunding }}{% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-2">
+        {% include 'evaluation/partial/form/matrix-filter' %}
+    </div>
+</div>

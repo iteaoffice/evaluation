@@ -1,0 +1,5 @@
+{% do headTitle().append(project.parseFullName()).append(translate('txt-edit-reviewer')).append(translate('txt-admin')) %}
+
+<h1>{{ translate('txt-edit-reviewer') }}</h1>
+
+{% include 'evaluation/partial/form/reviewer' %}
