@@ -187,7 +187,11 @@ abstract class AbstractLink extends AbstractViewHelper
         }
 
         $link = new Link(
-            $this->getServerUrl() . $this->getUrl()($this->router, $this->routerParams),
+            $this->getServerUrl() . $this->getUrl()(
+                $this->router,
+                $this->routerParams,
+                ['query' => $this->query, 'fragment' => $this->fragment]
+            ),
             $this->text,
             $this->classes,
             $this->linkContent,

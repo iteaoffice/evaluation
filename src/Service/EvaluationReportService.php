@@ -21,6 +21,7 @@ use Contact\Entity\Contact;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Driver\PDOConnection;
 use Evaluation\Entity\Report;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion\Type as CriterionType;
@@ -237,7 +238,7 @@ class EvaluationReportService extends AbstractService
 
         if ($projectVersionReport instanceof ProjectVersionReport) {
             $versionType = null;
-            $version = null;
+            $version     = null;
             if ($projectVersionReport->getReviewer() instanceof VersionReviewer) {
                 $version = $projectVersionReport->getReviewer()->getVersion();
                 $versionType = $version->getVersionType();
@@ -248,9 +249,13 @@ class EvaluationReportService extends AbstractService
 
             // Check whether it's a minor or major change reguest
             if ($versionType->getId() === VersionType::TYPE_CR) {
-                return ($version->getChangerequestProcess()->getType() === Process::TYPE_MAJOR)
-                    ? EvaluationReportType::TYPE_MAJOR_CR_VERSION
-                    : EvaluationReportType::TYPE_MINOR_CR_VERSION;
+                // Old projects don't have a chenge request process, so default to major
+                if ($version->getChangerequestProcess() === null) {
+                    return EvaluationReportType::TYPE_MAJOR_CR_VERSION;
+                }
+                return ($version->getChangerequestProcess()->getType() === Process::TYPE_MINOR)
+                    ? EvaluationReportType::TYPE_MINOR_CR_VERSION
+                    : EvaluationReportType::TYPE_MAJOR_CR_VERSION;
             }
 
             /** @var EvaluationReportType $evaluationReportType */
@@ -414,5 +419,126 @@ class EvaluationReportService extends AbstractService
             ]
         );
         return ($count === 0);
+    }
+
+    public function migrate(): array
+    {
+        die('Don\'t use, not ready yet!');
+
+        $log = [];
+        /** @var PDOConnection $pdo */
+        $pdo = $this->entityManager->getConnection()->getWrappedConnection();
+        $pdo->beginTransaction();
+
+        $log[] = 'Criterion categories: evaluation_report2_criterion_category';
+        $sql = 'INSERT INTO evaluation_report2_criterion_category (category_id, sequence, category) 
+            SELECT category_id, sequence, category FROM evaluation_report_criterion_category';
+        $statement = $pdo->prepare($sql);
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Criterion types: evaluation_report2_criterion_type';
+        $sql = 'INSERT INTO evaluation_report2_criterion_type (type_id, category_id, sequence, type) 
+            SELECT type_id, category_id, sequence, type FROM evaluation_report_criterion_type';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report windows: evaluation_report2_window';
+        $sql = 'INSERT INTO evaluation_report2_window SELECT * FROM evaluation_report_window';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report versions: evaluation_report2_version';
+        $now = (new \DateTime())->format('Y-m-d H:i:s');
+        $sql = 'INSERT INTO `evaluation_report2_version` VALUES 
+        (1, 1, \'PPR evaluation report 1.0\', \'First version of the PPR evaluation\', 0, \''.$now.'\'),
+        (2, 2, \'PO evaluation report 1.0\', \'First version of the PO evaluation\', 0, \''.$now.'\'),
+        (3, 3, \'FPP evaluation report 1.0\', \'First version of the FPP evaluation\', 0, \''.$now.'\'),
+        (4, 4, \'Minor CR evaluation report 1.0\', \'First version of the minor CR evaluation\', 0, \''.$now.'\'),
+        (5, 5, \'Major CR evaluation report 1.0\', \'First version of the major CR evaluation\', 0, \''.$now.'\')';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report types: evaluation_report2_type';
+        $sql = 'INSERT INTO `evaluation_report2_type` VALUES 
+        (1, NULL, 0, \'Progress report\'),
+        (2, 1, 1, \'Project outline\'),
+        (3, 2, 2, \'Full project proposal\'),
+        (4, 3, 3, \'Minor change request\'),
+        (5, 3, 4, \'Major change request\')';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Reports: evaluation_report2';
+        $sql = 'INSERT INTO evaluation_report2 
+            SELECT er.evaluation_report_id, rv.version_id, er.final, er.score, er.date_created, er.date_updated FROM evaluation_report er
+            INNER JOIN evaluation_report2_version rv ON rv.type_id = er.type_id
+            WHERE rv.archived = 0
+            ORDER BY er.evaluation_report_id';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report project versions: evaluation_report2_project_version';
+        $sql = 'INSERT INTO evaluation_report2_project_version 
+            SELECT project_version_id, evaluation_report_id, project_version_review_id, version_id, date_created, date_updated 
+            FROM evaluation_report_project_version';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report project reports: evaluation_report2_project_report';
+        $sql = 'INSERT INTO evaluation_report2_project_report 
+            SELECT project_report_id, evaluation_report_id, report_review_id, report_id, project_status, date_created, date_updated 
+            FROM evaluation_report_project_report';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report project criteria: evaluation_report2_criterion';
+        $sql = 'INSERT INTO evaluation_report2_criterion 
+            SELECT criterion_id, sequence, criterion, help_block, input_type, values, has_score, 0 
+            FROM evaluation_report_project_report';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report project criteria versions: evaluation_report2_criterion_version';
+        $sql = 'INSERT INTO evaluation_report2_criterion_version (criterion_id, version_id, type_id, sequence, required, confidential, highlighted) 
+            SELECT cr.criterion_id, rv.version_id, cr.type_id, cr.sequence, cr.is_required, cr.is_confidential, cr.is_highlighted 
+            FROM evaluation_report_criterion cr
+            INNER JOIN evaluation_report_criterion_report_type crt ON crt.criterion_id = cr.criterion_id 
+            INNER JOIN evaluation_report2_version rv ON rv.type_id = crt.type_id
+            WHERE rv.archived = 0
+            ORDER BY cr.criterion_id';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report project criteria topics: evaluation_report2_criterion_topic';
+        $sql = 'INSERT INTO evaluation_report2_criterion_topic  
+            SELECT * FROM evaluation_report_criterion_topic';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report project criteria topic versions: evaluation_report2_criterion_topic_version';
+        $sql = 'INSERT INTO evaluation_report2_criterion_topic_version  
+            SELECT trt.topic_id, rv.version_id FROM evaluation_report_criterion_topic_report_type trt
+            INNER JOIN evaluation_report2_version rv ON rv.type_id = trt.type_id
+            WHERE rv.archived = 0';
+        $statement = $pdo->prepare($sql);
+        $statement->execute();
+        $log[] = $statement->execute() ? 'OK' : 'ERROR';
+
+        $log[] = 'Report project criteria version topics: evaluation_report2_criterion_version_topic';
+
+        $log[] = $pdo->commit() ? 'Commit OK' : 'Commit failed: ' . implode(', ', $pdo->errorInfo()) ;
+
+        return $log;
+
     }
 }

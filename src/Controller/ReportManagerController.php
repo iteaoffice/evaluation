@@ -88,16 +88,16 @@ final class ReportManagerController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        VersionService $versionService,
-        ReportService $reportService,
-        EntityManager $entityManager,
-        TranslatorInterface $translator
+        VersionService          $versionService,
+        ReportService           $reportService,
+        EntityManager           $entityManager,
+        TranslatorInterface     $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->versionService = $versionService;
-        $this->reportService = $reportService;
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
+        $this->versionService          = $versionService;
+        $this->reportService           = $reportService;
+        $this->entityManager           = $entityManager;
+        $this->translator              = $translator;
     }
 
     public function listAction()
@@ -148,18 +148,16 @@ final class ReportManagerController extends AbstractActionController
             $arguments = $filterPlugin->parseFilteredSortQuery(['version']);
         }
 
-        return new ViewModel(
-            [
-                'subject' => $subject,
-                'versionType' => $versionType,
-                'type' => $type,
-                'paginator' => $paginator,
-                'form' => $form,
-                'order' => $filterPlugin->getOrder(),
-                'direction' => $filterPlugin->getDirection(),
-                'arguments' => $arguments
-            ]
-        );
+        return new ViewModel([
+            'subject'     => $subject,
+            'versionType' => $versionType,
+            'type'        => $type,
+            'paginator'   => $paginator,
+            'form'        => $form,
+            'order'       => $filterPlugin->getOrder(),
+            'direction'   => $filterPlugin->getDirection(),
+            'arguments'   => $arguments
+        ]);
     }
 
     public function newFinalAction()
@@ -460,9 +458,8 @@ final class ReportManagerController extends AbstractActionController
                 ['id' => $evaluationReport->getProjectReportReport()->getReport()->getId()],
                 ['fragment' => 'evaluation']
             );
-        } // Final PO/FPP/CR evaluation report
-
-
+        }
+        // Final PO/FPP/CR evaluation report
         if ($evaluationReport->getProjectVersionReport() instanceof ProjectVersionReport) {
             return $this->redirect()->toRoute(
                 'zfcadmin/project/version/view',
@@ -476,5 +473,12 @@ final class ReportManagerController extends AbstractActionController
             'community/evaluation/report/view',
             ['id' => $evaluationReport->getId()]
         );
+    }
+
+    public function migrateAction()
+    {
+        $log = $this->evaluationReportService->migrate();
+        echo implode('<br>', $log);
+        die();
     }
 }

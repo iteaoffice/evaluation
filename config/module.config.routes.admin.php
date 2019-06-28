@@ -47,6 +47,16 @@ return [
                                 ],
                                 'may_terminate' => true,
                                 'child_routes'  => [
+                                    'migrate'                => [
+                                        'type'     => Segment::class,
+                                        'priority' => 1000,
+                                        'options'  => [
+                                            'route'    => '/migrate.html',
+                                            'defaults' => [
+                                                'action' => 'migrate',
+                                            ],
+                                        ],
+                                    ],
                                     'list'                => [
                                         'type'     => Segment::class,
                                         'priority' => 1000,

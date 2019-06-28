@@ -51,7 +51,7 @@
                                 <td>{{ projectLink(versionReviewer.version.project, 'view-admin', 'name') }}</td>
                                 <td>{{ versionLink(versionReviewer.version, 'view-admin', 'description') }}
                                 {% if versionReviewer.version.versionType.id == constant("Project\\Entity\\Version\\Type::TYPE_CR") %}
-                                    {% if versionReviewer.version.changerequestProcess.type == constant("Project\\Entity\\ChangeRequest\\Process::TYPE_MINOR") %}
+                                    {% if versionReviewer.version.project.changerequestProcess.type == constant("Project\\Entity\\ChangeRequest\\Process::TYPE_MINOR") %}
                                         <small>({{ translate("txt-minor") }})</small>
                                     {% else %}
                                         <small>({{ translate("txt-major") }})</small>

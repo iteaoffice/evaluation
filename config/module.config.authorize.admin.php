@@ -75,6 +75,10 @@ return [
                     'roles' => ['office'],
                 ],
                 [
+                    'route' => 'zfcadmin/evaluation/report/migrate',
+                    'roles' => ['office'],
+                ],
+                [
                     'route' => 'zfcadmin/evaluation/report/upload',
                     'roles' => ['office'],
                 ],

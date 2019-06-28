@@ -111,7 +111,6 @@ class Window extends AbstractEntity
      * @ORM\Column(name="date_end_selection", type="datetime", nullable=true)
      * @Annotation\Type("\Zend\Form\Element\Date")
      * @Annotation\Required(false)
-     * @Annotation\AllowEmpty(true)
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-window-end-selection-label",
      *     "help-block":"txt-evaluation-report-window-end-selection-help-block"
