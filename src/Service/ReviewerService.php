@@ -28,7 +28,7 @@ use Exception;
 use General\Entity\Country;
 use Program\Entity\Call\Call;
 use Project\Entity\Calendar\Calendar as ProjectCalendar;
-use Project\Entity\Calendar\Review as CalendarReview;
+use Project\Entity\Calendar\Reviewer as CalendarReviewer;
 use Project\Entity\Project;
 use Project\Entity\Report\Report as ProjectReport;
 use Evaluation\Entity\Reviewer\Contact as ReviewContact;
@@ -284,7 +284,7 @@ class ReviewerService extends AbstractService
                     . '|' . self::TYPE_R;
                 $projectCalendarReviewers[$sortKey][self::TYPE_R] = [];
                 // Add the legacy Calendar\Review items from the old reviewer import
-                /** @var CalendarReview $calendarReview */
+                /** @var CalendarReviewer $calendarReview */
                 foreach ($projectCalendar->getReview() as $calendarReview) {
                     $projectCalendarReviewers[$sortKey][self::TYPE_R][]
                         = $this->getReviewHandle($calendarReview->getContact(), $project);

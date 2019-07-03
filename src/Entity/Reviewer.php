@@ -45,7 +45,7 @@ class Reviewer extends AbstractEntity
      */
     private $project;
     /**
-     * @ORM\ManyToOne(targetEntity="Contact\Entity\Contact", cascade="persist", inversedBy="projectReviewer")
+     * @ORM\ManyToOne(targetEntity="Contact\Entity\Contact", cascade="persist", inversedBy="projectReviewers")
      * @ORM\JoinColumn(name="contact_id", referencedColumnName="contact_id", nullable=false)
      * @Annotation\Type("Contact\Form\Element\Contact")
      * @Annotation\Options({"label":"txt-contact"})

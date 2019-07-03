@@ -539,6 +539,5 @@ class EvaluationReportService extends AbstractService
         $log[] = $pdo->commit() ? 'Commit OK' : 'Commit failed: ' . implode(', ', $pdo->errorInfo()) ;
 
         return $log;
-
     }
 }

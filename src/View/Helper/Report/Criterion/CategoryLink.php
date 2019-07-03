@@ -72,7 +72,7 @@ final class CategoryLink extends AbstractLink
                 $this->setRouter('zfcadmin/evaluation/report/criterion/category/edit');
                 $this->setText(
                     $this->translator->translate('txt-edit-evaluation-report-criterion-category'),
-                    );
+                );
                 break;
         }
     }

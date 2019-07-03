@@ -596,13 +596,13 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 null === $latestVersion
                     ? ''
                     : number_format(
-                    $this->versionService
+                        $this->versionService
                         ->findTotalEffortVersionByAffiliationAndVersion(
                             $affiliation,
                             $latestVersion
                         ),
-                    2
-                ),
+                        2
+                    ),
             ];
         }
 
@@ -613,12 +613,12 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             null === $latestVersion
                 ? ''
                 : number_format(
-                $this->versionService
+                    $this->versionService
                     ->findTotalEffortVersionByProjectVersion(
                         $latestVersion
                     ),
-                2
-            )];
+                    2
+                )];
 
 
         $this->parseCountryOverviewTable($affCountries, [239, 239, 239]);
