@@ -472,12 +472,11 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
         $queryBuilder = $this->_em->createQueryBuilder();
         $queryBuilder->select('rr', 'cv', 'c', 'ct', 'cc');
         $queryBuilder->from(EvaluationReport\Result::class, 'rr');
-        $queryBuilder->innerJoin('rr.report', 'r');
         $queryBuilder->innerJoin('rr.criterionVersion', 'cv');
         $queryBuilder->innerJoin('cv.criterion', 'c');
         $queryBuilder->innerJoin('cv.type', 'ct');
         $queryBuilder->innerJoin('ct.category', 'cc');
-        $queryBuilder->where($queryBuilder->expr()->eq('rr.report', ':report'));
+        $queryBuilder->where($queryBuilder->expr()->eq('rr.evaluationReport', ':report'));
         $queryBuilder->orderBy('cc.sequence', Criteria::ASC);
         $queryBuilder->addOrderBy('ct.sequence', Criteria::ASC);
         $queryBuilder->addOrderBy('c.sequence', Criteria::ASC);

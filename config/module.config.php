@@ -40,6 +40,7 @@ $config = [
             'createEvaluation'                => Controller\Plugin\CreateEvaluation::class,
             'getEvaluationFilter'             => Controller\Plugin\GetFilter::class,
             'evaluationReportExcelExport'     => Controller\Plugin\Report\ExcelExport::class,
+            'evaluationReportPdfExport'       => Controller\Plugin\Report\PdfExport::class,
             'evaluationConsolidatedPdfExport' => Controller\Plugin\Report\ConsolidatedPdfExport::class,
             'renderProjectEvaluation'         => Controller\Plugin\RenderProjectEvaluation::class,
 

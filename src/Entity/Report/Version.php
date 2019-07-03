@@ -97,7 +97,7 @@ class Version extends AbstractEntity
      */
     private $dateCreated;
     /**
-     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report", cascade={"persist"}, mappedBy="version", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report", cascade={"persist","remove"}, mappedBy="version", orphanRemoval=true)
      * @Annotation\Exclude()
      *
      * @var Collection

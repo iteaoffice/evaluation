@@ -88,21 +88,25 @@ final class FinalLink extends AbstractLink
             case 'download':
                 $this->setRouter('zfcadmin/evaluation/report/download');
                 $this->setText($this->translator->translate('txt-download-original-version'));
+                $this->setLinkIcon('fa-file-excel-o');
                 break;
             case 'download-distributable':
                 $this->setRouter('zfcadmin/evaluation/report/download');
                 $this->addQueryParam('format', 'distributable');
                 $this->setText($this->translator->translate('txt-download-distributable-version'));
+                $this->setLinkIcon('fa-file-excel-o');
                 break;
             case 'download-pdf':
                 $this->setRouter('zfcadmin/evaluation/report/download');
                 $this->addQueryParam('format', 'pdf');
                 $this->setText($this->translator->translate('txt-download-as-pdf'));
+                $this->setLinkIcon('fa-file-pdf-o');
                 break;
             case 'download-distributable-pdf':
                 $this->setRouter('zfcadmin/evaluation/report/download');
                 $this->addQueryParam('format', 'distributable-pdf');
                 $this->setText($this->translator->translate('txt-download-distributable-version-as-pdf'));
+                $this->setLinkIcon('fa-file-pdf-o');
                 break;
         }
     }

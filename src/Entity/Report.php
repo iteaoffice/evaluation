@@ -30,31 +30,29 @@ use Zend\Form\Annotation;
  */
 class Report extends AbstractEntity
 {
-    public const SCORE_LOW = 1; // Low score project
+    public const SCORE_LOW          = 1; // Low score project
     public const SCORE_MIDDLE_MINUS = 2; // Middle- score project
-    public const SCORE_MIDDLE = 3; // Middle score project
-    public const SCORE_MIDDLE_PLUS = 4; // Middle+ score project
-    public const SCORE_TOP = 5; // Top score project
-    public const SCORE_APPROVED = 6; // Approved project report
-    public const SCORE_REJECTED = 7; // Rejected project report
+    public const SCORE_MIDDLE       = 3; // Middle score project
+    public const SCORE_MIDDLE_PLUS  = 4; // Middle+ score project
+    public const SCORE_TOP          = 5; // Top score project
+    public const SCORE_APPROVED     = 6; // Approved project report
+    public const SCORE_REJECTED     = 7; // Rejected project report
 
     public const TYPE_INDIVIDUAL = 'individual'; // Individual review
-    public const TYPE_FINAL = 'final'; // Final review
+    public const TYPE_FINAL      = 'final'; // Final review
 
-    private static $versionScores
-        = [
-            self::SCORE_TOP          => 'txt-score-top-project',
-            self::SCORE_MIDDLE_PLUS  => 'txt-score-middle+',
-            self::SCORE_MIDDLE       => 'txt-score-middle',
-            self::SCORE_MIDDLE_MINUS => 'txt-score-middle-',
-            self::SCORE_LOW          => 'txt-score-low-quality'
-        ];
+    private static $versionScores = [
+        self::SCORE_TOP          => 'txt-score-top-project',
+        self::SCORE_MIDDLE_PLUS  => 'txt-score-middle+',
+        self::SCORE_MIDDLE       => 'txt-score-middle',
+        self::SCORE_MIDDLE_MINUS => 'txt-score-middle-',
+        self::SCORE_LOW          => 'txt-score-low-quality'
+    ];
 
-    private static $reportScores
-        = [
-            self::SCORE_APPROVED => 'txt-approved',
-            self::SCORE_REJECTED => 'txt-rejected'
-        ];
+    private static $reportScores = [
+        self::SCORE_APPROVED => 'txt-approved',
+        self::SCORE_REJECTED => 'txt-rejected'
+    ];
     /**
      * @ORM\Column(name="evaluation_report_id", type="integer", options={"unsigned":true})
      * @ORM\Id
@@ -145,6 +143,21 @@ class Report extends AbstractEntity
         $this->results = new ArrayCollection();
     }
 
+    public function __get($property)
+    {
+        return $this->$property;
+    }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    public function __isset($property)
+    {
+        return isset($this->$property);
+    }
+
     public static function getVersionScores(): array
     {
         return self::$versionScores;
@@ -166,7 +179,7 @@ class Report extends AbstractEntity
         return $this;
     }
 
-    public function getVersion(): Report\Version
+    public function getVersion(): ?Report\Version
     {
         return $this->version;
     }

@@ -19,7 +19,7 @@ namespace Evaluation\Options;
 
 use Zend\Stdlib\AbstractOptions;
 
-class ModuleOptions extends AbstractOptions
+final class ModuleOptions extends AbstractOptions
 {
     /**
      * @var string
@@ -38,14 +38,14 @@ class ModuleOptions extends AbstractOptions
      */
     private $projectTemplate = '';
 
-    public function getProjectTemplate(): string
-    {
-        return $this->projectTemplate;
-    }
-
     public function getReportTemplate(): string
     {
         return $this->reportTemplate;
+    }
+
+    public function setReportTemplate(string $reportTemplate): void
+    {
+        $this->reportTemplate = $reportTemplate;
     }
 
     public function getPresentationTemplates(): array
@@ -53,8 +53,28 @@ class ModuleOptions extends AbstractOptions
         return $this->presentationTemplates;
     }
 
+    public function setPresentationTemplates(array $presentationTemplates): void
+    {
+        $this->presentationTemplates = $presentationTemplates;
+    }
+
     public function getReportAuthor(): string
     {
         return $this->reportAuthor;
+    }
+
+    public function setReportAuthor(string $reportAuthor): void
+    {
+        $this->reportAuthor = $reportAuthor;
+    }
+
+    public function getProjectTemplate(): string
+    {
+        return $this->projectTemplate;
+    }
+
+    public function setProjectTemplate(string $projectTemplate): void
+    {
+        $this->projectTemplate = $projectTemplate;
     }
 }

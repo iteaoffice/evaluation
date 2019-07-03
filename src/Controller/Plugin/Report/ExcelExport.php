@@ -120,26 +120,26 @@ final class ExcelExport extends AbstractPlugin
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ProjectService $projectService,
-        VersionService $versionService,
-        ModuleOptions $moduleOptions,
-        TranslatorInterface $translator
+        ProjectService          $projectService,
+        VersionService          $versionService,
+        ModuleOptions           $moduleOptions,
+        TranslatorInterface     $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->projectService = $projectService;
-        $this->versionService = $versionService;
-        $this->moduleOptions = $moduleOptions;
-        $this->translator = $translator;
+        $this->projectService          = $projectService;
+        $this->versionService          = $versionService;
+        $this->moduleOptions           = $moduleOptions;
+        $this->translator              = $translator;
     }
 
     public function __invoke(
         EvaluationReport $evaluationReport,
-        bool $isFinal = false,
-        bool $forDistribution = false
+        bool             $isFinal = false,
+        bool             $forDistribution = false
     ): ExcelExport {
         $this->evaluationReport = $evaluationReport;
-        $this->excel = new Spreadsheet();
-        $this->forDistribution = $forDistribution;
+        $this->excel            = new Spreadsheet();
+        $this->forDistribution  = $forDistribution;
 
         $displaySheet = $this->excel->getActiveSheet();
         $displaySheet->setShowGridlines(false);
@@ -196,11 +196,7 @@ final class ExcelExport extends AbstractPlugin
             $row++;
         }
         $this->excel->addNamedRange(
-            new NamedRange(
-                'finalScores',
-                $lookupSheet,
-                'G1:G' . count($scores)
-            )
+            new NamedRange('finalScores', $lookupSheet, 'G1:G' . count($scores))
         );
 
         // Project status (PPR-only)
@@ -213,17 +209,13 @@ final class ExcelExport extends AbstractPlugin
                 $row++;
             }
             $this->excel->addNamedRange(
-                new NamedRange(
-                    'projectStatuses',
-                    $lookupSheet,
-                    'J1:J' . count($statuses)
-                )
+                new NamedRange('projectStatuses', $lookupSheet, 'J1:J' . count($statuses))
             );
         }
 
         // Add hidden sheets
         $dataSheet = null;
-        $dataRow = 1;
+        $dataRow   = 1;
         $allTopics = [];
         $hasTopics = false;
         if (!$this->forDistribution) {
@@ -251,10 +243,10 @@ final class ExcelExport extends AbstractPlugin
         }
 
         // Add the results
-        $row = 1;
-        $categoryCount = 1;
+        $row             = 1;
+        $categoryCount   = 1;
         $currentCategory = '';
-        $currentType = '';
+        $currentType     = '';
 
         /** @var Result $result */
         foreach ($this->evaluationReportService->getSortedResults($evaluationReport) as $result) {

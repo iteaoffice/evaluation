@@ -243,7 +243,7 @@ final class PdfExport extends AbstractPlugin
         /** @var Result $result */
         foreach ($this->results as $result) {
             /** @var Criterion\Type $type */
-            $type     = $result->getCriterion()->getType();
+            $type     = $result->getCriterionVersion()->getType();
             /** @var Criterion\Category $category */
             $category = $type->getCategory();
 
@@ -274,7 +274,7 @@ final class PdfExport extends AbstractPlugin
                 $firstType   = false;
             }
 
-            if (!$result->getCriterion()->getConfidential()) {
+            if (!$result->getCriterionVersion()->getConfidential()) {
                 $this->parseResult($result);
             }
 

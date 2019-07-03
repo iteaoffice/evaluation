@@ -30,6 +30,6 @@ final class ModuleOptionsFactory implements FactoryInterface
     {
         $config = $container->get('Config');
 
-        return new ModuleOptions($config['evaluation_option'] ?? []);
+        return new ModuleOptions($config['evaluation_options'] ?? []);
     }
 }

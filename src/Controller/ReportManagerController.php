@@ -379,16 +379,12 @@ final class ReportManagerController extends AbstractActionController
             case 'distributable':
                 return $this->evaluationReportExcelExport($evaluationReport, true, true)
                     ->parseResponse();
-                break;
             case 'pdf':
                 return $this->evaluationReportPdfExport($evaluationReport)->parseResponse();
-                break;
             case 'distributable-pdf':
                 return $this->evaluationReportPdfExport($evaluationReport, true)->parseResponse();
-                break;
             case 'consolidated-pdf':
                 return $this->evaluationConsolidatedPdfExport($evaluationReport)->parseResponse();
-                break;
             default:
                 return $this->evaluationReportExcelExport($evaluationReport, true)->parseResponse();
         }

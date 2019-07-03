@@ -17,17 +17,15 @@ declare(strict_types=1);
 
 $stylePath = __DIR__ . '/../../../../styles/' . (defined('ITEAOFFICE_HOST') ? ITEAOFFICE_HOST : 'test');
 
-$options = [
-    'evaluation_project_template'           => $stylePath . '/template/pdf/blank-template-firstpage.pdf',
-    'evaluation_report_template'            => $stylePath . '/template/pdf/evaluation-report-template.pdf',
-    'evaluation_presentation_templates'     => [
-        'title'      => $stylePath . '/template/presentation/title.png',
-        'background' => $stylePath . '/template/presentation/background.png',
-    ],
-    'evaluation_report_author'              => (defined('ITEAOFFICE_HOST')
-            ? strtoupper(ITEAOFFICE_HOST) : 'Test') . ' Office',
-];
-
 return [
-    'evaluation_options' => $options,
+    'evaluation_options' => [
+        'projectTemplate'           => $stylePath . '/template/pdf/blank-template-firstpage.pdf',
+        'reportTemplate'            => $stylePath . '/template/pdf/evaluation-report-template.pdf',
+        'presentationTemplates'     => [
+            'title'      => $stylePath . '/template/presentation/title.png',
+            'background' => $stylePath . '/template/presentation/background.png',
+        ],
+        'reportAuthor'              => (defined('ITEAOFFICE_HOST')
+                ? strtoupper(ITEAOFFICE_HOST) : 'Test') . ' Office',
+    ]
 ];

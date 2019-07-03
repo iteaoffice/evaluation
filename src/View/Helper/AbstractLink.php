@@ -271,6 +271,7 @@ abstract class AbstractLink extends AbstractViewHelper
         $this->fragment = [];
         $this->classes = [];
         $this->javascript = '';
+        $this->linkIcon = '';
     }
 
     protected function extractRouterParams(?AbstractEntity $abstractEntity, array $params): void
