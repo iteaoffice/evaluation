@@ -41,6 +41,7 @@ use Project\Entity\Version\Version;
 use Project\Form\MatrixFilter;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
+use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -105,31 +106,33 @@ final class EvaluationController extends AbstractActionController
     private $translator;
 
     public function __construct(
-        ProjectService $projectService,
-        VersionService $versionService,
-        EvaluationService $evaluationService,
-        CallService $callService,
-        ContactService $contactService,
-        GeneralService $generalService,
-        CountryService $countryService,
-        FormService $formService,
-        EntityManager $entityManager,
+        ProjectService      $projectService,
+        VersionService      $versionService,
+        EvaluationService   $evaluationService,
+        CallService         $callService,
+        ContactService      $contactService,
+        GeneralService      $generalService,
+        CountryService      $countryService,
+        FormService         $formService,
+        EntityManager       $entityManager,
         TranslatorInterface $translator
     ) {
-        $this->projectService = $projectService;
-        $this->versionService = $versionService;
+        $this->projectService    = $projectService;
+        $this->versionService    = $versionService;
         $this->evaluationService = $evaluationService;
-        $this->callService = $callService;
-        $this->contactService = $contactService;
-        $this->generalService = $generalService;
-        $this->countryService = $countryService;
-        $this->formService = $formService;
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
+        $this->callService       = $callService;
+        $this->contactService    = $contactService;
+        $this->generalService    = $generalService;
+        $this->countryService    = $countryService;
+        $this->formService       = $formService;
+        $this->entityManager     = $entityManager;
+        $this->translator        = $translator;
     }
 
     public function overviewAction(): ViewModel
     {
+        /** @var Request $request */
+        $request = $this->getRequest();
         $display = $this->params('display', Entity\Evaluation::DISPLAY_PARTNERS);
         $show = $this->params('show', 'proposals');
 
@@ -147,9 +150,9 @@ final class EvaluationController extends AbstractActionController
          */
         $form = new MatrixFilter($this->entityManager);
 
-        $form->setData($this->getRequest()->getPost()->toArray());
+        $form->setData($request->getPost()->toArray());
 
-        if ($this->getRequest()->isPost() && $form->isValid()) {
+        if ($request->isPost() && $form->isValid()) {
             $formData = $form->getData();
 
             $this->redirect()->toRoute(

@@ -31,18 +31,22 @@ final class VersionLink extends AbstractLink
 {
     public function __invoke(
         Version $reportVersion = null,
-        string $action = 'view',
-        string $show = 'name'
-    ): string {
+        string  $action = 'view',
+        string  $show = 'name'
+    ): string
+    {
         $this->reset();
 
-        $this->extractRouteParams($reportVersion, ['id']);
+        if (null === $reportVersion) {
+            $reportVersion = new Version();
+        }
 
-        if (null !== $reportVersion) {
+        if (!$reportVersion->isEmpty() ) {
+            $this->routeParams['id'] = $reportVersion->getId();
             $this->addShowOption('name', $reportVersion->getLabel());
         }
 
-        $this->parseAction($action, $reportVersion ?? new Version());
+        $this->parseAction($action, $reportVersion);
 
         return $this->createLink($show);
     }

@@ -143,27 +143,30 @@ class Version extends AbstractEntity
      */
     private $windows;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Project\Entity\Report\Report", mappedBy="evaluationReportVersion")
+     * @Annotation\Exclude()
+     *
+     * @var Collection
+     */
+    private $projectReports;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Project\Entity\Version\Version", mappedBy="evaluationReportVersion")
+     * @Annotation\Exclude()
+     *
+     * @var Collection
+     */
+    private $projectVersions;
+
     public function __construct()
     {
         $this->evaluationReports = new ArrayCollection();
         $this->criterionVersions = new ArrayCollection();
         $this->topics            = new ArrayCollection();
         $this->windows           = new ArrayCollection();
-    }
-
-    public function __get($property)
-    {
-        return $this->$property;
-    }
-
-    public function __set($property, $value)
-    {
-        $this->$property = $value;
-    }
-
-    public function __isset($property)
-    {
-        return isset($this->$property);
+        $this->projectReports    = new ArrayCollection();
+        $this->projectVersions   = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -307,5 +310,16 @@ class Version extends AbstractEntity
         foreach ($windows as $window) {
             $this->windows->removeElement($window);
         }
+    }
+
+    public function getProjectReports(): Collection
+    {
+        return $this->projectReports;
+    }
+
+    public function setProjectReports(Collection $projectReports): Version
+    {
+        $this->projectReports = $projectReports;
+        return $this;
     }
 }

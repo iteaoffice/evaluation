@@ -648,7 +648,7 @@ return [
                             ],
                         ],
                     ],
-                    /*'project'    => [
+                    'project'    => [
                         'child_routes'  => [
                             'evaluation'       => [
                                 'type'          => 'Segment',
@@ -682,7 +682,7 @@ return [
                                 ],
                             ],
                         ],
-                    ],*/
+                    ],
                 ],
             ],
         ],

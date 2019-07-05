@@ -20,6 +20,7 @@ namespace Evaluation\Repository\Report;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Evaluation\Entity\Report\Result;
 use Evaluation\Entity\Report\Type;
 use Evaluation\Entity\Report\Version;
 use Evaluation\Repository\FilteredObjectRepository;

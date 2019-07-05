@@ -73,14 +73,14 @@ final class ReportController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ProjectService $projectService,
-        EntityManager $entityManager,
-        TranslatorInterface $translator
+        ProjectService          $projectService,
+        EntityManager           $entityManager,
+        TranslatorInterface     $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->projectService = $projectService;
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
+        $this->projectService          = $projectService;
+        $this->entityManager           = $entityManager;
+        $this->translator              = $translator;
     }
 
     public function listAction()
@@ -174,48 +174,55 @@ final class ReportController extends AbstractActionController
 
         $uploadForm = new ReportUpload($uploadFormAction);
 
-        return new ViewModel(
-            [
-                'label'          => $label,
-                'projectService' => $this->projectService,
-                'project'        => $project,
-                'type'           => $type,
-                'review'         => $reviewer,
-                'reviewers'      => $reviewers,
-                'report'         => $evaluationReport,
-                'results'        => $this->evaluationReportService->getSortedResults($evaluationReport),
-                'scoreValues'    => Result::getScoreValues(),
-                'complete'       => $percentageComplete === (float)100,
-                'uploadForm'     => $uploadForm
-            ]
-        );
+        return new ViewModel([
+            'label'          => $label,
+            'projectService' => $this->projectService,
+            'project'        => $project,
+            'type'           => $type,
+            'review'         => $reviewer,
+            'reviewers'      => $reviewers,
+            'report'         => $evaluationReport,
+            'results'        => $this->evaluationReportService->getSortedResults($evaluationReport),
+            'scoreValues'    => Result::getScoreValues(),
+            'complete'       => $percentageComplete === (float)100,
+            'uploadForm'     => $uploadForm
+        ]);
     }
 
     public function newAction()
     {
         /** @var Request $request */
-        $request = $this->getRequest();
-        $offlineMode = ($request->getQuery('mode') === 'offline');
-        $versionReviewId = $this->params()->fromRoute('versionReviewer');
-        $reportReviewId = $this->params()->fromRoute('reportReviewer');
-        $reviewId = $versionReviewId ?? $reportReviewId;
+        $request           = $this->getRequest();
+        $offlineMode       = ($request->getQuery('mode') === 'offline');
+        $versionReviewerId = $this->params()->fromRoute('versionReviewer');
+        $reportReviewerId  = $this->params()->fromRoute('reportReviewer');
+        $reviewId          = $versionReviewerId ?? $reportReviewerId;
 
-        if (($versionReviewId === null) && ($reportReviewId === null)) {
+        if (($versionReviewerId === null) && ($reportReviewerId === null)) {
             return $this->notFoundAction();
         }
 
         // Check for non-archived evaluation report versions and use the most recent when there are multiple
-        if ($versionReviewId !== null) {
-            /** @var VersionReviewer $versionReview */
-            $versionReview = $this->projectService->find(VersionReviewer::class, (int)$reviewId);
-            if ($versionReview instanceof VersionReviewer) {
-                $reportVersion = $this->evaluationReportService
-                    ->findReportVersionForProjectVersion($versionReview->getVersion());
+        if ($versionReviewerId !== null) {
+            /** @var VersionReviewer $versionReviewer */
+            $versionReviewer = $this->projectService->find(VersionReviewer::class, (int)$reviewId);
+            if ($versionReviewer instanceof VersionReviewer) {
+                $reportVersion = $versionReviewer->getVersion()->getEvaluationReportVersion()
+                    ?? $this->evaluationReportService->findReportVersionForProjectVersion(
+                        $versionReviewer->getVersion()
+                    );
             } else {
                 return $this->notFoundAction();
             }
         } else {
-            $reportVersion = $this->evaluationReportService->findReportVersionForProjectReport();
+            /** @var ReportReviewer $reportReviewer */
+            $reportReviewer = $this->projectService->find(ReportReviewer::class, (int)$reviewId);
+            if ($reportReviewer instanceof ReportReviewer) {
+                $reportVersion = $reportReviewer->getProjectReport()->getEvaluationReportVersion()
+                    ?? $this->evaluationReportService->findReportVersionForProjectReport();
+            } else {
+                return $this->notFoundAction();
+            }
         }
 
         if ($reportVersion === null) {
@@ -227,12 +234,12 @@ final class ReportController extends AbstractActionController
 
         // Create an evaluation report so that new and edit can be handled by the same form
         $evaluationReport = $this->evaluationReportService->prepareEvaluationReport($reportVersion, (int)$reviewId);
-        $label = EvaluationReportService::parseLabel($evaluationReport);
-        $reviewers = $this->evaluationReportService->getReviewers($evaluationReport);
-        $project = EvaluationReportService::getProject($evaluationReport);
-        $reportReview = ($evaluationReport->getProjectReportReport() !== null)
+        $label            = $this->evaluationReportService->parseLabel($evaluationReport);
+        $reviewers        = $this->evaluationReportService->getReviewers($evaluationReport);
+        $project          = $this->evaluationReportService->getProject($evaluationReport);
+        $reportReviewer = ($evaluationReport->getProjectReportReport() !== null)
             ? $evaluationReport->getProjectReportReport()->getReviewer() : null;
-        $versionReview = ($evaluationReport->getProjectVersionReport() !== null)
+        $versionReviewer = ($evaluationReport->getProjectVersionReport() !== null)
             ? $evaluationReport->getProjectVersionReport()->getReviewer() : null;
 
         // Pre-fill FPP form with PO data
@@ -243,8 +250,8 @@ final class ReportController extends AbstractActionController
 
         $uploadFormAction = $this->url()->fromRoute(
             $this->getEvent()->getRouteMatch()->getMatchedRouteName(),
-            (isset($reportReview) ? ['reportReviewer' => $reportReview->getId()]
-                : ['versionReviewer' => $versionReview->getId()]),
+            (isset($reportReviewer) ? ['reportReviewer' => $reportReviewer->getId()]
+                : ['versionReviewer' => $versionReviewer->getId()]),
             ['query' => ['mode' => 'offline'], 'fragment' => 'offline']
         );
 
@@ -264,19 +271,15 @@ final class ReportController extends AbstractActionController
                     }
                     if ($success) {
                         $this->evaluationReportService->save($evaluationReport);
-                        $this->flashMessenger()->addSuccessMessage(
-                            sprintf(
-                                $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-created'),
-                                $label
-                            )
-                        );
+                        $this->flashMessenger()->addSuccessMessage(sprintf(
+                            $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-created'),
+                            $label
+                        ));
                     } else {
-                        $this->flashMessenger()->setNamespace('error')->addMessage(
-                            sprintf(
-                                $this->translator->translate('txt-failed-importing-evaluation-report-for-%s'),
-                                $label
-                            )
-                        );
+                        $this->flashMessenger()->setNamespace('error')->addMessage(sprintf(
+                            $this->translator->translate('txt-failed-importing-evaluation-report-for-%s'),
+                            $label
+                        ));
                     }
 
                     return $this->redirect()->toRoute(
@@ -285,12 +288,10 @@ final class ReportController extends AbstractActionController
                         ['fragment' => 'report']
                     );
                 } else {
-                    $this->flashMessenger()->setNamespace('error')->addMessage(
-                        sprintf(
-                            $this->translator->translate('txt-please-provide-a-valid-excel-file'),
-                            $label
-                        )
-                    );
+                    $this->flashMessenger()->setNamespace('error')->addMessage(sprintf(
+                        $this->translator->translate('txt-please-provide-a-valid-excel-file'),
+                        $label
+                    ));
 
                     return $this->redirect()->toRoute('community/evaluation/report/list');
                 }
@@ -315,12 +316,10 @@ final class ReportController extends AbstractActionController
                 $evaluationReport = $form->getData();
                 $this->evaluationReportService->save($evaluationReport);
 
-                $this->flashMessenger()->addSuccessMessage(
-                    sprintf(
-                        $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-created'),
-                        $label
-                    )
-                );
+                $this->flashMessenger()->addSuccessMessage(sprintf(
+                    $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-created'),
+                    $label
+                ));
 
                 return $this->redirect()->toRoute(
                     'community/evaluation/report/view',
@@ -333,8 +332,7 @@ final class ReportController extends AbstractActionController
         return new ViewModel(
             [
                 'projectService' => $this->projectService,
-                'review'         => $reportReview ?? $versionReview,
-                //'type'           => $type,
+                'review'         => $reportReviewer ?? $versionReviewer,
                 'project'        => $project,
                 'reviewers'      => $reviewers,
                 'form'           => $form,
@@ -374,23 +372,23 @@ final class ReportController extends AbstractActionController
         /** @var EvaluationReport\ProjectReport $projectReportReport */
         $projectReportReport = $evaluationReport->getProjectReportReport();
         if ($projectVersionReport !== null) {
-            $type = EvaluationReportType::TYPE_GENERAL_VERSION;
+            $type      = EvaluationReportType::TYPE_GENERAL_VERSION;
             /** @var VersionReviewer $reviewer */
-            $reviewer = $projectVersionReport->getReviewer();
+            $reviewer  = $projectVersionReport->getReviewer();
             /** @var Version $version */
-            $version = $reviewer->getVersion();
+            $version   = $reviewer->getVersion();
             $reviewers = $version->getReviewers();
-            $project = $version->getProject();
-            $label = $version->getVersionType()->getDescription();
+            $project   = $version->getProject();
+            $label     = $version->getVersionType()->getDescription();
         } elseif ($projectReportReport !== null) {
-            $type = EvaluationReportType::TYPE_GENERAL_REPORT;
+            $type      = EvaluationReportType::TYPE_GENERAL_REPORT;
             /** @var ReportReviewer $reviewer */
-            $reviewer = $projectReportReport->getReviewer();
+            $reviewer  = $projectReportReport->getReviewer();
             /** @var Report $report */
-            $report = $reviewer->getProjectReport();
+            $report    = $reviewer->getProjectReport();
             $reviewers = $report->getReviewers();
-            $project = $report->getProject();
-            $label = $report->parseName();
+            $project   = $report->getProject();
+            $label     = $report->parseName();
         } else {
             return $this->notFoundAction();
         }
@@ -423,19 +421,15 @@ final class ReportController extends AbstractActionController
                     }
                     if ($success) {
                         $this->evaluationReportService->save($evaluationReport);
-                        $this->flashMessenger()->addSuccessMessage(
-                            sprintf(
-                                $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-updated'),
-                                $label
-                            )
-                        );
+                        $this->flashMessenger()->addSuccessMessage(sprintf(
+                            $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-updated'),
+                            $label
+                        ));
                     } else {
-                        $this->flashMessenger()->setNamespace('error')->addMessage(
-                            sprintf(
-                                $this->translator->translate('txt-failed-importing-evaluation-report-for-%s'),
-                                $label
-                            )
-                        );
+                        $this->flashMessenger()->setNamespace('error')->addMessage(sprintf(
+                            $this->translator->translate('txt-failed-importing-evaluation-report-for-%s'),
+                            $label
+                        ));
                     }
 
                     return $this->redirect()->toRoute(
@@ -444,12 +438,10 @@ final class ReportController extends AbstractActionController
                         ['fragment' => 'report']
                     );
                 } else {
-                    $this->flashMessenger()->setNamespace('error')->addMessage(
-                        sprintf(
-                            $this->translator->translate('txt-please-provide-a-valid-excel-file'),
-                            $label
-                        )
-                    );
+                    $this->flashMessenger()->setNamespace('error')->addMessage(sprintf(
+                        $this->translator->translate('txt-please-provide-a-valid-excel-file'),
+                        $label
+                    ));
 
                     return $this->redirect()->toRoute(
                         'community/evaluation/report/update',
@@ -482,12 +474,10 @@ final class ReportController extends AbstractActionController
                 $report->setDateUpdated(new DateTime());
                 $this->evaluationReportService->save($report);
 
-                $this->flashMessenger()->addSuccessMessage(
-                    sprintf(
-                        $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-updated'),
-                        $label
-                    )
-                );
+                $this->flashMessenger()->addSuccessMessage(sprintf(
+                    $this->translator->translate('txt-%s-evaluation-report-has-successfully-been-updated'),
+                    $label
+                ));
 
                 return $this->redirect()->toRoute(
                     'community/evaluation/report/view',
@@ -497,19 +487,17 @@ final class ReportController extends AbstractActionController
             }
         }
 
-        return new ViewModel(
-            [
-                'projectService' => $this->projectService,
-                'project'        => $project,
-                'type'           => $type,
-                'review'         => $reviewer,
-                'reviewers'      => $reviewers,
-                'form'           => $form,
-                'uploadForm'     => $uploadForm,
-                'label'          => $label,
-                'report'         => $evaluationReport,
-            ]
-        );
+        return new ViewModel([
+            'projectService' => $this->projectService,
+            'project'        => $project,
+            'type'           => $type,
+            'review'         => $reviewer,
+            'reviewers'      => $reviewers,
+            'form'           => $form,
+            'uploadForm'     => $uploadForm,
+            'label'          => $label,
+            'report'         => $evaluationReport,
+        ]);
     }
 
     public function finaliseAction()
@@ -525,26 +513,22 @@ final class ReportController extends AbstractActionController
         }
 
         $percentageComplete = $this->evaluationReportService->parseCompletedPercentage($evaluationReport);
-        $label = EvaluationReportService::parseLabel($evaluationReport);
+        $label              = $this->evaluationReportService->parseLabel($evaluationReport);
 
         if ($percentageComplete === (float)100) {
             $evaluationReport->setFinal(true);
             $this->evaluationReportService->save($evaluationReport);
 
-            $this->flashMessenger()->addSuccessMessage(
-                sprintf(
-                    $this->translator->translate('txt-evaluation-report-for-%s-successfully-finalised'),
-                    $label
-                )
-            );
+            $this->flashMessenger()->addSuccessMessage(sprintf(
+                $this->translator->translate('txt-evaluation-report-for-%s-successfully-finalised'),
+                $label
+            ));
         } else {
-            $this->flashMessenger()->addErrorMessage(
-                sprintf(
-                    $this->translator->translate('txt-evaluation-report-for-%s-is-only-%d%%-completed'),
-                    $label,
-                    $percentageComplete
-                )
-            );
+            $this->flashMessenger()->addErrorMessage(sprintf(
+                $this->translator->translate('txt-evaluation-report-for-%s-is-only-%d%%-completed'),
+                $label,
+                $percentageComplete
+            ));
         }
 
         return $this->redirect()->toRoute(
