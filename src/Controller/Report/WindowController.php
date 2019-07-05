@@ -162,6 +162,8 @@ final class WindowController extends AbstractActionController
                     'zfcadmin/evaluation/report/window/view',
                     ['id' => $window->getId()]
                 );
+            } else {
+                var_dump($form->getMessages());
             }
         }
 

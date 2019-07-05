@@ -33,10 +33,6 @@
     <dd>{% if criterionVersion.confidential %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
     <dt>{{ translate("txt-highlighted") }}</dt>
     <dd>{% if criterionVersion.highlighted %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
-    <dt>{{ translate("txt-results") }}</dt>
-    <dd>0</dd>
-    <dt>{{ translate("txt-in-report-versions") }}</dt>
-    <dd>0</dd>
 </dl>
 
 {{ reportCriterionVersionLink(criterionVersion, 'edit', 'button') }}

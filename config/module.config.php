@@ -39,11 +39,14 @@ $config = [
         'aliases'   => [
             'createEvaluation'                => Controller\Plugin\CreateEvaluation::class,
             'getEvaluationFilter'             => Controller\Plugin\GetFilter::class,
+            'rosterGenerator'                 => Controller\Plugin\RosterGenerator::class,
             'evaluationReportExcelExport'     => Controller\Plugin\Report\ExcelExport::class,
+            'evaluationReportExcelDownload'   => Controller\Plugin\Report\ExcelDownload::class,
             'evaluationReportPdfExport'       => Controller\Plugin\Report\PdfExport::class,
             'evaluationConsolidatedPdfExport' => Controller\Plugin\Report\ConsolidatedPdfExport::class,
+            'evaluationReportExcelImport'     => Controller\Plugin\Report\ExcelImport::class,
+            'evaluationReportPresentation'    => Controller\Plugin\Report\Presentation::class,
             'renderProjectEvaluation'         => Controller\Plugin\RenderProjectEvaluation::class,
-
         ],
         'factories' => [
             Controller\Plugin\CreateEvaluation::class             => ConfigAbstractFactory::class,
@@ -56,7 +59,6 @@ $config = [
             Controller\Plugin\Report\ExcelImport::class           => ConfigAbstractFactory::class,
             Controller\Plugin\Report\Presentation::class          => ConfigAbstractFactory::class,
             Controller\Plugin\RenderProjectEvaluation::class      => ConfigAbstractFactory::class,
-
         ],
     ],
     'view_manager'       => [
@@ -119,12 +121,10 @@ $config = [
             Acl\Assertion\EvaluationAssertion::class                   => Factory\InvokableFactory::class,
             Acl\Assertion\ReportAssertion::class                       => Factory\InvokableFactory::class,
             Acl\Assertion\ReviewerAssertion::class                     => Factory\InvokableFactory::class,
-
             //InputFilter
             InputFilter\Report\Criterion\CategoryFilter::class         => ConfigAbstractFactory::class,
             InputFilter\Report\Criterion\TopicFilter::class            => ConfigAbstractFactory::class,
             InputFilter\Report\Criterion\TypeFilter::class             => ConfigAbstractFactory::class,
-
             // Services
             Service\EvaluationReportService::class                     => ConfigAbstractFactory::class,
             Service\EvaluationService::class                           => ConfigAbstractFactory::class,

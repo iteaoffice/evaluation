@@ -35,7 +35,7 @@ final class WindowLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($window, ['id']);
+        $this->extractRouteParams($window, ['id']);
 
         if (null !== $window) {
             $this->addShowOption('name', $window->getTitle());
@@ -52,15 +52,15 @@ final class WindowLink extends AbstractLink
 
         switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report/window/new');
+                $this->setRoute('zfcadmin/evaluation/report/window/new');
                 $this->setText($this->translator->translate('txt-new-evaluation-report-window'));
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report/window/list');
+                $this->setRoute('zfcadmin/evaluation/report/window/list');
                 $this->setText($this->translator->translate('txt-list-evaluation-report-window-list'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report/window/view');
+                $this->setRoute('zfcadmin/evaluation/report/window/view');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-view-evaluation-report-window-%s'),
@@ -69,7 +69,7 @@ final class WindowLink extends AbstractLink
                 );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report/window/edit');
+                $this->setRoute('zfcadmin/evaluation/report/window/edit');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-edit-evaluation-report-window-%s'),

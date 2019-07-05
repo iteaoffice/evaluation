@@ -33,30 +33,35 @@ final class FeedbackLink extends AbstractLink
 {
     public function __invoke(
         Feedback $feedback = null,
-        string $action = 'view',
-        string $show = 'text',
-        Version $version = null
-    ): string {
+        string   $action = 'view',
+        string   $show = 'text',
+        Version  $version = null
+    ): string
+    {
         $this->reset();
 
+        if ($feedback === null) {
+            $feedback = new Feedback();
+        }
+
         // Set the non-standard options needed to give an other link value
-        if (!$this->hasAccess($feedback ?? new Feedback(), FeedbackAssertion::class, $action)) {
+        if (!$this->hasAccess($feedback, FeedbackAssertion::class, $action)) {
             return '';
         }
 
-        if (null !== $feedback) {
+        if (!$feedback->isEmpty()) {
             $this->addShowOption('project', (string)$feedback->getVersion()->getProject());
             $this->addShowOption('status', (string)$feedback->getStatus()->getStatus());
             $this->addShowOption('feedback', $this->translator->translate('txt-feedback'));
         }
 
-        $this->extractRouterParams($feedback, ['id']);
+        $this->extractRouteParams($feedback, ['id']);
 
         if (null !== $version) {
             $this->addRouteParam('version', $version->getId());
         }
 
-        $this->parseAction($action, $feedback ?? new Feedback());
+        $this->parseAction($action, $feedback);
 
         return $this->createLink($show);
     }
@@ -67,47 +72,39 @@ final class FeedbackLink extends AbstractLink
 
         switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/feedback/new');
+                $this->setRoute('zfcadmin/feedback/new');
                 $this->setLinkIcon('fa-plus');
                 $this->setText($this->translator->translate('txt-add-feedback'));
                 break;
             case 'edit-admin':
-                $this->setRouter('zfcadmin/feedback/edit');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),
-                        strtoupper($feedback->getVersion()->getVersionType()->getType()),
-                        $feedback->getVersion()->getProject()
-                    )
-                );
+                $this->setRoute('zfcadmin/feedback/edit');
+                $this->setText(sprintf(
+                    $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),
+                    strtoupper($feedback->getVersion()->getVersionType()->getType()),
+                    $feedback->getVersion()->getProject()
+                ));
                 break;
             case 'view-admin':
-                $this->setRouter('zfcadmin/feedback/view');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-view-%s-feedback-of-project-%s'),
-                        strtoupper($feedback->getVersion()->getVersionType()->getType()),
-                        $feedback->getVersion()->getProject()
-                    )
-                );
+                $this->setRoute('zfcadmin/feedback/view');
+                $this->setText(sprintf(
+                    $this->translator->translate('txt-view-%s-feedback-of-project-%s'),
+                    strtoupper($feedback->getVersion()->getVersionType()->getType()),
+                    $feedback->getVersion()->getProject()
+                ));
                 break;
             case 'edit':
-                $this->setRouter('community/project/edit/feedback');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-edit-%s-feedback'),
-                        strtoupper($feedback->getVersion()->getVersionType()->getType())
-                    )
-                );
+                $this->setRoute('community/project/edit/feedback');
+                $this->setText(sprintf(
+                    $this->translator->translate('txt-edit-%s-feedback'),
+                    strtoupper($feedback->getVersion()->getVersionType()->getType())
+                ));
                 break;
             case 'view':
-                $this->setRouter('community/project/feedback');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-give-%s-feedback'),
-                        strtoupper($feedback->getVersion()->getVersionType()->getType())
-                    )
-                );
+                $this->setRoute('community/project/feedback');
+                $this->setText(sprintf(
+                    $this->translator->translate('txt-give-%s-feedback'),
+                    strtoupper($feedback->getVersion()->getVersionType()->getType())
+                ));
                 break;
         }
     }

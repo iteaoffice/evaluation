@@ -29,6 +29,10 @@ final class WindowFilter extends InputFilter
     {
         $inputFilter = new InputFilter();
         $inputFilter->add([
+            'name'     => 'reportVersions',
+            'required' => false,
+        ]);
+        $inputFilter->add([
             'name'     => 'title',
             'required' => true,
             'filters'  => [

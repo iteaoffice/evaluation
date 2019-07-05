@@ -36,7 +36,7 @@ final class VersionLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($reportVersion, ['id']);
+        $this->extractRouteParams($reportVersion, ['id']);
 
         if (null !== $reportVersion) {
             $this->addShowOption('name', $reportVersion->getLabel());
@@ -53,15 +53,15 @@ final class VersionLink extends AbstractLink
 
         switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report/version/new');
+                $this->setRoute('zfcadmin/evaluation/report/version/new');
                 $this->setText($this->translator->translate('txt-new-evaluation-report-version'));
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report/version/list');
+                $this->setRoute('zfcadmin/evaluation/report/version/list');
                 $this->setText($this->translator->translate('txt-evaluation-report-version-list'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report/version/view');
+                $this->setRoute('zfcadmin/evaluation/report/version/view');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-view-%s'),
@@ -70,7 +70,7 @@ final class VersionLink extends AbstractLink
                 );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report/version/edit');
+                $this->setRoute('zfcadmin/evaluation/report/version/edit');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-edit-%s'),
@@ -80,7 +80,7 @@ final class VersionLink extends AbstractLink
                 break;
             case 'copy':
                 $this->setLinkIcon('fa-copy');
-                $this->setRouter('zfcadmin/evaluation/report/version/copy');
+                $this->setRoute('zfcadmin/evaluation/report/version/copy');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-copy-%s'),

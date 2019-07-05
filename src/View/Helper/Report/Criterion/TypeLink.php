@@ -35,7 +35,7 @@ final class TypeLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($type, ['id']);
+        $this->extractRouteParams($type, ['id']);
         if (null !== $type) {
             $this->addShowOption('name', $type->getType());
         }
@@ -49,15 +49,15 @@ final class TypeLink extends AbstractLink
         $this->action = $action;
         switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/type/new');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/type/new');
                 $this->setText($this->translator->translate('txt-new-evaluation-report-criterion-type'));
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/type/list');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/type/list');
                 $this->setText($this->translator->translate('txt-list-evaluation-report-criterion-type-list'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/type/view');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/type/view');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-view-evaluation-report-criterion-type-%s'),
@@ -66,7 +66,7 @@ final class TypeLink extends AbstractLink
                 );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/type/edit');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/type/edit');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-edit-evaluation-report-criterion-type-%s'),

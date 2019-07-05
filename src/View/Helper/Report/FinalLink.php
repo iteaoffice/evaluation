@@ -40,7 +40,7 @@ final class FinalLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($evaluationReport, ['id']);
+        $this->extractRouteParams($evaluationReport, ['id']);
 
         if (!$this->hasAccess($evaluationReport ?? new EvaluationReport(), ReportAssertion::class, $action)) {
             return '';
@@ -74,36 +74,36 @@ final class FinalLink extends AbstractLink
                     $this->setText($this->translator->translate('txt-download'));
                     $route = 'zfcadmin/evaluation/report/update';
                 }
-                $this->setRouter($route);
+                $this->setRoute($route);
                 $this->addQueryParam('mode', 'offline');
                 break;
             case 'finalise':
-                $this->setRouter('zfcadmin/evaluation/report/finalise');
+                $this->setRoute('zfcadmin/evaluation/report/finalise');
                 $this->setText($this->translator->translate('txt-finalise-evaluation-report'));
                 break;
             case 'undo-final':
-                $this->setRouter('zfcadmin/evaluation/report/undo-final');
+                $this->setRoute('zfcadmin/evaluation/report/undo-final');
                 $this->setText($this->translator->translate('txt-undo-finalisation'));
                 break;
             case 'download':
-                $this->setRouter('zfcadmin/evaluation/report/download');
+                $this->setRoute('zfcadmin/evaluation/report/download');
                 $this->setText($this->translator->translate('txt-download-original-version'));
                 $this->setLinkIcon('fa-file-excel-o');
                 break;
             case 'download-distributable':
-                $this->setRouter('zfcadmin/evaluation/report/download');
+                $this->setRoute('zfcadmin/evaluation/report/download');
                 $this->addQueryParam('format', 'distributable');
                 $this->setText($this->translator->translate('txt-download-distributable-version'));
                 $this->setLinkIcon('fa-file-excel-o');
                 break;
             case 'download-pdf':
-                $this->setRouter('zfcadmin/evaluation/report/download');
+                $this->setRoute('zfcadmin/evaluation/report/download');
                 $this->addQueryParam('format', 'pdf');
                 $this->setText($this->translator->translate('txt-download-as-pdf'));
                 $this->setLinkIcon('fa-file-pdf-o');
                 break;
             case 'download-distributable-pdf':
-                $this->setRouter('zfcadmin/evaluation/report/download');
+                $this->setRoute('zfcadmin/evaluation/report/download');
                 $this->addQueryParam('format', 'distributable-pdf');
                 $this->setText($this->translator->translate('txt-download-distributable-version-as-pdf'));
                 $this->setLinkIcon('fa-file-pdf-o');

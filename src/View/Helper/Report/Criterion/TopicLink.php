@@ -35,7 +35,7 @@ final class TopicLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($topic, ['id']);
+        $this->extractRouteParams($topic, ['id']);
         if (null !== $topic) {
             $this->addShowOption('name', $topic->getTopic());
         }
@@ -51,15 +51,15 @@ final class TopicLink extends AbstractLink
 
         switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/topic/new');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/topic/new');
                 $this->setText($this->translator->translate('txt-new-evaluation-report-criterion-topic'));
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/topic/list');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/topic/list');
                 $this->setText($this->translator->translate('txt-evaluation-report-criterion-topic-list'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/topic/view');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/topic/view');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-view-evaluation-report-criterion-topic-%s'),
@@ -68,7 +68,7 @@ final class TopicLink extends AbstractLink
                 );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/topic/edit');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/topic/edit');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-edit-evaluation-report-criterion-topic-%s'),

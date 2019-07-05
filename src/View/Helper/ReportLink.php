@@ -34,15 +34,17 @@ final class ReportLink extends AbstractLink
 {
     public function __invoke(
         EvaluationReport $evaluationReport = null,
-        string $action = 'view',
-        string $show = 'text',
-        bool $shortLabel = false,
-        ReportReviewer $reportReview = null,
-        VersionReviewer $versionReview = null
+        string           $action = 'view',
+        string           $show = 'text',
+        bool             $shortLabel = false,
+        ReportReviewer   $reportReview = null,
+        VersionReviewer  $versionReview = null
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($evaluationReport, ['id']);
+        $this->routeParams = [
+            'id' => ($evaluationReport instanceof EvaluationReport) ? $evaluationReport->getId(): null
+        ];
 
         if (!$this->hasAccess($evaluationReport ?? new EvaluationReport(), ReportAssertion::class, $action)) {
             return '';
@@ -54,17 +56,17 @@ final class ReportLink extends AbstractLink
     }
 
     public function parseAction(
-        string $action,
-        bool $shortLabel,
+        string            $action,
+        bool              $shortLabel,
         ?EvaluationReport $evaluationReport,
-        ?ReportReviewer $reportReview,
-        ?VersionReviewer $versionReview
+        ?ReportReviewer   $reportReview,
+        ?VersionReviewer  $versionReview
     ): void {
         $this->action = $action;
 
         switch ($action) {
             case 'overview':
-                $this->setRouter('community/evaluation/report/list');
+                $this->setRoute('community/evaluation/report/list');
                 $this->addShowOption(
                     'notification',
                     $this->translator->translate('txt-new-project-evaluations-pending')
@@ -93,7 +95,7 @@ final class ReportLink extends AbstractLink
                     );
                     $this->addRouteParam('versionReviewer', $versionReview->getId());
                 }
-                $this->setRouter($route);
+                $this->setRoute($route);
                 $fullLabel = sprintf($this->translator->translate('txt-create-evaluation-report-for-%s'), $subject);
                 $this->setText($fullLabel);
                 if ($shortLabel) {
@@ -115,12 +117,12 @@ final class ReportLink extends AbstractLink
                 }
 
                 $this->setLinkIcon('fa-file-excel-o');
-                $this->setRouter($route);
+                $this->setRoute($route);
                 $this->addQueryParam('mode', 'offline');
                 $this->setText($this->translator->translate('txt-download-offline-form'));
                 break;
             case 'view':
-                $this->setRouter('community/evaluation/report/view');
+                $this->setRoute('community/evaluation/report/view');
                 if ($shortLabel) {
                     $label = EvaluationReportService::parseLabel($evaluationReport, '%3$s');
                 } else {
@@ -130,7 +132,7 @@ final class ReportLink extends AbstractLink
                 $this->addShowOption('name', $label);
                 break;
             case 'edit':
-                $this->setRouter('community/evaluation/report/update');
+                $this->setRoute('community/evaluation/report/update');
                 if ($shortLabel) {
                     $label = EvaluationReportService::parseLabel($evaluationReport, '%3$s');
                 } else {
@@ -140,11 +142,11 @@ final class ReportLink extends AbstractLink
                 $this->addShowOption('name', $label);
                 break;
             case 'finalise':
-                $this->setRouter('community/evaluation/report/finalise');
+                $this->setRoute('community/evaluation/report/finalise');
                 $this->setText($this->translator->translate('txt-finalise-evaluation-report'));
                 break;
             case 'undo-final':
-                $this->setRouter('zfcadmin/evaluation/report/undo-final');
+                $this->setRoute('zfcadmin/evaluation/report/undo-final');
                 $this->setText($this->translator->translate('txt-undo-finalisation'));
                 break;
         }

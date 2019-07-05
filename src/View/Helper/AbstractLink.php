@@ -28,70 +28,81 @@ use function in_array;
  */
 abstract class AbstractLink extends AbstractViewHelper
 {
-    protected const SHOW_ICON = 'icon';
+    protected const SHOW_ICON   = 'icon';
     protected const SHOW_BUTTON = 'button';
-    protected const SHOW_TEXT = 'text';
+    protected const SHOW_TEXT   = 'text';
 
-    protected static $linkIcons
-        = [
-            'new'              => 'fa-plus',
-            'view'             => 'fa-calendar',
-            'edit'             => 'fa-pencil-square-o',
-            'select-attendees' => 'fa-users',
+    private static $defaultLinkIcons = [
+        'new'  => 'fa-plus',
+        'view' => 'fa-link',
+        'edit' => 'fa-pencil-square-o',
+    ];
 
-        ];
     /**
      * @var string Text to be placed as title or as part of the linkContent
      */
     protected $text = '';
+
     /**
      * @var string|null
      */
     protected $javascript;
+
     /**
      * @var string
      */
     protected $router;
+
     /**
      * @var string
      */
     protected $action;
+
     /**
      * @var bool
      */
     protected $selected;
+
     /**
      * @var string
      */
     protected $show;
+
     /**
      * @var string
      */
     protected $linkIcon;
+
     /**
      * @var string
      */
     protected $alternativeShow;
+
     /**
      * @var array List of parameters needed to construct the URL from the router
      */
-    protected $routerParams = [];
+    protected $routeParams = [];
+
     /**
      * @var array content of the link (will be imploded during creation of the link)
      */
     protected $linkContent = [];
+
     /**
      * @var array Classes to be given to the link
      */
     protected $classes = [];
+
     /**
      * @var array Query params
      */
     protected $query = [];
+
     /**
      * @var array Fragment
      */
     protected $fragment = [];
+
     /**
      * @var array
      */
@@ -119,20 +130,13 @@ abstract class AbstractLink extends AbstractViewHelper
 
     public function isAllowed(AbstractEntity $resource, string $privilege = null): bool
     {
-        /**
-         * @var IsAllowed $isAllowed
-         */
+        /** @var IsAllowed $isAllowed */
         $isAllowed = $this->helperPluginManager->get('isAllowed');
 
         return $isAllowed($resource, $privilege);
     }
 
-    public function addLinkIcon(string $action, string $icon): void
-    {
-        self::$linkIcons[$action] = $icon;
-    }
-
-    public function setRouter(string $router): void
+    public function setRoute(string $router): void
     {
         $this->router = $router;
     }
@@ -159,7 +163,7 @@ abstract class AbstractLink extends AbstractViewHelper
 
     public function addRouteParam(string $key, $value): void
     {
-        $this->routerParams[$key] = $value;
+        $this->routeParams[$key] = $value;
     }
 
     public function setJavascript(?string $javascript): void
@@ -181,7 +185,7 @@ abstract class AbstractLink extends AbstractViewHelper
         if ('social' === $this->show) {
             return $this->getServerUrl() . $this->getUrl()(
                 $this->router,
-                $this->routerParams,
+                $this->routeParams,
                 ['query' => $this->query, 'fragment' => $this->fragment]
             );
         }
@@ -189,7 +193,7 @@ abstract class AbstractLink extends AbstractViewHelper
         $link = new Link(
             $this->getServerUrl() . $this->getUrl()(
                 $this->router,
-                $this->routerParams,
+                $this->routeParams,
                 ['query' => $this->query, 'fragment' => $this->fragment]
             ),
             $this->text,
@@ -248,7 +252,7 @@ abstract class AbstractLink extends AbstractViewHelper
     public function getLinkIcon(): string
     {
         if (null === $this->linkIcon) {
-            return self::$linkIcons[$this->action] ?? 'fa-exclamation';
+            return self::$defaultLinkIcons[$this->action] ?? 'fa-link';
         }
 
         return $this->linkIcon;
@@ -267,21 +271,21 @@ abstract class AbstractLink extends AbstractViewHelper
     protected function reset(): void
     {
         $this->linkContent = [];
-        $this->query = [];
-        $this->fragment = [];
-        $this->classes = [];
-        $this->javascript = '';
-        $this->linkIcon = '';
+        $this->query       = [];
+        $this->fragment    = [];
+        $this->classes     = [];
+        $this->javascript  = '';
+        $this->linkIcon    = null;
     }
 
-    protected function extractRouterParams(?AbstractEntity $abstractEntity, array $params): void
+    protected function extractrouteParams(?AbstractEntity $abstractEntity, array $params): void
     {
         if (null === $abstractEntity) {
             return;
         }
 
         foreach ($params as $param) {
-            $this->routerParams[$param] = $abstractEntity->$param;
+            $this->routeParams[$param] = $abstractEntity->$param;
         }
     }
 

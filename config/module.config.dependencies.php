@@ -182,8 +182,14 @@ return [
             Service\EvaluationService::class
         ],
 
-        //Input filter
+        // Input filter
         InputFilter\Report\Criterion\CategoryFilter::class    => [
+            EntityManager::class
+        ],
+        InputFilter\Report\Criterion\TopicFilter::class       => [
+            EntityManager::class
+        ],
+        InputFilter\Report\Criterion\TypeFilter::class        => [
             EntityManager::class
         ],
 

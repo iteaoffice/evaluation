@@ -38,7 +38,7 @@ final class VersionLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($version, ['id']);
+        $this->extractRouteParams($version, ['id']);
 
         if (null !== $reportVersion) {
             $this->addRouteParam('reportVersionId', $reportVersion->getId());
@@ -59,11 +59,11 @@ final class VersionLink extends AbstractLink
         switch ($action) {
             case 'add':
                 $this->setLinkIcon('fa-plus');
-                $this->setRouter('zfcadmin/evaluation/report/criterion/version/add');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/version/add');
                 $this->setText($this->translator->translate('txt-add-new-evaluation-report-criterion'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/version/view');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/version/view');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-view-evaluation-report-criterion-%s'),
@@ -72,7 +72,7 @@ final class VersionLink extends AbstractLink
                 );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/version/edit');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/version/edit');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-edit-evaluation-report-criterion-%s'),

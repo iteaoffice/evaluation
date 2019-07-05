@@ -20,7 +20,7 @@ final class DownloadLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->setRouter('community/evaluation/report/download-combined');
+        $this->setRoute('community/evaluation/report/download-combined');
         if (null !== $status) {
             $this->addRouteParam('status', $status);
         }

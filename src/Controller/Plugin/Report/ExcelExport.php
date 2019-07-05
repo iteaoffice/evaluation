@@ -712,7 +712,10 @@ final class ExcelExport extends AbstractPlugin
                 $displaySheet->setCellValue($scoreSelectCell, $value);
                 break;
             case Criterion::INPUT_TYPE_SELECT:
-                $selectValues = Json::decode($result->getCriterionVersion()->getCriterion()->getValues());
+                $selectValues = Json::decode(
+                    $result->getCriterionVersion()->getCriterion()->getValues(),
+                    Json::TYPE_ARRAY
+                );
                 if (!$this->forDistribution) {
                     $this->parseDropdown(
                         $displaySheet,

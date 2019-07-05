@@ -10,11 +10,15 @@
     <dt>{{ translate("txt-report-versions") }}</dt>
     {% for reportVersion in window.reportVersions %}
         <dd>{{ reportVersionLink(reportVersion, 'view') }}</dd>
+    {% else %}
+        <dd>{{ translate("txt-none") }}</dd>
     {%  endfor %}
     <dt>{{ translate("txt-title") }}</dt>
     <dd>{{ window.title }}</dd>
+    {% if window.description is not empty %}
     <dt>{{ translate("txt-description") }}</dt>
     <dd>{{ window.description }}</dd>
+    {% endif %}
     <dt>{{ translate("txt-report-start-date") }}</dt>
     <dd>{{ window.dateStartReport|date('d-m-Y') }}</dd>
     <dt>{{ translate("txt-report-end-date") }}</dt>

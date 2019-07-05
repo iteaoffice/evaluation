@@ -35,7 +35,7 @@ final class ContactLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($reviewContact, ['id']);
+        $this->extractRouteParams($reviewContact, ['id']);
         $this->extractLinkContentFromEntity($reviewContact, ['id', 'handle']);
 
         $this->parseAction($action);
@@ -49,19 +49,19 @@ final class ContactLink extends AbstractLink
 
         switch ($action) {
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/reviewer/contact/list');
+                $this->setRoute('zfcadmin/evaluation/reviewer/contact/list');
                 $this->setText($this->translator->translate('txt-review-contact-list'));
                 break;
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/reviewer/contact/new');
+                $this->setRoute('zfcadmin/evaluation/reviewer/contact/new');
                 $this->setText($this->translator->translate('txt-new-review-contact'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/reviewer/contact/view');
+                $this->setRoute('zfcadmin/evaluation/reviewer/contact/view');
                 $this->setText($this->translator->translate('txt-view-review-contact'));
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/reviewer/contact/edit');
+                $this->setRoute('zfcadmin/evaluation/reviewer/contact/edit');
                 $this->setText(sprintf($this->translator->translate('txt-edit-review-contact')));
                 break;
         }

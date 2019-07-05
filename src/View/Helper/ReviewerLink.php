@@ -40,7 +40,7 @@ final class ReviewerLink extends AbstractLink
             return '';
         }
 
-        $this->extractRouterParams($reviewer, ['id']);
+        $this->extractRouteParams($reviewer, ['id']);
 
         if (null !== $project) {
             $this->addRouteParam('projectId', $project->getId());
@@ -58,19 +58,19 @@ final class ReviewerLink extends AbstractLink
         switch ($action) {
             case 'list-contacts':
                 $this->setLinkIcon('fa fa-users');
-                $this->setRouter('zfcadmin/evaluation/reviewer/list');
+                $this->setRoute('zfcadmin/evaluation/reviewer/list');
                 $this->setText($this->translator->translate('txt-show-review-contacts'));
                 break;
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/reviewer/new');
+                $this->setRoute('zfcadmin/evaluation/reviewer/new');
                 $this->setText($this->translator->translate('txt-new-review-contact'));
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/reviewer/edit');
+                $this->setRoute('zfcadmin/evaluation/reviewer/edit');
                 $this->setText($this->translator->translate('txt-edit-review-contact'));
                 break;
             case 'delete':
-                $this->setRouter('zfcadmin/evaluation/reviewer/delete');
+                $this->setRoute('zfcadmin/evaluation/reviewer/delete');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-remove-%s-from-this-project'),
@@ -79,7 +79,7 @@ final class ReviewerLink extends AbstractLink
                 );
                 break;
             case 'export':
-                $this->setRouter('zfcadmin/evaluation/reviewer/export');
+                $this->setRoute('zfcadmin/evaluation/reviewer/export');
                 $this->setLinkIcon('fa-file-text-o');
                 $this->setText($this->translator->translate('txt-export-review-roster-text-file'));
                 break;

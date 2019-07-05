@@ -40,7 +40,7 @@
                     {% endif %})
                     {% if not loop.last %}<br>{% endif %}
                 {% else %}
-                    -
+                    {{ translate("txt-none") }}
                 {% endfor %}
             </dd>
             <dt>{{ translate("txt-evaluation-reports") }}</dt>

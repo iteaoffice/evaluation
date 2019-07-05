@@ -25,7 +25,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Zend\Form\Annotation;
 
 /**
- * @ORM\Table(name="evaluation_report")
+ * @ORM\Table(name="evaluation_report2")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\ReportRepository")
  */
 class Report extends AbstractEntity
@@ -70,13 +70,6 @@ class Report extends AbstractEntity
      * @var Report\Version
      */
     private $version;
-    /**
-     * @ORM\Column(name="type_id", type="integer", options={"unsigned":true}, nullable=false)
-     * @Annotation\Exclude()
-     *
-     * Keep a type for legacy reasons (to avoid that doctrine removes the type_id column)
-     */
-    private $type;
     /**
      * @ORM\Column(name="final", length=1, type="boolean", nullable=false)
      * @Annotation\Type("Zend\Form\Element\Checkbox")

@@ -35,7 +35,7 @@ final class CategoryLink extends AbstractLink
     ): string {
         $this->reset();
 
-        $this->extractRouterParams($category, ['id']);
+        $this->extractRouteParams($category, ['id']);
 
         if (null !== $category) {
             $this->addShowOption('name', $category->getCategory());
@@ -52,15 +52,15 @@ final class CategoryLink extends AbstractLink
 
         switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/category/new');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/category/new');
                 $this->setText($this->translator->translate('txt-new-evaluation-report-criterion-category'));
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/category/list');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/category/list');
                 $this->setText($this->translator->translate('txt-list-evaluation-report-criterion-categories'));
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/category/view');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/category/view');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-view-evaluation-report-criterion-category-%s'),
@@ -69,7 +69,7 @@ final class CategoryLink extends AbstractLink
                 );
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report/criterion/category/edit');
+                $this->setRoute('zfcadmin/evaluation/report/criterion/category/edit');
                 $this->setText(
                     $this->translator->translate('txt-edit-evaluation-report-criterion-category'),
                 );

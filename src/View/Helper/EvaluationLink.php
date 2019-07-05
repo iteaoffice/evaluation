@@ -86,7 +86,7 @@ final class EvaluationLink extends AbstractLink
                  * The parameters are the same but the router and the text change
                  */
                 if ($action === 'overview-project') {
-                    $this->setRouter('community/evaluation/overview-project');
+                    $this->setRoute('community/evaluation/overview-project');
                     $this->setText(
                         sprintf(
                             $this->translator->translate('txt-overview-%s-evaluation-for-project-%s-in-%s'),
@@ -96,7 +96,7 @@ final class EvaluationLink extends AbstractLink
                         )
                     );
                 } else {
-                    $this->setRouter('community/evaluation/evaluate-project');
+                    $this->setRoute('community/evaluation/evaluate-project');
                     $this->setText(
                         sprintf(
                             $this->translator->translate('txt-give-%s-evaluation-for-project-%s-in-%s'),
@@ -109,7 +109,7 @@ final class EvaluationLink extends AbstractLink
                 break;
             case 'download-project':
                 $this->setLinkIcon('fa-file-pdf-o');
-                $this->setRouter('community/evaluation/download-project');
+                $this->setRoute('community/evaluation/download-project');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-download-overview-%s-evaluation-for-project-%s-in-%s'),
@@ -120,7 +120,7 @@ final class EvaluationLink extends AbstractLink
                 );
                 break;
             case 'edit-admin':
-                $this->setRouter('zfcadmin/project/evaluation/edit');
+                $this->setRoute('zfcadmin/project/evaluation/edit');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-edit-%s-evaluation-for-project-%s-in-%s'),
@@ -131,7 +131,7 @@ final class EvaluationLink extends AbstractLink
                 );
                 break;
             case 'new-admin':
-                $this->setRouter('zfcadmin/project/evaluation/new');
+                $this->setRoute('zfcadmin/project/evaluation/new');
                 $this->setText(
                     sprintf(
                         $this->translator->translate('txt-add-evaluation-for-project-%s'),
