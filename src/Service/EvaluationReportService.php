@@ -87,9 +87,9 @@ class EvaluationReportService extends AbstractService
         return new ArrayCollection();
     }
 
-    public function parseLabel(EvaluationReport $evaluationReport, string $template = '%s - %s - %s'): string
+    public static function parseLabel(EvaluationReport $evaluationReport, string $template = '%s - %s - %s'): string
     {
-        $project              = $this->getProject($evaluationReport);
+        $project              = self::getProject($evaluationReport);
         $subject              = '';
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
         $projectReportReport  = $evaluationReport->getProjectReportReport();
@@ -113,7 +113,7 @@ class EvaluationReportService extends AbstractService
         return sprintf($template, $project->getCall(), $project->parseFullName(), $subject);
     }
 
-    public function getProject(EvaluationReport $evaluationReport): Project
+    public static function getProject(EvaluationReport $evaluationReport): Project
     {
         $projectVersionReport = $evaluationReport->getProjectVersionReport();
         $projectReportReport = $evaluationReport->getProjectReportReport();

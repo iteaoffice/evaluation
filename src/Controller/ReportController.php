@@ -234,9 +234,9 @@ final class ReportController extends AbstractActionController
 
         // Create an evaluation report so that new and edit can be handled by the same form
         $evaluationReport = $this->evaluationReportService->prepareEvaluationReport($reportVersion, (int)$reviewId);
-        $label            = $this->evaluationReportService->parseLabel($evaluationReport);
+        $label            = EvaluationReportService::parseLabel($evaluationReport);
         $reviewers        = $this->evaluationReportService->getReviewers($evaluationReport);
-        $project          = $this->evaluationReportService->getProject($evaluationReport);
+        $project          = EvaluationReportService::getProject($evaluationReport);
         $reportReviewer = ($evaluationReport->getProjectReportReport() !== null)
             ? $evaluationReport->getProjectReportReport()->getReviewer() : null;
         $versionReviewer = ($evaluationReport->getProjectVersionReport() !== null)
@@ -513,7 +513,7 @@ final class ReportController extends AbstractActionController
         }
 
         $percentageComplete = $this->evaluationReportService->parseCompletedPercentage($evaluationReport);
-        $label              = $this->evaluationReportService->parseLabel($evaluationReport);
+        $label              = EvaluationReportService::parseLabel($evaluationReport);
 
         if ($percentageComplete === (float)100) {
             $evaluationReport->setFinal(true);
