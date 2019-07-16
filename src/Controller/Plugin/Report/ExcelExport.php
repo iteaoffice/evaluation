@@ -384,7 +384,7 @@ final class ExcelExport extends AbstractPlugin
         // Latest project version (only for PPR)
         if ($this->evaluationReport->getProjectReportReport() !== null) {
             $this->parseCriterionLabel($displaySheet, $row, $this->translator->translate('txt-latest-project-version'));
-            $latestVersion = $this->projectService->getLatestProjectVersion($project);
+            $latestVersion = $this->projectService->getLatestApprovedProjectVersion($project);
 
             if (null !== $latestVersion) {
                 $displaySheet->setCellValue('B' . $row, $latestVersion->getVersionType()->getDescription());
@@ -418,7 +418,7 @@ final class ExcelExport extends AbstractPlugin
                 $version = $projectVersionReport->getVersion();
             }
         } else {
-            $version = $this->projectService->getLatestProjectVersion($project);
+            $version = $this->projectService->getLatestApprovedProjectVersion($project);
         }
         $this->parseCriterionLabel($displaySheet, $row, $this->translator->translate('txt-project-size'));
         $displaySheet->setCellValue(

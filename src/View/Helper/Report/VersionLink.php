@@ -33,15 +33,14 @@ final class VersionLink extends AbstractLink
         Version $reportVersion = null,
         string  $action = 'view',
         string  $show = 'name'
-    ): string
-    {
+    ): string {
         $this->reset();
 
         if (null === $reportVersion) {
             $reportVersion = new Version();
         }
 
-        if (!$reportVersion->isEmpty() ) {
+        if (!$reportVersion->isEmpty()) {
             $this->routeParams['id'] = $reportVersion->getId();
             $this->addShowOption('name', $reportVersion->getLabel());
         }

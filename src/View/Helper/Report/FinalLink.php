@@ -108,6 +108,12 @@ final class FinalLink extends AbstractLink
                 $this->setText($this->translator->translate('txt-download-distributable-version-as-pdf'));
                 $this->setLinkIcon('fa-file-pdf-o');
                 break;
+            case 'download-consolidated-pdf':
+                $this->setRoute('zfcadmin/evaluation/report/download');
+                $this->addQueryParam('format', 'consolidated-pdf');
+                $this->setText($this->translator->translate('txt-download-consolidated-version-as-pdf'));
+                $this->setLinkIcon('fa-file-pdf-o');
+                break;
         }
     }
 }

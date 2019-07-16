@@ -86,7 +86,7 @@ final class TypeController extends AbstractActionController
         ]);
     }
 
-    public function viewAction()
+    public function viewAction(): ViewModel
     {
         $type = $this->evaluationReportService->find(Type::class, (int)$this->params('id'));
 
@@ -136,6 +136,7 @@ final class TypeController extends AbstractActionController
         $type    = $this->evaluationReportService->find(Type::class, (int)$this->params('id'));
         $data    = $request->getPost()->toArray();
         $form    = $this->formService->prepare($type, $data);
+
         if (!$this->evaluationReportService->typeIsDeletable($type)) {
             $form->remove('delete');
         }

@@ -23,18 +23,25 @@
     <dd>{{ feedback.recommendedImprovements }}</dd>
 </dl>
 
-<h3>{{ translate("txt-review-feedback") }}</h3>
+<h2>{{ translate("txt-review-feedback") }}</h2>
 {% if feedback.reviewFeedback|length > 0 %}
-    <div class="well well-sm">{{ feedback.reviewFeedback|raw|nl2br }}</div>
+    {{ feedback.reviewFeedback|raw|nl2br }}
 {% else %}
     {{ ztbalert().info(translate("txt-no-review-feedback-given-yet"))|raw }}
 {% endif %}
 
-<h3>{{ translate("txt-evaluation-feedback") }}</h3>
+<h2>{{ translate("txt-evaluation-feedback") }}</h2>
 {% if feedback.evaluationFeedback|length > 0 %}
-    <div class="well well-sm">{{ feedback.evaluationFeedback|raw|nl2br }}</div>
+    {{ feedback.evaluationFeedback|raw|nl2br }}
 {% else %}
     {{ ztbalert().info(translate("txt-no-evaluation-feedback-given-yet"))|raw }}
+{% endif %}
+
+<h2>{{ translate("txt-evaluation-conclusion") }}</h2>
+{% if feedback.evaluationConclusion|length > 0 %}
+    {{ feedback.evaluationConclusion|raw|nl2br }}
+{% else %}
+    {{ ztbalert().info(translate("txt-no-evaluation-conclusion-given-yet"))|raw }}
 {% endif %}
 
 

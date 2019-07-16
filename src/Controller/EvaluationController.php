@@ -313,7 +313,7 @@ final class EvaluationController extends AbstractActionController
 
             //Find the latest version of the version type
             /** @var Version $latestVersion */
-            $latestVersion = $this->projectService->getLatestProjectVersion($project, $versionType);
+            $latestVersion = $this->projectService->getLatestApprovedProjectVersion($project, $versionType);
             $totalEffort = $this->versionService->findTotalEffortVersion($latestVersion);
             $evaluationResult = $this->createEvaluation(
                 [$project],

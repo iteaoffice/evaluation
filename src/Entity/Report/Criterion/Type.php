@@ -7,8 +7,8 @@ namespace Evaluation\Entity\Report\Criterion;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Zend\Form\Annotation;
 
 /**
@@ -21,9 +21,10 @@ class Type extends AbstractEntity
      * @ORM\Column(name="type_id", type="integer", options={"unsigned":true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Annotation\Exclude()
+     * @Annotation\Type("\Zend\Form\Element\Hidden")
      *
      * @var integer
+     * r
      */
     private $id;
     /**
@@ -93,7 +94,7 @@ class Type extends AbstractEntity
 
     public function __toString(): string
     {
-        return (string) $this->type;
+        return (string)$this->type;
     }
 
     public function getId(): ?int
@@ -135,15 +136,16 @@ class Type extends AbstractEntity
     }
 
     // Used in Evaluation\Entity\Report\Criterion\Version to fill the optgroup label with optgroup_identifier
-    public function getCategoryLabel(): string
-    {
-        return (string) $this->category;
-    }
 
     public function setCategory(Category $category): Type
     {
         $this->category = $category;
         return $this;
+    }
+
+    public function getCategoryLabel(): string
+    {
+        return (string)$this->category;
     }
 
     public function getCriterionVersions(): Collection

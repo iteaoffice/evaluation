@@ -136,7 +136,7 @@ final class CreateEvaluation extends AbstractPlugin
                 if ($this->evaluationService->isEvaluation($evaluationType)) {
                     $version = $this->versionService->findLatestVersionByType($project, $versionType);
                 } else {
-                    $version = $this->projectService->getLatestProjectVersion($project);
+                    $version = $this->projectService->getLatestApprovedProjectVersion($project);
                 }
 
                 /*

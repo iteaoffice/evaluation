@@ -36,8 +36,7 @@ final class FeedbackLink extends AbstractLink
         string   $action = 'view',
         string   $show = 'text',
         Version  $version = null
-    ): string
-    {
+    ): string {
         $this->reset();
 
         if ($feedback === null) {
@@ -78,6 +77,7 @@ final class FeedbackLink extends AbstractLink
                 break;
             case 'edit-admin':
                 $this->setRoute('zfcadmin/feedback/edit');
+                $this->setLinkIcon('fa-pencil-square-o');
                 $this->setText(sprintf(
                     $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),
                     strtoupper($feedback->getVersion()->getVersionType()->getType()),
@@ -94,6 +94,7 @@ final class FeedbackLink extends AbstractLink
                 break;
             case 'edit':
                 $this->setRoute('community/project/edit/feedback');
+                $this->setLinkIcon('fa-pencil-square-o');
                 $this->setText(sprintf(
                     $this->translator->translate('txt-edit-%s-feedback'),
                     strtoupper($feedback->getVersion()->getVersionType()->getType())

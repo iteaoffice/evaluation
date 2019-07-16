@@ -52,8 +52,6 @@ use ZfcTwig\View\TwigRenderer;
 use function array_map;
 use function array_sum;
 use function ceil;
-use function define;
-use function getenv;
 use function implode;
 use function in_array;
 use function number_format;
@@ -63,7 +61,7 @@ use function ob_get_length;
 use function ob_start;
 use function sprintf;
 
-define('ITEAOFFICE_HOST', getenv('ITEAOFFICE_HOST')); // itea, aeneas
+//define('ITEAOFFICE_HOST', getenv('ITEAOFFICE_HOST')); // itea, aeneas
 
 /**
  * Class ConsolidatedPdfExport
@@ -263,7 +261,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         /** @var Result $result */
         foreach ($this->results as $result) {
             /** @var Criterion\Type $type */
-            $type = $result->getCriterion()->getType();
+            $type = $result->getCriterionVersion()->getType();
             /** @var Criterion\Category $category */
             $category = $type->getCategory();
 
@@ -286,6 +284,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 $result->getCriterionVersion()->getType(),
                 $this->evaluationReport->getVersion()
             );
+
             if (($type->getType() !== $currentType) && !$confidentialType) {
                 // Only a short header when no details are shown and it's the first one
                 $this->parseHeading($type->getType(), 12, 'L', 'gray');
@@ -293,7 +292,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 $currentType = $type->getType();
             }
 
-            if (!$result->getCriterion()->getConfidential()) {
+            if (!$result->getCriterionVersion()->getConfidential()) {
                 $this->parseResult($result);
             }
 
@@ -324,7 +323,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         );
 
         $explanation = 'EMPTY';
-        if ($this->versionType->getId() === Type::TYPE_FPP) {
+        if (in_array($this->versionType->getId(), [Type::TYPE_FPP, Type::TYPE_PO], true)) {
             if ($this->version->isApproved()) {
                 $explanation = $this->translator->translate('txt-fpp-integrated-report-explanation-labelled');
             }
@@ -480,7 +479,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 $version = $projectVersionReport->getVersion();
             }
         } else {
-            $version = $this->projectService->getLatestProjectVersion($project);
+            $version = $this->projectService->getLatestApprovedProjectVersion($project);
         }
         $this->parseCriterionLabel($this->translator->translate('txt-project-size'));
         $this->pdf->Cell(
@@ -585,7 +584,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $this->parseHeading($this->translator->translate('txt-participating-companies-and-countries'), 15, 'L', 'sub');
 
         $affiliationOverview = $this->affiliationService->findAffiliationByProjectAndWhich($project);
-        $latestVersion = $this->projectService->getLatestProjectVersion($project);
+        $latestVersion = $this->projectService->getLatestApprovedProjectVersion($project);
 
         $affCountries = [];
         foreach ($affiliationOverview as $affiliation) {
@@ -814,13 +813,13 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $versionType = $this->evaluationReport->getProjectVersionReport()->getVersion()->getVersionType();
 
         /** @var EvaluationType $evaluationType */
-        $evaluationType = $this->projectService->find(
+        $evaluationType = $this->evaluationService->find(
             EvaluationType::class,
             EvaluationType::TYPE_PO_EVALUATION
         );
         if ($versionType->getId() === Type::TYPE_FPP) {
             /** @var EvaluationType $evaluationType */
-            $evaluationType = $this->projectService->find(
+            $evaluationType = $this->evaluationService->find(
                 EvaluationType::class,
                 EvaluationType::TYPE_FPP_EVALUATION
             );
@@ -859,11 +858,11 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
     private function parseFooter(): void
     {
-        $this->parseHeading($this->translator->translate('txt-conclusion'), 15, 'L', 'sub');
         $this->parseHeading('', 15, 'L', 'sub');
 
         $explanation = 'EMPTY';
-        if ($this->versionType->getId() === Type::TYPE_FPP) {
+
+        if ($this->versionType->getId() === Type::TYPE_FPP || $this->versionType->getId() === Type::TYPE_PO) {
             if ($this->version->isApproved()) {
                 $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-approved');
             }
@@ -873,7 +872,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             }
         }
 
-        // Some explansion
+        // Some explanation
         $lineHeight = self::$lineHeights['line'];
         $cellWidth = 3 * self::$colWidths[2];
         $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $explanation) + 10;
@@ -896,30 +895,32 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             'M'
         );
 
-        $conclusion = (string)$this->version->getFeedback()->getEvaluationConclusion();
+        if (null !== $this->version->getFeedback()) {
+            $conclusion = (string)$this->version->getFeedback()->getEvaluationConclusion();
 
-        // Some explansion
-        $lineHeight = self::$lineHeights['line'];
-        $cellWidth = 3 * self::$colWidths[2];
-        $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $conclusion) + 10;
+            // Some explansion
+            $lineHeight = self::$lineHeights['line'];
+            $cellWidth = 3 * self::$colWidths[2];
+            $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $conclusion) + 10;
 
-        $this->pdf->MultiCell(
-            $cellWidth,
-            $cellHeight,
-            $conclusion,
-            0,
-            'L',
-            false,
-            1,
-            20,
-            '',
-            true,
-            0,
-            true,
-            true,
-            $cellHeight,
-            'M'
-        );
+            $this->pdf->MultiCell(
+                $cellWidth,
+                $cellHeight,
+                $conclusion,
+                0,
+                'L',
+                false,
+                1,
+                20,
+                '',
+                true,
+                0,
+                true,
+                true,
+                $cellHeight,
+                'M'
+            );
+        }
     }
 
     public function parseResponse(): Response

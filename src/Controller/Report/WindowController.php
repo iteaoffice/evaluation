@@ -56,20 +56,20 @@ final class WindowController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService,
-        TranslatorInterface     $translator
+        FormService $formService,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->formService             = $formService;
-        $this->translator              = $translator;
+        $this->formService = $formService;
+        $this->translator = $translator;
     }
 
     public function listAction()
     {
-        $page         = $this->params()->fromRoute('page', 1);
+        $page = $this->params()->fromRoute('page', 1);
         $filterPlugin = $this->getEvaluationFilter();
-        $query        = $this->evaluationReportService->findFiltered(Window::class, $filterPlugin->getFilter());
-        $paginator    = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
+        $query = $this->evaluationReportService->findFiltered(Window::class, $filterPlugin->getFilter());
+        $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
         $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);
         $paginator->setCurrentPageNumber($page);
         $paginator->setPageRange(\ceil($paginator->getTotalItemCount() / $paginator::getDefaultItemCountPerPage()));
@@ -77,34 +77,38 @@ final class WindowController extends AbstractActionController
         $form = new WindowFilter();
         $form->setData(['filter' => $filterPlugin->getFilter()]);
 
-        return new ViewModel([
-            'paginator'     => $paginator,
-            'form'          => $form,
-            'encodedFilter' => \urlencode($filterPlugin->getHash()),
-            'order'         => $filterPlugin->getOrder(),
-            'direction'     => $filterPlugin->getDirection(),
-        ]);
+        return new ViewModel(
+            [
+                'paginator'     => $paginator,
+                'form'          => $form,
+                'encodedFilter' => \urlencode($filterPlugin->getHash()),
+                'order'         => $filterPlugin->getOrder(),
+                'direction'     => $filterPlugin->getDirection(),
+            ]
+        );
     }
 
     public function viewAction(): ViewModel
     {
-        $window = $this->evaluationReportService->find(Window::class, (int) $this->params('id'));
+        $window = $this->evaluationReportService->find(Window::class, (int)$this->params('id'));
 
         if ($window === null) {
             return $this->notFoundAction();
         }
 
-        return new ViewModel([
-            'window' => $window
-        ]);
+        return new ViewModel(
+            [
+                'window' => $window
+            ]
+        );
     }
 
     public function newAction()
     {
         /** @var Request $request */
         $request = $this->getRequest();
-        $data    = $request->getPost()->toArray();
-        $form    = $this->formService->prepare(new Window(), $data);
+        $data = $request->getPost()->toArray();
+        $form = $this->formService->prepare(new Window(), $data);
         $form->setInputFilter(new \Evaluation\InputFilter\Report\WindowFilter());
         $form->remove('delete');
 
@@ -135,7 +139,7 @@ final class WindowController extends AbstractActionController
         /** @var Request $request */
         $request = $this->getRequest();
         /** @var Window $window */
-        $window = $this->evaluationReportService->find(Window::class, (int) $this->params('id'));
+        $window = $this->evaluationReportService->find(Window::class, (int)$this->params('id'));
 
         if ($window === null) {
             return $this->notFoundAction();
@@ -162,14 +166,14 @@ final class WindowController extends AbstractActionController
                     'zfcadmin/evaluation/report/window/view',
                     ['id' => $window->getId()]
                 );
-            } else {
-                var_dump($form->getMessages());
             }
         }
 
-        return new ViewModel([
-            'form'   => $form,
-            'window' => $window
-        ]);
+        return new ViewModel(
+            [
+                'form'   => $form,
+                'window' => $window
+            ]
+        );
     }
 }

@@ -19,9 +19,9 @@ namespace Evaluation\Controller;
 
 use Evaluation\Entity\Feedback;
 use Evaluation\Service\EvaluationService;
+use Evaluation\Service\FormService;
 use Project\Controller\Plugin\GetFilter;
 use Project\Entity\Version\Version;
-use Evaluation\Service\FormService;
 use Project\Service\VersionService;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -94,7 +94,7 @@ final class FeedbackController extends AbstractActionController
 
             return $this->redirect()
                 ->toRoute(
-                    'zfcadmin/evaluation/feedback/view',
+                    'zfcadmin/feedback/view',
                     ['id' => $feedback->getId()]
                 );
         }
@@ -114,7 +114,7 @@ final class FeedbackController extends AbstractActionController
         $form = $this->formService->prepare($feedback, $data);
 
         $form->get($feedback->get('underscore_entity_name'))->get('version')->getProxy()->setLabelGenerator(
-            function (
+            static function (
                 Version $version
             ) {
                 return sprintf('%s (%s)', $version->getProject(), $version->getVersionType());
@@ -143,7 +143,7 @@ final class FeedbackController extends AbstractActionController
 
                 return $this->redirect()
                     ->toRoute(
-                        'zfcadmin/evaluation/feedback/view',
+                        'zfcadmin/feedback/view',
                         ['id' => $feedback->getId()]
                     );
             }
@@ -154,7 +154,7 @@ final class FeedbackController extends AbstractActionController
 
             return $this->redirect()
                 ->toRoute(
-                    'zfcadmin/evaluation/feedback/view',
+                    'zfcadmin/feedback/view',
                     ['id' => $feedback->getId()]
                 );
         }

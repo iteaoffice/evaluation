@@ -15,11 +15,13 @@
     {{ ztbformelement(feedback.get('recommendedImprovements')) }}
     {{ ztbformelement(feedback.get('reviewFeedback')) }}
     {{ ztbformelement(feedback.get('evaluationFeedback')) }}
+    {{ ztbformelement(feedback.get('evaluationConclusion')) }}
 </fieldset>
 
 
 <div class="form-group row">
     <div class="offset-sm-3 col-sm-9">
+        {{ ztbformelement(form.get('csrf')) }}
         {{ ztbformelement(form.get('submit')) }}
         {{ ztbformelement(form.get('cancel')) }}
     </div>

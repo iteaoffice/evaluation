@@ -504,7 +504,7 @@ final class PdfExport extends AbstractPlugin
         // Latest project version (only for PPR)
         if ($this->evaluationReport->getProjectReportReport() !== null) {
             $this->parseCriterionLabel($this->translator->translate('txt-latest-project-version'));
-            $latestVersion = $this->projectService->getLatestProjectVersion($project);
+            $latestVersion = $this->projectService->getLatestApprovedProjectVersion($project);
 
             if (null !== $latestVersion) {
                 $this->pdf->Cell(self::$colWidths[2], $lineHeight, $latestVersion->getVersionType()->getDescription());
@@ -553,7 +553,7 @@ final class PdfExport extends AbstractPlugin
                 $version = $projectVersionReport->getVersion();
             }
         } else {
-            $version = $this->projectService->getLatestProjectVersion($project);
+            $version = $this->projectService->getLatestApprovedProjectVersion($project);
         }
         $this->parseCriterionLabel($this->translator->translate('txt-project-size'));
         $this->pdf->Cell(

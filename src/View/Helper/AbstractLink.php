@@ -278,7 +278,7 @@ abstract class AbstractLink extends AbstractViewHelper
         $this->linkIcon    = null;
     }
 
-    protected function extractrouteParams(?AbstractEntity $abstractEntity, array $params): void
+    protected function extractRouteParams(?AbstractEntity $abstractEntity, array $params): void
     {
         if (null === $abstractEntity) {
             return;
