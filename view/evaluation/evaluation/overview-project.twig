@@ -1,7 +1,6 @@
 {% do headTitle().append(translate("txt-project-evaluation")) %}
 {% do headLink().appendStylesheet(url('assets/funding-status-css')) %}
 
-
 <h1>{{ translate("txt-evaluation-of-type-%s-for-project-%s-in-%s")|format(evaluationType, project.parseFullName(), country) }}</h1>
 <ul class="nav nav-tabs" role="tablist">
     {% for type in evaluationTypes if type.id in [1,2] %}
@@ -42,14 +41,18 @@
                 </thead>
                 <tbody>
                 {% for document in version.versionDocument %}
-                    <tr>
-                        <td>
-                            {{ contentTypeIcon(document.contentType) }}
-                            {{ versionDocumentLink(document,'view-community', 'name') }}
-                            {{ versionDocumentLink(document,'download', 'icon') }}
-                        </td>
-                        <td>{{ document.type }}</td>
-                    </tr>
+                    {# do a poor mans righs-check to be able to omit the lines which have no access #}
+                    {% set versionDocumentLinkContent = versionDocumentLink(document,'view-community', 'name') %}
+                    {% if versionDocumentLinkContent %}
+                        <tr>
+                            <td>
+                                {{ contentTypeIcon(document.contentType) }}
+                                {{ versionDocumentLink(document,'view-community', 'name') }}
+                                {{ versionDocumentLink(document,'download', 'icon') }}
+                            </td>
+                            <td>{{ document.type }}</td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
