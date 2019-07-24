@@ -96,8 +96,8 @@ final class ReportAssertion extends AbstractAssertion
                     return true;
                 }
 
-                $reportReviews  = $contact->getProjectReportReviewer();
-                $versionReviews = $contact->getProjectVersionReviewer();
+                $reportReviews  = $contact->getProjectReportReviewers();
+                $versionReviews = $contact->getProjectVersionReviewers();
 
                 return ((count($reportReviews) + count($versionReviews)) > 0);
 

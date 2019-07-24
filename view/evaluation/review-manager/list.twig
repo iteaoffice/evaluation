@@ -17,7 +17,7 @@
                 {% for reviewer in projectPreferredReviewers %}
                     <tr>
                         <td>{{ contactLink(reviewer.getContact(), 'view-admin', 'name') }} {{ projectReviewLink(reviewer, 'edit', 'icon') }} {{ projectReviewLink(reviewer, 'delete', 'icon') }}</td>
-                        <td>{{ reviewContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
+                        <td>{{ reviewerContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -44,7 +44,7 @@
                 {% for reviewer in projectIgnoredReviewers %}
                     <tr>
                         <td>{{ contactLink(reviewer.getContact(), 'view-admin', 'name') }}</td>
-                        <td>{{ reviewContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
+                        <td>{{ reviewerContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -66,7 +66,7 @@
                 {% for reviewer in projectFutureReviewers %}
                     <tr>
                         <td>{{ contactLink(reviewer.getContact(), 'view-admin', 'name') }}</td>
-                        <td>{{ reviewContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
+                        <td>{{ reviewerContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
