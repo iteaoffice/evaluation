@@ -252,7 +252,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $queryBuilder->select('pr', 'prr');
                 $queryBuilder->from(ProjectReport::class, 'pr');
                 $queryBuilder->innerJoin('pr.project', 'p');
-                $queryBuilder->innerJoin('pr.review', 'rr');
+                $queryBuilder->innerJoin('pr.reviewers', 'rr');
                 $queryBuilder->leftJoin('pr.projectReportReport', 'prr');
                 $queryBuilder->leftJoin('prr.evaluationReport', 'er');
                 $queryBuilder->groupBy('pr.id');
