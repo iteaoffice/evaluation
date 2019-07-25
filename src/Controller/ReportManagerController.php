@@ -243,7 +243,7 @@ final class ReportManagerController extends AbstractActionController
                     if (!$importHelper->hasParseErrors()) {
                         $success = $importHelper->import($evaluationReport);
                     }
-                    unlink($excel['tmp_name']);
+                    //unlink($excel['tmp_name']);
                     if ($success) {
                         $this->evaluationReportService->save($evaluationReport);
                         $this->flashMessenger()->addSuccessMessage(

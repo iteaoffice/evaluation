@@ -20,8 +20,8 @@ namespace Evaluation\Entity\Report;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Zend\Form\Annotation;
 
 /**
@@ -30,17 +30,18 @@ use Zend\Form\Annotation;
  */
 class Criterion extends AbstractEntity
 {
-    public const INPUT_TYPE_BOOL   = 1; // Input type is Yes/No
+    public const INPUT_TYPE_BOOL = 1; // Input type is Yes/No
     public const INPUT_TYPE_STRING = 2; // Input type is a single line textfield
-    public const INPUT_TYPE_TEXT   = 3; // Input type is a multi-line textarea
+    public const INPUT_TYPE_TEXT = 3; // Input type is a multi-line textarea
     public const INPUT_TYPE_SELECT = 4; // Input type is select box
 
-    protected static $inputTypeTemplates = [
-        self::INPUT_TYPE_BOOL   => 'txt-input-type-bool',
-        self::INPUT_TYPE_STRING => 'txt-input-type-string',
-        self::INPUT_TYPE_TEXT   => 'txt-input-type-text',
-        self::INPUT_TYPE_SELECT => 'txt-input-type-select',
-    ];
+    protected static $inputTypeTemplates
+        = [
+            self::INPUT_TYPE_BOOL   => 'txt-input-type-bool',
+            self::INPUT_TYPE_STRING => 'txt-input-type-string',
+            self::INPUT_TYPE_TEXT   => 'txt-input-type-text',
+            self::INPUT_TYPE_SELECT => 'txt-input-type-select',
+        ];
 
     /**
      * @ORM\Column(name="criterion_id", type="integer", options={"unsigned":true})
@@ -159,8 +160,13 @@ class Criterion extends AbstractEntity
 
     public function __construct()
     {
-        $this->versions    = new ArrayCollection();
+        $this->versions = new ArrayCollection();
         $this->reportTypes = new ArrayCollection();
+    }
+
+    public static function getInputTypeTemplates(): array
+    {
+        return self::$inputTypeTemplates;
     }
 
     public function __get($property)
@@ -180,12 +186,21 @@ class Criterion extends AbstractEntity
 
     public function __toString(): string
     {
-        return (string) $this->criterion;
+        return (string)$this->criterion;
     }
 
-    public static function getInputTypeTemplates(): array
+    public function addReportTypes(Collection $collection): void
     {
-        return self::$inputTypeTemplates;
+        foreach ($collection as $type) {
+            $this->reportTypes->add($type);
+        }
+    }
+
+    public function removeReportTypes(Collection $collection): void
+    {
+        foreach ($collection as $type) {
+            $this->reportTypes->removeElement($type);
+        }
     }
 
     public function getId(): ?int
@@ -237,15 +252,15 @@ class Criterion extends AbstractEntity
         return $this->inputType;
     }
 
-    public function parseInputType(): string
-    {
-        return self::$inputTypeTemplates[$this->inputType];
-    }
-
     public function setInputType(int $inputType): Criterion
     {
         $this->inputType = $inputType;
         return $this;
+    }
+
+    public function parseInputType(): string
+    {
+        return self::$inputTypeTemplates[$this->inputType];
     }
 
     public function getValues(): ?string
