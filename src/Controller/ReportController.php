@@ -85,9 +85,9 @@ final class ReportController extends AbstractActionController
 
     public function listAction()
     {
-        $status = EvaluationReportService::STATUS_NEW;
+        $status     = EvaluationReportService::STATUS_NEW;
         $reportsNew = $this->evaluationReportService->findReviewReportsByContact($this->identity(), $status);
-        $hasNew = false;
+        $hasNew     = false;
         foreach ($reportsNew as $container) {
             if (!empty($container['reviews'])) {
                 $hasNew = true;

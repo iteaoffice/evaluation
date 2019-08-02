@@ -23,6 +23,7 @@ use Evaluation\Entity\Report as EvaluationReport;
 use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Evaluation\Service\EvaluationReportService;
+use Project\Service\ProjectService;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Zend\Permissions\Acl\Role\RoleInterface;
@@ -39,11 +40,17 @@ final class ReportAssertion extends AbstractAssertion
      */
     private $evaluationReportService;
 
+    /**
+     * @var ProjectService
+     */
+    private $projectService;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
 
         $this->evaluationReportService = $container->get(EvaluationReportService::class);
+        $this->projectService          = $container->get(ProjectService::class);
     }
 
     public function assert(
@@ -70,16 +77,14 @@ final class ReportAssertion extends AbstractAssertion
 
                 if ($reportReviewId) {
                     /** @var ReportReviewer $reportReview */
-                    $reportReview = $this->evaluationReportService
-                        ->find(ReportReviewer::class, (int)$reportReviewId);
+                    $reportReview = $this->projectService->find(ReportReviewer::class, (int)$reportReviewId);
 
                     return (($reportReview !== null) && ($reportReview->getContact()->getId() === $contact->getId()));
                 }
 
                 if ($versionReviewId) {
                     /** @var VersionReviewer $versionReview */
-                    $versionReview = $this->evaluationReportService
-                        ->find(VersionReviewer::class, (int)$versionReviewId);
+                    $versionReview = $this->projectService->find(VersionReviewer::class, (int)$versionReviewId);
 
                     return (($versionReview !== null) && ($versionReview->getContact()->getId() === $contact->getId()));
                 }

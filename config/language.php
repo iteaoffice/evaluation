@@ -45,3 +45,6 @@ _("txt-approved");
 _("txt-rejected");
 _("txt-contact");
 _("txt-reviewer-type");
+_("txt-excellent");
+_("txt-adequate");
+_("txt-alarming");

@@ -50,7 +50,6 @@ use function array_keys;
 use function array_merge;
 use function ceil;
 use function reset;
-use function unlink;
 use const PHP_INT_MAX;
 
 /**
@@ -108,14 +107,14 @@ final class ReportManagerController extends AbstractActionController
             return $this->redirect()->toRoute('zfcadmin/evaluation/report/list');
         }
 
-        $page = $this->params()->fromRoute('page', 1);
+        $page         = $this->params()->fromRoute('page', 1);
         $filterPlugin = $this->getEvaluationFilter();
         $filterValues = $filterPlugin->getFilter();
-        $subject = $filterValues['subject'] ?? null;
-        $type = $filterValues['type'] ?? EvaluationReport::TYPE_INDIVIDUAL;
-        $versionType = $filterValues['version'] ?? null;
+        $subject      = $filterValues['subject'] ?? null;
+        $type         = $filterValues['type'] ?? EvaluationReport::TYPE_INDIVIDUAL;
+        $versionType  = $filterValues['version'] ?? null;
         /** @var QueryBuilder $reportQuery */
-        $reportQuery = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
+        $reportQuery  = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
 
         // Download presentation
         if (($request->getQuery('presentation') !== null) && ($type === EvaluationReport::TYPE_FINAL)) {
@@ -163,10 +162,10 @@ final class ReportManagerController extends AbstractActionController
     public function newFinalAction()
     {
         /** @var Request $request */
-        $request = $this->getRequest();
+        $request     = $this->getRequest();
         $offlineMode = ($request->getQuery('mode') === 'offline');
-        $versionId = $this->params()->fromRoute('version');
-        $reportId = $this->params()->fromRoute('report');
+        $versionId   = $this->params()->fromRoute('version');
+        $reportId    = $this->params()->fromRoute('report');
 
         if (($versionId === null) && ($reportId === null)) {
             return $this->notFoundAction();
@@ -178,8 +177,8 @@ final class ReportManagerController extends AbstractActionController
 
         // Create upon starting the form so that create and edit can be handled by the same form
         $evaluationReport = new EvaluationReport();
-        $report = null;
-        $version = null;
+        $report           = null;
+        $version          = null;
 
         // In offline mode, produce an Excel download instead of the form
         if ($offlineMode) {
@@ -228,9 +227,7 @@ final class ReportManagerController extends AbstractActionController
             // Upload Excel
             if ($request->isPost()) {
                 $data = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
-                $uploadForm = new ReportUpload(
-                    ''
-                ); //@bart, could the action be '' as you only use the form here for validation
+                $uploadForm = new ReportUpload('');
                 $uploadForm->setData($data);
                 $excel = $uploadForm->get('excel')->getValue();
                 if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
@@ -243,7 +240,6 @@ final class ReportManagerController extends AbstractActionController
                     if (!$importHelper->hasParseErrors()) {
                         $success = $importHelper->import($evaluationReport);
                     }
-                    unlink($excel['tmp_name']);
                     if ($success) {
                         $this->evaluationReportService->save($evaluationReport);
                         $this->flashMessenger()->addSuccessMessage(
@@ -324,7 +320,6 @@ final class ReportManagerController extends AbstractActionController
                     }
                     $success = $importHelper->import($evaluationReport);
                 }
-                unlink($excel['tmp_name']);
                 if ($success) {
                     $this->evaluationReportService->save($evaluationReport);
                     $this->flashMessenger()->addSuccessMessage(
