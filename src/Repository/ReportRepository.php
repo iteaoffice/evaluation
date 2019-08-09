@@ -92,11 +92,16 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb1->innerJoin('vr.version', 'v');
                             $qb1->innerJoin('v.versionType', 'vt');
                             $qb1->leftJoin('vr.projectVersionReport', 'pvr');
+                            $qb1->leftJoin('v.changerequestProcess', 'crp');
                             $qb1->where($qb1->expr()->eq('vr.contact', ':contact'));
                             $qb1->andWhere($qb1->expr()->isNull('pvr.id'));
                             $qb1->andWhere($qb1->expr()->eq('v.versionType', ':versionType'));
                             $qb1->andWhere($qb1->expr()->gte('v.dateSubmitted', ':dateStartSelection'));
                             $qb1->andWhere($qb1->expr()->isNull('v.dateReviewed'));
+                            $qb1->andWhere($qb1->expr()->orX(
+                                $qb1->expr()->isNull('crp.id'),
+                                $qb1->expr()->eq('crp.type', ':processType')
+                            ));
                             if ($window->getDateEndSelection() !== null) {
                                 $qb1->andWhere($qb1->expr()->lt('v.dateSubmitted', ':dateEndSelection'));
                                 $qb1->setParameter('dateEndSelection', $window->getDateEndSelection());
@@ -105,6 +110,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb1->setParameter('contact', $contact);
                             $qb1->setParameter('versionType', $versionType);
                             $qb1->setParameter('dateStartSelection', $window->getDateStartSelection());
+                            $qb1->setParameter('processType', $reportVersion->getReportType()->getProcessType());
 
                             $return[$window->getId()]['reviews'] = array_merge(
                                 $return[$window->getId()]['reviews'],
