@@ -38,10 +38,12 @@ use function array_merge;
 use function in_array;
 
 /**
+ * Can't be final because of unit test
+ *
  * Class ReportRepository
  * @package Evaluation\Repository
  */
-final class ReportRepository extends EntityRepository implements FilteredObjectRepository
+/*final*/ class ReportRepository extends EntityRepository implements FilteredObjectRepository
 {
     public function findReviewReportsByContact(
         Contact $contact,

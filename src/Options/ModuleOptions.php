@@ -19,7 +19,13 @@ namespace Evaluation\Options;
 
 use Zend\Stdlib\AbstractOptions;
 
-final class ModuleOptions extends AbstractOptions
+/**
+ * AbstractServiceTest mocks this class, so can't be final
+ *
+ * Class ModuleOptions
+ * @package Evaluation\Options
+ */
+/*final*/ class ModuleOptions extends AbstractOptions
 {
     /**
      * @var string
