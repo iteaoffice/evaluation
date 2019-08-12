@@ -189,17 +189,17 @@ class Criterion extends AbstractEntity
         return (string)$this->criterion;
     }
 
-    public function addReportTypes(Collection $collection): void
+    public function addReportTypes(Collection $reportTypes): void
     {
-        foreach ($collection as $type) {
-            $this->reportTypes->add($type);
+        foreach ($reportTypes as $reportType) {
+            $this->reportTypes->add($reportType);
         }
     }
 
-    public function removeReportTypes(Collection $collection): void
+    public function removeReportTypes(Collection $reportTypes): void
     {
-        foreach ($collection as $type) {
-            $this->reportTypes->removeElement($type);
+        foreach ($reportTypes as $reportType) {
+            $this->reportTypes->removeElement($reportType);
         }
     }
 
@@ -316,19 +316,5 @@ class Criterion extends AbstractEntity
     {
         $this->reportTypes = $reportTypes;
         return $this;
-    }
-
-    public function addReportTypes(Collection $reportTypes): void
-    {
-        foreach ($reportTypes as $reportType) {
-            $this->reportTypes->add($reportType);
-        }
-    }
-
-    public function removeReportTypes(Collection $reportTypes): void
-    {
-        foreach ($reportTypes as $reportType) {
-            $this->reportTypes->removeElement($reportType);
-        }
     }
 }
