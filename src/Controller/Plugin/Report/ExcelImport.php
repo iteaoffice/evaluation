@@ -26,7 +26,9 @@ use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result as EvaluationReportResult;
 use Evaluation\Service\EvaluationReportService;
+use RuntimeException;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use function sprintf;
 use function unlink;
 
 /**
@@ -134,6 +136,14 @@ final class ExcelImport extends AbstractPlugin
                 $result->setEvaluationReport($evaluationReport);
                 /** @var Criterion\Version $criterionVersion */
                 $criterionVersion = $this->evaluationReportService->find(Criterion\Version::class, (int)$row[0]);
+                if ($criterionVersion === null) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Criterion version with ID %d not found. Are you trying to import an older evaluation template?',
+                            (int)$row[0]
+                        )
+                    );
+                }
                 $result->setCriterionVersion($criterionVersion);
                 $result->setScore($score);
                 $result->setValue($value);

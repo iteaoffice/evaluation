@@ -56,20 +56,20 @@ final class WindowController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService $formService,
-        TranslatorInterface $translator
+        FormService             $formService,
+        TranslatorInterface     $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->formService = $formService;
-        $this->translator = $translator;
+        $this->formService             = $formService;
+        $this->translator              = $translator;
     }
 
     public function listAction()
     {
-        $page = $this->params()->fromRoute('page', 1);
+        $page         = $this->params()->fromRoute('page', 1);
         $filterPlugin = $this->getEvaluationFilter();
-        $query = $this->evaluationReportService->findFiltered(Window::class, $filterPlugin->getFilter());
-        $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
+        $query        = $this->evaluationReportService->findFiltered(Window::class, $filterPlugin->getFilter());
+        $paginator    = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
         $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);
         $paginator->setCurrentPageNumber($page);
         $paginator->setPageRange(\ceil($paginator->getTotalItemCount() / $paginator::getDefaultItemCountPerPage()));
@@ -77,15 +77,13 @@ final class WindowController extends AbstractActionController
         $form = new WindowFilter();
         $form->setData(['filter' => $filterPlugin->getFilter()]);
 
-        return new ViewModel(
-            [
-                'paginator'     => $paginator,
-                'form'          => $form,
-                'encodedFilter' => \urlencode($filterPlugin->getHash()),
-                'order'         => $filterPlugin->getOrder(),
-                'direction'     => $filterPlugin->getDirection(),
-            ]
-        );
+        return new ViewModel([
+            'paginator'     => $paginator,
+            'form'          => $form,
+            'encodedFilter' => \urlencode($filterPlugin->getHash()),
+            'order'         => $filterPlugin->getOrder(),
+            'direction'     => $filterPlugin->getDirection(),
+        ]);
     }
 
     public function viewAction(): ViewModel
@@ -96,11 +94,9 @@ final class WindowController extends AbstractActionController
             return $this->notFoundAction();
         }
 
-        return new ViewModel(
-            [
-                'window' => $window
-            ]
-        );
+        return new ViewModel([
+            'window' => $window
+        ]);
     }
 
     public function newAction()
@@ -160,7 +156,7 @@ final class WindowController extends AbstractActionController
                 $window = $form->getData();
                 $this->evaluationReportService->save($window);
                 $this->flashMessenger()->addSuccessMessage(
-                    $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
+                    $this->translator->translate('txt-evaluation-report-window-has-successfully-been-saved')
                 );
                 return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report/window/view',

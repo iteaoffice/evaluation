@@ -58,7 +58,7 @@ final class ExcelDownload extends AbstractPlugin
     /**
      * @var string
      */
-    private $zipTempFile;
+    private $zipTempFile = '';
 
     public function __construct(
         EvaluationReportService $evaluationReportService,

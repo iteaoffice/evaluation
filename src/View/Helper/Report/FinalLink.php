@@ -33,10 +33,10 @@ final class FinalLink extends AbstractLink
 {
     public function __invoke(
         EvaluationReport $evaluationReport = null,
-        string $action = 'view',
-        string $show = 'text',
-        ProjectReport $projectReport = null,
-        ProjectVersion $projectVersion = null
+        string           $action = 'view',
+        string           $show = 'text',
+        ProjectReport    $projectReport = null,
+        ProjectVersion   $projectVersion = null
     ): string {
         $this->reset();
 
@@ -52,10 +52,10 @@ final class FinalLink extends AbstractLink
     }
 
     public function parseAction(
-        string $action,
+        string            $action,
         ?EvaluationReport $evaluationReport,
-        ?ProjectReport $projectReport,
-        ?ProjectVersion $version
+        ?ProjectReport    $projectReport,
+        ?ProjectVersion   $version
     ): void {
         $this->action = $action;
 
@@ -80,6 +80,7 @@ final class FinalLink extends AbstractLink
             case 'finalise':
                 $this->setRoute('zfcadmin/evaluation/report/finalise');
                 $this->setText($this->translator->translate('txt-finalise-evaluation-report'));
+                $this->setLinkIcon('fa fa-lock');
                 break;
             case 'undo-final':
                 $this->setRoute('zfcadmin/evaluation/report/undo-final');

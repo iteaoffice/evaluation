@@ -318,14 +318,14 @@ class Criterion extends AbstractEntity
         return $this;
     }
 
-    public function addTopicReportTypes(Collection $reportTypes): void
+    public function addReportTypes(Collection $reportTypes): void
     {
         foreach ($reportTypes as $reportType) {
             $this->reportTypes->add($reportType);
         }
     }
 
-    public function removeTopicReportTypes(Collection $reportTypes): void
+    public function removeReportTypes(Collection $reportTypes): void
     {
         foreach ($reportTypes as $reportType) {
             $this->reportTypes->removeElement($reportType);

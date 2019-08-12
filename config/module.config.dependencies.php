@@ -150,6 +150,10 @@ return [
             Options\ModuleOptions::class,
             TranslatorInterface::class
         ],
+        Controller\Plugin\Report\ExcelDownload::class         => [
+            Service\EvaluationReportService::class,
+            'ControllerPluginManager',
+        ],
         Controller\Plugin\Report\ExcelImport::class           => [
             Service\EvaluationReportService::class
         ],

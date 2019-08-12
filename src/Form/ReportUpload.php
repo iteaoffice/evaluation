@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Evaluation\Form;
 
-use Project\Entity\Evaluation\Report as EvaluationReport;
-use Project\Entity\Report\Report;
-use Project\Entity\Version\Version;
 use Zend\Form\Element;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;

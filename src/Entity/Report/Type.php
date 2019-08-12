@@ -31,12 +31,12 @@ use Zend\Form\Annotation;
  */
 class Type extends AbstractEntity
 {
-    public const TYPE_GENERAL_REPORT = 'report';
+    public const TYPE_GENERAL_REPORT  = 'report';
     public const TYPE_GENERAL_VERSION = 'version';
 
-    public const TYPE_REPORT = 1;
-    public const TYPE_PO_VERSION = 2;
-    public const TYPE_FPP_VERSION = 3;
+    public const TYPE_REPORT           = 1;
+    public const TYPE_PO_VERSION       = 2;
+    public const TYPE_FPP_VERSION      = 3;
     public const TYPE_MINOR_CR_VERSION = 4;
     public const TYPE_MAJOR_CR_VERSION = 5;
 
@@ -73,6 +73,12 @@ class Type extends AbstractEntity
      * @var string
      */
     private $type;
+    /**
+     * @ORM\Column(name="process_type", type="smallint", options={"unsigned":true}, nullable=true)
+     *
+     * @var integer
+     */
+    private $processType;
     /**
      * @ORM\ManyToOne(targetEntity="Project\Entity\Version\Type", cascade={"persist"}, inversedBy="evaluationReportType")
      * @ORM\JoinColumn(name="version_type_id", referencedColumnName="type_id", nullable=true)
@@ -152,6 +158,17 @@ class Type extends AbstractEntity
     public function setType(string $type): Type
     {
         $this->type = $type;
+        return $this;
+    }
+
+    public function getProcessType(): ?int
+    {
+        return $this->processType;
+    }
+
+    public function setProcessType(int $processType): Type
+    {
+        $this->processType = $processType;
         return $this;
     }
 

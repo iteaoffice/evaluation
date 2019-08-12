@@ -33,13 +33,13 @@ use Zend\Form\Annotation;
 class ProjectReport extends AbstractEntity
 {
     public const PROJECT_STATUS_EXCELLENT = 1; // Excellent project status
-    public const PROJECT_STATUS_AVERAGE = 2; // Average project status
-    public const PROJECT_STATUS_ALARMING = 3; // Bad project status
+    public const PROJECT_STATUS_ADEQUATE  = 2; // Adequate project status
+    public const PROJECT_STATUS_ALARMING  = 3; // Bad project status
 
     private static $projectStatuses
         = [
             self::PROJECT_STATUS_EXCELLENT => 'txt-excellent',
-            self::PROJECT_STATUS_AVERAGE   => 'txt-average',
+            self::PROJECT_STATUS_ADEQUATE  => 'txt-adequate',
             self::PROJECT_STATUS_ALARMING  => 'txt-alarming'
         ];
 

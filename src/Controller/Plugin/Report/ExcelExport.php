@@ -370,6 +370,19 @@ final class ExcelExport extends AbstractPlugin
         $displaySheet->setCellValue('B' . $row, $project->getTitle());
         $row++;
 
+        // Project description (only for PPR)
+        if ($this->evaluationReport->getProjectReportReport() !== null) {
+            $this->parseCriterionLabel($displaySheet, $row, $this->translator->translate('txt-description'));
+            $mergeCell = 'B' . $row . ':C' . $row;
+            $displaySheet->mergeCells($mergeCell);
+            $displaySheet->setCellValue('B' . $row, $project->getDescription());
+            $roughRowHeight = 15 * ceil((strlen($project->getDescription()) / 108));
+            $displaySheet->getRowDimension($row)->setRowHeight($roughRowHeight);
+            $displaySheet->getStyle($mergeCell)->getAlignment()->setVertical(Alignment::VERTICAL_TOP)
+                ->setWrapText(true);
+            $row++;
+        }
+
         // Project leader
         $this->parseCriterionLabel($displaySheet, $row, $this->translator->translate('txt-project-leader'));
         $displaySheet->setCellValue('B' . $row, $project->getContact()->parseFullName());
