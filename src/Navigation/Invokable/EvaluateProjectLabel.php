@@ -30,13 +30,13 @@ final class EvaluateProjectLabel extends AbstractNavigationInvokable
 {
     public function __invoke(Mvc $page): void
     {
+        $label = $this->translator->translate('txt-evaluation');
+
         if ($this->getEntities()->containsKey(Project::class)) {
             /** @var Project $project */
             $project = $this->getEntities()->get(Project::class);
             $this->getEntities()->set(Call::class, $project->getCall());
-            $label = (string)sprintf($this->translator->translate("txt-evaluation-project-%s"), $project);
-        } else {
-            $label = $this->translator->translate("txt-evaluation");
+            $label = (string)sprintf($this->translator->translate('txt-evaluation-project-%s'), $project);
         }
         $page->set('label', $label);
     }
