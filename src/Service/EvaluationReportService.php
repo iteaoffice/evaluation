@@ -149,6 +149,20 @@ class EvaluationReportService extends AbstractService
         }
 
         $resultCount = 0;
+        /** @var EvaluationReport\Result $result */
+        foreach ($evaluationReport->getResults() as $result) {
+            if ($result->getCriterionVersion()->getRequired()
+                && ((($result->getScore() !== null) && ($result->getScore() !== -1)) || !empty($result->getValue()))
+            ) {
+                $resultCount++;
+            }
+        }
+
+        // No results is always 0%
+        if ($resultCount === 0) {
+            return 0.0;
+        }
+
         $key = $evaluationReport->getVersion()->getId();
         if (!isset($requiredCounts[$key])) {
             $requiredCounts[$key] = $this->entityManager->getRepository(CriterionVersion::class)->count([
@@ -157,18 +171,9 @@ class EvaluationReportService extends AbstractService
             ]);
         }
 
-        /** @var EvaluationReport\Result $result */
-        foreach ($evaluationReport->getResults() as $result) {
-            if ((($result->getScore() !== null) && ($result->getScore() !== -1))
-                || !empty($result->getValue())
-                || !$result->getCriterionVersion()->getRequired()
-            ) {
-                $resultCount++;
-            }
-        }
-
-        if (($resultCount === 0) || ($requiredCounts[$key] === 0)) {
-            return 0.0;
+        // There are results, but no required criteria, so 100%
+        if ($requiredCounts[$key] === 0) {
+            return 100.0;
         }
 
         // Legacy evaluation reports can end up above 100%, so just cap it at 100
@@ -203,6 +208,7 @@ class EvaluationReportService extends AbstractService
                 $result = clone $resultTemplate;
                 $result->setEvaluationReport($evaluationReport);
                 $result->setCriterionVersion($criterionVersion);
+
                 // Pre-fill previous PO evaluation results for FPP evaluation reports
                 if (($reportVersion->getReportType()->getId() === EvaluationReportType::TYPE_FPP_VERSION)
                     && $newResults

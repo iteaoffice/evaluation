@@ -249,12 +249,12 @@ class Report extends AbstractEntity
         return $this;
     }
 
-    public function getResults()
+    public function getResults(): Collection
     {
         return $this->results;
     }
 
-    public function setResults($results)
+    public function setResults(Collection $results)
     {
         $this->results = $results;
         return $this;

@@ -36,7 +36,7 @@ use function strtoupper;
  *
  * @package Evaluation\Repository\Report
  */
-final class VersionRepository extends EntityRepository implements FilteredObjectRepository
+/*final*/ class VersionRepository extends EntityRepository implements FilteredObjectRepository
 {
     public function findFiltered(array $filter = []): QueryBuilder
     {

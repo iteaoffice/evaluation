@@ -22,6 +22,7 @@ use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Service\EvaluationReportService;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\View\Helper\AbstractHelper;
+use function round;
 use function sprintf;
 
 /**
@@ -47,7 +48,7 @@ final class Progress extends AbstractHelper
 
     public function __invoke(EvaluationReport $evaluationReport = null): string
     {
-        $percentage = $this->evaluationReportService->parseCompletedPercentage($evaluationReport);
+        $percentage = round($this->evaluationReportService->parseCompletedPercentage($evaluationReport));
         $final      = (null === $evaluationReport) ? false : $evaluationReport->getFinal();
         $template   = '<div class="progress" style="margin-bottom: 0; height:2em;">
             <div class="progress-bar bg-%s" role="progressbar" aria-valuenow="%d" aria-valuemin="0" aria-valuemax="100" style="padding-left:2px; min-width: 2em; width: %d%%;">%s</div>

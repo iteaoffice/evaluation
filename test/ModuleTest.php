@@ -27,6 +27,8 @@ use function is_string;
  */
 class ModuleTest extends AbstractServiceTest
 {
+    protected $setUpForEveryTest = false;
+
     public function testCanFindConfiguration(): void
     {
         $module = new Module();
@@ -44,7 +46,7 @@ class ModuleTest extends AbstractServiceTest
         $abstractFacories = $config[ConfigAbstractFactory::class] ?? [];
 
         foreach ($abstractFacories as $service => $dependencies) {
-            //Skip the Filters
+            // Skip the Filters
             if (strpos($service, 'Filter') !== false) {
                 continue;
             }
