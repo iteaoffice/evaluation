@@ -114,7 +114,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         self::$finalReportEvaluationReport = $reportEvaluationReportFinal;
     }
 
-    public function testFindReviewReportsByContact()
+    public function testFindReviewReportsByContact(): void
     {
         $contact =  new Contact();
         $contact->setId(1);
@@ -135,7 +135,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $this->assertEquals([], $reviews);
     }
 
-    public function testGetReviewers()
+    public function testGetReviewers():void
     {
         /** @var EntityManager $entityManagerMock */
         $entityManagerMock = $this->getEntityManagerMock();

@@ -141,8 +141,12 @@ $config = [
             Navigation\Invokable\Report\Criterion\TopicLabel::class    => Factory\InvokableFactory::class,
             Navigation\Invokable\Report\Criterion\VersionLabel::class  => Factory\InvokableFactory::class,
             Navigation\Invokable\Reviewer\ContactLabel::class          => Factory\InvokableFactory::class,
+
+            Navigation\Invokable\EvaluateProjectLabel::class => Factory\InvokableFactory::class,
+            Navigation\Invokable\EvaluationLabel::class      => Factory\InvokableFactory::class,
+            Navigation\Invokable\FeedbackLabel::class        => Factory\InvokableFactory::class,
             // Misc
-            Options\ModuleOptions::class                               => Options\Factory\ModuleOptionsFactory::class
+            Options\ModuleOptions::class                     => Options\Factory\ModuleOptionsFactory::class
         ],
     ],
     'doctrine'           => [

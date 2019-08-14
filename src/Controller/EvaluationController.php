@@ -129,6 +129,15 @@ final class EvaluationController extends AbstractActionController
         $this->translator        = $translator;
     }
 
+    public function indexAction()
+    {
+        $call = $this->callService->findLastActiveCall();
+        if (null === $call) {
+            return $this->notFoundAction();
+        }
+        return $this->redirect()->toRoute('community/evaluation/overview', ['call' => $call->getId()]);
+    }
+
     public function overviewAction(): ViewModel
     {
         /** @var Request $request */
