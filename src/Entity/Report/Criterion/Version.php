@@ -161,6 +161,7 @@ class Version extends AbstractEntity
     public function __construct()
     {
         $this->versionTopics = new ArrayCollection();
+        $this->results       = new ArrayCollection();
     }
 
     public function __get($property)

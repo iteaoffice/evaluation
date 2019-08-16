@@ -244,7 +244,7 @@ final class ReportController extends AbstractActionController
 
         // Pre-fill FPP form with PO data
         $evaluationReportType = $evaluationReport->getVersion()->getReportType();
-        if (!$request->isPost() && ($evaluationReportType === EvaluationReport\Type::TYPE_FPP_VERSION)) {
+        if (!$request->isPost() && ($evaluationReportType->getId() === EvaluationReport\Type::TYPE_FPP_VERSION)) {
             $this->evaluationReportService->preFillFppReport($evaluationReport);
         }
 

@@ -494,7 +494,7 @@ use function in_array;
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function getSortedCriteriaVersions(EvaluationReportVersion $reportVersion): array
+    public function getSortedCriterionVersions(EvaluationReportVersion $reportVersion): array
     {
         $queryBuilder = $this->_em->createQueryBuilder();
         $queryBuilder->select('cv', 'c', 'ct', 'cc', 'cvt', 't');
