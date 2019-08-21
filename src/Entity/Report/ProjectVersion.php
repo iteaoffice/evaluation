@@ -143,7 +143,6 @@ class ProjectVersion extends AbstractEntity
     {
         $this->version = $version;
         return $this;
-
     }
 
     public function getVersion(): ?Version

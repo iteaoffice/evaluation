@@ -861,16 +861,61 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $this->parseHeading('', 15, 'L', 'sub');
 
         $explanation = 'EMPTY';
+        $project = EvaluationReportService::getProject($this->evaluationReport);
 
-        if ($this->versionType->getId() === Type::TYPE_FPP || $this->versionType->getId() === Type::TYPE_PO) {
+        if ($this->versionType->getId() === Type::TYPE_PO) {
             if ($this->version->isApproved()) {
-                $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-approved');
+                $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-approved-po');
             }
 
             if ($this->version->isRejected()) {
-                $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-rejected');
+                $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-rejected-po');
             }
         }
+
+
+        if ($this->versionType->getId() === Type::TYPE_FPP) {
+            if ($this->version->isApproved()) {
+                $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-approved-fpp');
+            }
+
+            if ($this->version->isRejected()) {
+                $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-rejected-fpp');
+            }
+        }
+
+
+        if (in_array('EURIPIDES', $project->parsePrograms(), true)) {
+            if ($this->versionType->getId() === Type::TYPE_PO) {
+                if ($this->version->isApproved()) {
+                    $explanation = $this->translator->translate(
+                        'txt-aeneas-management-committee-decision-approved-po-co-label'
+                    );
+                }
+
+                if ($this->version->isRejected()) {
+                    $explanation = $this->translator->translate(
+                        'txt-aeneas-management-committee-decision-rejected-po-co-label'
+                    );
+                }
+            }
+
+
+            if ($this->versionType->getId() === Type::TYPE_FPP) {
+                if ($this->version->isApproved()) {
+                    $explanation = $this->translator->translate(
+                        'txt-aeneas-management-committee-decision-approved-fpp-co-label'
+                    );
+                }
+
+                if ($this->version->isRejected()) {
+                    $explanation = $this->translator->translate(
+                        'txt-aeneas-management-committee-decision-rejected-fpp-co-label'
+                    );
+                }
+            }
+        }
+
 
         // Some explanation
         $lineHeight = self::$lineHeights['line'];
