@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityRepository;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Evaluation\Repository\Report\VersionRepository;
 use Evaluation\Repository\ReportRepository;
 use Evaluation\Service\EvaluationReportService;
 use Program\Entity\Call\Call;
@@ -18,6 +19,7 @@ use Program\Entity\Program;
 use Project\Entity\ChangeRequest\Process;
 use Project\Entity\Project;
 use Project\Entity\Report\Report;
+use Project\Entity\Version\Reviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Version;
@@ -518,7 +520,155 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         );
 
         // Test unknown type
+        $unknownReportType = new EvaluationReportType();
+        $unknownReportType->setId(0);
+        $reportVersion = new EvaluationReport\Version();
+        $reportVersion->setId(1);
+        $reportVersion->setReportType($unknownReportType);
+        $evaluationReport = $service->prepareEvaluationReport($reportVersion, 1);
 
+        $this->assertNull($evaluationReport->getProjectVersionReport());
+        $this->assertNull($evaluationReport->getProjectReportReport());
+        $this->assertEquals(1, $evaluationReport->getVersion()->getId());
+    }
 
+    public function testPreFillFppReport()
+    {
+        $matchingCriterion = new EvaluationReport\Criterion();
+        $matchingCriterion->setId(1);
+        $project = new Project();
+
+        $poCriterionVersion = new EvaluationReport\Criterion\Version();
+        $poCriterionVersion->setCriterion($matchingCriterion);
+        $poResult = new EvaluationReport\Result();
+        $poResult->setId(1);
+        $poResult->setScore(1);
+        $poResult->setCriterionVersion($poCriterionVersion);
+        $poEvaluationReport = new EvaluationReport();
+        $poEvaluationReport->setScore(EvaluationReport::SCORE_TOP);
+        $poEvaluationReport->getResults()->add($poResult);
+        $poProjectVersionReport = new EvaluationReport\ProjectVersion();
+        $poProjectVersionReport->setEvaluationReport($poEvaluationReport);
+        $poVersionType = new VersionType();
+        $poVersionType->setId(VersionType::TYPE_PO);
+        $poVersion = new Version();
+        $poVersion->setVersionType($poVersionType);
+        $poVersion->setProject($project);
+        $poVersion->setProjectVersionReport($poProjectVersionReport);
+        $project->getVersion()->add($poVersion);
+
+        $fppVersionType = new VersionType();
+        $fppVersionType->setId(VersionType::TYPE_FPP);
+        $fppVersion = new Version();
+        $fppVersion->setVersionType($fppVersionType);
+        $fppVersion->setProject($project);
+        $project->getVersion()->add($fppVersion);
+        $fppProjectVersionReport = new EvaluationReport\ProjectVersion();
+        $fppReviewer = new Reviewer();
+        $fppReviewer->setVersion($fppVersion);
+        $fppReviewer->setProjectVersionReport($fppProjectVersionReport);
+        $fppProjectVersionReport->setReviewer($fppReviewer);
+        $fppReportType = new EvaluationReportType();
+        $fppReportType->setId(EvaluationReportType::TYPE_FPP_VERSION);
+        $fppReportVersion = new EvaluationReport\Version();
+        $fppReportVersion->setReportType($fppReportType);
+        $fppCriterionVersion = new EvaluationReport\Criterion\Version();
+        $fppCriterionVersion->setCriterion($matchingCriterion);
+        $fppResult = new EvaluationReport\Result();
+        $fppResult->setCriterionVersion($fppCriterionVersion);
+        $fppEvaluationReport = new EvaluationReport();
+        $fppEvaluationReport->setVersion($fppReportVersion);
+        $fppEvaluationReport->setProjectVersionReport($fppProjectVersionReport);
+        $fppEvaluationReport->getResults()->add($fppResult);
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var EntityManager $entityManagerMock */
+        $service = new EvaluationReportService($entityManagerMock);
+
+        $service->preFillFppReport($fppEvaluationReport);
+
+        $this->assertEquals(EvaluationReport::SCORE_TOP, $fppEvaluationReport->getScore());
+        /** @var EvaluationReport\Result $fppResult */
+        $fppResult = $fppEvaluationReport->getResults()->first();
+        $this->assertInstanceOf(EvaluationReport\Result::class, $fppResult);
+        $this->assertEquals(1, $fppResult->getScore());
+    }
+
+    public function testCopyEvaluationReportVersion()
+    {
+        $criterionVersion = new EvaluationReport\Criterion\Version();
+        $criterionVersion->setId(1);
+        $criterionVersion->setCriterion((new EvaluationReport\Criterion())->setId(1));
+        $criterionVersion->setType((new EvaluationReport\Criterion\Type())->setId(1));
+        $criterionVersion->setHighlighted(true);
+        $criterionVersion->setSequence(3);
+        $criterionVersion->setRequired(true);
+        $criterionVersion->setConfidential(true);
+        $criterionVersion->setReportVersion((new EvaluationReport\Version())->setId(1));
+        $criterionVersion->getVersionTopics()->add((new EvaluationReport\Criterion\VersionTopic())->setId(1));
+
+        $evaluationReportVersion = new EvaluationReport\Version();
+        $evaluationReportVersion->setLabel('Test');
+        $evaluationReportVersion->setReportType((new EvaluationReportType())->setId(1));
+        $evaluationReportVersion->getCriterionVersions()->add($criterionVersion);
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var EntityManager $entityManagerMock */
+        $service = new EvaluationReportService($entityManagerMock);
+
+        $copy = $service->copyEvaluationReportVersion($evaluationReportVersion);
+
+        $this->assertCount(1, $copy->getCriterionVersions());
+        /** @var EvaluationReport\Criterion\Version $criterionVersionCopy */
+        $criterionVersionCopy = $copy->getCriterionVersions()->first();
+        $this->assertNotEquals(1, $criterionVersionCopy->getId());
+        $this->assertEquals(1, $criterionVersionCopy->getCriterion()->getId());
+        $this->assertEquals(1, $criterionVersionCopy->getType()->getId());
+        $this->assertNotEquals(1, $criterionVersionCopy->getReportVersion()->getId());
+        $this->assertEquals(3, $criterionVersionCopy->getSequence());
+        $this->assertTrue($criterionVersionCopy->getHighlighted());
+        $this->assertTrue($criterionVersionCopy->getRequired());
+        $this->assertTrue($criterionVersionCopy->getConfidential());
+    }
+
+    public function testFindReportVersionForProjectVersion()
+    {
+        $projectVersion = new Version();
+        $projectVersion->setId(1);
+
+        $evaluationReportVersion1 = new EvaluationReport\Version();
+        $evaluationReportVersion1->setId(1);
+
+        $evaluationReportVersionRepositoryMock = $this->getMockBuilder(VersionRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['findByProjectVersion'])
+            ->getMock();
+
+        $evaluationReportVersionRepositoryMock->expects($this->once())
+            ->method('findByProjectVersion')
+            ->with($projectVersion)
+            ->willReturn($evaluationReportVersion1);
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('getRepository')
+            ->with(EvaluationReport\Version::class)
+            ->willReturn($evaluationReportVersionRepositoryMock);
+
+        /** @var EntityManager $entityManagerMock */
+        $service = new EvaluationReportService($entityManagerMock);
+
+        $evaluationReportVersion2 = $service->findReportVersionForProjectVersion($projectVersion);
+        $this->assertEquals($evaluationReportVersion1->getId(), $evaluationReportVersion2->getId());
     }
 }

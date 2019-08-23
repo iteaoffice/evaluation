@@ -28,7 +28,7 @@ final class ReviewerRepository extends EntityRepository
         $limitQueryBuilder = $this->_em->createQueryBuilder();
         $limitQueryBuilder->select('c');
         $limitQueryBuilder->from(Reviewer::class, 'r');
-        $limitQueryBuilder->join('pr.contact', 'c');
+        $limitQueryBuilder->innerJoin('r.contact', 'c');
         $limitQueryBuilder->andWhere('r.project = :project');
 
         return $limitQueryBuilder;
