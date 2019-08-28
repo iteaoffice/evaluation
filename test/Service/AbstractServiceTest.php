@@ -7,7 +7,9 @@ namespace EvaluationTest\Service;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Evaluation\Entity\Report;
+use Evaluation\Entity\Reviewer;
 use Evaluation\Repository\ReportRepository;
+use Evaluation\Repository\ReviewerRepository;
 use Evaluation\Service\AbstractService;
 use Testing\Util\AbstractServiceTest as UtilAbstractServiceTest;
 
@@ -26,6 +28,10 @@ class AbstractServiceTest extends UtilAbstractServiceTest
             ->setMethods(['findFiltered'])
             ->getMock();
 
+        $reviewerRepositoryMock = $this->getMockBuilder(ReviewerRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $evaluationReportRepositoryMock->expects($this->once())
             ->method('findFiltered')
             ->with([])
@@ -36,14 +42,18 @@ class AbstractServiceTest extends UtilAbstractServiceTest
             ->setMethods(['getRepository'])
             ->getMock();
 
-        $entityManagerMock->expects($this->once())
+        $map = [
+            [$entity, $evaluationReportRepositoryMock],
+            [Reviewer::class, $reviewerRepositoryMock]
+        ];
+
+        $entityManagerMock->expects($this->exactly(2))
             ->method('getRepository')
-            ->with($entity)
-            ->willReturn($evaluationReportRepositoryMock);
+            ->will($this->returnValueMap($map));
 
         $service = new class($entityManagerMock) extends AbstractService {};
 
-        $result = $service->findFiltered($entity, []);
-        $this->assertEquals($queryBuilderMock, $result);
+        $this->assertEquals($queryBuilderMock, $service->findFiltered($entity, []));
+        $this->assertNull($service->findFiltered(Reviewer::class, []));
     }
 }

@@ -21,7 +21,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Evaluation\Entity\Reviewer;
 
-final class ReviewerRepository extends EntityRepository
+/*final*/ class ReviewerRepository extends EntityRepository
 {
     public function findReviewContactByProjectQueryBuilder(): QueryBuilder
     {
