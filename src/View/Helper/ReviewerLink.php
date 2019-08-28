@@ -30,9 +30,9 @@ final class ReviewerLink extends AbstractLink
 {
     public function __invoke(
         Reviewer $reviewer = null,
-        string $action = 'new',
-        string $show = 'text',
-        Project $project = null
+        string   $action = 'new',
+        string   $show = 'text',
+        Project  $project = null
     ): string {
         $this->reset();
 
@@ -77,11 +77,6 @@ final class ReviewerLink extends AbstractLink
                         null === $reviewer ? '' : $reviewer->getContact()->parseFullName()
                     )
                 );
-                break;
-            case 'export':
-                $this->setRoute('zfcadmin/evaluation/reviewer/export');
-                $this->setLinkIcon('fa-file-text-o');
-                $this->setText($this->translator->translate('txt-export-review-roster-text-file'));
                 break;
         }
     }

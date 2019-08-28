@@ -107,11 +107,11 @@ final class RosterGenerator extends AbstractPlugin
     public function __construct(
         ReviewRosterService $reviewRosterService,
         TranslatorInterface $translator,
-        ModuleOptions $moduleOptions
+        ModuleOptions       $moduleOptions
     ) {
         $this->reviewRosterService = $reviewRosterService;
-        $this->translator = $translator;
-        $this->moduleOptions = $moduleOptions;
+        $this->translator          = $translator;
+        $this->moduleOptions       = $moduleOptions;
     }
 
     /**
@@ -126,12 +126,12 @@ final class RosterGenerator extends AbstractPlugin
     public function __invoke(
         string $type,
         string $configFile,
-        int $reviewersPerProject,
-        bool $includeSpareReviewers = false,
-        ?int $forceProjectsPerRound = null
+        int    $reviewersPerProject,
+        bool   $includeSpareReviewers = false,
+        ?int   $forceProjectsPerRound = null
     ): RosterGenerator {
-        $this->type = $type;
-        $this->config = $this->reviewRosterService->parseConfigFile($configFile);
+        $this->type       = $type;
+        $this->config     = $this->reviewRosterService->parseConfigFile($configFile);
         $this->rosterData = $this->reviewRosterService->generateRosterData(
             $type,
             $this->config,
@@ -139,7 +139,7 @@ final class RosterGenerator extends AbstractPlugin
             $includeSpareReviewers,
             $forceProjectsPerRound
         );
-        $this->log = $this->reviewRosterService->getLog();
+        $this->log       = $this->reviewRosterService->getLog();
         $this->reviewers = array_merge($this->config['present'], $this->config['spare']);
         ksort($this->reviewers);
         $this->generateSpreadsheet();

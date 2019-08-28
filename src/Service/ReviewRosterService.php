@@ -57,6 +57,7 @@ use function shuffle;
 use function sprintf;
 use function sqrt;
 use function strtolower;
+use function unlink;
 
 /**
  * Class ReviewRosterService
@@ -1414,6 +1415,7 @@ class ReviewRosterService
 
         $reader = null;
         $excel = null;
+        unlink($configFile);
 
         return $config;
     }

@@ -19,10 +19,6 @@ return [
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/reviewer/export',
-                    'roles' => ['office'],
-                ],
-                [
                     'route' => 'zfcadmin/evaluation/reviewer/roster',
                     'roles' => ['office'],
                 ],

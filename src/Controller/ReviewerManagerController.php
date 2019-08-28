@@ -232,59 +232,6 @@ final class ReviewerManagerController extends AbstractActionController
         );
     }
 
-    /**
-     * @return Response
-     * @deprecated Just for legacy reasons. Please use the roster functionality.
-     */
-    public function exportAction(): Response
-    {
-        $output = '';
-        $projectId = $this->params()->fromRoute('project');
-
-        // Export a single project
-        if ($projectId) {
-            $output .= "1\r\n";
-            $project = $this->projectService->findProjectById($projectId);
-            $output .= $this->reviewerService->exportReviewers($project);
-        // Export all active projects
-        } else {
-            $projects = $this->projectService->findActiveProjectsForReviewRoster();
-            $output .= count($projects) . "\r\n";
-            foreach ($projects as $project) {
-                $output .= $this->reviewerService->exportReviewers($project);
-            }
-        }
-
-        ob_start();
-        // Gzip the output when possible. @see http://php.net/manual/en/function.ob-gzhandler.php
-        $gzip = ob_start('ob_gzhandler');
-        echo trim(iconv('UTF-8', 'Windows-1252', $output));
-        if ($gzip) {
-            ob_end_flush(); // Flush the gzipped buffer into the main buffer
-        }
-        $contentLength = ob_get_length();
-
-        // Prepare the response
-        $response = new Response();
-        $response->setContent(ob_get_clean());
-        $response->setStatusCode(200);
-        $headers = new Headers();
-        $headers->addHeaders([
-            'Content-Disposition' => 'attachment; filename="projects.txt"',
-            'Content-Type'        => 'Content-Type: text/plain',
-            'Content-Length'      => $contentLength,
-            'Expires'             => '0',
-            'Cache-Control'       => 'no-cache, must-revalidate',
-            'Pragma'              => 'public',
-        ]);
-        if ($gzip) {
-            $headers->addHeaders(['Content-Encoding' => 'gzip']);
-        }
-        $response->setHeaders($headers);
-
-        return $response;
-    }
-
     public function rosterAction()
     {
         /** @var Request $request */
@@ -305,7 +252,7 @@ final class ReviewerManagerController extends AbstractActionController
                         (bool) $form->get('include-spare')->getValue(),
                         (empty($form->get('projects')->getValue()) ? null : (int)$form->get('projects')->getValue())
                     );
-                    unlink($excelFile['tmp_name']);
+
                     return $rosterGenerator->parseResponse();
                 }
             }

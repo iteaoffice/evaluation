@@ -211,7 +211,6 @@ return [
         ],
         Service\ReviewerService::class                        => [
             EntityManager::class,
-            AffiliationService::class
         ],
         Service\ReviewRosterService::class                    => [
             CallService::class,

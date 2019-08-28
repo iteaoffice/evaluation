@@ -26,7 +26,7 @@ use Evaluation\Entity\Report\Version;
  * Class VersionRepository
  * @package Evaluation\Repository\Report\Criterion
  */
-final class VersionRepository extends SortableRepository
+/*final*/ class VersionRepository extends SortableRepository
 {
     public function findSorted(Version $reportVersion)
     {

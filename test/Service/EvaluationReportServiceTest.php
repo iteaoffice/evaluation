@@ -11,6 +11,8 @@ use Doctrine\ORM\EntityRepository;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Evaluation\Entity\Report\Criterion\Type as CriterionType;
+use Evaluation\Repository\Report\Criterion\VersionRepository as CriterionVersionRepository;
 use Evaluation\Repository\Report\VersionRepository;
 use Evaluation\Repository\ReportRepository;
 use Evaluation\Service\EvaluationReportService;
@@ -670,5 +672,107 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $evaluationReportVersion2 = $service->findReportVersionForProjectVersion($projectVersion);
         $this->assertEquals($evaluationReportVersion1->getId(), $evaluationReportVersion2->getId());
+    }
+
+    public function testFindReportVersionForProjectReport()
+    {
+        $evaluationReportVersion1 = new EvaluationReport\Version();
+        $evaluationReportVersion1->setId(1);
+
+        $evaluationReportVersionRepositoryMock = $this->getMockBuilder(VersionRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['findForProjectReport'])
+            ->getMock();
+
+        $evaluationReportVersionRepositoryMock->expects($this->once())
+            ->method('findForProjectReport')
+            ->willReturn($evaluationReportVersion1);
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('getRepository')
+            ->with(EvaluationReport\Version::class)
+            ->willReturn($evaluationReportVersionRepositoryMock);
+
+        /** @var EntityManager $entityManagerMock */
+        $service = new EvaluationReportService($entityManagerMock);
+
+        $evaluationReportVersion2 = $service->findReportVersionForProjectReport();
+        $this->assertEquals($evaluationReportVersion1->getId(), $evaluationReportVersion2->getId());
+    }
+
+    public function testTypeIsConfidential()
+    {
+        $evaluationReportVersion = new EvaluationReport\Version();
+        $evaluationReportVersion->setId(1);
+
+        $criterionType = new CriterionType();
+        $criterionType->setId(1);
+
+        $criterionVersionRepositoryMock = $this->getMockBuilder(CriterionVersionRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['count'])
+            ->getMock();
+
+        $criterionVersionRepositoryMock->expects($this->exactly(2))
+            ->method('count')
+            ->with([
+                'type'          => $criterionType,
+                'reportVersion' => $evaluationReportVersion,
+                'confidential'  => false
+            ])
+            ->will($this->onConsecutiveCalls(0, 1));
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->exactly(2))
+            ->method('getRepository')
+            ->with(CriterionVersion::class)
+            ->willReturn($criterionVersionRepositoryMock);
+
+        /** @var EntityManager $entityManagerMock */
+        $service = new EvaluationReportService($entityManagerMock);
+
+        $this->assertTrue($service->typeIsConfidential($criterionType, $evaluationReportVersion));
+        $this->assertFalse($service->typeIsConfidential($criterionType, $evaluationReportVersion));
+    }
+
+    public function testTypeIsDeletable()
+    {
+        $criterionType = new CriterionType();
+        $criterionType->setId(1);
+
+        $criterionVersionRepositoryMock = $this->getMockBuilder(CriterionVersionRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['count'])
+            ->getMock();
+
+        $criterionVersionRepositoryMock->expects($this->exactly(2))
+            ->method('count')
+            ->with(['type' => $criterionType])
+            ->will($this->onConsecutiveCalls(0, 1));
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->exactly(2))
+            ->method('getRepository')
+            ->with(CriterionVersion::class)
+            ->willReturn($criterionVersionRepositoryMock);
+
+        /** @var EntityManager $entityManagerMock */
+        $service = new EvaluationReportService($entityManagerMock);
+
+        $this->assertTrue($service->typeIsDeletable($criterionType));
+        $this->assertFalse($service->typeIsDeletable($criterionType));
     }
 }

@@ -501,15 +501,6 @@ return [
                                 ],
                                 'may_terminate' => true,
                                 'child_routes'  => [
-                                    'export'  => [
-                                        'type'    => 'Segment',
-                                        'options' => [
-                                            'route'    => '/projects[/:projectId].txt',
-                                            'defaults' => [
-                                                'action' => 'export',
-                                            ],
-                                        ],
-                                    ],
                                     'roster'  => [
                                         'type'    => 'Segment',
                                         'options' => [
