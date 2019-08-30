@@ -56,4 +56,84 @@ class AbstractServiceTest extends UtilAbstractServiceTest
         $this->assertEquals($queryBuilderMock, $service->findFiltered($entity, []));
         $this->assertNull($service->findFiltered(Reviewer::class, []));
     }
+
+    public function testFindAll()
+    {
+        $entity = Report::class;
+
+        $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['findAll'])
+            ->getMock();
+        $evaluationReportRepositoryMock->expects($this->once())
+            ->method('findAll')
+            ->willReturn([]);
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('getRepository')
+            ->with($entity)
+            ->willReturn($evaluationReportRepositoryMock);
+
+        $service = new class($entityManagerMock) extends AbstractService {};
+        $this->assertEquals([], $service->findAll($entity));
+    }
+
+    public function testFind()
+    {
+        $entity = Report::class;
+
+        $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['find'])
+            ->getMock();
+        $evaluationReportRepositoryMock->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn(null);
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('getRepository')
+            ->with($entity)
+            ->willReturn($evaluationReportRepositoryMock);
+
+        $service = new class($entityManagerMock) extends AbstractService {};
+        $this->assertNull($service->find($entity, 1));
+    }
+
+    public function testFindByName()
+    {
+        $entity = Report::class;
+
+        $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['findOneBy'])
+            ->getMock();
+        $evaluationReportRepositoryMock->expects($this->once())
+            ->method('findOneBy')
+            ->with(['name' => 'pietje'])
+            ->willReturn(null);
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('getRepository')
+            ->with($entity)
+            ->willReturn($evaluationReportRepositoryMock);
+
+        $service = new class($entityManagerMock) extends AbstractService {};
+        $this->assertNull($service->findByName($entity, 'name' , 'pietje'));
+    }
 }
