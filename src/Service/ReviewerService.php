@@ -146,7 +146,7 @@ class ReviewerService extends AbstractService
                         $handle = $this->parseReviewHandle($attendee->getContact());
                         // Only add when not already added from historical data
                         //if (!in_array($handle, $projectCalendarReviewers[$sortKey][self::TYPE_R])) {
-                            $projectCalendarReviewers[$sortKey][self::TYPE_R][] = $handle;
+                        $projectCalendarReviewers[$sortKey][self::TYPE_R][] = $handle;
                         //}
                     }
                 }

@@ -106,27 +106,27 @@ final class EvaluationController extends AbstractActionController
     private $translator;
 
     public function __construct(
-        ProjectService      $projectService,
-        VersionService      $versionService,
-        EvaluationService   $evaluationService,
-        CallService         $callService,
-        ContactService      $contactService,
-        GeneralService      $generalService,
-        CountryService      $countryService,
-        FormService         $formService,
-        EntityManager       $entityManager,
+        ProjectService $projectService,
+        VersionService $versionService,
+        EvaluationService $evaluationService,
+        CallService $callService,
+        ContactService $contactService,
+        GeneralService $generalService,
+        CountryService $countryService,
+        FormService $formService,
+        EntityManager $entityManager,
         TranslatorInterface $translator
     ) {
-        $this->projectService    = $projectService;
-        $this->versionService    = $versionService;
+        $this->projectService = $projectService;
+        $this->versionService = $versionService;
         $this->evaluationService = $evaluationService;
-        $this->callService       = $callService;
-        $this->contactService    = $contactService;
-        $this->generalService    = $generalService;
-        $this->countryService    = $countryService;
-        $this->formService       = $formService;
-        $this->entityManager     = $entityManager;
-        $this->translator        = $translator;
+        $this->callService = $callService;
+        $this->contactService = $contactService;
+        $this->generalService = $generalService;
+        $this->countryService = $countryService;
+        $this->formService = $formService;
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
     }
 
     public function indexAction()
