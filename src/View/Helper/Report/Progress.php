@@ -39,6 +39,12 @@ final class Progress extends AbstractHelper
      * @var TranslatorInterface
      */
     private $translator;
+    /**
+     * @var string
+     */
+    private $template = '<div class="progress" style="margin-bottom: 0; height:2em;">
+            <div class="progress-bar bg-%s" role="progressbar" aria-valuenow="%d" aria-valuemin="0" aria-valuemax="100" style="padding-left:2px; min-width: 2em; width: %d%%;">%s</div>
+        </div>';
 
     public function __construct(EvaluationReportService $evaluationReportService, TranslatorInterface $translator)
     {
@@ -50,9 +56,6 @@ final class Progress extends AbstractHelper
     {
         $percentage = round($this->evaluationReportService->parseCompletedPercentage($evaluationReport));
         $final      = (null === $evaluationReport) ? false : $evaluationReport->getFinal();
-        $template   = '<div class="progress" style="margin-bottom: 0; height:2em;">
-            <div class="progress-bar bg-%s" role="progressbar" aria-valuenow="%d" aria-valuemin="0" aria-valuemax="100" style="padding-left:2px; min-width: 2em; width: %d%%;">%s</div>
-        </div>';
 
         $style = 'danger';
         if ((int)$percentage === 100) {
@@ -66,6 +69,11 @@ final class Progress extends AbstractHelper
             $label .= ' + ' . $this->translator->translate('txt-final');
         }
 
-        return sprintf($template, $style, $percentage, $percentage, $label);
+        return sprintf($this->template, $style, $percentage, $percentage, $label);
+    }
+
+    public function getTemplate(): string
+    {
+        return $this->template;
     }
 }

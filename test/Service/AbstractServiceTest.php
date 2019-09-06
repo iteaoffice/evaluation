@@ -136,4 +136,92 @@ class AbstractServiceTest extends UtilAbstractServiceTest
         $service = new class($entityManagerMock) extends AbstractService {};
         $this->assertNull($service->findByName($entity, 'name' , 'pietje'));
     }
+
+    public function testCount()
+    {
+        $entity   = Report::class;
+        $criteria = ['x' => 'y'];
+
+        $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['count'])
+            ->getMock();
+        $evaluationReportRepositoryMock->expects($this->once())
+            ->method('count')
+            ->with($criteria)
+            ->willReturn(1);
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRepository'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('getRepository')
+            ->with($entity)
+            ->willReturn($evaluationReportRepositoryMock);
+
+        $service = new class($entityManagerMock) extends AbstractService {};
+        $this->assertEquals(1, $service->count($entity, $criteria));
+    }
+
+    public function testSave()
+    {
+        $entity = new Report();
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['contains', 'persist', 'flush'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('contains')
+            ->with($entity)
+            ->willReturn(false);
+
+        $entityManagerMock->expects($this->once())
+            ->method('persist')
+            ->with($entity);
+
+        $entityManagerMock->expects($this->once())->method('flush');
+
+        $service = new class($entityManagerMock) extends AbstractService {};
+        $this->assertEquals($entity, $service->save($entity));
+    }
+
+    public function testDelete()
+    {
+        $entity = new Report();
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['remove', 'flush'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('remove')
+            ->with($entity);
+
+        $entityManagerMock->expects($this->once())->method('flush');
+
+        $service = new class($entityManagerMock) extends AbstractService {};
+        $this->assertNull($service->delete($entity));
+    }
+
+    public function testRefresh()
+    {
+        $entity = new Report();
+
+        $entityManagerMock = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['refresh'])
+            ->getMock();
+
+        $entityManagerMock->expects($this->once())
+            ->method('refresh')
+            ->with($entity);
+
+        $service = new class($entityManagerMock) extends AbstractService {};
+        $this->assertNull($service->refresh($entity));
+    }
 }
