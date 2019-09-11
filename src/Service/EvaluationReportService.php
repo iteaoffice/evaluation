@@ -353,7 +353,9 @@ class EvaluationReportService extends AbstractService
             $newCriterionVersion->setRequired($criterionVersion->getRequired());
             $newCriterionVersion->setConfidential($criterionVersion->getConfidential());
             $newCriterionVersion->setHighlighted($criterionVersion->getHighlighted());
-            $newCriterionVersion->setVersionTopics($criterionVersion->getVersionTopics());
+            $newCriterionVersion->setVersionTopics(new ArrayCollection(
+                $criterionVersion->getVersionTopics()->toArray()
+            ));
             $targetReportVersion->getCriterionVersions()->add($newCriterionVersion);
         }
 

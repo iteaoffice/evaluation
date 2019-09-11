@@ -17,15 +17,19 @@ declare(strict_types=1);
 
 namespace Evaluation\Controller\Report\Criterion;
 
+use DoctrineORMModule\Form\Element\EntitySelect;
+use Evaluation\Entity\Report\Criterion\Topic;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Version as ReportVersion;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
+use Zend\Form\Fieldset;
 use Zend\Http\Request;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Model\ViewModel;
+use function in_array;
 
 /**
  * Class VersionController
@@ -134,6 +138,29 @@ final class VersionController extends AbstractActionController
 
         $data       = $request->getPost()->toArray();
         $form       = $this->formService->prepare($criterionVersion, $data);
+        // Unfortunately this needs to happen in the controller as during form creation (VersionFieldset.php) the
+        // collection is still empty
+        $allowedValueOptions = [];
+        /** @var Topic $topic */
+        foreach ($criterionVersion->getReportVersion()->getTopics() as $topic) {
+            $allowedValueOptions[] = $topic->getId();
+        }
+        $fieldsets = $form->get('evaluation_entity_report_criterion_version')->get('versionTopics')->getFieldsets();
+        /** @var Fieldset $fieldset */
+        foreach ($fieldsets as $fieldset) {
+            /** @var EntitySelect $topic */
+            $topic = $fieldset->get('topic');
+            $valueOptions = $topic->getValueOptions();
+            foreach ($valueOptions as $key => $option) {
+                if (!in_array($option['value'], $allowedValueOptions)
+                    && ($fieldset->get('topic')->getValue() !== $option['value']))
+                {
+                    unset($valueOptions[$key]);
+                }
+            }
+            $topic->setValueOptions($valueOptions);
+        }
+
         $hasResults = false;
         if ($hasResults) {
             $form->remove('delete');

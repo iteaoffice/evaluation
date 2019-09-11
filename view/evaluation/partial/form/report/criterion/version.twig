@@ -12,6 +12,7 @@
 {{ ztbformelement(criterionFieldset.get('sequence')) }}
 {{ ztbformelement(criterionFieldset.get('criterion')) }}
 {{ ztbformelement(criterionFieldset.get('type')) }}
+{% if reportVersion.topics|length > 0 %}
 <div class="form-group row">
     <label class="col-sm-3 col-form-label">{{ translate(criterionFieldset.get('versionTopics').getOption('label')) }}</label>
     <div class="col-sm-9">
@@ -39,6 +40,7 @@
         <small class="form-text text-muted">{{ translate("txt-add-topic-help-block") }}</small>
     </div>
 </div>
+{% endif %}
 
 {{ ztbformelement(criterionFieldset.get('required')) }}
 {{ ztbformelement(criterionFieldset.get('confidential')) }}
@@ -56,6 +58,7 @@
 </div>
 {{ form().closeTag()|raw }}
 
+{% if reportVersion.topics|length > 0 %}
 <div id="template" class="d-none">
     <div class="card mb-2">
         <div class="card-body row">
@@ -64,7 +67,7 @@
                     <label for="topic-__index__">{{ translate("txt-topic") }}</label>
                     <select id="topic-__index__" name="evaluation_entity_report_criterion_version[versionTopics][__index__][topic]"
                             class="form-control">
-                        {% for topic in topics %}
+                        {% for topic in reportVersion.topics %}
                             <option value="{{ topic.id }}">{{ topic.topic }}</option>
                         {% endfor %}
                     </select>
@@ -98,3 +101,4 @@
         $(html).hide().appendTo(topics).fadeIn(300);
     });
 </script>
+{% endif %}
