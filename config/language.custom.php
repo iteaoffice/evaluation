@@ -5,3 +5,6 @@ _('txt-low:-insufficient-lacking-or-inadequate');
 _('txt-medium:-minimum-required');
 _('txt-good:-expected-quality');
 _('txt-excellent:-outstanding-work');
+_('txt-excellent');
+_('txt-adequate');
+_('txt-alarming');

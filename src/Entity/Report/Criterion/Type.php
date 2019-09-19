@@ -23,7 +23,7 @@ class Type extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Type("\Zend\Form\Element\Hidden")
      *
-     * @var integer
+     * @var int
      * r
      */
     private $id;
@@ -36,7 +36,7 @@ class Type extends AbstractEntity
      *     "help-block":"txt-report-criterion-type-sequence-help-block"
      * })
      *
-     * @var integer
+     * @var int
      */
     private $sequence = 0;
     /**

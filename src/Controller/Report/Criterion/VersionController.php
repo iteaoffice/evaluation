@@ -153,8 +153,7 @@ final class VersionController extends AbstractActionController
             $valueOptions = $topic->getValueOptions();
             foreach ($valueOptions as $key => $option) {
                 if (!in_array($option['value'], $allowedValueOptions)
-                    && ($fieldset->get('topic')->getValue() !== $option['value']))
-                {
+                    && ($fieldset->get('topic')->getValue() !== $option['value'])) {
                     unset($valueOptions[$key]);
                 }
             }

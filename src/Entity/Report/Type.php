@@ -46,7 +46,7 @@ class Type extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Exclude()
      *
-     * @var integer
+     * @var int
      */
     private $id;
     /**
@@ -59,7 +59,7 @@ class Type extends AbstractEntity
      *
      * @Gedmo\SortablePosition
      *
-     * @var integer
+     * @var int
      */
     private $sequence;
     /**
@@ -76,7 +76,7 @@ class Type extends AbstractEntity
     /**
      * @ORM\Column(name="process_type", type="smallint", options={"unsigned":true}, nullable=true)
      *
-     * @var integer
+     * @var int
      */
     private $processType;
     /**
