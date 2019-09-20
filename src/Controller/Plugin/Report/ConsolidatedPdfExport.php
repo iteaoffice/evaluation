@@ -792,12 +792,8 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         $this->checkPageEnding($lineHeight);
         $this->parseCriterionLabel($result->getCriterionVersion()->getCriterion()->getCriterion(), $lineHeight);
-        // Scores only get added internal reports
-        if ($hasScore && !$this->forDistribution) {
-            $this->parseContentField($content, $fillColor, $lineHeight, $result->getScore());
-        } else {
-            $this->parseContentField($content, $fillColor, $lineHeight);
-        }
+        // No scores for AENEAS
+        $this->parseContentField($content, $fillColor, $lineHeight);
     }
 
     private function parseFunderFeedbackOverview(): void
