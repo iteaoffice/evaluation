@@ -111,7 +111,7 @@ class Criterion extends AbstractEntity
      */
     private $values;
     /**
-     * @ORM\Column(name="has_score", type="boolean", length=1, options={"unsigned":true}, nullable=false)
+     * @ORM\Column(name="has_score", type="boolean", length=1, nullable=false)
      * @Annotation\Type("Zend\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-has-score",
@@ -122,7 +122,7 @@ class Criterion extends AbstractEntity
      */
     private $hasScore = true;
     /**
-     * @ORM\Column(name="archived", type="boolean", length=1, options={"unsigned":true}, nullable=false)
+     * @ORM\Column(name="archived", type="boolean", length=1, nullable=false)
      * @Annotation\Type("Zend\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-archived",

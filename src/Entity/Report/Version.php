@@ -21,13 +21,11 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Zend\Form\Annotation;
 
 /**
- * Evaluation report version
- *
  * @ORM\Table(name="evaluation_report2_version")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\VersionRepository")
  */
@@ -78,7 +76,7 @@ class Version extends AbstractEntity
      */
     private $description;
     /**
-     * @ORM\Column(name="archived", type="boolean", length=1, options={"unsigned":true}, nullable=false)
+     * @ORM\Column(name="archived", type="boolean", length=1, nullable=false)
      * @Annotation\Type("Zend\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-archived",
@@ -163,15 +161,15 @@ class Version extends AbstractEntity
     {
         $this->evaluationReports = new ArrayCollection();
         $this->criterionVersions = new ArrayCollection();
-        $this->topics            = new ArrayCollection();
-        $this->windows           = new ArrayCollection();
-        $this->projectReports    = new ArrayCollection();
-        $this->projectVersions   = new ArrayCollection();
+        $this->topics = new ArrayCollection();
+        $this->windows = new ArrayCollection();
+        $this->projectReports = new ArrayCollection();
+        $this->projectVersions = new ArrayCollection();
     }
 
     public function __toString(): string
     {
-        return (string) $this->label;
+        return (string)$this->label;
     }
 
     public function getId(): ?int

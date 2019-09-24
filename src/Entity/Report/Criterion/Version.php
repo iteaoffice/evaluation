@@ -27,8 +27,6 @@ use Evaluation\Entity\Report\Version as ReportVersion;
 use Zend\Form\Annotation;
 
 /**
- * Evaluation report criterion version
- *
  * @ORM\Table(name="evaluation_report2_criterion_version", uniqueConstraints={
  *      @ORM\UniqueConstraint(name="criterion_version", columns={"criterion_id", "version_id"})
  * })
@@ -100,7 +98,7 @@ class Version extends AbstractEntity
      */
     private $sequence = 0;
     /**
-     * @ORM\Column(name="required", type="boolean", length=1, options={"unsigned":true}, nullable=false)
+     * @ORM\Column(name="required", type="boolean", length=1,  nullable=false)
      * @Annotation\Type("Zend\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-required",
@@ -111,7 +109,7 @@ class Version extends AbstractEntity
      */
     private $required = true;
     /**
-     * @ORM\Column(name="confidential", type="boolean", length=1, options={"unsigned":true}, nullable=false)
+     * @ORM\Column(name="confidential", type="boolean", length=1, nullable=false)
      * @Annotation\Type("Zend\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-confidential",
@@ -122,7 +120,7 @@ class Version extends AbstractEntity
      */
     private $confidential = false;
     /**
-     * @ORM\Column(name="highlighted", type="boolean", length=1, options={"unsigned":true}, nullable=false)
+     * @ORM\Column(name="highlighted", type="boolean", length=1, nullable=false)
      * @Annotation\Type("Zend\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-highlighted",
