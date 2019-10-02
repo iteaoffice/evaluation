@@ -1,13 +1,8 @@
 <?php
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -110,7 +105,7 @@ final class WindowController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                $this->redirect()->toRoute('zfcadmin/evaluation/report/window/list');
+                return  $this->redirect()->toRoute('zfcadmin/evaluation/report/window/list');
             }
 
             if ($form->isValid()) {
@@ -120,7 +115,7 @@ final class WindowController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate('txt-evaluation-report-window-has-successfully-been-saved')
                 );
-                $this->redirect()->toRoute(
+                return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report/window/view',
                     ['id' => $window->getId()]
                 );

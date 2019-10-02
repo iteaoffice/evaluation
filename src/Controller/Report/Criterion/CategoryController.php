@@ -1,13 +1,8 @@
 <?php
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -98,7 +93,7 @@ final class CategoryController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/category/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/category/list');
             }
 
             if ($form->isValid()) {
@@ -148,7 +143,7 @@ final class CategoryController extends AbstractActionController
                 /** @var Category $category */
                 $category = $form->getData();
                 $this->evaluationReportService->save($category);
-                $this->redirect()->toRoute(
+                return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report/criterion/category/view',
                     ['id' => $category->getId()]
                 );

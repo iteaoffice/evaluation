@@ -1,13 +1,8 @@
 <?php
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -138,7 +133,7 @@ final class EvaluationController extends AbstractActionController
         return $this->redirect()->toRoute('community/evaluation/overview', ['call' => $call->getId()]);
     }
 
-    public function overviewAction(): ViewModel
+    public function overviewAction()
     {
         /** @var Request $request */
         $request = $this->getRequest();
@@ -164,7 +159,7 @@ final class EvaluationController extends AbstractActionController
         if ($request->isPost() && $form->isValid()) {
             $formData = $form->getData();
 
-            $this->redirect()->toRoute(
+            return $this->redirect()->toRoute(
                 'community/evaluation/overview',
                 [
                     'show'    => 'matrix',
@@ -175,14 +170,16 @@ final class EvaluationController extends AbstractActionController
 
                 ]
             );
-        } else {
-            $form->setData(
-                [
+        }
+
+
+        $form->setData(
+            [
                     'call'   => $callId,
                     'source' => $source,
                 ]
-            );
-        }
+        );
+
 
         /** @var Call $call */
         $call = $this->callService->findCallById((int)$callId);

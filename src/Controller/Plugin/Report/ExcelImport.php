@@ -1,12 +1,7 @@
 <?php
 
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Bart van Eijck <bart.van.eijck@itea3.org>
  * @copyright   Copyright (c) 2004-2018 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
