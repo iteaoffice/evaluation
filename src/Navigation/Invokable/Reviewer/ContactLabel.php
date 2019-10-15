@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -18,26 +18,20 @@ use Zend\Navigation\Page\Mvc;
 
 /**
  * Class ContactLabel
+ *
  * @package Evaluation\Navigation\Invokable\Reviewer
  */
 final class ContactLabel extends AbstractNavigationInvokable
 {
-    /**
-     * Set the review contact navigation label
-     *
-     * @param Mvc $page
-     *
-     * @return void;
-     */
     public function __invoke(Mvc $page): void
     {
+        $label = $this->translator->translate('txt-nav-view');
+
         if ($this->getEntities()->containsKey(Contact::class)) {
             /** @var Contact $contact */
             $contact = $this->getEntities()->get(Contact::class);
             $page->setParams(array_merge($page->getParams(), ['id' => $contact->getId()]));
             $label = (string)$contact;
-        } else {
-            $label = $this->translator->translate('txt-nav-view');
         }
         $page->set('label', $label);
     }
