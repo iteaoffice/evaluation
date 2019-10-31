@@ -63,21 +63,21 @@ final class VersionController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService,
-        TranslatorInterface     $translator,
-        EntityManager           $entityManager
+        FormService $formService,
+        TranslatorInterface $translator,
+        EntityManager $entityManager
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->formService             = $formService;
-        $this->translator              = $translator;
-        $this->entityManager           = $entityManager;
+        $this->formService = $formService;
+        $this->translator = $translator;
+        $this->entityManager = $entityManager;
     }
 
-    public function listAction()
+    public function listAction(): ViewModel
     {
-        $page         = $this->params('page', 1);
+        $page = $this->params('page', 1);
         $filterPlugin = $this->getEvaluationFilter();
-        $query        = $this->evaluationReportService->findFiltered(Version::class, $filterPlugin->getFilter());
+        $query = $this->evaluationReportService->findFiltered(Version::class, $filterPlugin->getFilter());
 
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
         $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);
@@ -87,41 +87,45 @@ final class VersionController extends AbstractActionController
         $form = new VersionFilter($this->entityManager);
         $form->setData(['filter' => $filterPlugin->getFilter()]);
 
-        return new ViewModel([
-            'paginator'     => $paginator,
-            'form'          => $form,
-            'encodedFilter' => \urlencode($filterPlugin->getHash()),
-            'order'         => $filterPlugin->getOrder(),
-            'direction'     => $filterPlugin->getDirection(),
-        ]);
+        return new ViewModel(
+            [
+                'paginator'     => $paginator,
+                'form'          => $form,
+                'encodedFilter' => \urlencode($filterPlugin->getHash()),
+                'order'         => $filterPlugin->getOrder(),
+                'direction'     => $filterPlugin->getDirection(),
+            ]
+        );
     }
 
-    public function viewAction()
+    public function viewAction(): ViewModel
     {
         /** @var Version $reportVersion */
-        $reportVersion = $this->evaluationReportService->find(Version::class, (int) $this->params('id'));
+        $reportVersion = $this->evaluationReportService->find(Version::class, (int)$this->params('id'));
 
         if ($reportVersion === null) {
             return $this->notFoundAction();
         }
 
-        return new ViewModel([
-            'reportVersion'  => $reportVersion,
-            'reports'        => $this->evaluationReportService->count(Report::class, ['version' => $reportVersion]),
-            'activeWindows'  =>  $this->entityManager->getRepository(Report\Window::class)
-                ->findActiveWindows($reportVersion),
-            'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
-                ->findSorted($reportVersion),
-        ]);
+        return new ViewModel(
+            [
+                'reportVersion'  => $reportVersion,
+                'reports'        => $this->evaluationReportService->count(Report::class, ['version' => $reportVersion]),
+                'activeWindows'  => $this->entityManager->getRepository(Report\Window::class)
+                    ->findActiveWindows($reportVersion),
+                'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
+                    ->findSorted($reportVersion),
+            ]
+        );
     }
 
     public function newAction()
     {
         /** @var Request $request */
-        $request       = $this->getRequest();
-        $data          = $request->getPost()->toArray();
+        $request = $this->getRequest();
+        $data = $request->getPost()->toArray();
         $reportVersion = new Version();
-        $form          = $this->formService->prepare($reportVersion, $data);
+        $form = $this->formService->prepare($reportVersion, $data);
         $form->getInputFilter()->get($reportVersion->get('underscore_entity_name'))->get('topics')
             ->setRequired(false);
         $form->remove('delete');
@@ -142,25 +146,27 @@ final class VersionController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'form'   => $form
-        ]);
+        return new ViewModel(
+            [
+                'form' => $form
+            ]
+        );
     }
 
     public function editAction()
     {
         /** @var Request $request */
-        $request       = $this->getRequest();
+        $request = $this->getRequest();
         /** @var Version $reportVersion */
-        $reportVersion = $this->evaluationReportService->find(Version::class, (int) $this->params('id'));
+        $reportVersion = $this->evaluationReportService->find(Version::class, (int)$this->params('id'));
 
         if ($reportVersion === null) {
             return $this->notFoundAction();
         }
 
         $hasReports = ($this->evaluationReportService->count(Report::class, ['version' => $reportVersion]) > 0);
-        $data       = $request->getPost()->toArray();
-        $form       = $this->formService->prepare($reportVersion, $data);
+        $data = $request->getPost()->toArray();
+        $form = $this->formService->prepare($reportVersion, $data);
         $form->getInputFilter()->get($reportVersion->get('underscore_entity_name'))->get('topics')
             ->setRequired(false);
         if ($hasReports) {
@@ -189,26 +195,28 @@ final class VersionController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'form'          => $form,
-            'reportVersion' => $reportVersion
-        ]);
+        return new ViewModel(
+            [
+                'form'          => $form,
+                'reportVersion' => $reportVersion
+            ]
+        );
     }
 
     public function copyAction()
     {
         /** @var Request $request */
-        $request       = $this->getRequest();
+        $request = $this->getRequest();
         /** @var Version $reportVersion */
-        $reportVersion = $this->evaluationReportService->find(Version::class, (int) $this->params('id'));
+        $reportVersion = $this->evaluationReportService->find(Version::class, (int)$this->params('id'));
 
         if ($reportVersion === null) {
             return $this->notFoundAction();
         }
 
         $reportVersionCopy = $this->evaluationReportService->copyEvaluationReportVersion($reportVersion);
-        $data              = $request->getPost()->toArray();
-        $form              = $this->formService->prepare($reportVersionCopy, $data);
+        $data = $request->getPost()->toArray();
+        $form = $this->formService->prepare($reportVersionCopy, $data);
         $form->getInputFilter()->get($reportVersion->get('underscore_entity_name'))->get('topics')
             ->setRequired(false);
         $form->remove('delete');
@@ -232,11 +240,13 @@ final class VersionController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'form'           => $form,
-            'reportVersion'  => $reportVersion,
-            'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
-                ->findSorted($reportVersion),
-        ]);
+        return new ViewModel(
+            [
+                'form'           => $form,
+                'reportVersion'  => $reportVersion,
+                'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
+                    ->findSorted($reportVersion),
+            ]
+        );
     }
 }

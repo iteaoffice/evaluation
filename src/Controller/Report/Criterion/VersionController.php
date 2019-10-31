@@ -20,6 +20,7 @@ namespace Evaluation\Controller\Report\Criterion;
 use DoctrineORMModule\Form\Element\EntitySelect;
 use Evaluation\Entity\Report\Criterion\Topic;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Evaluation\Entity\Report\Criterion\VersionTopic;
 use Evaluation\Entity\Report\Version as ReportVersion;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
@@ -34,6 +35,7 @@ use function in_array;
 /**
  * Class VersionController
  * @method FlashMessenger flashMessenger()
+ *
  * @package Evaluation\Controller\Report\Criterion
  */
 final class VersionController extends AbstractActionController
@@ -55,43 +57,45 @@ final class VersionController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService,
-        TranslatorInterface     $translator
+        FormService $formService,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->formService             = $formService;
-        $this->translator              = $translator;
+        $this->formService = $formService;
+        $this->translator = $translator;
     }
 
     public function viewAction(): ViewModel
     {
         $criterionVersion = $this->evaluationReportService->find(
             CriterionVersion::class,
-            (int) $this->params('id')
+            (int)$this->params('id')
         );
 
         if ($criterionVersion === null) {
             return $this->notFoundAction();
         }
 
-        return new ViewModel([
-            'criterionVersion' => $criterionVersion
-        ]);
+        return new ViewModel(
+            [
+                'criterionVersion' => $criterionVersion
+            ]
+        );
     }
 
     public function addAction()
     {
         /** @var Request $request */
-        $request       = $this->getRequest();
+        $request = $this->getRequest();
         /** @var ReportVersion $reportVersion */
         $reportVersion = $this->evaluationReportService->find(
             ReportVersion::class,
-            (int) $this->params('reportVersionId')
+            (int)$this->params('reportVersionId')
         );
-        $data             = $request->getPost()->toArray();
+        $data = $request->getPost()->toArray();
         $criterionVersion = new CriterionVersion();
         $criterionVersion->setReportVersion($reportVersion);
-        $form             = $this->formService->prepare($criterionVersion, $data);
+        $form = $this->formService->prepare($criterionVersion, $data);
         $form->remove('delete');
 
         if ($request->isPost()) {
@@ -105,6 +109,14 @@ final class VersionController extends AbstractActionController
             if ($form->isValid()) {
                 /** @var CriterionVersion $criterionVersion */
                 $criterionVersion = $form->getData();
+
+                //Manually inject the $criterionVersion into the $versionTopics
+                //@todo: Bart is this really needed?
+                /** @var VersionTopic $versionTopic */
+                foreach ($criterionVersion->getVersionTopics() as $versionTopic) {
+                    $versionTopic->setCriterionVersion($criterionVersion);
+                }
+
                 $this->evaluationReportService->save($criterionVersion);
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-saved')
@@ -116,28 +128,30 @@ final class VersionController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'form'          => $form,
-            'reportVersion' => $reportVersion
-        ]);
+        return new ViewModel(
+            [
+                'form'          => $form,
+                'reportVersion' => $reportVersion
+            ]
+        );
     }
 
     public function editAction()
     {
         /** @var Request $request */
-        $request          = $this->getRequest();
+        $request = $this->getRequest();
         /** @var CriterionVersion $criterionVersion */
         $criterionVersion = $this->evaluationReportService->find(
             CriterionVersion::class,
-            (int) $this->params('id')
+            (int)$this->params('id')
         );
 
         if ($criterionVersion === null) {
             return $this->notFoundAction();
         }
 
-        $data       = $request->getPost()->toArray();
-        $form       = $this->formService->prepare($criterionVersion, $data);
+        $data = $request->getPost()->toArray();
+        $form = $this->formService->prepare($criterionVersion, $data);
         // Unfortunately this needs to happen in the controller as during form creation (VersionFieldset.php) the
         // collection is still empty
         $allowedValueOptions = [];
@@ -153,7 +167,8 @@ final class VersionController extends AbstractActionController
             $valueOptions = $topic->getValueOptions();
             foreach ($valueOptions as $key => $option) {
                 if (!in_array($option['value'], $allowedValueOptions)
-                    && ($fieldset->get('topic')->getValue() !== $option['value'])) {
+                    && ($fieldset->get('topic')->getValue() !== $option['value'])
+                ) {
                     unset($valueOptions[$key]);
                 }
             }
@@ -176,7 +191,9 @@ final class VersionController extends AbstractActionController
             if (isset($data['delete']) && !$hasResults) {
                 $this->evaluationReportService->delete($criterionVersion);
                 $this->flashMessenger()->addSuccessMessage(
-                    $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-deleted')
+                    $this->translator->translate(
+                        'txt-evaluation-report-criterion-version-has-successfully-been-deleted'
+                    )
                 );
                 return $this->redirect()->toRoute(
                     'zfcadmin/evaluation/report/version/view',
@@ -187,6 +204,13 @@ final class VersionController extends AbstractActionController
             if ($form->isValid()) {
                 /** @var CriterionVersion $criterionVersion */
                 $criterionVersion = $form->getData();
+
+                //Manually inject the $criterionVersion into the $versionTopics
+                //@todo: Bart is this really needed?
+                /** @var VersionTopic $versionTopic */
+                foreach ($criterionVersion->getVersionTopics() as $versionTopic) {
+                    $versionTopic->setCriterionVersion($criterionVersion);
+                }
                 $this->evaluationReportService->save($criterionVersion);
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-saved')
@@ -198,10 +222,12 @@ final class VersionController extends AbstractActionController
             }
         }
 
-        return new ViewModel([
-            'form'             => $form,
-            'criterionVersion' => $criterionVersion,
-            'reportVersion'    => $criterionVersion->getReportVersion()
-        ]);
+        return new ViewModel(
+            [
+                'form'             => $form,
+                'criterionVersion' => $criterionVersion,
+                'reportVersion'    => $criterionVersion->getReportVersion()
+            ]
+        );
     }
 }

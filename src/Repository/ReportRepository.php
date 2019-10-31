@@ -480,9 +480,11 @@ use function in_array;
         $queryBuilder->innerJoin('cv.type', 'ct');
         $queryBuilder->innerJoin('ct.category', 'cc');
         $queryBuilder->where($queryBuilder->expr()->eq('rr.evaluationReport', ':report'));
+
         $queryBuilder->orderBy('cc.sequence', Criteria::ASC);
         $queryBuilder->addOrderBy('ct.sequence', Criteria::ASC);
         $queryBuilder->addOrderBy('c.sequence', Criteria::ASC);
+
 
         $queryBuilder->setParameter('report', $evaluationReport);
 

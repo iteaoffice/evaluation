@@ -461,11 +461,4 @@ final class ReportManagerController extends AbstractActionController
             ['id' => $evaluationReport->getId()]
         );
     }
-
-    public function migrateAction()
-    {
-        $log = $this->evaluationReportService->migrate();
-        echo implode('<br>', $log);
-        die();
-    }
 }

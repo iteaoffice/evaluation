@@ -9,6 +9,8 @@
     <dd>{{ category.id }}</dd>
     <dt>{{ translate("txt-category") }}</dt>
     <dd>{{ category.category }}</dd>
+    <dt>{{ translate("txt-sequence") }}</dt>
+    <dd>{{ category.sequence }}</dd>
     <dt>{{ translate("txt-types") }}</dt>
     {% for type in category.types %}
         <dd>{{ reportCriterionTypeLink(type,'view','name') }}</dd>

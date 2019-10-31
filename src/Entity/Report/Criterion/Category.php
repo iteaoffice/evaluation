@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -15,13 +15,11 @@ namespace Evaluation\Entity\Report\Criterion;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Zend\Form\Annotation;
 
 /**
- * Evaluation report criterion category
- *
  * @ORM\Table(name="evaluation_report2_criterion_category")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\Criterion\CategoryRepository")
  */
@@ -30,8 +28,7 @@ class Category extends AbstractEntity
     /**
      * @ORM\Column(name="category_id", type="integer", options={"unsigned":true})
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Annotation\Exclude()
+     * @Annotation\Type("\Zend\Form\Element\Hidden")
      *
      * @var int
      */
@@ -85,7 +82,7 @@ class Category extends AbstractEntity
 
     public function __toString(): string
     {
-        return (string) $this->category;
+        return (string)$this->category;
     }
 
     public function getId(): ?int

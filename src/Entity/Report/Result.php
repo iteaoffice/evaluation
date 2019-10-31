@@ -68,6 +68,7 @@ class Result extends AbstractEntity
     /**
      * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Criterion\Version", cascade={"persist"}, inversedBy="results")
      * @ORM\JoinColumn(name="criterion_version_id", referencedColumnName="criterion_version_id")
+     * @ORM\OrderBy({"sequence"="ASC"})
      * @Annotation\Exclude()
      *
      * @var CriterionVersion

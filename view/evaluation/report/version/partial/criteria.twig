@@ -8,10 +8,15 @@
         {% endif %}
         {% set currentCategory = criterionVersion.type.category.category %}
         {% if currentCategory != activeCategory %}
-            <h3{% if loop.index > 1 %} class="mt-5"{% endif %}>{{ currentCategory }}</h3>
+            <h3{% if loop.index > 1 %} class="mt-5"{% endif %}><small
+                        class="text-muted">{{ criterionVersion.type.category.sequence }}:
+                </small> {{ currentCategory }} {{ reportCriterionCategoryLink(criterionVersion.type.category, 'edit','icon') }}
+            </h3>
             {% set activeCategory = currentCategory %}
         {% endif %}
-        <h4><span class="badge badge-secondary">{{ currentType }}</span></h4>
+        <h4><span class="badge badge-secondary"><small>{{ criterionVersion.type.sequence }}:
+                </small> {{ currentType }}</span> {{ reportCriterionTypeLink(criterionVersion.type, 'edit','icon') }}
+        </h4>
         <table class="table table-hover table-striped table-sm">
         <thead>
         <tr>
@@ -29,7 +34,7 @@
         <tbody>
     {% endif %}
     <tr{% if criterionVersion.highlighted %} class="table-warning"{% endif %}>
-        <td>{{ criterionVersion.id }}
+        <td><small class="text-muted">{{ criterionVersion.id }}</small>
             {% if not reportVersion.archived and not readonly %}
                 {{ reportCriterionVersionLink(criterionVersion, 'edit', 'icon') }}
             {% endif %}

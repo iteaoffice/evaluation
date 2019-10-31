@@ -27,8 +27,6 @@ use function ceil;
 use function urlencode;
 
 /**
- * Class CategoryController
- *
  * @method GetFilter getEvaluationFilter()
  * @package Evaluation\Controller\Report\Criterion
  */
