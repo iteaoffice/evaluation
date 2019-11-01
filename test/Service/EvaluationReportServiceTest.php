@@ -461,12 +461,24 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->setMethods(['getSortedCriterionVersions'])
             ->getMock();
 
-        $criterionVersion = new CriterionVersion();
-        $criterionVersion->setId(1);
-        $criterionVersion->setCriterion((new EvaluationReport\Criterion())->setId(1)->setHasScore(true));
+        $criterionWithValues = new EvaluationReport\Criterion();
+        $criterionWithValues->setId(1)
+            ->setHasScore(true)
+            ->setValues('{"1","2"}');
+
+        $criterionVersionWithValues = new CriterionVersion();
+        $criterionVersionWithValues->setId(1);
+        $criterionVersionWithValues->setCriterion($criterionWithValues);
+        $criterionVersionWithValues->setDefaultValue('test');
+
+        $criterionVersionWithComment = new CriterionVersion();
+        $criterionVersionWithComment->setId(2);
+        $criterionVersionWithComment->setCriterion((new EvaluationReport\Criterion())->setId(2)->setHasScore(true));
+        $criterionVersionWithComment->setDefaultValue('test');
+
         $evaluationReportRepositoryMock
             ->method('getSortedCriterionVersions')
-            ->willReturn([$criterionVersion]);
+            ->willReturn([$criterionVersionWithValues, $criterionVersionWithComment]);
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
@@ -483,7 +495,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         /** @var EntityManager $entityManagerMock */
         $service = new EvaluationReportService($entityManagerMock);
 
-        // Test project report evaluation report
+        // Test project report evaluation report with default values
         $evaluationReport = $service->prepareEvaluationReport(
             self::$finalReportEvaluationReport->getVersion(),
             1
@@ -498,8 +510,16 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             $evaluationReport->getProjectReportReport()->getReviewer()->getId()
         );
         $this->assertEquals(
-            $criterionVersion->getId(),
+            $criterionVersionWithValues->getId(),
             $evaluationReport->getResults()->first()->getCriterionVersion()->getId()
+        );
+        $this->assertEquals(
+            $criterionVersionWithValues->getDefaultValue(),
+            $evaluationReport->getResults()->first()->getValue()
+        );
+        $this->assertEquals(
+            $criterionVersionWithValues->getDefaultValue(),
+            $evaluationReport->getResults()->get(1)->getComment()
         );
 
         // Test project version evaluation report
@@ -517,7 +537,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             $evaluationReport->getProjectVersionReport()->getReviewer()->getId()
         );
         $this->assertEquals(
-            $criterionVersion->getId(),
+            $criterionVersionWithValues->getId(),
             $evaluationReport->getResults()->first()->getCriterionVersion()->getId()
         );
 
