@@ -23,6 +23,7 @@
             <th>{{ translate("txt-id") }}</th>
             <th>{{ translate("txt-sequence") }}</th>
             <th>{{ translate("txt-criterion") }}</th>
+            <th>{{ translate("txt-default-value") }}</th>
             <th>{{ translate("txt-topics") }}</th>
             <th>{{ translate("txt-input-type") }}</th>
             <th>{{ translate("txt-has-score") }}</th>
@@ -46,6 +47,7 @@
                 {{ reportCriterionVersionLink(criterionVersion, 'view', 'name') }}
             {% endif %}
         </td>
+        <td>{{ criterionVersion.defaultValue|length > 10 ? criterionVersion.defaultValue|slice(0, 10) ~ '…' : criterionVersion.defaultValue|default('-')  }}</td>
         <td>{% for versionTopic in criterionVersion.versionTopics %}
                 {{ reportCriterionTopicLink(versionTopic.topic, 'view', 'name') }} ({{ versionTopic.weight }})
                 {% if not loop.last %}<br>{% endif %}

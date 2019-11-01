@@ -131,6 +131,17 @@ class Version extends AbstractEntity
      */
     private $highlighted = false;
     /**
+     * @ORM\Column(name="defaultValue", type="string", nullable=true)
+     * @Annotation\Type("Zend\Form\Element\Text")
+     * @Annotation\Options({
+     *     "label":"txt-default-value",
+     *     "help-block":"txt-evaluation-report-criterion-default-value-help-block"
+     * })
+     *
+     * @var string
+     */
+    private $defaultValue;
+    /**
      * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Criterion\VersionTopic", cascade={"persist","remove"}, mappedBy="criterionVersion", orphanRemoval=true)
      * @Annotation\ComposedObject({
      *     "target_object":"Evaluation\Entity\Report\Criterion\VersionTopic",
@@ -267,6 +278,17 @@ class Version extends AbstractEntity
     public function setHighlighted(bool $highlighted): Version
     {
         $this->highlighted = $highlighted;
+        return $this;
+    }
+
+    public function getDefaultValue(): ?string
+    {
+        return $this->defaultValue;
+    }
+
+    public function setDefaultValue(?string $defaultValue): Version
+    {
+        $this->defaultValue = $defaultValue;
         return $this;
     }
 

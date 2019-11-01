@@ -274,6 +274,14 @@ class EvaluationReportService extends AbstractService
             }
             $result->setCriterionVersion($criterionVersion);
             $result->setEvaluationReport($evaluationReport);
+            $defaultValue = $criterionVersion->getDefaultValue();
+            if (!empty($defaultValue)) {
+                if ($criterionVersion->getCriterion()->getValues() !== null) {
+                    $result->setValue($defaultValue);
+                } else {
+                    $result->setComment($defaultValue);
+                }
+            }
             $evaluationReport->getResults()->add($result);
         }
 

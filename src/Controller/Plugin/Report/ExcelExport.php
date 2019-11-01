@@ -549,12 +549,26 @@ final class ExcelExport extends AbstractPlugin
                 sprintf($this->translator->translate('txt-steering-group-decision-on-%s'), ReviewerService::TYPE_PPR),
                 'Please indicate a score for this project'
             );
+        } elseif ($reportType === EvaluationReport\Type::TYPE_PO_VERSION) {
+            $this->parseCriterionLabel(
+                $displaySheet,
+                $row,
+                sprintf($this->translator->translate('txt-steering-group-decision-on-%s'), ReviewerService::TYPE_PO),
+                'Please indicate a score for this project'
+            );
+        } elseif ($reportType === EvaluationReport\Type::TYPE_FPP_VERSION) {
+            $this->parseCriterionLabel(
+                $displaySheet,
+                $row,
+                sprintf($this->translator->translate('txt-steering-group-decision-on-%s'), ReviewerService::TYPE_FPP),
+                'Please indicate a score for this project'
+            );
         }
         $decisionSelectCell = 'B' . $row;
         $displaySheet->getStyle($decisionSelectCell)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $displaySheet->getStyle($decisionSelectCell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $displaySheet->getStyle($decisionSelectCell)->getAlignment()->setWrapText(true);
-        $displaySheet->getStyle($decisionSelectCell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB(
+         $displaySheet->getStyle($decisionSelectCell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB(
             'EFEFEF'
         );
         $displaySheet->getStyle($decisionSelectCell)->getBorders()->getAllBorders()

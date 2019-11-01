@@ -503,9 +503,10 @@ use function in_array;
         $queryBuilder->leftJoin('cvt.topic', 't');
         $queryBuilder->where($queryBuilder->expr()->eq('cv.reportVersion', ':reportVersion'));
         $queryBuilder->andWhere($queryBuilder->expr()->eq('c.archived', 0));
+
         $queryBuilder->orderBy('cc.sequence', Criteria::ASC);
         $queryBuilder->addOrderBy('ct.sequence', Criteria::ASC);
-        $queryBuilder->addOrderBy('c.sequence', Criteria::ASC);
+        $queryBuilder->addOrderBy('cv.sequence', Criteria::ASC);
 
         $queryBuilder->setParameter('reportVersion', $reportVersion);
 
