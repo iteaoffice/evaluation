@@ -305,7 +305,9 @@ class Version extends AbstractEntity
 
     public function addVersionTopics(Collection $versionTopics): void
     {
+        /** @var VersionTopic $versionTopic */
         foreach ($versionTopics as $versionTopic) {
+            $versionTopic->setCriterionVersion($this);
             $this->versionTopics->add($versionTopic);
         }
     }

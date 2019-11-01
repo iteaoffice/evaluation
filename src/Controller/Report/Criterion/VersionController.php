@@ -109,14 +109,6 @@ final class VersionController extends AbstractActionController
             if ($form->isValid()) {
                 /** @var CriterionVersion $criterionVersion */
                 $criterionVersion = $form->getData();
-
-                //Manually inject the $criterionVersion into the $versionTopics
-                //@todo: Bart is this really needed?
-                /** @var VersionTopic $versionTopic */
-                foreach ($criterionVersion->getVersionTopics() as $versionTopic) {
-                    $versionTopic->setCriterionVersion($criterionVersion);
-                }
-
                 $this->evaluationReportService->save($criterionVersion);
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate('txt-evaluation-report-criterion-version-has-successfully-been-saved')
