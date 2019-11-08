@@ -306,7 +306,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $evaluationReport->getResults()->add($result);
         $results = [$result];
 
-        $repositoryMock = $this->getMockBuilder(EntityManager::class)
+        $repositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
             ->setMethods(['getSortedResults'])
             ->getMock();
