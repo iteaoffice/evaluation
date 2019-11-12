@@ -28,6 +28,7 @@ class Category extends AbstractEntity
     /**
      * @ORM\Column(name="category_id", type="integer", options={"unsigned":true})
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Type("\Zend\Form\Element\Hidden")
      *
      * @var int

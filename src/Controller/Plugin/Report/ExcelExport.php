@@ -568,7 +568,7 @@ final class ExcelExport extends AbstractPlugin
         $displaySheet->getStyle($decisionSelectCell)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         $displaySheet->getStyle($decisionSelectCell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $displaySheet->getStyle($decisionSelectCell)->getAlignment()->setWrapText(true);
-         $displaySheet->getStyle($decisionSelectCell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB(
+        $displaySheet->getStyle($decisionSelectCell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB(
             'EFEFEF'
         );
         $displaySheet->getStyle($decisionSelectCell)->getBorders()->getAllBorders()
