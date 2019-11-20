@@ -4,7 +4,7 @@
 {% do form.prepare() %}
 {{ form().openTag(form)|raw }}
 
-{% set filter = form.get('filter') %}
+{% set filterFieldset = form.get('filter') %}
 
 <div class="row">
     <div class="col-md-10">
@@ -16,13 +16,13 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <div class="input-group">
-                        {{ formelement(filter.get('search')) }}
+                        {{ formelement(filterFieldset.get('search')) }}
                         <span class="input-group-btn">{{ formelement(form.get('submit')) }}</span>
                     </div>
                 </div>
                 {% if type == constant("Evaluation\\Entity\\Report::TYPE_FINAL") %}
                 <div class="form-group">
-                    {{ formelement(form.get('presentation')) }}
+                    {{ evaluationReportPresentationLink(query) }}
                 </div>
                 {% endif %}
             </div>
@@ -212,14 +212,14 @@
         <div class="well well-sm">
             <fieldset>
                 <div class="form-group row">
-                    {{ ztbformelement(filter.get('type'), true) }}
-                    {{ ztbformelement(filter.get('status'), true) }}
-                    {{ ztbformelement(filter.get('subject'), true) }}
+                    {{ ztbformelement(filterFieldset.get('type'), true) }}
+                    {{ ztbformelement(filterFieldset.get('status'), true) }}
+                    {{ ztbformelement(filterFieldset.get('subject'), true) }}
                     {% if subject == constant("Evaluation\\Entity\\Report\\Type::TYPE_REPORT") %}
-                        {{ ztbformelement(filter.get('year'), true) }}
-                        {{ ztbformelement(filter.get('period'), true) }}
+                        {{ ztbformelement(filterFieldset.get('year'), true) }}
+                        {{ ztbformelement(filterFieldset.get('period'), true) }}
                     {% endif %}
-                    {{ ztbformelement(filter.get('call'), true) }}
+                    {{ ztbformelement(filterFieldset.get('call'), true) }}
                 </div>
                     {{ ztbformelement(form.get('submit')) }}
                     {{ ztbformelement(form.get('clear')) }}

@@ -35,6 +35,7 @@ use Project\Entity\Version\Version as ProjectVersion;
 use Project\Service\ReportService;
 use Project\Service\VersionService;
 use Zend\Http\Request;
+use Zend\Http\Response;
 use Zend\I18n\Translator\TranslatorInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
@@ -111,23 +112,6 @@ final class ReportManagerController extends AbstractActionController
         /** @var QueryBuilder $reportQuery */
         $reportQuery  = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
 
-        // Download presentation
-        if (($request->getQuery('presentation') !== null) && ($type === EvaluationReport::TYPE_FINAL)) {
-            $evaluationReports = [];
-            foreach ($reportQuery->getQuery()->getResult() as $item) {
-                if (($item instanceof ProjectVersion)
-                    && ($item->getProjectVersionReport() instanceof ProjectVersionReport)
-                ) {
-                    $evaluationReports[] = $item->getProjectVersionReport()->getEvaluationReport();
-                } elseif (($item instanceof ProjectReport)
-                    && ($item->getProjectReportReport() instanceof ProjectReportReport)
-                ) {
-                    $evaluationReports[] = $item->getProjectReportReport()->getEvaluationReport();
-                }
-            }
-            return $this->evaluationReportPresentation($evaluationReports)->parseResponse();
-        }
-
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($reportQuery, false)));
         $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);
         $paginator->setCurrentPageNumber($page);
@@ -143,14 +127,15 @@ final class ReportManagerController extends AbstractActionController
         }
 
         return new ViewModel([
-            'subject'     => $subject,
-            'versionType' => $versionType,
-            'type'        => $type,
-            'paginator'   => $paginator,
-            'form'        => $form,
-            'order'       => $filterPlugin->getOrder(),
-            'direction'   => $filterPlugin->getDirection(),
-            'arguments'   => $arguments
+            'subject'      => $subject,
+            'versionType'  => $versionType,
+            'type'         => $type,
+            'paginator'    => $paginator,
+            'form'         => $form,
+            'order'        => $filterPlugin->getOrder(),
+            'direction'    => $filterPlugin->getDirection(),
+            'arguments'    => $arguments,
+            'query'        => $request->getQuery()
         ]);
     }
 
@@ -379,6 +364,29 @@ final class ReportManagerController extends AbstractActionController
             default:
                 return $this->evaluationReportExcelExport($evaluationReport, true)->parseResponse();
         }
+    }
+
+    public function presentationAction(): Response
+    {
+        $filterPlugin = $this->getEvaluationFilter();
+        $filterValues = $filterPlugin->getFilter();
+        /** @var QueryBuilder $reportQuery */
+        $reportQuery  = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
+
+        $evaluationReports = [];
+        foreach ($reportQuery->getQuery()->getResult() as $item) {
+            if (($item instanceof ProjectVersion)
+                && ($item->getProjectVersionReport() instanceof ProjectVersionReport)
+            ) {
+                $evaluationReports[] = $item->getProjectVersionReport()->getEvaluationReport();
+            } elseif (($item instanceof ProjectReport)
+                && ($item->getProjectReportReport() instanceof ProjectReportReport)
+            ) {
+                $evaluationReports[] = $item->getProjectReportReport()->getEvaluationReport();
+            }
+        }
+
+        return $this->evaluationReportPresentation($evaluationReports)->parseResponse();
     }
 
     public function finaliseAction()

@@ -83,6 +83,10 @@ return [
                     'roles' => ['office'],
                 ],
                 [
+                    'route' => 'zfcadmin/evaluation/report/presentation',
+                    'roles' => ['office'],
+                ],
+                [
                     'route' => 'zfcadmin/evaluation/report/list',
                     'roles' => ['office'],
                 ],

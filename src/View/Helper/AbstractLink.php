@@ -51,7 +51,7 @@ abstract class AbstractLink extends AbstractViewHelper
     /**
      * @var string
      */
-    protected $router;
+    protected $route;
 
     /**
      * @var string
@@ -79,7 +79,7 @@ abstract class AbstractLink extends AbstractViewHelper
     protected $alternativeShow;
 
     /**
-     * @var array List of parameters needed to construct the URL from the router
+     * @var array List of parameters needed to construct the URL from the route
      */
     protected $routeParams = [];
 
@@ -136,9 +136,9 @@ abstract class AbstractLink extends AbstractViewHelper
         return $isAllowed($resource, $privilege);
     }
 
-    public function setRoute(string $router): void
+    public function setRoute(string $route): void
     {
-        $this->router = $router;
+        $this->route = $route;
     }
 
     public function setText(string $text): void
@@ -184,7 +184,7 @@ abstract class AbstractLink extends AbstractViewHelper
 
         if ('social' === $this->show) {
             return $this->getServerUrl() . $this->getUrl()(
-                $this->router,
+                $this->route,
                 $this->routeParams,
                 ['query' => $this->query, 'fragment' => $this->fragment]
             );
@@ -192,7 +192,7 @@ abstract class AbstractLink extends AbstractViewHelper
 
         $link = new Link(
             $this->getServerUrl() . $this->getUrl()(
-                $this->router,
+                $this->route,
                 $this->routeParams,
                 ['query' => $this->query, 'fragment' => $this->fragment]
             ),
