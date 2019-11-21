@@ -483,8 +483,7 @@ use function in_array;
 
         $queryBuilder->orderBy('cc.sequence', Criteria::ASC);
         $queryBuilder->addOrderBy('ct.sequence', Criteria::ASC);
-        $queryBuilder->addOrderBy('c.sequence', Criteria::ASC);
-
+        $queryBuilder->addOrderBy('cv.sequence', Criteria::ASC);
 
         $queryBuilder->setParameter('report', $evaluationReport);
 

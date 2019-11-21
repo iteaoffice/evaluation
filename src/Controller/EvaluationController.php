@@ -51,7 +51,6 @@ use function strtoupper;
 use function sys_get_temp_dir;
 
 /**
- * @package Evaluation\Controller
  * @method CreateEvaluation createEvaluation(array $projects, Type $evaluationType, int $display, int $source)
  * @method Identity|Contact identity()
  * @method RenderProjectEvaluation renderProjectEvaluation()
@@ -319,7 +318,7 @@ final class EvaluationController extends AbstractActionController
 
             //Find the latest version of the version type
             /** @var Version $latestVersion */
-            $latestVersion = $this->projectService->getLatestApprovedProjectVersion($project, $versionType);
+            $latestVersion = $this->projectService->getLatestNotRejectedProjectVersion($project, $versionType);
             $totalEffort = $this->versionService->findTotalEffortVersion($latestVersion);
             $evaluationResult = $this->createEvaluation(
                 [$project],

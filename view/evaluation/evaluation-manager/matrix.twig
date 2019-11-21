@@ -8,7 +8,7 @@
 
         <ul class="nav nav-tabs" role="tablist">
             {% for type in evaluationTypes %}
-                <li class="nav-item {% if typeId == type.id %}active{% endif %}">
+                <li class="nav-item">
                     <a class="nav-link {% if typeId == type.id %}active{% endif %}"
                        href="{{ url('zfcadmin/evaluation/matrix', {'call': call.id,  'show': 'matrix', 'type': type.id} ) }}">{{ type }}</a>
                 </li>
@@ -16,13 +16,8 @@
         </ul>
 
         <div class="tab-content">
-
-
-            <div class="tab-pane active" id="home">
-
-                <h3>{{ evaluationType }}</h3>
-
-                <ul class="nav nav-pills nav-nos-menu">
+            <div class="tab-pane active">
+                <ul class="nav nav-pills my-3">
                     {% for displayId, value in evaluation.getDisplayTemplates %}
                         <li class="nav-item {% if displayId is same as(display) %}active{% endif %}">
                             <a class="nav-link {% if displayId is same as(display) %}active{% endif %}"
@@ -30,8 +25,6 @@
                         </li>
                     {% endfor %}
                 </ul>
-
-                <hr>
 
                 {% if projects|length > 0 %}
                 <table class="table table-sm table-bordered funding">
@@ -159,9 +152,9 @@
             </div>
 
             {% if isEvaluation %}
-                <h3>{{ translate("txt-evaluation-status-legend") }}</h3>
+                <h2>{{ translate("txt-evaluation-status-legend") }}</h2>
             {% else %}
-                <h3>{{ translate("txt-funding-status-legend") }}</h3>
+                <h2>{{ translate("txt-funding-status-legend") }}</h2>
             {% endif %}
             <div class="card-deck">
                 {% for status in fundingStatuses %}

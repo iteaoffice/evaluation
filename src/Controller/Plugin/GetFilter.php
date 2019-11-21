@@ -19,6 +19,12 @@ use Zend\Mvc\Application;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\ServiceManager\ServiceManager;
+use function base64_decode;
+use function base64_encode;
+use function http_build_query;
+use function json_decode;
+use function json_encode;
+use function urldecode;
 
 /**
  * Class GetFilter
@@ -45,13 +51,13 @@ final class GetFilter extends AbstractPlugin
         $filter = [];
         /** @var Application $application */
         $application = $this->serviceManager->get('application');
-        $encodedFilter = \urldecode((string)$application->getMvcEvent()->getRouteMatch()->getParam('encodedFilter'));
+        $encodedFilter = urldecode((string)$application->getMvcEvent()->getRouteMatch()->getParam('encodedFilter'));
         /** @var Request $request */
         $request = $application->getMvcEvent()->getRequest();
 
         if (!empty($encodedFilter)) {
             // Take the filter from the URL
-            $filter = (array)\json_decode(\base64_decode($encodedFilter));
+            $filter = (array)json_decode(base64_decode($encodedFilter), true, 512, JSON_THROW_ON_ERROR);
         }
 
         $order = $request->getQuery('order');
@@ -101,7 +107,7 @@ final class GetFilter extends AbstractPlugin
             unset($filterCopy[$param]);
         }
 
-        return \http_build_query(['filter' => $filterCopy, 'submit' => 'true']);
+        return http_build_query(['filter' => $filterCopy, 'submit' => 'true']);
     }
 
     public function getOrder(): string
@@ -116,6 +122,6 @@ final class GetFilter extends AbstractPlugin
 
     public function getHash(): string
     {
-        return \base64_encode(\json_encode($this->filter));
+        return base64_encode(json_encode($this->filter, JSON_THROW_ON_ERROR, 512));
     }
 }

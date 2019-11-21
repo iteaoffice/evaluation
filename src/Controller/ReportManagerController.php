@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -82,16 +82,16 @@ final class ReportManagerController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        VersionService          $versionService,
-        ReportService           $reportService,
-        EntityManager           $entityManager,
-        TranslatorInterface     $translator
+        VersionService $versionService,
+        ReportService $reportService,
+        EntityManager $entityManager,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->versionService          = $versionService;
-        $this->reportService           = $reportService;
-        $this->entityManager           = $entityManager;
-        $this->translator              = $translator;
+        $this->versionService = $versionService;
+        $this->reportService = $reportService;
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
     }
 
     public function listAction()
@@ -102,17 +102,18 @@ final class ReportManagerController extends AbstractActionController
             return $this->redirect()->toRoute('zfcadmin/evaluation/report/list');
         }
 
-        $page         = $this->params()->fromRoute('page', 1);
+        $page = $this->params()->fromRoute('page', 1);
         $filterPlugin = $this->getEvaluationFilter();
         $filterValues = $filterPlugin->getFilter();
-        $subject      = $filterValues['subject'] ?? null;
-        $type         = $filterValues['type'] ?? EvaluationReport::TYPE_INDIVIDUAL;
-        $versionType  = $filterValues['version'] ?? null;
+        $subject = $filterValues['subject'] ?? null;
+        $type = $filterValues['type'] ?? EvaluationReport::TYPE_INDIVIDUAL;
+        $versionType = $filterValues['version'] ?? null;
         /** @var QueryBuilder $reportQuery */
-        $reportQuery  = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
+        $reportQuery = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
 
         // Download presentation
         if (($request->getQuery('presentation') !== null) && ($type === EvaluationReport::TYPE_FINAL)) {
+            $reportQuery = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
             $evaluationReports = [];
             foreach ($reportQuery->getQuery()->getResult() as $item) {
                 if (($item instanceof ProjectVersion)
@@ -125,6 +126,7 @@ final class ReportManagerController extends AbstractActionController
                     $evaluationReports[] = $item->getProjectReportReport()->getEvaluationReport();
                 }
             }
+
             return $this->evaluationReportPresentation($evaluationReports)->parseResponse();
         }
 
@@ -142,25 +144,27 @@ final class ReportManagerController extends AbstractActionController
             $arguments = $filterPlugin->parseFilteredSortQuery(['version']);
         }
 
-        return new ViewModel([
-            'subject'     => $subject,
-            'versionType' => $versionType,
-            'type'        => $type,
-            'paginator'   => $paginator,
-            'form'        => $form,
-            'order'       => $filterPlugin->getOrder(),
-            'direction'   => $filterPlugin->getDirection(),
-            'arguments'   => $arguments
-        ]);
+        return new ViewModel(
+            [
+                'subject' => $subject,
+                'versionType' => $versionType,
+                'type' => $type,
+                'paginator' => $paginator,
+                'form' => $form,
+                'order' => $filterPlugin->getOrder(),
+                'direction' => $filterPlugin->getDirection(),
+                'arguments' => $arguments
+            ]
+        );
     }
 
     public function newFinalAction()
     {
         /** @var Request $request */
-        $request     = $this->getRequest();
+        $request = $this->getRequest();
         $offlineMode = ($request->getQuery('mode') === 'offline');
-        $versionId   = $this->params()->fromRoute('version');
-        $reportId    = $this->params()->fromRoute('report');
+        $versionId = $this->params()->fromRoute('version');
+        $reportId = $this->params()->fromRoute('report');
 
         if (($versionId === null) && ($reportId === null)) {
             return $this->notFoundAction();
@@ -172,8 +176,8 @@ final class ReportManagerController extends AbstractActionController
 
         // Create upon starting the form so that create and edit can be handled by the same form
         $evaluationReport = new EvaluationReport();
-        $report           = null;
-        $version          = null;
+        $report = null;
+        $version = null;
 
         // In offline mode, produce an Excel download instead of the form
         if ($offlineMode) {
@@ -302,7 +306,9 @@ final class ReportManagerController extends AbstractActionController
         // Upload offline Excel
         if ($offlineMode && $request->isPost()) {
             $data = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
-            $uploadForm = new ReportUpload('');//@bart, could the action be '' as you only use the form here for validation
+            $uploadForm = new ReportUpload(
+                ''
+            );//@bart, could the action be '' as you only use the form here for validation
             $uploadForm->setData($data);
             $excel = $uploadForm->get('excel')->getValue();
             if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {

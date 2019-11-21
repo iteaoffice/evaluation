@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -115,8 +115,6 @@ final class EvaluationManagerController extends AbstractActionController
         $versionType = $this->projectService
             ->find(VersionType::class, $evaluationType->getVersionType());
         $contact = $this->identity();
-        $viewParameters = [];
-
 
         switch ($evaluationType->getId()) {
             case Type::TYPE_PO_EVALUATION:
@@ -137,28 +135,25 @@ final class EvaluationManagerController extends AbstractActionController
         }
 
         return new ViewModel(
-            array_merge(
-                [
-                    'isEvaluation'     => $this->evaluationService->isEvaluation($evaluationType),
-                    'projects'         => $projects,
-                    'fundingStatuses'  => $fundingStatuses,
-                    'evaluationTypes'  => $evaluationTypes,
-                    'versionTypes'     => $versionTypes,
-                    'call'             => $call,
-                    'typeId'           => $typeId,
-                    'source'           => $source,
-                    'display'          => (int)$display,
-                    'form'             => $form,
-                    'evaluationResult' => $this->createEvaluation(
-                        $projects,
-                        $evaluationType,
-                        $display,
-                        $source
-                    ),
-                    'evaluation'       => new Evaluation(),
-                ],
-                $viewParameters
-            )
+            [
+                'isEvaluation'     => $this->evaluationService->isEvaluation($evaluationType),
+                'projects'         => $projects,
+                'fundingStatuses'  => $fundingStatuses,
+                'evaluationTypes'  => $evaluationTypes,
+                'evaluationType'   => $evaluationType,
+                'call'             => $call,
+                'typeId'           => $typeId,
+                'source'           => $source,
+                'display'          => (int)$display,
+                'form'             => $form,
+                'evaluationResult' => $this->createEvaluation(
+                    $projects,
+                    $evaluationType,
+                    $display,
+                    $source
+                ),
+                'evaluation'       => new Evaluation(),
+            ]
         );
     }
 }
