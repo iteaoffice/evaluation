@@ -35,7 +35,6 @@ final class ReportLink extends AbstractLink
         ReportReviewer   $reportReview = null,
         VersionReviewer  $versionReview = null
     ): string {
-        $this->reset();
 
         $this->routeParams = [
             'id' => ($evaluationReport instanceof EvaluationReport) ? $evaluationReport->getId(): null

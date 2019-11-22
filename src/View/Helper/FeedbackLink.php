@@ -32,7 +32,6 @@ final class FeedbackLink extends AbstractLink
         string   $show = 'text',
         Version  $version = null
     ): string {
-        $this->reset();
 
         if ($feedback === null) {
             $feedback = new Feedback();

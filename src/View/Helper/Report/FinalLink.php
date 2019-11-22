@@ -33,7 +33,6 @@ final class FinalLink extends AbstractLink
         ProjectReport    $projectReport = null,
         ProjectVersion   $projectVersion = null
     ): string {
-        $this->reset();
 
         $this->extractRouteParams($evaluationReport, ['id']);
 

@@ -28,7 +28,6 @@ final class TypeLink extends AbstractLink
         string $action = 'view',
         string $show = 'name'
     ): string {
-        $this->reset();
 
         $this->extractRouteParams($type, ['id']);
         if (null !== $type) {

@@ -66,11 +66,6 @@ abstract class AbstractLink extends AbstractViewHelper
     /**
      * @var string
      */
-    protected $show;
-
-    /**
-     * @var string
-     */
     protected $linkIcon;
 
     /**
@@ -178,42 +173,35 @@ abstract class AbstractLink extends AbstractViewHelper
 
     protected function createLink(string $show): string
     {
-        $this->show = $show;
+        $this->parseShow($show);
 
-        $this->parseShow();
-
-        if ('social' === $this->show) {
-            return $this->getServerUrl() . $this->getUrl()(
-                $this->route,
-                $this->routeParams,
-                ['query' => $this->query, 'fragment' => $this->fragment]
-            );
-        }
-
-        $link = new Link(
-            $this->getServerUrl() . $this->getUrl()(
-                $this->route,
-                $this->routeParams,
-                ['query' => $this->query, 'fragment' => $this->fragment]
-            ),
-            $this->text,
-            $this->classes,
-            $this->linkContent,
-            $this->javascript
+        $url = $this->getServerUrl() . $this->getUrl()(
+            $this->route,
+            $this->routeParams,
+            ['query' => $this->query, 'fragment' => $this->fragment]
         );
 
-        return (string)$link;
+        if ('social' === $show) {
+            $this->reset();
+
+            return $url;
+        }
+
+        $link = new Link($url, $this->text, $this->classes, $this->linkContent, $this->javascript);
+        $this->reset();
+
+        return (string) $link;
     }
 
-    public function parseShow(): void
+    public function parseShow(string $show): void
     {
-        switch ($this->show) {
+        switch ($show) {
             case 'icon':
             case 'button':
             case 'icon-and-text':
                 $this->addLinkContent(sprintf('<i class="fa %s fa-fw"></i>', $this->getLinkIcon()));
 
-                if ($this->show === 'button') {
+                if ($show === 'button') {
                     $this->addLinkContent(' ' . $this->text);
                     if (in_array($this->action, ['cancel', 'delete', 'decline'], true)) {
                         $this->addClass('btn btn-danger');
@@ -222,7 +210,7 @@ abstract class AbstractLink extends AbstractViewHelper
                     }
                 }
 
-                if ($this->show === 'icon-and-text') {
+                if ($show === 'icon-and-text') {
                     $this->addLinkContent(' ' . $this->text);
                 }
 
@@ -234,12 +222,10 @@ abstract class AbstractLink extends AbstractViewHelper
                 $this->addLinkContent($this->alternativeShow);
                 break;
             case 'social':
-                /*
-                 * Social is treated in the createLink function, no content needs to be created
-                 */
+                // Social is dealt with in the createLink function, no content needs to be created
                 return;
             default:
-                $this->addLinkContent($this->showOptions[$this->show] ?? $this->show);
+                $this->addLinkContent($this->showOptions[$show] ?? $show);
                 break;
         }
     }
@@ -270,6 +256,7 @@ abstract class AbstractLink extends AbstractViewHelper
 
     protected function reset(): void
     {
+        $this->routeParams = [];
         $this->linkContent = [];
         $this->query       = [];
         $this->fragment    = [];

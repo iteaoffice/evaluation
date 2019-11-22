@@ -35,7 +35,6 @@ final class EvaluationLink extends AbstractLink
         string $show = 'text',
         array $classes = []
     ): string {
-        $this->reset();
 
         if (null === $evaluation) {
             $evaluation = new Evaluation();
