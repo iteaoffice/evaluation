@@ -7,6 +7,7 @@ namespace EvaluationTest\Service;
 use Evaluation\Entity\Report;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\View\Helper\Report\Progress;
+use PHPUnit\Framework\MockObject\MockObject;
 use Testing\Util\AbstractServiceTest;
 use Zend\I18n\Translator\TranslatorInterface;
 
@@ -16,9 +17,10 @@ class ProgressTest extends AbstractServiceTest
     {
         $evaluationReport = new Report();
 
+        /** @var EvaluationReportService|MockObject $evaluationReportServiceMock */
         $evaluationReportServiceMock = $this->getMockBuilder(EvaluationReportService::class)
             ->disableOriginalConstructor()
-            ->setMethods(['parseCompletedPercentage'])
+            ->onlyMethods(['parseCompletedPercentage'])
             ->getMock();
 
         $evaluationReportServiceMock->expects($this->exactly(4))
@@ -26,8 +28,9 @@ class ProgressTest extends AbstractServiceTest
             ->with($evaluationReport)
             ->will($this->onConsecutiveCalls(10.0, 50.0, 100.0, 100.0));
 
+        /** @var TranslatorInterface|MockObject $translatorMock */
         $translatorMock = $this->getMockBuilder(TranslatorInterface::class)
-            ->setMethods(['translate', 'translatePlural'])
+            ->onlyMethods(['translate', 'translatePlural'])
             ->getMock();
 
         $translatorMock->expects($this->exactly(5))

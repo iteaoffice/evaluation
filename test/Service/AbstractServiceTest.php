@@ -25,7 +25,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['findFiltered'])
+            ->onlyMethods(['findFiltered'])
             ->getMock();
 
         $reviewerRepositoryMock = $this->getMockBuilder(ReviewerRepository::class)
@@ -39,7 +39,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $map = [
@@ -63,7 +63,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['findAll'])
+            ->onlyMethods(['findAll'])
             ->getMock();
         $evaluationReportRepositoryMock->expects($this->once())
             ->method('findAll')
@@ -71,7 +71,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
@@ -89,7 +89,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['find'])
+            ->onlyMethods(['find'])
             ->getMock();
         $evaluationReportRepositoryMock->expects($this->once())
             ->method('find')
@@ -98,7 +98,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
@@ -116,7 +116,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
+            ->onlyMethods(['findOneBy'])
             ->getMock();
         $evaluationReportRepositoryMock->expects($this->once())
             ->method('findOneBy')
@@ -125,7 +125,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
@@ -144,7 +144,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['count'])
+            ->onlyMethods(['count'])
             ->getMock();
         $evaluationReportRepositoryMock->expects($this->once())
             ->method('count')
@@ -153,7 +153,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
@@ -171,7 +171,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['contains', 'persist', 'flush'])
+            ->onlyMethods(['contains', 'persist', 'flush'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
@@ -195,7 +195,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['remove', 'flush'])
+            ->onlyMethods(['remove', 'flush'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
@@ -214,7 +214,7 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['refresh'])
+            ->onlyMethods(['refresh'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())

@@ -130,7 +130,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $repositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['findReviewReportsByContact'])
+            ->onlyMethods(['findReviewReportsByContact'])
             ->getMock();
         $repositoryMock->expects($this->once())
             ->method('findReviewReportsByContact')
@@ -261,7 +261,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $repositoryMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['count'])
+            ->addMethods(['count'])
             ->getMock();
 
         $map = [
@@ -308,7 +308,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $repositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getSortedResults'])
+            ->onlyMethods(['getSortedResults'])
             ->getMock();
         $repositoryMock->expects($this->once())
             ->method('getSortedResults')
@@ -331,7 +331,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
     {
         $repositoryMock = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['findOneBy'])
+            ->onlyMethods(['findOneBy'])
             ->getMock();
 
         $poVersionType = new VersionType();
@@ -438,7 +438,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $reportReviewer->setId(1);
         $reportReviewerRepositoryMock = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['find'])
+            ->onlyMethods(['find'])
             ->getMock();
         $reportReviewerRepositoryMock
             ->method('find')
@@ -449,7 +449,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $versionReviewer->setId(1);
         $versionReviewerRepositoryMock = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['find'])
+            ->onlyMethods(['find'])
             ->getMock();
         $versionReviewerRepositoryMock
             ->method('find')
@@ -458,7 +458,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getSortedCriterionVersions'])
+            ->onlyMethods(['getSortedCriterionVersions'])
             ->getMock();
 
         $criterionWithValues = new EvaluationReport\Criterion();
@@ -482,7 +482,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $map = [
@@ -669,7 +669,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $evaluationReportVersionRepositoryMock = $this->getMockBuilder(VersionRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['findByProjectVersion'])
+            ->onlyMethods(['findByProjectVersion'])
             ->getMock();
 
         $evaluationReportVersionRepositoryMock->expects($this->once())
@@ -679,7 +679,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
@@ -701,7 +701,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $evaluationReportVersionRepositoryMock = $this->getMockBuilder(VersionRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['findForProjectReport'])
+            ->onlyMethods(['findForProjectReport'])
             ->getMock();
 
         $evaluationReportVersionRepositoryMock->expects($this->once())
@@ -710,7 +710,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
@@ -735,7 +735,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $criterionVersionRepositoryMock = $this->getMockBuilder(CriterionVersionRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['count'])
+            ->onlyMethods(['count'])
             ->getMock();
 
         $criterionVersionRepositoryMock->expects($this->exactly(2))
@@ -749,7 +749,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->exactly(2))
@@ -771,7 +771,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $criterionVersionRepositoryMock = $this->getMockBuilder(CriterionVersionRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['count'])
+            ->onlyMethods(['count'])
             ->getMock();
 
         $criterionVersionRepositoryMock->expects($this->exactly(2))
@@ -781,7 +781,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->exactly(2))

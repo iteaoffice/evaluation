@@ -29,7 +29,7 @@ use Project\Entity\Project;
  *
  * @package Project\Repository\Review
  */
-final class ContactRepository extends EntityRepository implements FilteredObjectRepository
+/*final*/ class ContactRepository extends EntityRepository implements FilteredObjectRepository
 {
     public function findFiltered(array $filter = []): QueryBuilder
     {
