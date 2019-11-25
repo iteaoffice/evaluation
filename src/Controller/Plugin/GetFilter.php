@@ -60,13 +60,11 @@ final class GetFilter extends AbstractPlugin
             $filter = (array)json_decode(base64_decode($encodedFilter), true, 512, JSON_THROW_ON_ERROR);
         }
 
-        $order = $request->getQuery('order');
+        $order     = $request->getQuery('order');
         $direction = $request->getQuery('direction');
 
         // If the form is submitted, refresh the URL
-        if ($request->isGet()
-            && (($request->getQuery('submit') !== null) || ($request->getQuery('presentation') !== null))
-        ) {
+        if ($request->isGet() && ($request->getQuery('submit') !== null)) {
             $query = $request->getQuery()->toArray();
             if (isset($query['filter'])) {
                 $filter = $query['filter'];

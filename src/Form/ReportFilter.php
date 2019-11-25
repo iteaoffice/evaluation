@@ -155,16 +155,6 @@ final class ReportFilter extends Form
 
         $this->add([
             'type'       => Element\Submit::class,
-            'name'       => 'presentation',
-            'attributes' => [
-                'id'    => 'submit',
-                'class' => 'btn btn-primary',
-                'value' => _('txt-download-presentation'),
-            ],
-        ]);
-
-        $this->add([
-            'type'       => Element\Submit::class,
             'name'       => 'clear',
             'attributes' => [
                 'id'    => 'cancel',

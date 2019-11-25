@@ -133,6 +133,16 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'presentation'            => [
+                                        'type'    => Segment::class,
+                                        'options' => [
+                                            'route'    => '/presentation.html',
+                                            'defaults' => [
+                                                'action' => 'presentation',
+
+                                            ],
+                                        ],
+                                    ],
                                     'version'             => [
                                         'type'          => Literal::class,
                                         'options'       => [
