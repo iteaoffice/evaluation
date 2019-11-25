@@ -33,7 +33,6 @@ final class TopicLink extends AbstractLink
         string $action = 'view',
         string $show = 'name'
     ): string {
-        $this->reset();
 
         $this->extractRouteParams($topic, ['id']);
         if (null !== $topic) {

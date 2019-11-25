@@ -28,7 +28,6 @@ final class CategoryLink extends AbstractLink
         string $action = 'view',
         string $show = 'name'
     ): string {
-        $this->reset();
 
         $this->extractRouteParams($category, ['id']);
 

@@ -28,11 +28,8 @@ final class ContactLink extends AbstractLink
         string $action = 'view',
         string $show = 'handle'
     ): string {
-        $this->reset();
-
         $this->extractRouteParams($reviewContact, ['id']);
         $this->extractLinkContentFromEntity($reviewContact, ['id', 'handle']);
-
         $this->parseAction($action);
 
         return $this->createLink($show);

@@ -12,6 +12,7 @@ use Contact\Entity\Contact;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Evaluation\Entity\Reviewer;
+use Evaluation\Repository\Reviewer\ContactRepository;
 use Evaluation\Service\ReviewerService;
 use InvalidArgumentException;
 use Project\Entity\Calendar\Calendar as ProjectCalendar;
@@ -77,9 +78,9 @@ class ReviewerServiceTest extends AbstractServiceTest
         $reviewContact->setId(1);
         $reviewContact->setHandle('XYZ');
 
-        $reviewContactRepositoryMock = $this->getMockBuilder(Reviewer\Contact::class)
+        $reviewContactRepositoryMock = $this->getMockBuilder(ContactRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(['findIgnoredReviewers'])
+            ->onlyMethods(['findIgnoredReviewers'])
             ->getMock();
 
         $reviewContactRepositoryMock->expects($this->once())
@@ -89,7 +90,7 @@ class ReviewerServiceTest extends AbstractServiceTest
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRepository'])
+            ->onlyMethods(['getRepository'])
             ->getMock();
 
         $entityManagerMock->expects($this->once())
