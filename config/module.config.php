@@ -12,6 +12,7 @@ namespace Evaluation;
 
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Evaluation\View\Factory\ViewHelperFactory;
+use General\View\Factory\LinkFactory;
 use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Zend\Stdlib;
 
@@ -89,12 +90,12 @@ $config = [
 
         ],
         'factories'  => [
-            View\Helper\FeedbackLink::class                  => ViewHelperFactory::class,
-            View\Helper\EvaluationLink::class                => ViewHelperFactory::class,
-            View\Helper\ReportLink::class                    => ViewHelperFactory::class,
+            View\Helper\FeedbackLink::class                  => LinkFactory::class,
+            View\Helper\EvaluationLink::class                => LinkFactory::class,
+            View\Helper\ReportLink::class                    => LinkFactory::class,
             View\Helper\Report\DownloadLink::class           => ViewHelperFactory::class,
             View\Helper\Report\PresentationLink::class       => ViewHelperFactory::class,
-            View\Helper\Report\FinalLink::class              => ViewHelperFactory::class,
+            View\Helper\Report\FinalLink::class              => LinkFactory::class,
             View\Helper\Report\Progress::class               => ConfigAbstractFactory::class,
             View\Helper\Report\Score::class                  => ConfigAbstractFactory::class,
             View\Helper\Report\VersionLink::class            => ViewHelperFactory::class,
@@ -104,7 +105,7 @@ $config = [
             View\Helper\Report\Criterion\TypeLink::class     => ViewHelperFactory::class,
             View\Helper\Report\Criterion\TopicLink::class    => ViewHelperFactory::class,
             View\Helper\Report\Criterion\VersionLink::class  => ViewHelperFactory::class,
-            View\Helper\ReviewerLink::class                  => ViewHelperFactory::class,
+            View\Helper\ReviewerLink::class                  => LinkFactory::class,
             View\Helper\Reviewer\ContactLink::class          => ViewHelperFactory::class,
         ],
     ],

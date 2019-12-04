@@ -1,5 +1,4 @@
 <?php
-
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -16,6 +15,8 @@ namespace Evaluation\View\Helper\Report;
 use Evaluation\Acl\Assertion\ReportAssertion;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\View\Helper\AbstractLink;
+use General\ValueObject\Link\Link;
+use General\ValueObject\Link\LinkDecoration;
 use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Version\Version as ProjectVersion;
 
@@ -24,91 +25,108 @@ use Project\Entity\Version\Version as ProjectVersion;
  *
  * @package Evaluation\View\Helper\Report
  */
-final class FinalLink extends AbstractLink
+final class FinalLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         EvaluationReport $evaluationReport = null,
         string           $action = 'view',
-        string           $show = 'text',
+        string           $type = LinkDecoration::TYPE_TEXT,
         ProjectReport    $projectReport = null,
         ProjectVersion   $projectVersion = null
-    ): string {
+    ): string
+    {
+        $evaluationReport ??= new EvaluationReport();
 
-        $this->extractRouteParams($evaluationReport, ['id']);
-
-        if (!$this->hasAccess($evaluationReport ?? new EvaluationReport(), ReportAssertion::class, $action)) {
+        if (!$this->hasAccess($evaluationReport, ReportAssertion::class, $action)) {
             return '';
         }
 
-        $this->parseAction($action, $evaluationReport, $projectReport, $projectVersion);
-
-        return $this->createLink($show);
-    }
-
-    public function parseAction(
-        string            $action,
-        ?EvaluationReport $evaluationReport,
-        ?ProjectReport    $projectReport,
-        ?ProjectVersion   $version
-    ): void {
-        $this->action = $action;
+        $routeParams = [];
+        if (!$evaluationReport->isEmpty()) {
+            $routeParams['id'] = $evaluationReport->getId();
+        }
 
         switch ($action) {
             case 'download-offline-form':
                 $route = 'zfcadmin/evaluation/report/list';
+                $text  = '';
                 if (null !== $projectReport) {
                     $route = 'zfcadmin/evaluation/report/create-from-report';
-                    $this->setText($this->translator->translate('txt-download-offline-form'));
-                    $this->addRouteParam('report', $projectReport->getId());
-                } elseif (null !== $version) {
+                    $text = $this->translator->translate('txt-download-offline-form');
+                    $routeParams['report'] = $projectReport->getId();
+                } elseif (null !== $projectVersion) {
                     $route = 'zfcadmin/evaluation/report/create-from-version';
-                    $this->setText($this->translator->translate('txt-download-offline-form'));
-                    $this->addRouteParam('version', $version->getId());
+                    $text = $this->translator->translate('txt-download-offline-form');
+                    $routeParams['version'] = $projectVersion->getId();
                 } elseif (null !== $evaluationReport) {
-                    $this->setText($this->translator->translate('txt-download'));
+                    $text = $this->translator->translate('txt-download');
                     $route = 'zfcadmin/evaluation/report/update';
                 }
-                $this->setRoute($route);
-                $this->addQueryParam('mode', 'offline');
+                $linkParams = [
+                    'route'       => $route,
+                    'queryParams' => ['mode' => 'offline'],
+                    'text'        => $text
+                ];
                 break;
             case 'finalise':
-                $this->setRoute('zfcadmin/evaluation/report/finalise');
-                $this->setText($this->translator->translate('txt-finalise-evaluation-report'));
-                $this->setLinkIcon('fa fa-lock');
+                $linkParams = [
+                    'icon'  => 'fa-lock',
+                    'route' => 'zfcadmin/evaluation/report/finalise',
+                    'text'  => $this->translator->translate('txt-finalise-evaluation-report')
+                ];
                 break;
             case 'undo-final':
-                $this->setRoute('zfcadmin/evaluation/report/undo-final');
-                $this->setText($this->translator->translate('txt-undo-finalisation'));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/undo-final',
+                    'text'  => $this->translator->translate('txt-undo-finalisation')
+                ];
                 break;
             case 'download':
-                $this->setRoute('zfcadmin/evaluation/report/download');
-                $this->setText($this->translator->translate('txt-download-original-version'));
-                $this->setLinkIcon('fa-file-excel-o');
+                $linkParams = [
+                    'icon'  => 'fa-file-excel-o',
+                    'route' => 'zfcadmin/evaluation/report/download',
+                    'text'  => $this->translator->translate('txt-download-original-version')
+                ];
                 break;
             case 'download-distributable':
-                $this->setRoute('zfcadmin/evaluation/report/download');
-                $this->addQueryParam('format', 'distributable');
-                $this->setText($this->translator->translate('txt-download-distributable-version'));
-                $this->setLinkIcon('fa-file-excel-o');
+                $linkParams = [
+                    'icon'        => 'fa-file-excel-o',
+                    'route'       => 'zfcadmin/evaluation/report/download',
+                    'queryParams' => ['format' => 'distributable'],
+                    'text'        => $this->translator->translate('txt-download-distributable-version')
+                ];
                 break;
             case 'download-pdf':
-                $this->setRoute('zfcadmin/evaluation/report/download');
-                $this->addQueryParam('format', 'pdf');
-                $this->setText($this->translator->translate('txt-download-as-pdf'));
-                $this->setLinkIcon('fa-file-pdf-o');
+                $linkParams = [
+                    'icon'        => 'fa-file-pdf-o',
+                    'route'       => 'zfcadmin/evaluation/report/download',
+                    'queryParams' => ['format' => 'pdf'],
+                    'text'        => $this->translator->translate('txt-download-as-pdf')
+                ];
                 break;
             case 'download-distributable-pdf':
-                $this->setRoute('zfcadmin/evaluation/report/download');
-                $this->addQueryParam('format', 'distributable-pdf');
-                $this->setText($this->translator->translate('txt-download-distributable-version-as-pdf'));
-                $this->setLinkIcon('fa-file-pdf-o');
+                $linkParams = [
+                    'icon'        => 'fa-file-pdf-o',
+                    'route'       => 'zfcadmin/evaluation/report/download',
+                    'queryParams' => ['format' => 'distributable-pdf'],
+                    'text'        => $this->translator->translate('txt-download-distributable-version-as-pdf')
+                ];
                 break;
             case 'download-consolidated-pdf':
-                $this->setRoute('zfcadmin/evaluation/report/download');
-                $this->addQueryParam('format', 'consolidated-pdf');
-                $this->setText($this->translator->translate('txt-download-consolidated-version-as-pdf'));
-                $this->setLinkIcon('fa-file-pdf-o');
+                $linkParams = [
+                    'icon'        => 'fa-file-pdf-o',
+                    'route'       => 'zfcadmin/evaluation/report/download',
+                    'queryParams' => ['format' => 'consolidated-pdf'],
+                    'text'        => $this->translator->translate('txt-download-consolidated-version-as-pdf')
+                ];
                 break;
+            default:
+                return '';
         }
+        $linkParams['action']      = $action;
+        $linkParams['type']        = $type;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

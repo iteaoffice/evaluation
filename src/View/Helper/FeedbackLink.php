@@ -15,6 +15,8 @@ namespace Evaluation\View\Helper;
 
 use Evaluation\Acl\Assertion\FeedbackAssertion;
 use Evaluation\Entity\Feedback;
+use General\ValueObject\Link\Link;
+use General\ValueObject\Link\LinkDecoration;
 use Project\Entity\Version\Version;
 use function sprintf;
 use function strtoupper;
@@ -24,83 +26,89 @@ use function strtoupper;
  *
  * @package Evaluation\View\Helper
  */
-final class FeedbackLink extends AbstractLink
+final class FeedbackLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         Feedback $feedback = null,
         string   $action = 'view',
-        string   $show = 'text',
+        string   $type = LinkDecoration::TYPE_TEXT,
         Version  $version = null
-    ): string {
+    ): string
+    {
+        $feedback ??= new Feedback();
 
-        if ($feedback === null) {
-            $feedback = new Feedback();
-        }
-
-        // Set the non-standard options needed to give an other link value
         if (!$this->hasAccess($feedback, FeedbackAssertion::class, $action)) {
             return '';
         }
 
+        $showOptions = [];
+        $routeParams = [];
         if (!$feedback->isEmpty()) {
-            $this->addShowOption('project', (string)$feedback->getVersion()->getProject());
-            $this->addShowOption('status', (string)$feedback->getStatus()->getStatus());
-            $this->addShowOption('feedback', $this->translator->translate('txt-feedback'));
+            $showOptions = [
+                'project'  => (string) $feedback->getVersion()->getProject(),
+                'status'   => (string) $feedback->getStatus()->getStatus(),
+                'feedback' => $this->translator->translate('txt-feedback')
+            ];
+            $routeParams['id'] = $feedback->getId();
         }
-
-        $this->extractRouteParams($feedback, ['id']);
 
         if (null !== $version) {
-            $this->addRouteParam('version', $version->getId());
+            $routeParams['version'] = $version->getId();
         }
-
-        $this->parseAction($action, $feedback);
-
-        return $this->createLink($show);
-    }
-
-    public function parseAction(string $action, Feedback $feedback): void
-    {
-        $this->action = $action;
 
         switch ($action) {
             case 'new':
-                $this->setRoute('zfcadmin/feedback/new');
-                $this->setLinkIcon('fa-plus');
-                $this->setText($this->translator->translate('txt-add-feedback'));
+                $linkParams = [
+                    'route' => 'zfcadmin/feedback/new',
+                    'text'  => $showOptions[$type] ?? $this->translator->translate('txt-add-feedback')
+                ];
                 break;
             case 'edit-admin':
-                $this->setRoute('zfcadmin/feedback/edit');
-                $this->setLinkIcon('fa-pencil-square-o');
-                $this->setText(sprintf(
-                    $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),
-                    strtoupper($feedback->getVersion()->getVersionType()->getType()),
-                    $feedback->getVersion()->getProject()
-                ));
+                $linkParams = [
+                    'icon'  => 'fa-pencil-square-o',
+                    'route' => 'zfcadmin/feedback/edit',
+                    'text'  => $showOptions[$type] ?? sprintf(
+                        $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),
+                        strtoupper($feedback->getVersion()->getVersionType()->getType()),
+                        $feedback->getVersion()->getProject()
+                    )
+                ];
                 break;
             case 'view-admin':
-                $this->setRoute('zfcadmin/feedback/view');
-                $this->setText(sprintf(
-                    $this->translator->translate('txt-view-%s-feedback-of-project-%s'),
-                    strtoupper($feedback->getVersion()->getVersionType()->getType()),
-                    $feedback->getVersion()->getProject()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/feedback/view',
+                    'text'  => $showOptions[$type] ?? sprintf(
+                        $this->translator->translate('txt-view-%s-feedback-of-project-%s'),
+                        strtoupper($feedback->getVersion()->getVersionType()->getType()),
+                        $feedback->getVersion()->getProject()
+                    )
+                ];
                 break;
             case 'edit':
-                $this->setRoute('community/project/edit/feedback');
-                $this->setLinkIcon('fa-pencil-square-o');
-                $this->setText(sprintf(
-                    $this->translator->translate('txt-edit-%s-feedback'),
-                    strtoupper($feedback->getVersion()->getVersionType()->getType())
-                ));
+                $linkParams = [
+                    'route' => 'community/project/edit/feedback',
+                    'text'  => $showOptions[$type] ?? sprintf(
+                        $this->translator->translate('txt-edit-%s-feedback'),
+                        strtoupper($feedback->getVersion()->getVersionType()->getType())
+                    )
+                ];
                 break;
             case 'view':
-                $this->setRoute('community/project/feedback');
-                $this->setText(sprintf(
-                    $this->translator->translate('txt-give-%s-feedback'),
-                    strtoupper($feedback->getVersion()->getVersionType()->getType())
-                ));
+                $linkParams = [
+                    'route' => 'community/project/feedback',
+                    'text'  => $showOptions[$type] ?? sprintf(
+                        $this->translator->translate('txt-give-%s-feedback'),
+                        strtoupper($feedback->getVersion()->getVersionType()->getType())
+                    )
+                ];
                 break;
+            default:
+                return '';
         }
+        $linkParams['action']      = $action;
+        $linkParams['type']        = $type;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }
