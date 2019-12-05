@@ -18,7 +18,6 @@ final class DownloadLink extends AbstractLink
         string $action = 'download-combined',
         string $show = 'button'
     ): string {
-
         $this->setRoute('community/evaluation/report/download-combined');
         if (null !== $status) {
             $this->addRouteParam('status', $status);

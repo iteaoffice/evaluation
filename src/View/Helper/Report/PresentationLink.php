@@ -18,7 +18,6 @@ final class PresentationLink extends AbstractLink
         Parameters $parameters = null,
         string     $show = 'button'
     ): string {
-
         $this->setRoute('zfcadmin/evaluation/report/presentation');
         $this->setText($this->translator->translate('txt-download-presentation'));
         $this->setLinkIcon('fa fa-download');

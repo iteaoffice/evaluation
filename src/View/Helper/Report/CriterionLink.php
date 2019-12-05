@@ -29,7 +29,6 @@ final class CriterionLink extends AbstractLink
         string $action = 'view',
         string $show = 'name'
     ): string {
-
         $this->extractRouteParams($criterion, ['id']);
         if (null !== $criterion) {
             $this->addShowOption('name', $criterion->getCriterion());

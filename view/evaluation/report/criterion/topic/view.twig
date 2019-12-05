@@ -10,7 +10,7 @@
     <dt>{{ translate("txt-topic") }}</dt>
     <dd>{{ topic.topic }}</dd>
     <dt>{{ translate("txt-active-report-versions") }}</dt>
-    {% for reportVersion in topic.reportVersions if not reportVersion.archived %}
+    {% for reportVersion in topic.reportVersions|filter(reportVersion => not reportVersion.archived) -%}
         <dd>{{ reportVersionLink(reportVersion, 'view') }}</dd>
     {% else %}
         <dd>{{ translate("txt-none") }}</dd>

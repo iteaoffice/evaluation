@@ -31,7 +31,6 @@ final class VersionLink extends AbstractLink
         string $show = 'name',
         ReportVersion $reportVersion = null
     ): string {
-
         $this->extractRouteParams($version, ['id']);
 
         if (null !== $reportVersion) {

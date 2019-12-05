@@ -6,7 +6,7 @@
         <h1>{{ translate("txt-project-evaluation-call-%s")|format(call) }}</h1>
 
         <ul class="nav nav-tabs" role="tablist">
-            {% for type in versionTypes if type.id in [1,2] %}
+            {% for type in versionTypes|filter(type => type.id in [1,2]) -%}
                 <li class="nav-item {% if show == 'proposals' and typeId == type.id %}active{% endif %}">
                     <a class="nav-link {% if show == 'proposals' and typeId == type.id %}active{% endif %}"
                        role="tab"

@@ -29,7 +29,6 @@ final class ReviewerLink extends AbstractLink
         string   $show = 'text',
         Project  $project = null
     ): string {
-
         if (!$this->hasAccess($reviewer ?? new Reviewer(), ReviewerAssertion::class, $action)) {
             return '';
         }

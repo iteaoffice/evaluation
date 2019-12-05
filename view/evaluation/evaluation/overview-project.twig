@@ -3,7 +3,7 @@
 
 <h1>{{ translate("txt-evaluation-of-type-%s-for-project-%s-in-%s")|format(evaluationType, project.parseFullName(), country) }}</h1>
 <ul class="nav nav-tabs" role="tablist">
-    {% for type in evaluationTypes if type.id in [1,2] %}
+    {% for type in evaluationTypes|filter(type => type.id in [1,2]) -%}
         <li class="nav-item {% if evaluationType.id is same as(type.id) %}active{% endif %}">
 
             {% set classes = ['nav-link'] %}
@@ -62,7 +62,7 @@
     </div>
 
     {% set hasCountry = false %}
-    {% for country in countries if contactCountry.id == country.id %}
+    {% for country in countries|filter(country => contactCountry.id == country.id) -%}
         {% set hasCountry = true %}
     {% endfor %}
 
@@ -81,7 +81,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for country in countries if contactCountry.id == country.id %}
+            {% for country in countries|filter(country => contactCountry.id == country.id) -%}
                 {% set projectEvaluation = evaluationResult[country.id][project.id] %}
                 {% set evaluation = projectEvaluation['evaluation'] %}
                 {% set value = projectEvaluation['value'] %}
@@ -117,7 +117,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for country in countries if contactCountry.id != country.id %}
+        {% for country in countries|filter(country => contactCountry.id != country.id) -%}
             {% set projectEvaluation = evaluationResult[country.id][project.id] %}
             {% set evaluation = projectEvaluation['evaluation'] %}
             {% set value = projectEvaluation['value'] %}

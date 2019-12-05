@@ -29,7 +29,6 @@ final class VersionLink extends AbstractLink
         string  $action = 'view',
         string  $show = 'name'
     ): string {
-
         if (null === $reportVersion) {
             $reportVersion = new Version();
         }

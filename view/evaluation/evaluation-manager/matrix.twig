@@ -49,7 +49,7 @@
                         {% endif %}
                         {% for country in evaluationResult['countries'] %}
                             <th class="rotate">
-                                {% for callCountry in country.object.callCountry if callCountry.call.id == call.id %}
+                                {% for callCountry in country.object.callCountry|filter(callCountry => callCountry.call.id == call.id) -%}
                                     <div><span>{{ callCountry.dateNationalApplication }}</span></div>
                                 {% endfor %}
                             </th>
@@ -73,7 +73,7 @@
                         {% endif %}
                         {% for country in evaluationResult['countries'] %}
                             <th class="rotate-reverse">
-                                {% for callCountry in country.object.callCountry if callCountry.call.id == call.id %}
+                                {% for callCountry in country.object.callCountry|filter(callCountry => callCountry.call.id == call.id) -%}
                                     <div><span>{{ callCountry.dateExpectedFundingDecision }}</span></div>
                                 {% endfor %}
                             </th>
@@ -103,7 +103,7 @@
                                 <td class="funding-status {{ evaluationResult[country.id][project.id].result.cssName }}
 
                                      {% if not evaluationResult[country.id][project.id].result.is_decision %}
-                                        {% for rationale in project.rationale if rationale.country.id == country.id %}
+                                        {% for rationale in project.rationale|filter(rationale => rationale.country.id == country.id) -%}
                                             {% if rationale.dateNationalApplicationSubmitted|length > 0 %}
                                                 note note-submitted
                                             {% elseif rationale.dateNationalApplicationExpected|length > 0 %}
@@ -114,7 +114,7 @@
                                     "
 
                                         {% if not evaluationResult[country.id][project.id].result.is_decision %}
-                                            {% for rationale in project.rationale if rationale.country.id == country.id %}
+                                            {% for rationale in project.rationale|filter(rationale => rationale.country.id == country.id) -%}
                                                 {% if rationale.dateNationalApplicationSubmitted|length > 0 %}
                                                     title="{{ translate("txt-submitted-on-%s")|format(rationale.dateNationalApplicationSubmitted|date('d-m-Y')) }}"
                                                 {% elseif rationale.dateNationalApplicationExpected|length > 0 %}

@@ -33,7 +33,6 @@ final class FinalLink extends AbstractLink
         ProjectReport    $projectReport = null,
         ProjectVersion   $projectVersion = null
     ): string {
-
         $this->extractRouteParams($evaluationReport, ['id']);
 
         if (!$this->hasAccess($evaluationReport ?? new EvaluationReport(), ReportAssertion::class, $action)) {

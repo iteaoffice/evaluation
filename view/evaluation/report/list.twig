@@ -4,7 +4,7 @@
 
 <!--<h2>{{ translate("txt-new") }}</h2>-->
 {% if hasNew %}
-    {% for container in reportsNew if container.reviews is not empty %}
+    {% for container in reportsNew|filter(container => container.reviews is not empty) -%}
         <h3>{{ container.window.title }}</h3>
         <table class="table table-hover table-striped table-sm">
             <thead>
