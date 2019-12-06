@@ -45,11 +45,9 @@
                         {% for project in projects %}
 
                             {% set userCountryInProject = false %}
-                            {% for country in countryService.findCountryByProject(project)
-                                if country.id == contactCountry.id %}
+                            {% for country in countryService.findCountryByProject(project)|filter(country => country == contactCountry) %}
                                 {% set userCountryInProject = true %}
                             {% endfor %}
-
 
                             <tr {% if userCountryInProject %}class="ownCountry"{% endif %}>
                                 {# take the projectLink separate to check if a user has access

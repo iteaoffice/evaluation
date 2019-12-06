@@ -30,18 +30,9 @@ use function in_array;
  */
 final class RenderProjectEvaluation extends AbstractPlugin
 {
-    /**
-     * @var ModuleOptions
-     */
-    private $moduleOptions;
-    /**
-     * @var TwigRenderer
-     */
-    private $renderer;
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
+    private ModuleOptions $moduleOptions;
+    private TwigRenderer $renderer;
+    private EvaluationService $evaluationService;
 
     public function __construct(
         ModuleOptions $moduleOptions,
@@ -102,7 +93,7 @@ final class RenderProjectEvaluation extends AbstractPlugin
         $pdf->header();
         $pdf->SetFontSize(10);
         $pdf->setPageMark();
-
+        $pdf->SetMargins(24, $y);
 
         $projectEvaluationOverview = $this->renderer->render(
             'evaluation/partial/pdf/evaluation-project-overview',

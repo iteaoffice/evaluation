@@ -75,13 +75,7 @@ class ReviewRosterService
 
     private const MAX_RETRIES = 25; // Maximum attempts to generate a correct roster
 
-    /**
-     * Boost the project match score based on previous reviews
-     *
-     * @var array
-     */
-    private static $scoreBoost
-        = [
+    private static array $scoreBoost = [
             ReviewerService::TYPE_PO  => 1,
             ReviewerService::TYPE_CR  => 2,
             ReviewerService::TYPE_FPP => 3,
@@ -91,13 +85,7 @@ class ReviewRosterService
             ReviewerService::TYPE_PR  => 10, // Preferred reviewers have the highest boost
         ];
 
-    /**
-     * All scores that mean a reviewer is assigned
-     *
-     * @var array
-     */
-    private static $assigned
-        = [
+    private static array $assigned = [
             self::REVIEWER_ASSIGNED,
             self::REVIEWER_PRIMARY,
             self::REVIEWER_SPARE,
@@ -105,50 +93,15 @@ class ReviewRosterService
             self::REVIEWER_EXTRA
         ];
 
-    /**
-     * @var CallService
-     */
-    private $callService;
-
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-
-    /**
-     * @var ProjectSearchService
-     */
-    private $projectSearchService;
-
-    /**
-     * @var ReviewerService
-     */
-    private $reviewerService;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var int
-     */
-    private $reviewersPerProject;
-
-    /**
-     * @var bool
-     */
-    private $includeSpareReviewers;
-
-    /**
-     * @var int
-     */
-    private $avgReviewActivityScore;
-
-    /**
-     * @var array
-     */
-    private $log;
+    private CallService $callService;
+    private ProjectService $projectService;
+    private ProjectSearchService $projectSearchService;
+    private ReviewerService $reviewerService;
+    private EntityManager $entityManager;
+    private int $reviewersPerProject;
+    private bool $includeSpareReviewers;
+    private int $avgReviewActivityScore;
+    private array $log;
 
     public function __construct(
         CallService $callService,

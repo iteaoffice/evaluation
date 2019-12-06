@@ -28,7 +28,7 @@ abstract class AbstractService
     /**
      * @var EntityManager
      */
-    protected $entityManager;
+    protected EntityManager $entityManager;
 
     public function __construct(EntityManager $entityManager)
     {
@@ -39,7 +39,7 @@ abstract class AbstractService
     {
         /** @var FilteredObjectRepository $repository */
         $repository = $this->entityManager->getRepository($entity);
-        if (in_array(FilteredObjectRepository::class, class_implements($repository))) {
+        if (in_array(FilteredObjectRepository::class, class_implements($repository), true)) {
             return $repository->findFiltered($filter);
         }
         return null;

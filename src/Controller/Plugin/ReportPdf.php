@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace Evaluation\Controller\Plugin;
 
+use RuntimeException;
 use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
+use function file_exists;
+use function sprintf;
 
 /**
  * Class ReportPdf
@@ -23,21 +26,14 @@ final class ReportPdf extends TcpdfFpdi
 {
     public const DEFAULT_FONT = 'freesans';
 
-    /**
-     * @var string
-     */
-    private $templatePageId;
-
-    /**
-     * @var string
-     */
-    private $templateFile;
+    private ?string $templatePageId = null;
+    private string $templateFile;
 
     public function Header(): void
     {
         if (null === $this->templatePageId) {
-            if (!\file_exists($this->templateFile)) {
-                throw new \RuntimeException(\sprintf("Template %s cannot be found", $this->templateFile));
+            if (!file_exists($this->templateFile)) {
+                throw new RuntimeException(sprintf('Template %s cannot be found', $this->templateFile));
             }
             $this->setSourceFile($this->templateFile);
             $this->templatePageId = $this->importPage(1);
@@ -45,7 +41,7 @@ final class ReportPdf extends TcpdfFpdi
         $this->useTemplate($this->templatePageId);
         $this->SetFont(self::DEFAULT_FONT, 'N', 15);
         $this->SetTextColor(0);
-        $this->SetXY(PDF_MARGIN_LEFT, 5);
+        $this->SetXY(PDF_MARGIN_LEFT, 15);
     }
 
     public function Footer(): void
@@ -55,7 +51,7 @@ final class ReportPdf extends TcpdfFpdi
         $this->MultiCell(
             0,
             0,
-            \sprintf('Page %s of %s', $this->PageNo(), $this->getAliasNbPages()),
+            sprintf('Page %s of %s', $this->PageNo(), $this->getAliasNbPages()),
             0,
             'C',
             false,

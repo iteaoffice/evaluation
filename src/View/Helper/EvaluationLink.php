@@ -17,6 +17,8 @@ use Evaluation\Acl\Assertion\EvaluationAssertion;
 use Evaluation\Entity\Evaluation;
 use Evaluation\Entity\Type;
 use General\Entity\Country;
+use General\ValueObject\Link\Link;
+use General\ValueObject\Link\LinkDecoration;
 use Project\Entity\Project;
 
 /**
@@ -24,114 +26,111 @@ use Project\Entity\Project;
  *
  * @package Evaluation\View\Helper
  */
-final class EvaluationLink extends AbstractLink
+final class EvaluationLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         Evaluation $evaluation = null,
-        Project $project = null,
-        Type $type = null,
-        Country $country = null,
-        string $action = 'evaluate-project',
-        string $show = 'text',
-        array $classes = []
+        Project    $project = null,
+        Type       $evaluationType = null,
+        Country    $country = null,
+        string     $action = 'evaluate-project',
+        string     $type = LinkDecoration::TYPE_TEXT
     ): string {
         if (null === $evaluation) {
             $evaluation = new Evaluation();
             $evaluation->setProject($project ?? new Project());
-            $evaluation->setType($type ?? new Type());
+            $evaluation->setType($evaluationType ?? new Type());
             $evaluation->setCountry($country ?? new Country());
-        }
-
-        if ($evaluation->getId()) {
-            $this->addRouteParam('id', $evaluation->getId());
-        }
-        if (null !== $project) {
-            $this->addRouteParam('project', $project->getId());
-        }
-        if (null !== $type) {
-            $this->addRouteParam('type', $type->getId());
-        }
-        if (null !== $country) {
-            $this->addRouteParam('country', $country->getId());
         }
 
         if (!$this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
             return '';
         }
 
-        $this->addClasses($classes);
-
-        $this->parseAction($action, $evaluation);
-
-        return $this->createLink($show);
-    }
-
-    public function parseAction(string $action, Evaluation $evaluation): void
-    {
-        $this->action = $action;
+        $routeParams = [];
+        if (!$evaluation->isEmpty()) {
+            $routeParams['id'] = $evaluation->getId();
+        }
+        if (null !== $project) {
+            $routeParams['project'] = $project->getId();
+        }
+        if (null !== $evaluationType) {
+            $routeParams['type'] = $evaluationType->getId();
+        }
+        if (null !== $country) {
+            $routeParams['country'] = $country->getId();
+        }
 
         switch ($action) {
             case 'evaluate-project':
-                //Evaluate and overview are the same actions
+            // Evaluate and overview are the same actions
             case 'overview-project':
-                $this->setLinkIcon('fa-list-ul');
-                /*
-                 * The parameters are the same but the router and the text change
-                 */
+                // The parameters are the same but the router and the text change
                 if ($action === 'overview-project') {
-                    $this->setRoute('community/evaluation/overview-project');
-                    $this->setText(
-                        sprintf(
+                    $linkParams = [
+                        'icon'  => 'fa-list-ul',
+                        'route' => 'community/evaluation/overview-project',
+                        'text'  => sprintf(
                             $this->translator->translate('txt-overview-%s-evaluation-for-project-%s-in-%s'),
                             $evaluation->getType(),
                             $evaluation->getProject(),
                             $evaluation->getCountry()
                         )
-                    );
+                    ];
                 } else {
-                    $this->setRoute('community/evaluation/evaluate-project');
-                    $this->setText(
-                        sprintf(
+                    $linkParams = [
+                        'icon'  => 'fa-list-ul',
+                        'route' => 'community/evaluation/evaluate-project',
+                        'text'  => sprintf(
                             $this->translator->translate('txt-give-%s-evaluation-for-project-%s-in-%s'),
                             $evaluation->getType(),
                             $evaluation->getProject(),
                             $evaluation->getCountry()
                         )
-                    );
+                    ];
                 }
                 break;
             case 'download-project':
-                $this->setLinkIcon('fa-file-pdf-o');
-                $this->setRoute('community/evaluation/download-project');
-                $this->setText(
-                    sprintf(
+                $linkParams = [
+                    'icon'  => 'fa-file-pdf-o',
+                    'route' => 'community/evaluation/download-project',
+                    'text'  => sprintf(
                         $this->translator->translate('txt-download-overview-%s-evaluation-for-project-%s-in-%s'),
                         $evaluation->getType(),
                         $evaluation->getProject(),
                         $evaluation->getCountry()
                     )
-                );
+                ];
                 break;
             case 'edit-admin':
-                $this->setRoute('zfcadmin/project/evaluation/edit');
-                $this->setText(
-                    sprintf(
+                $linkParams = [
+                    'icon'  => 'fa-pencil-square-o',
+                    'route' => 'zfcadmin/project/evaluation/edit',
+                    'text'  => sprintf(
                         $this->translator->translate('txt-edit-%s-evaluation-for-project-%s-in-%s'),
                         $evaluation->getType(),
                         $evaluation->getProject(),
                         $evaluation->getCountry()
                     )
-                );
+                ];
                 break;
             case 'new-admin':
-                $this->setRoute('zfcadmin/project/evaluation/new');
-                $this->setText(
-                    sprintf(
+                $linkParams = [
+                    'icon'  => 'fa-plus',
+                    'route' => 'zfcadmin/project/evaluation/new',
+                    'text'  => sprintf(
                         $this->translator->translate('txt-add-evaluation-for-project-%s'),
                         $evaluation->getProject()
                     )
-                );
+                ];
                 break;
+            default:
+                return '';
         }
+        $linkParams['action']      = $action;
+        $linkParams['type']        = $type;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

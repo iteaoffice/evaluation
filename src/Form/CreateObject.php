@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Evaluation\Form;
 
 use Doctrine\ORM\EntityManager;
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Evaluation\Entity\AbstractEntity;
 use Zend\Form\Element;
@@ -28,7 +29,7 @@ final class CreateObject extends Form
     public function __construct(
         EntityManager           $entityManager,
         AbstractEntity          $object,
-        ServiceLocatorInterface $serviceManager
+        ContainerInterface $container
     ) {
         parent::__construct($object->get('entity_name'));
 
@@ -42,8 +43,8 @@ final class CreateObject extends Form
         /**
          * Load a specific fieldSet when present
          */
-        if ($serviceManager->has($objectSpecificFieldset)) {
-            $objectFieldset = $serviceManager->build($objectSpecificFieldset, ['object' => $object]);
+        if ($container->has($objectSpecificFieldset)) {
+            $objectFieldset = $container->build($objectSpecificFieldset, ['object' => $object]);
         } elseif (\class_exists($objectSpecificFieldset)) {
             $objectFieldset = new $objectSpecificFieldset($entityManager, $object);
         } else {

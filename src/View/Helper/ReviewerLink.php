@@ -14,6 +14,8 @@ namespace Evaluation\View\Helper;
 
 use Evaluation\Acl\Assertion\ReviewerAssertion;
 use Evaluation\Entity\Reviewer;
+use General\ValueObject\Link\Link;
+use General\ValueObject\Link\LinkDecoration;
 use Project\Entity\Project;
 
 /**
@@ -21,56 +23,64 @@ use Project\Entity\Project;
  *
  * @package Evaluation\View\Helper
  */
-final class ReviewerLink extends AbstractLink
+final class ReviewerLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         Reviewer $reviewer = null,
         string   $action = 'new',
-        string   $show = 'text',
+        string   $type = LinkDecoration::TYPE_TEXT,
         Project  $project = null
     ): string {
-        if (!$this->hasAccess($reviewer ?? new Reviewer(), ReviewerAssertion::class, $action)) {
+        $reviewer ??= new Reviewer();
+
+        if (!$this->hasAccess($reviewer, ReviewerAssertion::class, $action)) {
             return '';
         }
 
-        $this->extractRouteParams($reviewer, ['id']);
-
-        if (null !== $project) {
-            $this->addRouteParam('projectId', $project->getId());
+        $routeParams = [];
+        if (!$reviewer->isEmpty()) {
+            $routeParams['id'] = $reviewer->getId();
         }
-
-        $this->parseAction($action, $reviewer);
-
-        return $this->createLink($show);
-    }
-
-    public function parseAction(string $action, ?Reviewer $reviewer): void
-    {
-        $this->action = $action;
+        if ($project instanceof Project) {
+            $routeParams['projectId'] = $project->getId();
+        }
 
         switch ($action) {
             case 'list-contacts':
-                $this->setLinkIcon('fa fa-users');
-                $this->setRoute('zfcadmin/evaluation/reviewer/list');
-                $this->setText($this->translator->translate('txt-show-review-contacts'));
+                $linkParams = [
+                    'icon'  => 'fa-users',
+                    'route' => 'zfcadmin/evaluation/reviewer/list',
+                    'text'  => $this->translator->translate('txt-show-review-contacts')
+                ];
                 break;
             case 'new':
-                $this->setRoute('zfcadmin/evaluation/reviewer/new');
-                $this->setText($this->translator->translate('txt-new-review-contact'));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/reviewer/new',
+                    'text'  => $this->translator->translate('txt-new-review-contact')
+                ];
                 break;
             case 'edit':
-                $this->setRoute('zfcadmin/evaluation/reviewer/edit');
-                $this->setText($this->translator->translate('txt-edit-review-contact'));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/reviewer/edit',
+                    'text'  => $this->translator->translate('txt-edit-review-contact')
+                ];
                 break;
             case 'delete':
-                $this->setRoute('zfcadmin/evaluation/reviewer/delete');
-                $this->setText(
-                    sprintf(
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/reviewer/delete',
+                    'text'  => sprintf(
                         $this->translator->translate('txt-remove-%s-from-this-project'),
-                        null === $reviewer ? '' : $reviewer->getContact()->parseFullName()
+                        $reviewer->getContact()->parseFullName()
                     )
-                );
+                ];
                 break;
+            default:
+                return '';
         }
+        $linkParams['action']      = $action;
+        $linkParams['type']        = $type;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

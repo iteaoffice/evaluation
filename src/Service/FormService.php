@@ -19,6 +19,7 @@ namespace Evaluation\Service;
 use Doctrine\ORM\EntityManager;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Form\CreateObject;
+use Interop\Container\ContainerInterface;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilter;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -31,16 +32,10 @@ use function is_string;
  */
 class FormService
 {
-    /**
-     * @var ServiceLocatorInterface
-     */
-    private $container;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private ContainerInterface $container;
+    private EntityManager $entityManager;
 
-    public function __construct(ServiceLocatorInterface $container, EntityManager $entityManager)
+    public function __construct(ContainerInterface $container, EntityManager $entityManager)
     {
         $this->container = $container;
         $this->entityManager = $entityManager;
@@ -48,12 +43,6 @@ class FormService
 
     public function prepare($classNameOrEntity, array $data = [], array $options = []): Form
     {
-        /**
-         * The form can be created from an empty element, we then expect the $formClassName to be filled
-         * This should be a string, indicating the class
-         *
-         * But if the class a class is injected, we will change it into the className but hint the user to use a string
-         */
         if (is_string($classNameOrEntity)) {
             $classNameOrEntity = new $classNameOrEntity();
         }
