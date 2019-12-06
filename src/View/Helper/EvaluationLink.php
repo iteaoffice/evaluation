@@ -34,7 +34,7 @@ class EvaluationLink extends \General\View\Helper\AbstractLink
         Type       $evaluationType = null,
         Country    $country = null,
         string     $action = 'evaluate-project',
-        string     $type = LinkDecoration::TYPE_TEXT
+        string     $show = LinkDecoration::SHOW_TEXT
     ): string
     {
         if (null === $evaluation) {
@@ -129,7 +129,7 @@ class EvaluationLink extends \General\View\Helper\AbstractLink
                 return '';
         }
         $linkParams['action']      = $action;
-        $linkParams['type']        = $type;
+        $linkParams['show']        = $show;
         $linkParams['routeParams'] = $routeParams;
 
         return $this->parse(Link::fromArray($linkParams));

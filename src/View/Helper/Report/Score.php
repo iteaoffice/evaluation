@@ -15,10 +15,7 @@ use Zend\View\Helper\AbstractHelper;
  */
 final class Score extends AbstractHelper
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(TranslatorInterface $translator)
     {

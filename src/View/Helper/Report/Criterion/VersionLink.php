@@ -13,67 +13,72 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report\Criterion;
 
+use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Version as ReportVersion;
-use Evaluation\View\Helper\AbstractLink;
+use General\ValueObject\Link\Link;
+use General\View\Helper\AbstractLink;
 use function sprintf;
 
 /**
  * Class VersionLink
- *
  * @package Evaluation\View\Helper\Report\Criterion
  */
 final class VersionLink extends AbstractLink
 {
     public function __invoke(
-        CriterionVersion $version = null,
-        string $action = 'view',
-        string $show = 'name',
-        ReportVersion $reportVersion = null
-    ): string {
+        CriterionVersion $criterionVersion = null,
+        string           $action = 'view',
+        string           $show = 'name',
+        ReportVersion    $reportVersion = null
+    ): string
+    {
+        $criterionVersion ??= (new CriterionVersion())->setCriterion(new Criterion());
 
-        $this->extractRouteParams($version, ['id']);
+        $routeParams = [];
+        $showOptions = [];
+        if (!$criterionVersion->isEmpty()) {
+            $routeParams['id']   = $criterionVersion->getId();
+            $showOptions['name'] = (string) $criterionVersion->getCriterion();
+        }
 
         if (null !== $reportVersion) {
-            $this->addRouteParam('reportVersionId', $reportVersion->getId());
+            $routeParams['reportVersionId'] = $reportVersion->getId();
         }
-        if (null !== $version) {
-            $this->addShowOption('name', (string)$version->getCriterion());
-        }
-
-        $this->parseAction($action, $version ?? new CriterionVersion());
-
-        return $this->createLink($show);
-    }
-
-    public function parseAction(string $action, CriterionVersion $version): void
-    {
-        $this->action = $action;
 
         switch ($action) {
             case 'add':
-                $this->setLinkIcon('fa-plus');
-                $this->setRoute('zfcadmin/evaluation/report/criterion/version/add');
-                $this->setText($this->translator->translate('txt-add-new-evaluation-report-criterion'));
+                $linkParams = [
+                    'icon'  => 'fa-plus',
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/add',
+                    'text'  => $this->translator->translate('txt-add-new-evaluation-report-criterion')
+                ];
                 break;
             case 'view':
-                $this->setRoute('zfcadmin/evaluation/report/criterion/version/view');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-view-evaluation-report-criterion-%s'),
-                        $version->getCriterion()
-                    )
-                );
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/view',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                            $this->translator->translate('txt-view-evaluation-report-criterion-%s'),
+                            $criterionVersion->getCriterion()
+                        )
+                ];
                 break;
             case 'edit':
-                $this->setRoute('zfcadmin/evaluation/report/criterion/version/edit');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-edit-evaluation-report-criterion-%s'),
-                        $version->getCriterion()
-                    )
-                );
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/edit',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                            $this->translator->translate('txt-edit-evaluation-report-criterion-%s'),
+                            $criterionVersion->getCriterion()
+                        )
+                ];
                 break;
+            default:
+                return '';
         }
+        $linkParams['action']      = $action;
+        $linkParams['show']        = $show;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

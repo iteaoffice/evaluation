@@ -31,7 +31,7 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
     public function __invoke(
         Feedback $feedback = null,
         string   $action = 'view',
-        string   $type = LinkDecoration::TYPE_TEXT,
+        string   $show = LinkDecoration::SHOW_TEXT,
         Version  $version = null
     ): string
     {
@@ -41,14 +41,8 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
             return '';
         }
 
-        $showOptions = [];
         $routeParams = [];
         if (!$feedback->isEmpty()) {
-            $showOptions = [
-                'project'  => (string) $feedback->getVersion()->getProject(),
-                'status'   => (string) $feedback->getStatus()->getStatus(),
-                'feedback' => $this->translator->translate('txt-feedback')
-            ];
             $routeParams['id'] = $feedback->getId();
         }
 
@@ -60,14 +54,14 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
             case 'new':
                 $linkParams = [
                     'route' => 'zfcadmin/feedback/new',
-                    'text'  => $showOptions[$type] ?? $this->translator->translate('txt-add-feedback')
+                    'text'  => $this->translator->translate('txt-add-feedback')
                 ];
                 break;
             case 'edit-admin':
                 $linkParams = [
                     'icon'  => 'fa-pencil-square-o',
                     'route' => 'zfcadmin/feedback/edit',
-                    'text'  => $showOptions[$type] ?? sprintf(
+                    'text'  => sprintf(
                         $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),
                         strtoupper($feedback->getVersion()->getVersionType()->getType()),
                         $feedback->getVersion()->getProject()
@@ -77,7 +71,7 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
             case 'view-admin':
                 $linkParams = [
                     'route' => 'zfcadmin/feedback/view',
-                    'text'  => $showOptions[$type] ?? sprintf(
+                    'text'  => sprintf(
                         $this->translator->translate('txt-view-%s-feedback-of-project-%s'),
                         strtoupper($feedback->getVersion()->getVersionType()->getType()),
                         $feedback->getVersion()->getProject()
@@ -87,7 +81,7 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
             case 'edit':
                 $linkParams = [
                     'route' => 'community/project/edit/feedback',
-                    'text'  => $showOptions[$type] ?? sprintf(
+                    'text'  => sprintf(
                         $this->translator->translate('txt-edit-%s-feedback'),
                         strtoupper($feedback->getVersion()->getVersionType()->getType())
                     )
@@ -96,7 +90,7 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
             case 'view':
                 $linkParams = [
                     'route' => 'community/project/feedback',
-                    'text'  => $showOptions[$type] ?? sprintf(
+                    'text'  => sprintf(
                         $this->translator->translate('txt-give-%s-feedback'),
                         strtoupper($feedback->getVersion()->getVersionType()->getType())
                     )
@@ -106,7 +100,7 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
                 return '';
         }
         $linkParams['action']      = $action;
-        $linkParams['type']        = $type;
+        $linkParams['show']        = $show;
         $linkParams['routeParams'] = $routeParams;
 
         return $this->parse(Link::fromArray($linkParams));

@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
 
-use Evaluation\View\Helper\AbstractLink;
+use General\ValueObject\Link\Link;
+use General\View\Helper\AbstractLink;
 
 /**
  * Class DownloadLink
- *
  * @package Evaluation\View\Helper\Report
  */
 final class DownloadLink extends AbstractLink
 {
     public function __invoke(
-        int $status = null,
+        int    $status = null,
         string $action = 'download-combined',
         string $show = 'button'
-    ): string {
-
-        $this->setRoute('community/evaluation/report/download-combined');
-        if (null !== $status) {
-            $this->addRouteParam('status', $status);
-        }
-        $this->setText($this->translator->translate('txt-download-all'));
-
-        return $this->createLink($show);
+    ): string
+    {
+        return $this->parse(Link::fromArray([
+            'icon'        => 'fa-download',
+            'route'       => 'community/evaluation/report/download-combined',
+            'text'        => $this->translator->translate('txt-download-all'),
+            'routeParams' => (null === $status) ? [] : ['status' => $status],
+            'show'        => $show
+        ]));
     }
 }

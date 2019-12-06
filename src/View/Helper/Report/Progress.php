@@ -1,5 +1,4 @@
 <?php
-
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -26,18 +25,9 @@ use function sprintf;
  */
 final class Progress extends AbstractHelper
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-    /**
-     * @var string
-     */
-    private $template = '<div class="progress" style="margin-bottom: 0; height:2em;">
+    private EvaluationReportService $evaluationReportService;
+    private TranslatorInterface     $translator;
+    private string                  $template = '<div class="progress" style="margin-bottom: 0; height:2em;">
             <div class="progress-bar bg-%s" role="progressbar" aria-valuenow="%d" aria-valuemin="0" aria-valuemax="100" style="padding-left:2px; min-width: 2em; width: %d%%;">%s</div>
         </div>';
 

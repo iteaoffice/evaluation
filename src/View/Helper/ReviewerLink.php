@@ -28,7 +28,7 @@ final class ReviewerLink extends \General\View\Helper\AbstractLink
     public function __invoke(
         Reviewer $reviewer = null,
         string   $action = 'new',
-        string   $type = LinkDecoration::TYPE_TEXT,
+        string   $show = LinkDecoration::SHOW_TEXT,
         Project  $project = null
     ): string
     {
@@ -79,7 +79,7 @@ final class ReviewerLink extends \General\View\Helper\AbstractLink
                 return '';
         }
         $linkParams['action']      = $action;
-        $linkParams['type']        = $type;
+        $linkParams['show']        = $show;
         $linkParams['routeParams'] = $routeParams;
 
         return $this->parse(Link::fromArray($linkParams));
