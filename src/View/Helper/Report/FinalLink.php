@@ -30,7 +30,7 @@ final class FinalLink extends \General\View\Helper\AbstractLink
     public function __invoke(
         EvaluationReport $evaluationReport = null,
         string           $action = 'view',
-        string           $type = LinkDecoration::TYPE_TEXT,
+        string           $show = LinkDecoration::SHOW_TEXT,
         ProjectReport    $projectReport = null,
         ProjectVersion   $projectVersion = null
     ): string {
@@ -123,7 +123,7 @@ final class FinalLink extends \General\View\Helper\AbstractLink
                 return '';
         }
         $linkParams['action']      = $action;
-        $linkParams['type']        = $type;
+        $linkParams['show']        = $show;
         $linkParams['routeParams'] = $routeParams;
 
         return $this->parse(Link::fromArray($linkParams));

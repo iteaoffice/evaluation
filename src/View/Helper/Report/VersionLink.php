@@ -1,5 +1,4 @@
 <?php
-
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -14,7 +13,8 @@ declare(strict_types=1);
 namespace Evaluation\View\Helper\Report;
 
 use Evaluation\Entity\Report\Version;
-use Evaluation\View\Helper\AbstractLink;
+use General\ValueObject\Link\Link;
+use General\View\Helper\AbstractLink;
 use function sprintf;
 
 /**
@@ -29,61 +29,59 @@ final class VersionLink extends AbstractLink
         string  $action = 'view',
         string  $show = 'name'
     ): string {
-        if (null === $reportVersion) {
-            $reportVersion = new Version();
-        }
+        $reportVersion ??= new Version();
 
+        $routeParams = [];
+        $showOptions = [];
         if (!$reportVersion->isEmpty()) {
-            $this->routeParams['id'] = $reportVersion->getId();
-            $this->addShowOption('name', $reportVersion->getLabel());
+            $routeParams['id']   = $reportVersion->getId();
+            $showOptions['name'] = $reportVersion->getLabel();
         }
-
-        $this->parseAction($action, $reportVersion);
-
-        return $this->createLink($show);
-    }
-
-    public function parseAction(string $action, Version $version): void
-    {
-        $this->action = $action;
 
         switch ($action) {
             case 'new':
-                $this->setRoute('zfcadmin/evaluation/report/version/new');
-                $this->setText($this->translator->translate('txt-new-evaluation-report-version'));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/version/new',
+                    'text'  => $showOptions[$show]
+                        ?? $this->translator->translate('txt-new-evaluation-report-version')
+                ];
                 break;
             case 'list':
-                $this->setRoute('zfcadmin/evaluation/report/version/list');
-                $this->setText($this->translator->translate('txt-evaluation-report-version-list'));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/version/list',
+                    'text'  => $showOptions[$show]
+                        ?? $this->translator->translate('txt-evaluation-report-version-list')
+                ];
                 break;
             case 'view':
-                $this->setRoute('zfcadmin/evaluation/report/version/view');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-view-%s'),
-                        $version->getLabel()
-                    )
-                );
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/version/view',
+                    'text'  => $showOptions[$show]
+                        ?? sprintf($this->translator->translate('txt-view-%s'), $reportVersion->getLabel())
+                ];
                 break;
             case 'edit':
-                $this->setRoute('zfcadmin/evaluation/report/version/edit');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-edit-%s'),
-                        $version->getLabel()
-                    )
-                );
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/version/edit',
+                    'text'  => $showOptions[$show]
+                        ?? sprintf($this->translator->translate('txt-edit-%s'), $reportVersion->getLabel())
+                ];
                 break;
             case 'copy':
-                $this->setLinkIcon('fa-copy');
-                $this->setRoute('zfcadmin/evaluation/report/version/copy');
-                $this->setText(
-                    sprintf(
-                        $this->translator->translate('txt-copy-%s'),
-                        $version->getLabel()
-                    )
-                );
+                $linkParams = [
+                    'icon'  => 'fa-copy',
+                    'route' => 'zfcadmin/evaluation/report/version/copy',
+                    'text'  => $showOptions[$show]
+                        ?? sprintf($this->translator->translate('txt-copy-%s'), $reportVersion->getLabel())
+                ];
                 break;
+            default:
+                return '';
         }
+        $linkParams['action']      = $action;
+        $linkParams['show']        = $show;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

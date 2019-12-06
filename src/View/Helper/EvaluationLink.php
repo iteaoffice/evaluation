@@ -26,7 +26,7 @@ use Project\Entity\Project;
  *
  * @package Evaluation\View\Helper
  */
-final class EvaluationLink extends \General\View\Helper\AbstractLink
+class EvaluationLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         Evaluation $evaluation = null,
@@ -34,7 +34,7 @@ final class EvaluationLink extends \General\View\Helper\AbstractLink
         Type       $evaluationType = null,
         Country    $country = null,
         string     $action = 'evaluate-project',
-        string     $type = LinkDecoration::TYPE_TEXT
+        string     $show = LinkDecoration::SHOW_TEXT
     ): string {
         if (null === $evaluation) {
             $evaluation = new Evaluation();
@@ -128,7 +128,7 @@ final class EvaluationLink extends \General\View\Helper\AbstractLink
                 return '';
         }
         $linkParams['action']      = $action;
-        $linkParams['type']        = $type;
+        $linkParams['show']        = $show;
         $linkParams['routeParams'] = $routeParams;
 
         return $this->parse(Link::fromArray($linkParams));
