@@ -35,33 +35,17 @@ use function trim;
 use function unlink;
 
 /**
- * Class ReviewerManagerController
  * @package Evaluation\Controller
  * @method FlashMessenger flashMessenger()
  * @method RosterGenerator rosterGenerator(string $type, string $configFile, int $reviewersPerProject, bool $includeSpareReviewers = false, ?int $forceProjectsPerRound = null)
  */
 final class ReviewerManagerController extends AbstractActionController
 {
-    /**
-     * @var ReviewerService
-     */
-    private $reviewerService;
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var FormService
-     */
-    private $formService;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private ReviewerService $reviewerService;
+    private ProjectService $projectService;
+    private FormService $formService;
+    private EntityManager $entityManager;
+    private TranslatorInterface $translator;
 
     public function __construct(
         ReviewerService     $reviewerService,

@@ -1,7 +1,7 @@
 <?php
 
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -19,6 +19,7 @@ use Evaluation\Entity\Type;
 use General\Entity\Country;
 use General\ValueObject\Link\Link;
 use General\ValueObject\Link\LinkDecoration;
+use General\View\Helper\AbstractLink;
 use Project\Entity\Project;
 
 /**
@@ -26,15 +27,15 @@ use Project\Entity\Project;
  *
  * @package Evaluation\View\Helper
  */
-class EvaluationLink extends \General\View\Helper\AbstractLink
+final class EvaluationLink extends AbstractLink
 {
     public function __invoke(
         Evaluation $evaluation = null,
-        Project    $project = null,
-        Type       $evaluationType = null,
-        Country    $country = null,
-        string     $action = 'evaluate-project',
-        string     $show = LinkDecoration::SHOW_TEXT
+        Project $project = null,
+        Type $evaluationType = null,
+        Country $country = null,
+        string $action = 'evaluate-project',
+        string $show = LinkDecoration::SHOW_TEXT
     ): string {
         if (null === $evaluation) {
             $evaluation = new Evaluation();
@@ -63,14 +64,14 @@ class EvaluationLink extends \General\View\Helper\AbstractLink
 
         switch ($action) {
             case 'evaluate-project':
-            // Evaluate and overview are the same actions
+                // Evaluate and overview are the same actions
             case 'overview-project':
                 // The parameters are the same but the router and the text change
                 if ($action === 'overview-project') {
                     $linkParams = [
-                        'icon'  => 'fa-list-ul',
+                        'icon' => 'fa-list-ul',
                         'route' => 'community/evaluation/overview-project',
-                        'text'  => sprintf(
+                        'text' => sprintf(
                             $this->translator->translate('txt-overview-%s-evaluation-for-project-%s-in-%s'),
                             $evaluation->getType(),
                             $evaluation->getProject(),
@@ -79,9 +80,9 @@ class EvaluationLink extends \General\View\Helper\AbstractLink
                     ];
                 } else {
                     $linkParams = [
-                        'icon'  => 'fa-list-ul',
+                        'icon' => 'fa-list-ul',
                         'route' => 'community/evaluation/evaluate-project',
-                        'text'  => sprintf(
+                        'text' => sprintf(
                             $this->translator->translate('txt-give-%s-evaluation-for-project-%s-in-%s'),
                             $evaluation->getType(),
                             $evaluation->getProject(),
@@ -92,9 +93,9 @@ class EvaluationLink extends \General\View\Helper\AbstractLink
                 break;
             case 'download-project':
                 $linkParams = [
-                    'icon'  => 'fa-file-pdf-o',
+                    'icon' => 'fa-file-pdf-o',
                     'route' => 'community/evaluation/download-project',
-                    'text'  => sprintf(
+                    'text' => sprintf(
                         $this->translator->translate('txt-download-overview-%s-evaluation-for-project-%s-in-%s'),
                         $evaluation->getType(),
                         $evaluation->getProject(),
@@ -104,9 +105,9 @@ class EvaluationLink extends \General\View\Helper\AbstractLink
                 break;
             case 'edit-admin':
                 $linkParams = [
-                    'icon'  => 'fa-pencil-square-o',
+                    'icon' => 'fa-pencil-square-o',
                     'route' => 'zfcadmin/project/evaluation/edit',
-                    'text'  => sprintf(
+                    'text' => sprintf(
                         $this->translator->translate('txt-edit-%s-evaluation-for-project-%s-in-%s'),
                         $evaluation->getType(),
                         $evaluation->getProject(),
@@ -116,9 +117,9 @@ class EvaluationLink extends \General\View\Helper\AbstractLink
                 break;
             case 'new-admin':
                 $linkParams = [
-                    'icon'  => 'fa-plus',
+                    'icon' => 'fa-plus',
                     'route' => 'zfcadmin/project/evaluation/new',
-                    'text'  => sprintf(
+                    'text' => sprintf(
                         $this->translator->translate('txt-add-evaluation-for-project-%s'),
                         $evaluation->getProject()
                     )
@@ -127,8 +128,8 @@ class EvaluationLink extends \General\View\Helper\AbstractLink
             default:
                 return '';
         }
-        $linkParams['action']      = $action;
-        $linkParams['show']        = $show;
+        $linkParams['action'] = $action;
+        $linkParams['show'] = $show;
         $linkParams['routeParams'] = $routeParams;
 
         return $this->parse(Link::fromArray($linkParams));

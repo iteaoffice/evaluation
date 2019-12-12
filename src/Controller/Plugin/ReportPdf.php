@@ -26,10 +26,10 @@ final class ReportPdf extends TcpdfFpdi
 {
     public const DEFAULT_FONT = 'freesans';
 
-    private ?string $templatePageId = null;
+    private ? string $templatePageId = null;
     private string $templateFile;
 
-    public function Header(): void
+    public function Header() : void
     {
         if (null === $this->templatePageId) {
             if (!file_exists($this->templateFile)) {

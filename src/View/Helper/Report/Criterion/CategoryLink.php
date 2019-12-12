@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Evaluation\View\Helper\Report\Criterion;
 
 use Evaluation\Entity\Report\Criterion\Category;
-use General\View\Helper\AbstractLink;
 use General\ValueObject\Link\Link;
+use General\View\Helper\AbstractLink;
 
 /**
  * Class CategoryLink
@@ -25,15 +25,15 @@ final class CategoryLink extends AbstractLink
 {
     public function __invoke(
         Category $category = null,
-        string   $action = 'view',
-        string   $show = 'name'
+        string $action = 'view',
+        string $show = 'name'
     ): string {
         $category ??= new Category();
 
         $routeParams = [];
         $showOptions = [];
         if (!$category->isEmpty()) {
-            $routeParams['id']   = $category->getId();
+            $routeParams['id'] = $category->getId();
             $showOptions['name'] = $category->getCategory();
         }
 
@@ -41,21 +41,21 @@ final class CategoryLink extends AbstractLink
             case 'new':
                 $linkParams = [
                     'route' => 'zfcadmin/evaluation/report/criterion/category/new',
-                    'text'  => $showOptions[$show]
+                    'text' => $showOptions[$show]
                         ?? $this->translator->translate('txt-new-evaluation-report-criterion-category')
                 ];
                 break;
             case 'list':
                 $linkParams = [
                     'route' => 'zfcadmin/evaluation/report/criterion/category/list',
-                    'text'  => $showOptions[$show]
+                    'text' => $showOptions[$show]
                         ?? $this->translator->translate('txt-evaluation-report-criterion-category-list')
                 ];
                 break;
             case 'view':
                 $linkParams = [
                     'route' => 'zfcadmin/evaluation/report/criterion/category/view',
-                    'text'  => $showOptions[$show] ?? sprintf(
+                    'text' => $showOptions[$show] ?? sprintf(
                         $this->translator->translate('txt-view-evaluation-report-criterion-category-%s'),
                         $category->getCategory()
                     )
@@ -64,15 +64,15 @@ final class CategoryLink extends AbstractLink
             case 'edit':
                 $linkParams = [
                     'route' => 'zfcadmin/evaluation/report/criterion/category/edit',
-                    'text'  => $showOptions[$show] ?? sprintf(
+                    'text' => $showOptions[$show] ?? sprintf(
                         $this->translator->translate('txt-edit-evaluation-report-criterion-category-%s'),
                         $category->getCategory()
                     )
                 ];
                 break;
         }
-        $linkParams['action']      = $action;
-        $linkParams['show']        = $show;
+        $linkParams['action'] = $action;
+        $linkParams['show'] = $show;
         $linkParams['routeParams'] = $routeParams;
 
         return $this->parse(Link::fromArray($linkParams));

@@ -22,7 +22,7 @@ final class PresentationLink extends AbstractLink
             'icon'        => 'fa-download',
             'route'       => 'zfcadmin/evaluation/report/presentation',
             'text'        => $this->translator->translate('txt-download-presentation'),
-            'queryParams' => $parameters->toArray(),
+            'queryParams' => null === $parameters ? [] : $parameters->toArray(),
             'show'        => $show
         ]));
     }

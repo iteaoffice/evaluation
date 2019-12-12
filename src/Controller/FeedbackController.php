@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Evaluation\Controller;
 
+use DoctrineModule\Form\Element\Proxy;
 use Evaluation\Entity\Feedback;
 use Evaluation\Service\EvaluationService;
 use Evaluation\Service\FormService;
@@ -32,22 +33,10 @@ use function sprintf;
  */
 final class FeedbackController extends AbstractActionController
 {
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
-    /**
-     * @var VersionService
-     */
-    private $versionService;
-    /**
-     * @var FormService
-     */
-    private $formService;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private EvaluationService $evaluationService;
+    private VersionService $versionService;
+    private FormService $formService;
+    private TranslatorInterface $translator;
 
     public function __construct(
         EvaluationService $evaluationService,
@@ -73,12 +62,14 @@ final class FeedbackController extends AbstractActionController
 
         $form = $this->formService->prepare(new Feedback(), $data);
 
-        $form->get('evaluation_entity_feedback')->get('version')->getProxy()->setLabelGenerator(
-            static function (
-                Version $version
-            ) {
-                return sprintf('%s (%s)', $version->getProject(), $version->getVersionType());
-            }
+        /** @var Proxy $proxy */
+        $proxy = $form->get('evaluation_entity_feedback')->get('version')->getProxy();
+        $proxy->setLabelGenerator(
+            fn (Version $version) => sprintf(
+                '%s (%s)',
+                $version->getProject(),
+            $version->getVersionType()
+            )
         );
 
         if ($this->getRequest()->isPost() && $form->isValid()) {
@@ -108,12 +99,14 @@ final class FeedbackController extends AbstractActionController
         );
         $form = $this->formService->prepare($feedback, $data);
 
-        $form->get($feedback->get('underscore_entity_name'))->get('version')->getProxy()->setLabelGenerator(
-            static function (
-                Version $version
-            ) {
-                return sprintf('%s (%s)', $version->getProject(), $version->getVersionType());
-            }
+        /** @var Proxy $proxy */
+        $proxy = $form->get('evaluation_entity_feedback')->get('version')->getProxy();
+        $proxy->setLabelGenerator(
+            fn (Version $version) => sprintf(
+                '%s (%s)',
+                $version->getProject(),
+            $version->getVersionType()
+            )
         );
 
         if ($this->getRequest()->isPost() && $form->isValid()) {
@@ -163,9 +156,9 @@ final class FeedbackController extends AbstractActionController
 
         return new ViewModel(
             [
-                'feedback'          => $feedback,
+                'feedback' => $feedback,
                 'evaluationService' => $this->evaluationService,
-                'versionService'    => $this->versionService,
+                'versionService' => $this->versionService,
             ]
         );
     }

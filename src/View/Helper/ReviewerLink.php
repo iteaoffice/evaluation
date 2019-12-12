@@ -16,6 +16,7 @@ use Evaluation\Acl\Assertion\ReviewerAssertion;
 use Evaluation\Entity\Reviewer;
 use General\ValueObject\Link\Link;
 use General\ValueObject\Link\LinkDecoration;
+use General\View\Helper\AbstractLink;
 use Project\Entity\Project;
 
 /**
@@ -23,7 +24,7 @@ use Project\Entity\Project;
  *
  * @package Evaluation\View\Helper
  */
-final class ReviewerLink extends \General\View\Helper\AbstractLink
+final class ReviewerLink extends AbstractLink
 {
     public function __invoke(
         Reviewer $reviewer = null,

@@ -7,14 +7,12 @@
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
  */
-
 declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
 
 use Evaluation\Acl\Assertion\ReportAssertion;
 use Evaluation\Entity\Report as EvaluationReport;
-use Evaluation\View\Helper\AbstractLink;
 use General\ValueObject\Link\Link;
 use General\ValueObject\Link\LinkDecoration;
 use Project\Entity\Report\Report as ProjectReport;
@@ -34,17 +32,14 @@ final class FinalLink extends \General\View\Helper\AbstractLink
         ProjectReport    $projectReport = null,
         ProjectVersion   $projectVersion = null
     ): string {
-        $this->extractRouteParams($evaluationReport, ['id']);
-
+        $evaluationReport ??= new EvaluationReport();
         if (!$this->hasAccess($evaluationReport, ReportAssertion::class, $action)) {
             return '';
         }
-
         $routeParams = [];
         if (!$evaluationReport->isEmpty()) {
             $routeParams['id'] = $evaluationReport->getId();
         }
-
         switch ($action) {
             case 'download-offline-form':
                 $route = 'zfcadmin/evaluation/report/list';
@@ -125,7 +120,6 @@ final class FinalLink extends \General\View\Helper\AbstractLink
         $linkParams['action']      = $action;
         $linkParams['show']        = $show;
         $linkParams['routeParams'] = $routeParams;
-
         return $this->parse(Link::fromArray($linkParams));
     }
 }

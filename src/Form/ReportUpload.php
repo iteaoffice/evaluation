@@ -34,7 +34,7 @@ final class ReportUpload extends Form
             'action' => $action
         ]);
 
-        // Set a basic inputfilter
+        // Set a basic input filter
         $inputFilter = new InputFilter();
         $inputFilter->add([
             'name'       => 'excel',

@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -37,33 +37,17 @@ use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
 /**
- * @package Evaluation\Controller
  * @method CreateEvaluation createEvaluation(array $projects, Type $evaluationType, int $display, int $source)
  * @method Identity|Contact identity()
  * @method IsAllowed isAllowed($resource, string $action)
  */
 final class JsonController extends AbstractActionController
 {
-    /**
-     * @var CallService
-     */
-    private $callService;
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var CountryService
-     */
-    private $countryService;
-    /**
-     * @var HelperPluginManager
-     */
-    private $viewHelperManager;
+    private CallService $callService;
+    private EvaluationService $evaluationService;
+    private ProjectService $projectService;
+    private CountryService $countryService;
+    private HelperPluginManager $viewHelperManager;
 
     public function __construct(
         CallService $callService,
@@ -172,12 +156,12 @@ final class JsonController extends AbstractActionController
 
         return new JsonModel(
             [
-                'isEvaluation'     => $this->evaluationService->isEvaluation($evaluationType),
-                'projects'         => $projectResults,
-                'source'           => $source,
-                'countries'        => $evaluationResult['countries'],
+                'isEvaluation' => $this->evaluationService->isEvaluation($evaluationType),
+                'projects' => $projectResults,
+                'source' => $source,
+                'countries' => $evaluationResult['countries'],
                 'evaluationResult' => $evaluationResult,
-                'evaluationType'   => $evaluationType,
+                'evaluationType' => $evaluationType,
             ]
         );
     }
@@ -213,7 +197,7 @@ final class JsonController extends AbstractActionController
             return new JsonModel(
                 [
                     'class' => $status->parseCssName(),
-                    'code'  => $status->getCode(),
+                    'code' => $status->getCode(),
                 ]
             );
         }

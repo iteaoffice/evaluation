@@ -27,28 +27,15 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 /**
- * @package Evaluation\Controller
  * @method array createEvaluation(array $projects, Type $evaluationType, int $display, int $source)
  * @method Contact identity()
  */
 final class EvaluationManagerController extends AbstractActionController
 {
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
-    /**
-     * @var CallService
-     */
-    private $callService;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private ProjectService $projectService;
+    private EvaluationService $evaluationService;
+    private CallService $callService;
+    private EntityManager $entityManager;
 
     public function __construct(
         ProjectService $projectService,

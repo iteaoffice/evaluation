@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -49,40 +49,28 @@ use function sprintf;
  */
 final class ReportController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private EvaluationReportService $evaluationReportService;
+    private ProjectService $projectService;
+    private EntityManager $entityManager;
+    private TranslatorInterface $translator;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ProjectService          $projectService,
-        EntityManager           $entityManager,
-        TranslatorInterface     $translator
+        ProjectService $projectService,
+        EntityManager $entityManager,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->projectService          = $projectService;
-        $this->entityManager           = $entityManager;
-        $this->translator              = $translator;
+        $this->projectService = $projectService;
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
     }
 
-    public function listAction()
+    public function listAction(): ViewModel
     {
-        $status     = EvaluationReportService::STATUS_NEW;
+        $status = EvaluationReportService::STATUS_NEW;
         $reportsNew = $this->evaluationReportService->findReviewReportsByContact($this->identity(), $status);
-        $hasNew     = false;
+        $hasNew = false;
         foreach ($reportsNew as $container) {
             if (!empty($container['reviews'])) {
                 $hasNew = true;
@@ -90,34 +78,11 @@ final class ReportController extends AbstractActionController
             }
         }
 
-        /*$reportsInProgress = $this->evaluationReportService->findReviewReportsByContact(
-            $this->identity(),
-            EvaluationReportService::STATUS_IN_PROGRESS
-        );
-        $hasInProgress = false;
-        foreach ($reportsInProgress as $container) {
-            if (!empty($container['reviews'])) {
-                $hasInProgress = true;
-                break;
-            }
-        }
-
-        $reportsFinal = $this->evaluationReportService->findReviewReportsByContact(
-            $this->identity(),
-            EvaluationReportService::STATUS_FINAL
-        );
-        $hasFinal = !empty($reportsFinal);*/
-
         return new ViewModel(
             [
                 'reportsNew' => $reportsNew,
-                'hasNew'     => $hasNew,
-                'status'     => $status,
-                //'reportsInProgress'       => $reportsInProgress,
-                //'hasInProgress'           => $hasInProgress,
-                //'reportsFinal'            => $reportsFinal,
-                //'hasFinal'                => $hasFinal,
-                //'evaluationReportService' => $this->evaluationReportService
+                'hasNew' => $hasNew,
+                'status' => $status
             ]
         );
     }
@@ -170,28 +135,28 @@ final class ReportController extends AbstractActionController
         $uploadForm = new ReportUpload($uploadFormAction);
 
         return new ViewModel([
-            'label'          => $label,
+            'label' => $label,
             'projectService' => $this->projectService,
-            'project'        => $project,
-            'type'           => $type,
-            'review'         => $reviewer,
-            'reviewers'      => $reviewers,
-            'report'         => $evaluationReport,
-            'results'        => $this->evaluationReportService->getSortedResults($evaluationReport),
-            'scoreValues'    => Result::getScoreValues(),
-            'complete'       => $percentageComplete === (float)100,
-            'uploadForm'     => $uploadForm
+            'project' => $project,
+            'type' => $type,
+            'review' => $reviewer,
+            'reviewers' => $reviewers,
+            'report' => $evaluationReport,
+            'results' => $this->evaluationReportService->getSortedResults($evaluationReport),
+            'scoreValues' => Result::getScoreValues(),
+            'complete' => $percentageComplete === (float)100,
+            'uploadForm' => $uploadForm
         ]);
     }
 
     public function newAction()
     {
         /** @var Request $request */
-        $request           = $this->getRequest();
-        $offlineMode       = ($request->getQuery('mode') === 'offline');
+        $request = $this->getRequest();
+        $offlineMode = ($request->getQuery('mode') === 'offline');
         $versionReviewerId = $this->params()->fromRoute('versionReviewer');
-        $reportReviewerId  = $this->params()->fromRoute('reportReviewer');
-        $reviewId          = $versionReviewerId ?? $reportReviewerId;
+        $reportReviewerId = $this->params()->fromRoute('reportReviewer');
+        $reviewId = $versionReviewerId ?? $reportReviewerId;
 
         if (($versionReviewerId === null) && ($reportReviewerId === null)) {
             return $this->notFoundAction();
@@ -229,9 +194,9 @@ final class ReportController extends AbstractActionController
 
         // Create an evaluation report so that new and edit can be handled by the same form
         $evaluationReport = $this->evaluationReportService->prepareEvaluationReport($reportVersion, (int)$reviewId);
-        $label            = EvaluationReportService::parseLabel($evaluationReport);
-        $reviewers        = $this->evaluationReportService->getReviewers($evaluationReport);
-        $project          = EvaluationReportService::getProject($evaluationReport);
+        $label = EvaluationReportService::parseLabel($evaluationReport);
+        $reviewers = $this->evaluationReportService->getReviewers($evaluationReport);
+        $project = EvaluationReportService::getProject($evaluationReport);
         $reportReviewer = ($evaluationReport->getProjectReportReport() !== null)
             ? $evaluationReport->getProjectReportReport()->getReviewer() : null;
         $versionReviewer = ($evaluationReport->getProjectVersionReport() !== null)
@@ -327,12 +292,12 @@ final class ReportController extends AbstractActionController
         return new ViewModel(
             [
                 'projectService' => $this->projectService,
-                'review'         => $reportReviewer ?? $versionReviewer,
-                'project'        => $project,
-                'reviewers'      => $reviewers,
-                'form'           => $form,
-                'uploadForm'     => $uploadForm,
-                'report'         => $evaluationReport,
+                'review' => $reportReviewer ?? $versionReviewer,
+                'project' => $project,
+                'reviewers' => $reviewers,
+                'form' => $form,
+                'uploadForm' => $uploadForm,
+                'report' => $evaluationReport,
             ]
         );
     }
@@ -367,23 +332,23 @@ final class ReportController extends AbstractActionController
         /** @var EvaluationReport\ProjectReport $projectReportReport */
         $projectReportReport = $evaluationReport->getProjectReportReport();
         if ($projectVersionReport !== null) {
-            $type      = EvaluationReportType::TYPE_GENERAL_VERSION;
+            $type = EvaluationReportType::TYPE_GENERAL_VERSION;
             /** @var VersionReviewer $reviewer */
-            $reviewer  = $projectVersionReport->getReviewer();
+            $reviewer = $projectVersionReport->getReviewer();
             /** @var Version $version */
-            $version   = $reviewer->getVersion();
+            $version = $reviewer->getVersion();
             $reviewers = $version->getReviewers();
-            $project   = $version->getProject();
-            $label     = $version->getVersionType()->getDescription();
+            $project = $version->getProject();
+            $label = $version->getVersionType()->getDescription();
         } elseif ($projectReportReport !== null) {
-            $type      = EvaluationReportType::TYPE_GENERAL_REPORT;
+            $type = EvaluationReportType::TYPE_GENERAL_REPORT;
             /** @var ReportReviewer $reviewer */
-            $reviewer  = $projectReportReport->getReviewer();
+            $reviewer = $projectReportReport->getReviewer();
             /** @var Report $report */
-            $report    = $reviewer->getProjectReport();
+            $report = $reviewer->getProjectReport();
             $reviewers = $report->getReviewers();
-            $project   = $report->getProject();
-            $label     = $report->parseName();
+            $project = $report->getProject();
+            $label = $report->parseName();
         } else {
             return $this->notFoundAction();
         }
@@ -484,14 +449,14 @@ final class ReportController extends AbstractActionController
 
         return new ViewModel([
             'projectService' => $this->projectService,
-            'project'        => $project,
-            'type'           => $type,
-            'review'         => $reviewer,
-            'reviewers'      => $reviewers,
-            'form'           => $form,
-            'uploadForm'     => $uploadForm,
-            'label'          => $label,
-            'report'         => $evaluationReport,
+            'project' => $project,
+            'type' => $type,
+            'review' => $reviewer,
+            'reviewers' => $reviewers,
+            'form' => $form,
+            'uploadForm' => $uploadForm,
+            'label' => $label,
+            'report' => $evaluationReport,
         ]);
     }
 
@@ -508,7 +473,7 @@ final class ReportController extends AbstractActionController
         }
 
         $percentageComplete = $this->evaluationReportService->parseCompletedPercentage($evaluationReport);
-        $label              = EvaluationReportService::parseLabel($evaluationReport);
+        $label = EvaluationReportService::parseLabel($evaluationReport);
 
         if ($percentageComplete === (float)100) {
             $evaluationReport->setFinal(true);

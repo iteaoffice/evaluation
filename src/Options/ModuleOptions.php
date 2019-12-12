@@ -22,22 +22,10 @@ use Zend\Stdlib\AbstractOptions;
  */
 /*final*/ class ModuleOptions extends AbstractOptions
 {
-    /**
-     * @var string
-     */
-    protected $reportTemplate = '';
-    /**
-     * @var array
-     */
-    protected $presentationTemplates = [];
-    /**
-     * @var string
-     */
-    protected $reportAuthor = '';
-    /**
-     * @var string
-     */
-    private $projectTemplate = '';
+    protected string $reportTemplate = '';
+    protected array $presentationTemplates = [];
+    protected string $reportAuthor = '';
+    private string $projectTemplate = '';
 
     public function getReportTemplate(): string
     {

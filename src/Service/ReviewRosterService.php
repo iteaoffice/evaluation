@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -76,22 +76,22 @@ class ReviewRosterService
     private const MAX_RETRIES = 25; // Maximum attempts to generate a correct roster
 
     private static array $scoreBoost = [
-            ReviewerService::TYPE_PO  => 1,
-            ReviewerService::TYPE_CR  => 2,
-            ReviewerService::TYPE_FPP => 3,
-            ReviewerService::TYPE_PPR => 3,
-            ReviewerService::TYPE_R   => 5,
-            ReviewerService::TYPE_FE  => 6,
-            ReviewerService::TYPE_PR  => 10, // Preferred reviewers have the highest boost
-        ];
+        ReviewerService::TYPE_PO => 1,
+        ReviewerService::TYPE_CR => 2,
+        ReviewerService::TYPE_FPP => 3,
+        ReviewerService::TYPE_PPR => 3,
+        ReviewerService::TYPE_R => 5,
+        ReviewerService::TYPE_FE => 6,
+        ReviewerService::TYPE_PR => 10, // Preferred reviewers have the highest boost
+    ];
 
     private static array $assigned = [
-            self::REVIEWER_ASSIGNED,
-            self::REVIEWER_PRIMARY,
-            self::REVIEWER_SPARE,
-            self::REVIEWER_EXTRA_SPARE,
-            self::REVIEWER_EXTRA
-        ];
+        self::REVIEWER_ASSIGNED,
+        self::REVIEWER_PRIMARY,
+        self::REVIEWER_SPARE,
+        self::REVIEWER_EXTRA_SPARE,
+        self::REVIEWER_EXTRA
+    ];
 
     private CallService $callService;
     private ProjectService $projectService;
@@ -118,10 +118,10 @@ class ReviewRosterService
     }
 
     /**
-     * @param string   $type                  Constants defined in Evaluation\Service\ReviewerService
-     * @param array    $config                Config data output by parseConfigFile()
-     * @param int      $reviewersPerProject   Minimum number of reviewers assigned per project
-     * @param bool     $includeSpareReviewers Include spare reviewers in the minimum number of reviewers assigned
+     * @param string $type Constants defined in Evaluation\Service\ReviewerService
+     * @param array $config Config data output by parseConfigFile()
+     * @param int $reviewersPerProject Minimum number of reviewers assigned per project
+     * @param bool $includeSpareReviewers Include spare reviewers in the minimum number of reviewers assigned
      * @param int|null $forceProjectsPerRound Overrule the calculated number of projects per round
      *
      * @return array
@@ -222,7 +222,7 @@ class ReviewRosterService
      * Get a list of projects depending on the roster type
      *
      * @param string $type
-     * @param array  $projectConfig
+     * @param array $projectConfig
      *
      * @return array
      */
@@ -237,7 +237,7 @@ class ReviewRosterService
             $year = ($previousSemester === 2) ? ((int)$now->format('Y') - 1) : ((int)$now->format('Y'));
             $reports = $this->entityManager->getRepository(Report::class)->findBy(
                 [
-                    'year'     => $year,
+                    'year' => $year,
                     'semester' => $previousSemester
                 ]
             );
@@ -250,7 +250,7 @@ class ReviewRosterService
             $calls = $this->callService->findOpenCall();
             $currentCall = $calls->getFirst() ?? $calls->getUpcoming();
             $filter = [
-                'program_call_id'     => $currentCall->getId(),
+                'program_call_id' => $currentCall->getId(),
                 'latest_version_type' => strtolower($type)
             ];
 
@@ -304,7 +304,7 @@ class ReviewRosterService
      * Apply score boosts and penalties based on review history, preferred and ignored reviewers
      *
      * @param array|Project[] $projects
-     * @param array           $allReviewers
+     * @param array $allReviewers
      *
      * @return array
      */
@@ -319,10 +319,10 @@ class ReviewRosterService
             $preferredReviewers = $this->reviewerService->getPreferredReviewers($project);
 
             $projectReviewerScores[$projectKey] = [
-                'data'   => [
-                    'number'  => $project->getNumber(),
-                    'name'    => $project->getProject(),
-                    'call'    => $project->getCall()->shortName(),
+                'data' => [
+                    'number' => $project->getNumber(),
+                    'name' => $project->getProject(),
+                    'call' => $project->getCall()->shortName(),
                     'history' => $reviewHistory,
                     'ignored' => $ignoredReviewers
                 ],
@@ -561,8 +561,8 @@ class ReviewRosterService
      * Check whether reviewers are from the same (parent) organisation
      *
      * @param string $handle
-     * @param array  $otherHandles
-     * @param array  $reviewerData
+     * @param array $otherHandles
+     * @param array $reviewerData
      *
      * @return bool
      */
@@ -586,9 +586,9 @@ class ReviewRosterService
      * This assumes full availability for each reviewer, not taking into account the rounds not available
      * from start or end
      *
-     * @param int      $numberOfProjects
-     * @param int      $minReviewersAssigned
-     * @param int      $totalReviewers
+     * @param int $numberOfProjects
+     * @param int $minReviewersAssigned
+     * @param int $totalReviewers
      * @param int|null $forceProjectsPerRound
      *
      * @return array
@@ -957,12 +957,12 @@ class ReviewRosterService
                         if (!isset($bestMatchByHandle[$handle]) || ($score > $bestMatchByHandle[$handle]['score'])) {
                             $bestMatchByHandle[$handle] = [
                                 'projectIndex' => $projectIndex,
-                                'score'        => $score
+                                'score' => $score
                             ];
                         }
                         $bestMatchesByProjectTemp[$projectIndex][(string)$score][] = [
                             'handle' => $handle,
-                            'score'  => $score
+                            'score' => $score
                         ];
                     }
                 }
@@ -1326,13 +1326,13 @@ class ReviewRosterService
                                     ->getOrganisation()
                                 : null;
                             $config[$keys[$sheetIndex]][$handle] = [
-                                'name'         => $reviewContact->getContact()->parseFullName(),
+                                'name' => $reviewContact->getContact()->parseFullName(),
                                 'organisation' => $organisation->getOrganisation(),
-                                'parent'       => $parent,
-                                'present'      => ($sheetIndex === 0),
-                                'risky'        => ((int)$sheet->getCell('B' . $row)->getValue() === 1),
-                                'experienced'  => ((int)$sheet->getCell('C' . $row)->getValue() === 1),
-                                'weight'       => (float)$sheet->getCell('D' . $row)->getValue(),
+                                'parent' => $parent,
+                                'present' => ($sheetIndex === 0),
+                                'risky' => ((int)$sheet->getCell('B' . $row)->getValue() === 1),
+                                'experienced' => ((int)$sheet->getCell('C' . $row)->getValue() === 1),
+                                'weight' => (float)$sheet->getCell('D' . $row)->getValue(),
                                 'availability' => (float)$sheet->getCell('E' . $row)->getValue(),
                             ];
                         } else {

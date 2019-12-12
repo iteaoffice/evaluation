@@ -1,6 +1,6 @@
 <?php
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -58,46 +58,16 @@ use function sys_get_temp_dir;
  */
 final class EvaluationController extends AbstractActionController
 {
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var VersionService
-     */
-    private $versionService;
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
-    /**
-     * @var CallService
-     */
-    private $callService;
-    /**
-     * @var ContactService
-     */
-    private $contactService;
-    /**
-     * @var GeneralService
-     */
-    private $generalService;
-    /**
-     * @var CountryService
-     */
-    private $countryService;
-    /**
-     * @var FormService
-     */
-    private $formService;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private ProjectService $projectService;
+    private VersionService $versionService;
+    private EvaluationService $evaluationService;
+    private CallService $callService;
+    private ContactService $contactService;
+    private GeneralService $generalService;
+    private CountryService $countryService;
+    private FormService $formService;
+    private EntityManager $entityManager;
+    private TranslatorInterface $translator;
 
     public function __construct(
         ProjectService $projectService,
@@ -161,10 +131,10 @@ final class EvaluationController extends AbstractActionController
             return $this->redirect()->toRoute(
                 'community/evaluation/overview',
                 [
-                    'show'    => 'matrix',
-                    'type'    => $typeId,
-                    'source'  => (int)$formData['source'],
-                    'call'    => (int)$formData['call'],
+                    'show' => 'matrix',
+                    'type' => $typeId,
+                    'source' => (int)$formData['source'],
+                    'call' => (int)$formData['call'],
                     'display' => $display,
 
                 ]
@@ -174,9 +144,9 @@ final class EvaluationController extends AbstractActionController
 
         $form->setData(
             [
-                    'call'   => $callId,
-                    'source' => $source,
-                ]
+                'call' => $callId,
+                'source' => $source,
+            ]
         );
 
 
@@ -238,22 +208,22 @@ final class EvaluationController extends AbstractActionController
         return new ViewModel(
             array_merge_recursive(
                 [
-                    'isEvaluation'    => $this->evaluationService->isEvaluation($evaluationType),
-                    'projects'        => $projects,
+                    'isEvaluation' => $this->evaluationService->isEvaluation($evaluationType),
+                    'projects' => $projects,
                     'fundingStatuses' => $fundingStatuses,
                     'evaluationTypes' => $evaluationTypes,
-                    'versionTypes'    => $versionTypes,
-                    'call'            => $call,
-                    'contactCountry'  => $this->contactService->parseCountry($this->identity()),
-                    'show'            => $show,
-                    'typeId'          => $typeId,
-                    'source'          => $source,
-                    'display'         => (int)$display,
-                    'form'            => $form,
-                    'generalService'  => $this->generalService,
-                    'projectService'  => $this->projectService,
-                    'countryService'  => $this->countryService,
-                    'evaluation'      => new Entity\Evaluation(),
+                    'versionTypes' => $versionTypes,
+                    'call' => $call,
+                    'contactCountry' => $this->contactService->parseCountry($this->identity()),
+                    'show' => $show,
+                    'typeId' => $typeId,
+                    'source' => $source,
+                    'display' => (int)$display,
+                    'form' => $form,
+                    'generalService' => $this->generalService,
+                    'projectService' => $this->projectService,
+                    'countryService' => $this->countryService,
+                    'evaluation' => new Entity\Evaluation(),
                 ],
                 $viewParameters
             )
@@ -436,7 +406,7 @@ final class EvaluationController extends AbstractActionController
                     'community/evaluation/overview-project',
                     [
                         'country' => $country->getId(),
-                        'type'    => $evaluationType->getId(),
+                        'type' => $evaluationType->getId(),
                         'project' => $project->getId(),
                     ]
                 );
@@ -451,7 +421,7 @@ final class EvaluationController extends AbstractActionController
                     'community/evaluation/overview-project',
                     [
                         'country' => $country->getId(),
-                        'type'    => $evaluationType->getId(),
+                        'type' => $evaluationType->getId(),
                         'project' => $project->getId(),
                     ]
                 );
@@ -467,11 +437,11 @@ final class EvaluationController extends AbstractActionController
 
         return new ViewModel(
             [
-                'evaluation'      => $evaluation,
-                'evaluationType'  => $evaluationType,
+                'evaluation' => $evaluation,
+                'evaluationType' => $evaluationType,
                 'evaluationTypes' => $evaluationTypes,
-                'version'         => $version,
-                'form'            => $form,
+                'version' => $version,
+                'form' => $form,
             ]
         );
     }
@@ -640,22 +610,22 @@ final class EvaluationController extends AbstractActionController
 
         return new ViewModel(
             [
-                'country'          => $country,
-                'countries'        => $countries,
-                'totalEffort'      => null !== $version ? $this->versionService->findTotalEffortVersion($version)
+                'country' => $country,
+                'countries' => $countries,
+                'totalEffort' => null !== $version ? $this->versionService->findTotalEffortVersion($version)
                     : 0,
-                'contactCountry'   => $this->contactService->parseCountry(
+                'contactCountry' => $this->contactService->parseCountry(
                     $this->identity()
                 ),
-                'projectService'   => $this->projectService,
-                'generalService'   => $this->generalService,
-                'versionService'   => $this->versionService,
-                'evaluationType'   => $evaluationType,
-                'evaluationTypes'  => $evaluationTypes,
+                'projectService' => $this->projectService,
+                'generalService' => $this->generalService,
+                'versionService' => $this->versionService,
+                'evaluationType' => $evaluationType,
+                'evaluationTypes' => $evaluationTypes,
                 'evaluationResult' => $evaluationResult,
-                'version'          => $version,
-                'project'          => $project,
-                'versionType'      => $versionType,
+                'version' => $version,
+                'project' => $project,
+                'versionType' => $versionType,
             ]
         );
     }
