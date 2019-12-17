@@ -28,21 +28,6 @@ use function strtolower;
  */
 abstract class AbstractEntity implements Entity, ResourceInterface
 {
-    public function __get($property)
-    {
-        return $this->$property;
-    }
-
-    public function __set($property, $value)
-    {
-        $this->$property = $value;
-    }
-
-    public function __isset($property)
-    {
-        return isset($this->$property);
-    }
-
     public function getResourceId(): string
     {
         return sprintf('%s:%s', $this->get('full_entity_name'), $this->getId());

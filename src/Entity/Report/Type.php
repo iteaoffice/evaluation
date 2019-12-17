@@ -97,21 +97,6 @@ class Type extends AbstractEntity
      */
     private $criteria;
 
-    public function __get($property)
-    {
-        return $this->$property;
-    }
-
-    public function __set($property, $value)
-    {
-        $this->$property = $value;
-    }
-
-    public function __isset($property)
-    {
-        return isset($this->$property);
-    }
-
     public function __construct()
     {
         $this->reportVersions = new ArrayCollection();
