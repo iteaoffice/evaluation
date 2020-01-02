@@ -24,9 +24,9 @@
             </div>
         </div>
         <div class="form-horizontal">
-            <h2>{{ translate('txt-project-score') }}</h2>
+            <h2>{{ translate("txt-project-score") }}</h2>
             <div class="form-group row">
-                <label class="col-md-3 control-label">{{ translate('txt-score') }}</label>
+                <label class="col-md-3 control-label">{{ translate("txt-score") }}</label>
                 <div class="col-md-9">
                     <p class="form-control-static form-control-plaintext">{{ evaluationReportScore(report) }}</p>
                 </div>
@@ -71,14 +71,14 @@
                     <div class="form-group row">
                         <label class="col-md-3 control-label">{{ result.criterion.criterion }}</label>
                         <div class="col-md-9">
-                            <p class="form-control-static form-control-plaintext">({{ translate('txt-not-applicable') }})</p>
+                            <p class="form-control-static form-control-plaintext">({{ translate("txt-not-applicable") }})</p>
                         </div>
                     </div>
                 {% else %}
                     <div class="form-group row">
                         <label class="col-md-3 control-label">{{ result.criterion.criterion }}</label>
                         <div class="col-md-9">
-                            {{ ztbalert().info(translate('txt-no-result-provided'))|raw }}
+                            {{ ztbalert().info(translate("txt-no-result-provided"))|raw }}
                         </div>
                     </div>
                 {% endif %}

@@ -1,5 +1,5 @@
 <?php
-_("txt-description');
+_('txt-description');
 _('txt-evaluation-description-explanation');
 _('txt-evaluation-status');
 _('txt-evaluation-status-explanation');
@@ -44,4 +44,4 @@ _('txt-score-low-quality');
 _('txt-approved');
 _('txt-rejected');
 _('txt-contact');
-_('txt-reviewer-type");
+_('txt-reviewer-type');

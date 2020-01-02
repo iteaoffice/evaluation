@@ -25,9 +25,6 @@ use function in_array;
  */
 abstract class AbstractService
 {
-    /**
-     * @var EntityManager
-     */
     protected EntityManager $entityManager;
 
     public function __construct(EntityManager $entityManager)

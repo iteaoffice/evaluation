@@ -28,8 +28,8 @@ use Project\Entity\Project;
 use Project\Entity\Version\Type as VersionType;
 use Project\Form\MatrixFilter;
 use Project\Service\ProjectService;
-use Project\View\Helper\ProjectLink;
-use Project\View\Helper\ProjectStatusIcon;
+use Project\View\Helper\Project\ProjectLink;
+use Project\View\Helper\Project\StatusIcon;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Plugin\Identity\Identity;
 use Zend\View\HelperPluginManager;
@@ -107,8 +107,8 @@ final class JsonController extends AbstractActionController
 
         /** @var ProjectLink $projectLink */
         $projectLink = $this->viewHelperManager->get(ProjectLink::class);
-        /** @var ProjectStatusIcon $projectStatusIcon */
-        $projectStatusIcon = $this->viewHelperManager->get(ProjectStatusIcon::class);
+        /** @var StatusIcon $projectStatusIcon */
+        $projectStatusIcon = $this->viewHelperManager->get(StatusIcon::class);
         /** @var EvaluationLink $evaluationLink */
         $evaluationLink = $this->viewHelperManager->get(EvaluationLink::class);
         /** @var Country $contactCountry */

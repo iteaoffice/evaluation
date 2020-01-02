@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-md-6">
         <dl class="dl-horizontal">
-            <dt>{{ translate('txt-evaluation-subject') }}</dt>
+            <dt>{{ translate("txt-evaluation-subject") }}</dt>
             <dd>
                 {% if type is constant("Evaluation\\Entity\\Report\\Type::TYPE_GENERAL_REPORT") %}
                     {{ reportLink(review.projectReport, 'report-community', 'name') }}
@@ -10,27 +10,27 @@
                     {{ versionLink(review.version,'view-community','description') }}
                 {% endif %}
             </dd>
-            <dt>{{ translate('txt-status') }}</dt>
+            <dt>{{ translate("txt-status") }}</dt>
             <dd>{% if action == 'new' %}
                     {{ evaluationReportProgress() }}
                 {% else %}
                     {{ evaluationReportProgress(report) }}
                 {% endif %}
             </dd>
-            <dt>{{ translate('txt-final') }}</dt>
+            <dt>{{ translate("txt-final") }}</dt>
             <dd>{% if report.final %}
-                    {{ translate('txt-yes') }} ({{ evaluationReportLink(report, 'undo-final') }})
+                    {{ translate("txt-yes') }} ({{ evaluationReportLink(report, 'undo-final") }})
                 {% else %}
-                    {{ translate('txt-no') }}
+                    {{ translate("txt-no") }}
                 {% endif %}
             </dd>
             {% if report.dateCreated is not empty %}
-                <dt>{{ translate('txt-date-created') }}</dt>
+                <dt>{{ translate("txt-date-created") }}</dt>
                 <dd>{{ report.dateCreated|string_date }}</dd>
-                <dt>{{ translate('txt-date-updated') }}</dt>
+                <dt>{{ translate("txt-date-updated") }}</dt>
                 <dd>{{ report.dateUpdated|string_date }}</dd>
             {% endif %}
-            <dt>{{ translate('txt-steering-group-reviewers') }}</dt>
+            <dt>{{ translate("txt-steering-group-reviewers") }}</dt>
             {% for reviewer in reviewers %}
                 <dd>{{ reviewer.contact.parseFullName() }} {{ contactLink(reviewer.contact,'view-admin','icon') }}</dd>
             {% endfor %}

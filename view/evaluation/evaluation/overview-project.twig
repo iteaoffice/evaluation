@@ -7,7 +7,7 @@
         <li class="nav-item {% if evaluationType.id is same as(type.id) %}active{% endif %}">
             <a class="nav-link{% if evaluationType.id is same as(type.id) %} active{% endif %}"
                href="{{ evaluationLink(null, project, type, country,'overview-project', 'raw') }}">
-                {{ translate('txt-overview-%s-evaluation-for-project-%s-in-%s')|format(type,project,country) }}</a>
+                {{ translate("txt-overview-%s-evaluation-for-project-%s-in-%s")|format(type,project,country) }}</a>
         </li>
     {% endfor %}
 </ul>
