@@ -27,39 +27,21 @@ use Evaluation\Entity\Report\Version;
 use Evaluation\Form\Report\VersionFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Http\Request;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
 
 /**
- * Class VersionController
- *
  * @method GetFilter getEvaluationFilter()
- * @package Evaluation\Controller\Report
  */
 final class VersionController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-
-    /**
-     * @var FormService
-     */
-    private $formService;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
+    private TranslatorInterface $translator;
+    private EntityManager $entityManager;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
@@ -89,11 +71,11 @@ final class VersionController extends AbstractActionController
 
         return new ViewModel(
             [
-                'paginator'     => $paginator,
-                'form'          => $form,
+                'paginator' => $paginator,
+                'form' => $form,
                 'encodedFilter' => \urlencode($filterPlugin->getHash()),
-                'order'         => $filterPlugin->getOrder(),
-                'direction'     => $filterPlugin->getDirection(),
+                'order' => $filterPlugin->getOrder(),
+                'direction' => $filterPlugin->getDirection(),
             ]
         );
     }
@@ -109,9 +91,9 @@ final class VersionController extends AbstractActionController
 
         return new ViewModel(
             [
-                'reportVersion'  => $reportVersion,
-                'reports'        => $this->evaluationReportService->count(Report::class, ['version' => $reportVersion]),
-                'activeWindows'  => $this->entityManager->getRepository(Report\Window::class)
+                'reportVersion' => $reportVersion,
+                'reports' => $this->evaluationReportService->count(Report::class, ['version' => $reportVersion]),
+                'activeWindows' => $this->entityManager->getRepository(Report\Window::class)
                     ->findActiveWindows($reportVersion),
                 'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
                     ->findSorted($reportVersion),
@@ -178,7 +160,7 @@ final class VersionController extends AbstractActionController
                 return $this->redirect()->toRoute('zfcadmin/evaluation/report/version/list');
             }
 
-            if (isset($data['delete']) && !$hasReports) {
+            if (isset($data['delete']) && ! $hasReports) {
                 $this->evaluationReportService->delete($reportVersion);
 
                 return $this->redirect()->toRoute('zfcadmin/evaluation/report/version/list');
@@ -197,7 +179,7 @@ final class VersionController extends AbstractActionController
 
         return new ViewModel(
             [
-                'form'          => $form,
+                'form' => $form,
                 'reportVersion' => $reportVersion
             ]
         );
@@ -242,8 +224,8 @@ final class VersionController extends AbstractActionController
 
         return new ViewModel(
             [
-                'form'           => $form,
-                'reportVersion'  => $reportVersion,
+                'form' => $form,
+                'reportVersion' => $reportVersion,
                 'sortedCriteria' => $this->entityManager->getRepository(CriterionVersion::class)
                     ->findSorted($reportVersion),
             ]

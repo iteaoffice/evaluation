@@ -16,9 +16,9 @@ use Admin\Entity\Access;
 use Evaluation\Entity\Reviewer;
 use Evaluation\Service\ReviewerService;
 use Interop\Container\ContainerInterface;
-use Zend\Permissions\Acl\Acl;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
 
 /**
  * Class ReviewerAssertion
@@ -47,7 +47,7 @@ final class ReviewerAssertion extends AbstractAssertion
         $this->setPrivilege($privilege);
         $id = $this->getId();
 
-        if ((!$reviewer instanceof Reviewer) && (null !== $id)) {
+        if ((! $reviewer instanceof Reviewer) && (null !== $id)) {
             $reviewer = $this->reviewerService->find(Reviewer::class, (int)$id);
         }
 

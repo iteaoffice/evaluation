@@ -20,10 +20,10 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Evaluation\Entity\Report as EvaluationReport;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Evaluation\Service\EvaluationReportService;
-use Zend\Http\Headers;
-use Zend\Http\Response;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Mvc\Controller\PluginManager;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\PluginManager;
 use ZipArchive;
 use function file_exists;
 use function file_get_contents;
@@ -76,7 +76,7 @@ final class ExcelDownload extends AbstractPlugin
         foreach ($windows as $window) {
             foreach ($window['reviews'] as $content) {
                 $report = $content;
-                if (!($content instanceof EvaluationReport)) {
+                if (! ($content instanceof EvaluationReport)) {
                     if ($content instanceof VersionReviewer) {
                         $reportVersion = $this->evaluationReportService->findReportVersionForProjectVersion(
                             $content->getVersion()
@@ -92,7 +92,7 @@ final class ExcelDownload extends AbstractPlugin
 
                 /** @var Xlsx $writer */
                 $writer = IOFactory::createWriter($excel, 'Xlsx');
-                $writer->setIncludeCharts(!$forDistribution);
+                $writer->setIncludeCharts(! $forDistribution);
                 ob_start();
                 $writer->save('php://output');
                 $zip->addFromString($fileName, ob_get_clean());
@@ -109,7 +109,7 @@ final class ExcelDownload extends AbstractPlugin
     public function parseResponse(): Response
     {
         $response = new Response();
-        if (!file_exists($this->zipTempFile)) {
+        if (! file_exists($this->zipTempFile)) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 

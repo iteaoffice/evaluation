@@ -6,7 +6,7 @@ namespace Evaluation\View\Helper\Report;
 
 use General\ValueObject\Link\Link;
 use General\View\Helper\AbstractLink;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 
 /**
  * Class PresentationLink

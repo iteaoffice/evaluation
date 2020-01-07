@@ -15,7 +15,7 @@ namespace Evaluation\Entity;
 use Doctrine\Common\Collections;
 use Doctrine\ORM\Mapping as ORM;
 use Project\Entity\Version\Type as VersionType;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_type")
@@ -97,12 +97,12 @@ class Type extends AbstractEntity
         return $this;
     }
 
-    public function getEvaluation(): ?array
+    public function getEvaluation()
     {
         return $this->evaluation;
     }
 
-    public function setEvaluation(array $evaluation): Type
+    public function setEvaluation($evaluation): Type
     {
         $this->evaluation = $evaluation;
         return $this;

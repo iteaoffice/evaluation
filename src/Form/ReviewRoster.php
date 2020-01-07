@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Evaluation\Form;
 
 use Evaluation\Service\ReviewerService;
-use Zend\Form\Element;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\Validator\File\Extension;
+use Laminas\Form\Element;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Validator\File\Extension;
 
 /**
  * Class ReviewRoster

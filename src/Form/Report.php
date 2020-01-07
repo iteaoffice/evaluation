@@ -19,11 +19,11 @@ use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result;
 use Evaluation\InputFilter\Report\ResultFilter;
 use Evaluation\Service\EvaluationReportService;
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
-use Zend\InputFilter\CollectionInputFilter;
-use Zend\InputFilter\InputFilter;
+use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Form;
+use Laminas\InputFilter\CollectionInputFilter;
+use Laminas\InputFilter\InputFilter;
 
 /**
  * Class Report

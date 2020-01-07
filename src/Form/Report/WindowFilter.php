@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Evaluation\Form\Report;
 
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
-use Zend\Form\Element;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Form;
+use Laminas\Form\Element;
 
 /**
  * Class WindowFilter

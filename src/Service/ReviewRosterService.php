@@ -195,7 +195,7 @@ class ReviewRosterService
 
         //$this->dumpRoundAssignments($rosterData, $allReviewers);
 
-        if (!$this->testRosterAssignments($rosterData)) {
+        if (! $this->testRosterAssignments($rosterData)) {
             $try = 1;
             while ($try <= self::MAX_RETRIES) {
                 $this->log(__LINE__, sprintf('Retry %d of %d', $try, self::MAX_RETRIES));
@@ -279,7 +279,7 @@ class ReviewRosterService
             $projectIndex[$project->getProject()] = $index;
         }
         foreach ($projectConfig['included'] as $projectName) {
-            if (!isset($projectIndex[$projectName]) && !in_array($projectName, $projectConfig['excluded'])) {
+            if (! isset($projectIndex[$projectName]) && ! in_array($projectName, $projectConfig['excluded'])) {
                 $project = $this->entityManager->getRepository(Project::class)
                     ->findOneBy(['project' => $projectName]);
                 if ($project instanceof Project) {
@@ -453,7 +453,7 @@ class ReviewRosterService
                         // Prevent rare cases where a preferred reviewer is also an ignored one (after org merge)
                         && ($projectReviewerScores[$projectIndex]['scores'][$handle] !== self::REVIEWER_IGNORED)
                         // Prevent reviewers from the same company being added
-                        && !$this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
+                        && ! $this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
                     ) {
                         $reviewersAssigned[] = $handle;
                         $reviewerLoad[$handle]++;
@@ -469,7 +469,7 @@ class ReviewRosterService
                     }
                 }
             } // Add the highest scoring match per project
-            elseif (!empty($bestMatchesByProject[$projectIndex])) {
+            elseif (! empty($bestMatchesByProject[$projectIndex])) {
                 $handle = reset($bestMatchesByProject[$projectIndex]);
                 $reviewersAssigned[] = $handle;
                 $reviewerLoad[$handle]++;
@@ -486,7 +486,7 @@ class ReviewRosterService
 
             // Make one of the above reviewers the primary reviewer.
             // Inexperienced reviewers should not become prime reviewer.
-            if (!empty($reviewersAssigned)) {
+            if (! empty($reviewersAssigned)) {
                 $handle = $reviewersAssigned[array_rand($reviewersAssigned)];
                 $assignment['scores'][$handle] = self::REVIEWER_PRIMARY;
                 $hasPrimaryReviewer = true;
@@ -507,7 +507,7 @@ class ReviewRosterService
                 foreach (array_keys($reviewerLoad) as $handle) {
                     // Add reviewers with low load and not from the same organisation as reviewers already assigned
                     if (($assignment['scores'][$handle] === 0)
-                        && !$this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
+                        && ! $this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
                     ) {
                         $reviewersAssigned[] = $handle;
                         $reviewerLoad[$handle]++;
@@ -528,7 +528,7 @@ class ReviewRosterService
             }
 
             // No primary reviewer has been assigned based on experience or FE label. Just pick a random one.
-            if (!$hasPrimaryReviewer) {
+            if (! $hasPrimaryReviewer) {
                 $handle = $reviewersAssigned[array_rand($reviewersAssigned)];
                 $assignment['scores'][$handle] = self::REVIEWER_PRIMARY;
                 $this->log(
@@ -545,7 +545,7 @@ class ReviewRosterService
         // Sort by call DESC
         $rosterData = [];
         foreach ($assignments as $assignment1) {
-            if (!isset($rosterData[$assignment1['data']['call']])) {
+            if (! isset($rosterData[$assignment1['data']['call']])) {
                 $rosterData[$assignment1['data']['call']] = [];
             }
             $rosterData[$assignment1['data']['call']][] = $assignment1;
@@ -634,7 +634,7 @@ class ReviewRosterService
         $groupAssignments = [];
         reset($projectReviewerScores);
         foreach ($projectsPerRound as $round => $numberOfProjects) {
-            if (!isset($groupAssignments[$round])) {
+            if (! isset($groupAssignments[$round])) {
                 $groupAssignments[$round] = [];
             }
             for ($i = 0; $i < $numberOfProjects; $i++) {
@@ -691,7 +691,7 @@ class ReviewRosterService
                                 (($boostDistributionScoreTest <= $boostDistributionScoreNew)
                                     && ($ignoreDistributionScoreTest <= $ignoreDistributionScoreNew))
                                 // Only improvement when BOTH values are NOT the same as their previous value
-                                && !(($boostDistributionScoreNew === $boostDistributionScoreTest)
+                                && ! (($boostDistributionScoreNew === $boostDistributionScoreTest)
                                     && ($ignoreDistributionScoreNew === $ignoreDistributionScoreTest))
                             );
 
@@ -719,7 +719,7 @@ class ReviewRosterService
                 (($boostDistributionScoreNew <= $boostDistributionScore)
                     && ($ignoreDistributionScoreNew <= $ignoreDistributionScore))
                 // Only improvement when BOTH values are NOT the same as their previous value
-                && !(($boostDistributionScoreNew === $boostDistributionScore)
+                && ! (($boostDistributionScoreNew === $boostDistributionScore)
                     && ($ignoreDistributionScoreNew === $ignoreDistributionScore))
             );
             if ($hasImproved) {
@@ -751,7 +751,7 @@ class ReviewRosterService
         foreach ($groupAssignments as $round => $projects) {
             foreach ($projects as $project) {
                 foreach ($project['scores'] as $reviewer => $score) {
-                    if (!isset($boostsPerReviewerPerRound[$reviewer][$round])) {
+                    if (! isset($boostsPerReviewerPerRound[$reviewer][$round])) {
                         $boostsPerReviewerPerRound[$reviewer][$round] = 0;
                     }
                     if ($score > 0) { // Add score boost
@@ -771,7 +771,7 @@ class ReviewRosterService
                 // Get the frequencies for the number of boosts per round
                 $frequencies = [];
                 foreach ($roundBoosts as $boostScore) {
-                    if (!isset($frequencies[$boostScore])) {
+                    if (! isset($frequencies[$boostScore])) {
                         $frequencies[$boostScore] = 0;
                     }
                     $frequencies[$boostScore]++;
@@ -850,7 +850,7 @@ class ReviewRosterService
         foreach ($groupAssignments as $round => $projects) {
             foreach ($projects as $project) {
                 foreach ($project['scores'] as $reviewer => $score) {
-                    if (!isset($ignoresPerReviewerPerRound[$reviewer][$round])) {
+                    if (! isset($ignoresPerReviewerPerRound[$reviewer][$round])) {
                         $ignoresPerReviewerPerRound[$reviewer][$round] = 0;
                     }
                     if ($score < 0) { // Count ignored reviewer
@@ -870,7 +870,7 @@ class ReviewRosterService
                 // Get the frequencies for the number of ignores per round
                 $frequencies = [];
                 foreach ($roundIgnores as $ignores) {
-                    if (!isset($frequencies[$ignores])) {
+                    if (! isset($frequencies[$ignores])) {
                         $frequencies[$ignores] = 0;
                     }
                     $frequencies[$ignores]++;
@@ -954,7 +954,7 @@ class ReviewRosterService
                 foreach ($projectData['scores'] as $handle => $score) {
                     if ($score > 0) {
                         // Score is not set yet or higher
-                        if (!isset($bestMatchByHandle[$handle]) || ($score > $bestMatchByHandle[$handle]['score'])) {
+                        if (! isset($bestMatchByHandle[$handle]) || ($score > $bestMatchByHandle[$handle]['score'])) {
                             $bestMatchByHandle[$handle] = [
                                 'projectIndex' => $projectIndex,
                                 'score' => $score
@@ -999,8 +999,8 @@ class ReviewRosterService
                         foreach ($consideredHandles as $handleData) {
                             $teamKey .= $handleData['handle'] . '|';
                         }
-                        if (!empty($teamKey)) {
-                            if (!isset($reviewTeams[$teamKey])) {
+                        if (! empty($teamKey)) {
+                            if (! isset($reviewTeams[$teamKey])) {
                                 $reviewTeams[$teamKey] = 0;
                             }
                             $reviewTeams[$teamKey]++;
@@ -1034,16 +1034,16 @@ class ReviewRosterService
                     foreach ($bestMatchesByProject[$projectIndex] as $handleData) {
                         $handle = $handleData['handle'];
                         if (// Not explicitly excluded
-                            !in_array($handle, $excludeFromProject)
+                            ! in_array($handle, $excludeFromProject)
                             // Not yet assigned in this round
-                            && !in_array($handle, $handlesAssigned[$round])
+                            && ! in_array($handle, $handlesAssigned[$round])
                             // Not a best match on another project, or the other project has already been assigned to other reviewers
-                            && (!isset($bestMatchByHandle[$handle])
+                            && (! isset($bestMatchByHandle[$handle])
                                 || ($bestMatchByHandle[$handle]['projectIndex'] <= $projectIndex))
                             // Don't assign multiple spare reviewers
-                            && (!$hasSpareReviewer || $reviewerData[$handle]['present'])
+                            && (! $hasSpareReviewer || $reviewerData[$handle]['present'])
                             // Don't add reviewers from the same organisation
-                            && !$this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
+                            && ! $this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
                         ) {
                             $assigned = $reviewerData[$handle]['present'] ? self::REVIEWER_ASSIGNED
                                 : self::REVIEWER_SPARE;
@@ -1053,7 +1053,7 @@ class ReviewRosterService
                             if ($reviewerData[$handle]['experienced']) {
                                 $hasExperiencedReviewer = true;
                             }
-                            if (!$reviewerData[$handle]['present']) {
+                            if (! $reviewerData[$handle]['present']) {
                                 $hasSpareReviewer = true;
                             }
                         }
@@ -1085,23 +1085,23 @@ class ReviewRosterService
                         break;
                     }
                     if (// Not explicitly excluded
-                        ($score > self::REVIEWER_IGNORED) && !in_array($handle, $excludeFromProject)
+                        ($score > self::REVIEWER_IGNORED) && ! in_array($handle, $excludeFromProject)
                         // Not yet assigned in this round
-                        && !in_array($handle, $handlesAssigned[$round])
+                        && ! in_array($handle, $handlesAssigned[$round])
                         // Not a best match on another project, or the other project has already been assigned to other reviewers
-                        && (!isset($bestMatchByHandle[$handle])
+                        && (! isset($bestMatchByHandle[$handle])
                             || ($bestMatchByHandle[$handle]['projectIndex'] <= $projectIndex))
                         // Don't assign multiple spare reviewers
-                        && (!$hasSpareReviewer || $reviewerData[$handle]['present'])
+                        && (! $hasSpareReviewer || $reviewerData[$handle]['present'])
                         // Prefer present reviewers when spare reviewers aren't counted
                         && ($hasEnoughPresentReviewers || $reviewerData[$handle]['present'])
                         // Don't add reviewers from the same organisation
-                        && !$this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
+                        && ! $this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
                     ) {
                         // When no experienced reviewer has been assigned yet, skip inexperienced reviewers
                         if ((count($reviewersAssigned) === ($this->reviewersPerProject - 1))
-                            && !$hasExperiencedReviewer
-                            && !$reviewerData[$handle]['experienced']
+                            && ! $hasExperiencedReviewer
+                            && ! $reviewerData[$handle]['experienced']
                         ) {
                             continue;
                         }
@@ -1113,7 +1113,7 @@ class ReviewRosterService
                         if ($reviewerData[$handle]['experienced']) {
                             $hasExperiencedReviewer = true;
                         }
-                        if (!$reviewerData[$handle]['present']) {
+                        if (! $reviewerData[$handle]['present']) {
                             $hasSpareReviewer = true;
                         }
                     }
@@ -1176,9 +1176,9 @@ class ReviewRosterService
             }
 
             // No extra assignments for the last round
-            if (!empty($unassignedReviewers) && ($round < $lastRound)) {
+            if (! empty($unassignedReviewers) && ($round < $lastRound)) {
                 // Assign leftover unassigned reviewers to the other projects based on number of assignments and score
-                while (!empty($unassignedReviewers)) {
+                while (! empty($unassignedReviewers)) {
                     shuffle($unassignedReviewers);
                     $handle = reset($unassignedReviewers);
                     $sortedProjectIndexes = $this->getLeastAssignmentsProjectIndex($rosterData[$round]);
@@ -1226,7 +1226,7 @@ class ReviewRosterService
                     $projectAssignmentCount++;
                 }
             }
-            if (!isset($projectAssignments[$projectAssignmentCount])) {
+            if (! isset($projectAssignments[$projectAssignmentCount])) {
                 $projectAssignments[$projectAssignmentCount] = [];
             }
             // Allow for multiple projects with the same number of assignments
@@ -1286,7 +1286,7 @@ class ReviewRosterService
     public function parseConfigFile(string $configFile): array
     {
         $config = [];
-        if (!file_exists($configFile)) {
+        if (! file_exists($configFile)) {
             throw new InvalidArgumentException('Excel config file not found.');
         }
 
@@ -1314,7 +1314,7 @@ class ReviewRosterService
             if ($sheetIndex < 3) {
                 for ($row = $startRow; $row <= $highestRow; $row++) {
                     $handle = $sheet->getCell('A' . $row)->getValue();
-                    if (!empty($handle)) {
+                    if (! empty($handle)) {
                         $reviewContact = $this->entityManager->getRepository(ReviewContact::class)
                             ->findOneBy(['handle' => $handle]);
                         // Check whether the review contact has been found and has the same case XyZ / XYZ would both
@@ -1351,10 +1351,10 @@ class ReviewRosterService
                 for ($row = $startRow; $row <= $highestRow; $row++) {
                     $includedProject = $sheet->getCell('A' . $row)->getValue();
                     $excludedProject = $sheet->getCell('B' . $row)->getValue();
-                    if (!empty($includedProject)) {
+                    if (! empty($includedProject)) {
                         $config[$keys[$sheetIndex]]['included'][] = $includedProject;
                     }
-                    if (!empty($excludedProject)) {
+                    if (! empty($excludedProject)) {
                         $config[$keys[$sheetIndex]]['excluded'][] = $excludedProject;
                     }
                 }

@@ -19,7 +19,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use General\Entity\Country;
 use Project\Entity\Funding\Status;
 use Project\Entity\Project;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation")
@@ -38,7 +38,7 @@ class Evaluation extends AbstractEntity
     public const ELIGIBLE_NOT_SET = 2;
     public const ELIGIBLE_YES = 1;
 
-    protected static $displayTemplates
+    protected static array $displayTemplates
         = [
             self::DISPLAY_PARTNERS          => 'txt-partners',
             self::DISPLAY_EFFORT            => 'txt-effort',
@@ -46,7 +46,7 @@ class Evaluation extends AbstractEntity
             self::DISPLAY_COST              => 'txt-cost',
         ];
 
-    protected static $eligibleTemplates
+    protected static array $eligibleTemplates
         = [
             self::ELIGIBLE_YES     => 'txt-eligible',
             self::ELIGIBLE_NO      => 'txt-not-eligible',
@@ -63,7 +63,7 @@ class Evaluation extends AbstractEntity
     private $id;
     /**
      * @ORM\Column(name="description", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":15})
      * @Annotation\Options({"label":"txt-description","help-block": "txt-evaluation-description-explanation"})
      *
@@ -178,7 +178,7 @@ class Evaluation extends AbstractEntity
     private $project;
     /**
      * @ORM\Column(name="eligible", type="smallint", length=2, nullable=true)
-     * @Annotation\Type("Zend\Form\Element\Radio")
+     * @Annotation\Type("Laminas\Form\Element\Radio")
      * @Annotation\Attributes({"array":"eligibleTemplates"})
      * @Annotation\Options({"label":"txt-eligibility","help-block":"txt-evaluation-eligibility-explanation"})
      *

@@ -19,7 +19,7 @@ use Project\Entity\Report\Report;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Version;
-use Zend\Navigation\Page\Mvc;
+use Laminas\Navigation\Page\Mvc;
 
 /**
  * Class ReportLabel

@@ -18,7 +18,7 @@ use Evaluation\Options\ModuleOptions;
 use Evaluation\Service\EvaluationService;
 use Project\Entity\Project;
 use Project\Entity\Version\Type;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use ZfcTwig\View\TwigRenderer;
 use function defined;
 use function in_array;

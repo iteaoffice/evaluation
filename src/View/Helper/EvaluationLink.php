@@ -44,12 +44,12 @@ final class EvaluationLink extends AbstractLink
             $evaluation->setCountry($country ?? new Country());
         }
 
-        if (!$this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
+        if (! $this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
             return '';
         }
 
         $routeParams = [];
-        if (!$evaluation->isEmpty()) {
+        if (! $evaluation->isEmpty()) {
             $routeParams['id'] = $evaluation->getId();
         }
         if (null !== $project) {
@@ -69,7 +69,7 @@ final class EvaluationLink extends AbstractLink
                 // The parameters are the same but the router and the text change
                 if ($action === 'overview-project') {
                     $linkParams = [
-                        'icon' => 'fa-list-ul',
+                        'icon' => 'fa-list',
                         'route' => 'community/evaluation/overview-project',
                         'text' => sprintf(
                             $this->translator->translate('txt-overview-%s-evaluation-for-project-%s-in-%s'),
@@ -80,7 +80,7 @@ final class EvaluationLink extends AbstractLink
                     ];
                 } else {
                     $linkParams = [
-                        'icon' => 'fa-list-ul',
+                        'icon' => 'fa-list',
                         'route' => 'community/evaluation/evaluate-project',
                         'text' => sprintf(
                             $this->translator->translate('txt-give-%s-evaluation-for-project-%s-in-%s'),

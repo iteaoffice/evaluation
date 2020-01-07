@@ -14,8 +14,8 @@ namespace Evaluation\View\Helper\Report;
 
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Service\EvaluationReportService;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\View\Helper\AbstractHelper;
 use function round;
 use function sprintf;
 

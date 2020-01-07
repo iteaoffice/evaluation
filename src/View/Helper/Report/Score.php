@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Evaluation\View\Helper\Report;
 
 use Evaluation\Entity\Report as EvaluationReport;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\View\Helper\AbstractHelper;
 
 /**
  * Class Score

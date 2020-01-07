@@ -24,38 +24,24 @@ use Evaluation\Entity\Report\Criterion\Topic;
 use Evaluation\Form\Report\Criterion\TopicFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Http\Request;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
 use function ceil;
 use function urlencode;
 
 /**
- * Class TopicController
- *
  * @method GetFilter getEvaluationFilter()
  * @method FlashMessenger flashMessenger()
- * @package Evaluation\Controller\Report
  */
 final class TopicController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-
-    /**
-     * @var FormService
-     */
-    private $formService;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
+    private TranslatorInterface $translator;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,

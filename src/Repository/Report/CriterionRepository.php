@@ -60,7 +60,7 @@ final class CriterionRepository extends SortableRepository implements FilteredOb
         if (array_key_exists('show', $filter) && ($filter['show'] !== 'all')) {
             $queryBuilder->andWhere($queryBuilder->expr()->eq('cr.archived', ':archived'));
             $queryBuilder->setParameter('archived', ($filter['show'] === 'archived') ? 1 : 0);
-        } elseif (!array_key_exists('show', $filter)) {
+        } elseif (! array_key_exists('show', $filter)) {
             $queryBuilder->andWhere($queryBuilder->expr()->eq('cr.archived', ':archived'));
             $queryBuilder->setParameter('archived', 0);
         }

@@ -20,10 +20,10 @@ use Evaluation\Form\Reviewer\ContactFilter;
 use Evaluation\Service\FormService;
 use Evaluation\Entity\Reviewer\Contact;
 use Evaluation\Service\ReviewerService;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
 use function ceil;
 use function urlencode;
 
@@ -34,14 +34,8 @@ use function urlencode;
  */
 final class ContactManagerController extends AbstractActionController
 {
-    /**
-     * @var ReviewerService
-     */
-    private $reviewerService;
-    /**
-     * @var FormService
-     */
-    private $formService;
+    private ReviewerService $reviewerService;
+    private FormService $formService;
 
     public function __construct(
         ReviewerService $reviewerService,

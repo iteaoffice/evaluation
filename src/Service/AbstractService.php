@@ -64,7 +64,7 @@ abstract class AbstractService
 
     public function save(Entity\AbstractEntity $entity): Entity\AbstractEntity
     {
-        if (!$this->entityManager->contains($entity)) {
+        if (! $this->entityManager->contains($entity)) {
             $this->entityManager->persist($entity);
         }
 

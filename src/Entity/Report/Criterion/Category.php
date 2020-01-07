@@ -17,7 +17,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\AbstractEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_criterion_category")
@@ -29,7 +29,7 @@ class Category extends AbstractEntity
      * @ORM\Column(name="category_id", type="integer", options={"unsigned":true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Annotation\Type("\Zend\Form\Element\Hidden")
+     * @Annotation\Type("\Laminas\Form\Element\Hidden")
      *
      * @var int
      */
@@ -37,7 +37,7 @@ class Category extends AbstractEntity
     /**
      * @Gedmo\SortablePosition
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("\Zend\Form\Element\Number")
+     * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({"label":"txt-sequence"})
      *
      * @var int
@@ -45,7 +45,7 @@ class Category extends AbstractEntity
     private $sequence = 0;
     /**
      * @ORM\Column(name="category", type="string", length=255, nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({"label":"txt-category"})
      *
      * @var string

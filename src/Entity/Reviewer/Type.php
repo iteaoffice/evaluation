@@ -16,7 +16,7 @@ use Doctrine\Common\Collections;
 use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Entity\Reviewer;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="project_review_type")

@@ -38,7 +38,7 @@ final class WindowLink extends AbstractLink
 
         $routeParams = [];
         $showOptions = [];
-        if (!$window->isEmpty()) {
+        if (! $window->isEmpty()) {
             $routeParams['id']   = $window->getId();
             $showOptions['name'] = $window->getTitle();
         }

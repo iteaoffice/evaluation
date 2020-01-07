@@ -34,13 +34,13 @@ use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Version\Version as ProjectVersion;
 use Project\Service\ReportService;
 use Project\Service\VersionService;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
 use function array_keys;
 use function array_merge;
 use function ceil;
@@ -195,14 +195,14 @@ final class ReportManagerController extends AbstractActionController
                 $uploadForm = new ReportUpload('');
                 $uploadForm->setData($data);
                 $excel = $uploadForm->get('excel')->getValue();
-                if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
+                if ($uploadForm->isValid() && ! empty($excel['name']) && ($excel['error'] === 0)) {
                     // Version evaluation reports are automatically finalised
                     if ($evaluationReport->getProjectVersionReport() instanceof ProjectVersionReport) {
                         $evaluationReport->setFinal(true);
                     }
                     $success = false;
                     $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
-                    if (!$importHelper->hasParseErrors()) {
+                    if (! $importHelper->hasParseErrors()) {
                         $success = $importHelper->import($evaluationReport);
                     }
 
@@ -277,10 +277,10 @@ final class ReportManagerController extends AbstractActionController
             );//@bart, could the action be '' as you only use the form here for validation
             $uploadForm->setData($data);
             $excel = $uploadForm->get('excel')->getValue();
-            if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
+            if ($uploadForm->isValid() && ! empty($excel['name']) && ($excel['error'] === 0)) {
                 $success = false;
                 $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
-                if (!$importHelper->hasParseErrors()) {
+                if (! $importHelper->hasParseErrors()) {
                     // Prevent duplicate entries by clearing old results when an outdated Excel is used
                     if ($importHelper->excelIsOutdated($evaluationReport)) {
                         $evaluationReport->getResults()->clear();

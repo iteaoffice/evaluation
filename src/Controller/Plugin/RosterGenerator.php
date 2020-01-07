@@ -26,10 +26,10 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use Zend\Http\Headers;
-use Zend\Http\Response;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use function array_keys;
 use function array_merge;
 use function in_array;
@@ -53,51 +53,25 @@ final class RosterGenerator extends AbstractPlugin
      *
      * @var array
      */
-    private $config = [];
-
+    private array $config = [];
     /**
      * The roster type (PO/FPP/PPR/CR)
      *
      * @var string
      */
-    private $type;
-
-    /**
-     * @var array
-     */
-    private $rosterData;
-
-    /**
-     * @var array
-     */
-    private $reviewers = [];
-
+    private string $type;
+    private array $rosterData;
+    private array $reviewers = [];
     /**
      * The main spreadsheet object the roster will be written to
      *
      * @var Spreadsheet
      */
-    private $spreadsheet;
-
-    /**
-     * @var ReviewRosterService
-     */
-    private $reviewRosterService;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var ModuleOptions
-     */
-    private $moduleOptions;
-
-    /**
-     * @var array
-     */
-    private $log;
+    private Spreadsheet $spreadsheet;
+    private ReviewRosterService $reviewRosterService;
+    private TranslatorInterface $translator;
+    private ModuleOptions $moduleOptions;
+    private array $log;
 
     public function __construct(
         ReviewRosterService $reviewRosterService,
@@ -230,7 +204,7 @@ final class RosterGenerator extends AbstractPlugin
         foreach ($this->rosterData as $projects) {
             foreach ($projects as $project) {
                 foreach ($project['scores'] as $handle => $ignoredOrAssigned) {
-                    if (!isset($assignments[$handle])) {
+                    if (! isset($assignments[$handle])) {
                         $assignments[$handle] = 0;
                     }
                     if (in_array($ignoredOrAssigned, $assigned)) {
@@ -319,7 +293,7 @@ final class RosterGenerator extends AbstractPlugin
     {
         foreach ($projectData['history'] as $historyLine) {
             foreach ($historyLine as $type => $reviewers) {
-                if (!empty($reviewers)) {
+                if (! empty($reviewers)) {
                     $sheet->setCellValue('A' . $row, $projectData['call']);
                     $sheet->setCellValue('B' . $row, $projectData['number']);
                     $sheet->setCellValue('C' . $row, $projectData['name']);
@@ -434,7 +408,7 @@ final class RosterGenerator extends AbstractPlugin
     public function parseResponse(): Response
     {
         $response = new Response();
-        if (!($this->spreadsheet instanceof Spreadsheet)) {
+        if (! ($this->spreadsheet instanceof Spreadsheet)) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 
@@ -476,9 +450,6 @@ final class RosterGenerator extends AbstractPlugin
         return $response;
     }
 
-    /**
-     * @return Spreadsheet
-     */
     public function getSpreadsheet(): Spreadsheet
     {
         return $this->spreadsheet;

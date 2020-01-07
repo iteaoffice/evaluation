@@ -30,10 +30,10 @@ use PhpOffice\PhpPresentation\Style\Bullet;
 use PhpOffice\PhpPresentation\Style\Color;
 use PhpOffice\PhpPresentation\Style\Fill;
 use Project\Entity\Rationale;
-use Zend\Http\Headers;
-use Zend\Http\Response;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use function array_map;
 use function ceil;
 use function count;
@@ -323,7 +323,7 @@ final class Presentation extends AbstractPlugin
     public function parseResponse(): Response
     {
         $response = new Response();
-        if (!($this->presentation instanceof PhpPresentation)) {
+        if (! ($this->presentation instanceof PhpPresentation)) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 

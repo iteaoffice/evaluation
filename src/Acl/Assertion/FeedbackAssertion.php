@@ -17,9 +17,9 @@ use Evaluation\Entity\Feedback;
 use Evaluation\Service\EvaluationService;
 use Interop\Container\ContainerInterface;
 use Project\Acl\Assertion\Project;
-use Zend\Permissions\Acl\Acl;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
 
 /**
  * Class Feedback
@@ -54,11 +54,11 @@ final class FeedbackAssertion extends AbstractAssertion
         $this->setPrivilege($privilege);
         $id = $this->getId();
 
-        if (!$feedback instanceof Feedback && null !== $id) {
+        if (! $feedback instanceof Feedback && null !== $id) {
             $feedback = $this->evaluationService->find(Feedback::class, (int)$id);
         }
 
-        if (!$this->hasContact() || null === $feedback) {
+        if (! $this->hasContact() || null === $feedback) {
             return false;
         }
 

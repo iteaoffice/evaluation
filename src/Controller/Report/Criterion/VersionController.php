@@ -24,12 +24,12 @@ use Evaluation\Entity\Report\Criterion\VersionTopic;
 use Evaluation\Entity\Report\Version as ReportVersion;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Form\Fieldset;
-use Zend\Http\Request;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\View\Model\ViewModel;
+use Laminas\Form\Fieldset;
+use Laminas\Http\Request;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\View\Model\ViewModel;
 use function in_array;
 
 /**
@@ -40,20 +40,9 @@ use function in_array;
  */
 final class VersionController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-
-    /**
-     * @var FormService
-     */
-    private $formService;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
+    private TranslatorInterface $translator;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
@@ -158,7 +147,7 @@ final class VersionController extends AbstractActionController
             $topic = $fieldset->get('topic');
             $valueOptions = $topic->getValueOptions();
             foreach ($valueOptions as $key => $option) {
-                if (!in_array($option['value'], $allowedValueOptions)
+                if (! in_array($option['value'], $allowedValueOptions)
                     && ($fieldset->get('topic')->getValue() !== $option['value'])
                 ) {
                     unset($valueOptions[$key]);
@@ -180,7 +169,7 @@ final class VersionController extends AbstractActionController
                 );
             }
 
-            if (isset($data['delete']) && !$hasResults) {
+            if (isset($data['delete']) && ! $hasResults) {
                 $this->evaluationReportService->delete($criterionVersion);
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate(

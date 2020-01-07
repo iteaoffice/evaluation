@@ -15,7 +15,7 @@ namespace Evaluation\InputFilter\Report\Criterion;
 use Doctrine\ORM\EntityManager;
 use DoctrineModule\Validator\UniqueObject;
 use Evaluation\Entity\Report\Criterion\Type;
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 
 /**
  * Class TypeFilter

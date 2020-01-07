@@ -24,7 +24,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Version as ReportVersion;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_criterion_version", uniqueConstraints={
@@ -87,7 +87,7 @@ class Version extends AbstractEntity
     /**
      *
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("Zend\Form\Element\Number")
+     * @Annotation\Type("Laminas\Form\Element\Number")
      * @Annotation\Options({
      *     "label":"txt-sequence",
      *     "help-block":"txt-evaluation-report-criterion-sequence-help-block"
@@ -99,7 +99,7 @@ class Version extends AbstractEntity
     private $sequence = 0;
     /**
      * @ORM\Column(name="required", type="boolean", length=1,  nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-required",
      *     "help-block":"txt-evaluation-report-criterion-is-required-help-block"
@@ -110,7 +110,7 @@ class Version extends AbstractEntity
     private $required = true;
     /**
      * @ORM\Column(name="confidential", type="boolean", length=1, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-confidential",
      *     "help-block":"txt-evaluation-report-criterion-is-confidential-help-block"
@@ -121,7 +121,7 @@ class Version extends AbstractEntity
     private $confidential = false;
     /**
      * @ORM\Column(name="highlighted", type="boolean", length=1, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-highlighted",
      *     "help-block":"txt-evaluation-report-criterion-is-highlighted-help-block"
@@ -132,7 +132,7 @@ class Version extends AbstractEntity
     private $highlighted = false;
     /**
      * @ORM\Column(name="defaultValue", type="string", nullable=true)
-     * @Annotation\Type("Zend\Form\Element\Text")
+     * @Annotation\Type("Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-default-value",
      *     "help-block":"txt-evaluation-report-criterion-default-value-help-block"

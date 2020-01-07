@@ -36,7 +36,7 @@ final class VersionLink extends AbstractLink
 
         $routeParams = [];
         $showOptions = [];
-        if (!$criterionVersion->isEmpty()) {
+        if (! $criterionVersion->isEmpty()) {
             $routeParams['id']   = $criterionVersion->getId();
             $showOptions['name'] = (string) $criterionVersion->getCriterion();
         }

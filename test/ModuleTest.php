@@ -14,10 +14,10 @@ namespace EvaluationTest;
 
 use Evaluation\Module;
 use Testing\Util\AbstractServiceTest;
-use Zend\Mvc\Application;
-use Zend\Mvc\Controller\PluginManager;
-use Zend\ServiceManager\AbstractFactory\ConfigAbstractFactory;
-use Zend\View\HelperPluginManager;
+use Laminas\Mvc\Application;
+use Laminas\Mvc\Controller\PluginManager;
+use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use Laminas\View\HelperPluginManager;
 use function is_string;
 
 /**

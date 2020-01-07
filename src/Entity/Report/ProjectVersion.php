@@ -19,7 +19,7 @@ use Evaluation\Entity\Report as EvaluationReport;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Project\Entity\Version\Reviewer;
 use Project\Entity\Version\Version;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_project_version")

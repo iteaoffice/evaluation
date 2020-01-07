@@ -16,7 +16,7 @@ use Admin\Navigation\Invokable\AbstractNavigationInvokable;
 use Program\Entity\Call\Call;
 use Evaluation\Entity\Evaluation;
 use Project\Entity\Project;
-use Zend\Navigation\Page\Mvc;
+use Laminas\Navigation\Page\Mvc;
 
 /**
  * Class EvaluationLabel

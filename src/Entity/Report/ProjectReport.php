@@ -19,7 +19,7 @@ use Evaluation\Entity\Report as EvaluationReport;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Project\Entity\Report\Report;
 use Project\Entity\Report\Reviewer;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_project_report")
@@ -57,7 +57,7 @@ class ProjectReport extends AbstractEntity
     private $evaluationReport;
     /**
      * @ORM\Column(name="project_status", type="smallint", length=5, options={"unsigned":true}, nullable=true)
-     * @Annotation\Type("Zend\Form\Element\Select")
+     * @Annotation\Type("Laminas\Form\Element\Select")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-project-status-label",
      *     "help-block":"txt-evaluation-report-project-status-help-block",

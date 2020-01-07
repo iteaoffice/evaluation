@@ -33,7 +33,7 @@ final class VersionLink extends AbstractLink
 
         $routeParams = [];
         $showOptions = [];
-        if (!$reportVersion->isEmpty()) {
+        if (! $reportVersion->isEmpty()) {
             $routeParams['id']   = $reportVersion->getId();
             $showOptions['name'] = $reportVersion->getLabel();
         }

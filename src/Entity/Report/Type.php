@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\AbstractEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Project\Entity\Version\Type as VersionType;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_type")
@@ -59,7 +59,7 @@ class Type extends AbstractEntity
     private $sequence;
     /**
      * @ORM\Column(name="type", type="string", nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-type-type-label",
      *     "help-block":"txt-evaluation-report-type-type-help-block"

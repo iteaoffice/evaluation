@@ -34,12 +34,12 @@ final class ReviewerLink extends AbstractLink
     ): string {
         $reviewer ??= new Reviewer();
 
-        if (!$this->hasAccess($reviewer, ReviewerAssertion::class, $action)) {
+        if (! $this->hasAccess($reviewer, ReviewerAssertion::class, $action)) {
             return '';
         }
 
         $routeParams = [];
-        if (!$reviewer->isEmpty()) {
+        if (! $reviewer->isEmpty()) {
             $routeParams['id'] = $reviewer->getId();
         }
         if ($project instanceof Project) {

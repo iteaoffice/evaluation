@@ -17,7 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2")
@@ -67,7 +67,7 @@ class Report extends AbstractEntity
     private $version;
     /**
      * @ORM\Column(name="final", length=1, type="boolean", nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-final",
      *     "help-block":"txt-evaluation-report-final-help-block"
@@ -78,7 +78,7 @@ class Report extends AbstractEntity
     private $final = false;
     /**
      * @ORM\Column(name="score", type="smallint", length=5, nullable=true)
-     * @Annotation\Type("Zend\Form\Element\Select")
+     * @Annotation\Type("Laminas\Form\Element\Select")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-score-label",
      *     "help-block":"txt-evaluation-report-score-help-block",

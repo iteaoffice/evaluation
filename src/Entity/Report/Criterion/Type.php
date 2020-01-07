@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\AbstractEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_criterion_type")
@@ -21,7 +21,7 @@ class Type extends AbstractEntity
      * @ORM\Column(name="type_id", type="integer", options={"unsigned":true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Annotation\Type("\Zend\Form\Element\Hidden")
+     * @Annotation\Type("\Laminas\Form\Element\Hidden")
      *
      * @var int
      * r
@@ -30,7 +30,7 @@ class Type extends AbstractEntity
     /**
      * @Gedmo\SortablePosition
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("\Zend\Form\Element\Number")
+     * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({
      *     "label":"txt-report-criterion-type-sequence-label",
      *     "help-block":"txt-report-criterion-type-sequence-help-block"
@@ -41,7 +41,7 @@ class Type extends AbstractEntity
     private $sequence = 0;
     /**
      * @ORM\Column(name="type", type="string", length=255, nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-report-criterion-type-label",
      *     "help-block":"txt-report-criterion-type-help-block"

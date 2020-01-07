@@ -20,33 +20,21 @@ use Evaluation\Entity\Report\Criterion\Type;
 use Evaluation\Form\Report\Criterion\TypeFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
 use function ceil;
 use function urlencode;
 
 /**
- * Class TypeController
- *
  * @method GetFilter getEvaluationFilter()
- * @package Evaluation\Controller\Report\Criterion
  */
 final class TypeController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-    /**
-     * @var FormService
-     */
-    private $formService;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
+    private EntityManager $entityManager;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
@@ -132,7 +120,7 @@ final class TypeController extends AbstractActionController
         $data    = $request->getPost()->toArray();
         $form    = $this->formService->prepare($type, $data);
 
-        if (!$this->evaluationReportService->typeIsDeletable($type)) {
+        if (! $this->evaluationReportService->typeIsDeletable($type)) {
             $form->remove('delete');
         }
 

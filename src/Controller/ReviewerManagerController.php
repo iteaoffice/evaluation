@@ -17,13 +17,13 @@ use Evaluation\Entity\Reviewer;
 use Evaluation\Entity\Reviewer\Type as ReviewerType;
 use Evaluation\Repository\Reviewer\ContactRepository as ContactRepository;
 use Project\Service\ProjectService;
-use Zend\Http\Headers;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Headers;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\View\Model\ViewModel;
 use function array_merge_recursive;
 use function in_array;
 use function iconv;
@@ -35,7 +35,6 @@ use function trim;
 use function unlink;
 
 /**
- * @package Evaluation\Controller
  * @method FlashMessenger flashMessenger()
  * @method RosterGenerator rosterGenerator(string $type, string $configFile, int $reviewersPerProject, bool $includeSpareReviewers = false, ?int $forceProjectsPerRound = null)
  */
@@ -228,7 +227,7 @@ final class ReviewerManagerController extends AbstractActionController
 
             if ($form->isValid()) {
                 $excelFile = $form->get('excel')->getValue();
-                if (!empty($excelFile['name']) && ($excelFile['error'] === 0)) {
+                if (! empty($excelFile['name']) && ($excelFile['error'] === 0)) {
                     $rosterGenerator = $this->rosterGenerator(
                         $form->get('type')->getValue(),
                         $excelFile['tmp_name'],

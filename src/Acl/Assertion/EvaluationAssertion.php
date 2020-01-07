@@ -26,9 +26,9 @@ use Project\Entity\Version\Type as VersionType;
 use Evaluation\Service\EvaluationService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
-use Zend\Permissions\Acl\Acl;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
 use function in_array;
 
 /**
@@ -92,7 +92,7 @@ final class EvaluationAssertion extends AbstractAssertion
          * You need to be a funder, to see the overview. Return null if this ia not the case
          */
         if (in_array($this->getPrivilege(), ['index', 'overview', 'overview-project', 'download-overview'], true)) {
-            if (!$this->rolesHaveAccess(['funder', 'office', 'ppa', 'steeringgroup'])) {
+            if (! $this->rolesHaveAccess(['funder', 'office', 'ppa', 'steeringgroup'])) {
                 return false;
             }
 
@@ -101,7 +101,7 @@ final class EvaluationAssertion extends AbstractAssertion
         }
 
 
-        if (!$resource instanceof Evaluation) {
+        if (! $resource instanceof Evaluation) {
             if (null === $countryId || null === $evaluationTypeId || null === $projectId) {
                 return false;
             }
@@ -121,7 +121,7 @@ final class EvaluationAssertion extends AbstractAssertion
 
 
         //Give no access when no access to the project itself
-        if (!$this->projectAssertion->assert($acl, $role, $resource->getProject(), 'view-community')) {
+        if (! $this->projectAssertion->assert($acl, $role, $resource->getProject(), 'view-community')) {
             return false;
         }
 
@@ -180,7 +180,7 @@ final class EvaluationAssertion extends AbstractAssertion
                 $contactCountry = $this->contactService->parseCountry($this->contact);
                 $countries = $this->countryService->findCountryByProject($resource->getProject());
                 foreach ($countries as $country) {
-                    if (!$contactActiveInCountry
+                    if (! $contactActiveInCountry
                         && null !== $contactCountry
                         && $contactCountry->getId() === $country->getId()
                     ) {
@@ -190,7 +190,7 @@ final class EvaluationAssertion extends AbstractAssertion
                 /*
                  * When the contact is not active in the country, return false because we do not allow evaluation
                  */
-                if (!$contactActiveInCountry) {
+                if (! $contactActiveInCountry) {
                     return false;
                 }
 
@@ -213,7 +213,7 @@ final class EvaluationAssertion extends AbstractAssertion
 
                 $countries = $this->countryService->findCountryByProject($resource->getProject());
                 foreach ($countries as $country) {
-                    if (!$contactActiveInCountry
+                    if (! $contactActiveInCountry
                         && null !== $contactCountry
                         && $contactCountry->getId() === $country->getId()
                     ) {
@@ -223,7 +223,7 @@ final class EvaluationAssertion extends AbstractAssertion
                 /*
                  * When the contact is not active in the country, return false because we do not allow evaluation
                  */
-                if (!$contactActiveInCountry) {
+                if (! $contactActiveInCountry) {
                     return false;
                 }
 

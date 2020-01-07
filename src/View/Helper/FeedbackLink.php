@@ -36,12 +36,12 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
     ): string {
         $feedback ??= new Feedback();
 
-        if (!$this->hasAccess($feedback, FeedbackAssertion::class, $action)) {
+        if (! $this->hasAccess($feedback, FeedbackAssertion::class, $action)) {
             return '';
         }
 
         $routeParams = [];
-        if (!$feedback->isEmpty()) {
+        if (! $feedback->isEmpty()) {
             $routeParams['id'] = $feedback->getId();
         }
 

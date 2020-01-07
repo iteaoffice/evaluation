@@ -16,7 +16,7 @@ use Contact\Entity\Contact;
 use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\Reviewer\Type;
 use Project\Entity\Project;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="project_review")

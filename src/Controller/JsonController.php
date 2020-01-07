@@ -30,11 +30,11 @@ use Project\Form\MatrixFilter;
 use Project\Service\ProjectService;
 use Project\View\Helper\Project\ProjectLink;
 use Project\View\Helper\Project\StatusIcon;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\Identity\Identity;
-use Zend\View\HelperPluginManager;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\Identity\Identity;
+use Laminas\View\HelperPluginManager;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 /**
  * @method CreateEvaluation createEvaluation(array $projects, Type $evaluationType, int $display, int $source)

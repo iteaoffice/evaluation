@@ -14,7 +14,7 @@ namespace Evaluation\Entity\Reviewer;
 
 use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\AbstractEntity;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="project_review_contact")
@@ -32,7 +32,7 @@ class Contact extends AbstractEntity
     private $id;
     /**
      * @ORM\Column(name="handle", type="string", length=5, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Text")
+     * @Annotation\Type("Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-handle",
      *     "help-block":"txt-review-contact-handle-explanation"

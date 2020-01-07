@@ -82,7 +82,7 @@ use function in_array;
                         $versionType = $reportVersion->getReportType()->getVersionType();
 
                         // Window is for a version
-                        if (($versionType !== null) && !in_array($versionType->getId(), $versionTypes)) {
+                        if (($versionType !== null) && ! in_array($versionType->getId(), $versionTypes)) {
                             $qb1 = $this->_em->createQueryBuilder();
                             $qb1->select('vr');
                             $qb1->from(VersionReviewer::class, 'vr');
@@ -155,7 +155,7 @@ use function in_array;
                         $versionType = $reportVersion->getReportType()->getVersionType();
 
                         // Window is for a version
-                        if (($versionType !== null) && !in_array($versionType->getId(), $versionTypes)) {
+                        if (($versionType !== null) && ! in_array($versionType->getId(), $versionTypes)) {
                             $qb1 = $this->_em->createQueryBuilder();
                             $qb1->select('er');
                             $qb1->from(EvaluationReport::class, 'er');
@@ -240,7 +240,7 @@ use function in_array;
         /** @var CallRepository $callRepository */
         $callRepository = $this->_em->getRepository(Call::class);
         $call           = null;
-        if (isset($filter['call']) && !empty($filter['call'])) {
+        if (isset($filter['call']) && ! empty($filter['call'])) {
             $call = $callRepository->find($filter['call']);
         }
 
@@ -279,13 +279,13 @@ use function in_array;
             }
 
             // Add year filter when present
-            if (array_key_exists('year', $filter) && !empty($filter['year'])) {
+            if (array_key_exists('year', $filter) && ! empty($filter['year'])) {
                 $queryBuilder->andWhere($queryBuilder->expr()->eq('pr.year', ':year'));
                 $queryBuilder->setParameter('year', $filter['year']);
             }
 
             // Add period filter when present
-            if (array_key_exists('period', $filter) && !empty($filter['period'])) {
+            if (array_key_exists('period', $filter) && ! empty($filter['period'])) {
                 $queryBuilder->andWhere($queryBuilder->expr()->eq('pr.semester', ':semester'));
                 $queryBuilder->setParameter('semester', $filter['period']);
             }
@@ -372,7 +372,7 @@ use function in_array;
             }
 
             // Add version type filter when present
-            if (array_key_exists('subject', $filter) && !empty($filter['subject'])) {
+            if (array_key_exists('subject', $filter) && ! empty($filter['subject'])) {
                 $reportTypeSelect = $this->_em->createQueryBuilder();
                 $reportTypeSelect->select('rt')
                     ->from(EvaluationReportType::class, 'rt')
@@ -447,11 +447,11 @@ use function in_array;
         }
 
         // Add search when present
-        if (array_key_exists('search', $filter) && !empty($filter['search'])) {
+        if (array_key_exists('search', $filter) && ! empty($filter['search'])) {
             $match      = sprintf("%%%s%%", $filter['search']);
             $expression = $queryBuilder->expr()->like('p.project', ':project');
 
-            if (!$finalReport) {
+            if (! $finalReport) {
                 $contactName = $queryBuilder->expr()->concat(
                     'c.firstName',
                     $queryBuilder->expr()->concat($queryBuilder->expr()->literal(' '), 'c.lastName')

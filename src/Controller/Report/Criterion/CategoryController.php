@@ -19,10 +19,10 @@ use Evaluation\Entity\Report\Criterion\Category;
 use Evaluation\Form\Report\Criterion\CategoryFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
 use function ceil;
 use function urlencode;
 
@@ -32,14 +32,8 @@ use function urlencode;
  */
 final class CategoryController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-    /**
-     * @var FormService
-     */
-    private $formService;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
@@ -123,7 +117,7 @@ final class CategoryController extends AbstractActionController
         $data = $request->getPost()->toArray();
         $form = $this->formService->prepare($category, $data);
 
-        if (!$category->getTypes()->isEmpty()) {
+        if (! $category->getTypes()->isEmpty()) {
             $form->remove('delete');
         }
 

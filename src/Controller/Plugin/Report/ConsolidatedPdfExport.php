@@ -37,12 +37,12 @@ use Project\Form\MatrixFilter;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
 use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
-use Zend\Http\Headers;
-use Zend\Http\Response;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Json\Json;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Mvc\Controller\PluginManager;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Json\Json;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\PluginManager;
 use ZfcTwig\View\TwigRenderer;
 use function array_map;
 use function array_sum;
@@ -268,7 +268,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                     // No STG decision in export PO/FPP evaluation
                     $hideFor = [EvaluationReport\Type::TYPE_PO_VERSION, EvaluationReport\Type::TYPE_FPP_VERSION];
                     $reportType = $this->evaluationReportService->parseEvaluationReportType($evaluationReport);
-                    if (!$this->forDistribution || !in_array($reportType, $hideFor, false)) {
+                    if (! $this->forDistribution || ! in_array($reportType, $hideFor, false)) {
                         $this->parseHeading($this->translator->translate('txt-review-details'), 15, 'L', 'sub');
                     }
                 }
@@ -280,14 +280,14 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 $this->evaluationReport->getVersion()
             );
 
-            if (($type->getType() !== $currentType) && !$confidentialType) {
+            if (($type->getType() !== $currentType) && ! $confidentialType) {
                 // Only a short header when no details are shown and it's the first one
                 $this->parseHeading($type->getType(), 12, 'L', 'gray');
 
                 $currentType = $type->getType();
             }
 
-            if (!$result->getCriterionVersion()->getConfidential()) {
+            if (! $result->getCriterionVersion()->getConfidential()) {
                 $this->parseResult($result);
             }
 
@@ -676,7 +676,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             $this->pdf->Cell($w[2], 6, $row[2], 'LR', 0, 'L', $fill);
             $this->pdf->Cell($w[3], 6, $row[3], 'LR', 0, 'L', $fill);
             $this->pdf->Ln();
-            $fill = !$fill;
+            $fill = ! $fill;
         }
         $this->pdf->Cell(array_sum($w), 0, '', 'T');
     }
@@ -693,7 +693,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             case Criterion::INPUT_TYPE_BOOL:
                 $this->parseCriterionLabel($result->getCriterionVersion()->getCriterion()->getCriterion());
                 $value = $this->translator->translate('txt-yes');
-                if (!$isNew && ($result->getValue() === 'No')) {
+                if (! $isNew && ($result->getValue() === 'No')) {
                     $value = $this->translator->translate('txt-no');
                 }
                 $this->parseContentField($value, $fillColor);
@@ -702,7 +702,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             case Criterion::INPUT_TYPE_SELECT:
                 $this->parseCriterionLabel($result->getCriterionVersion()->getCriterion()->getCriterion());
                 $selectValues = Json::decode($result->getCriterionVersion()->getCriterion()->getValues(), true);
-                if (!$isNew && null !== $result->getValue()) {
+                if (! $isNew && null !== $result->getValue()) {
                     $this->parseContentField($result->getValue(), $fillColor);
                 } else {
                     $this->parseContentField(reset($selectValues), $fillColor);
@@ -772,7 +772,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
     private function parseCriterionRow(Result $result, array $fillColor): void
     {
         $big = $hasScore = $result->getCriterionVersion()->getCriterion()->getHasScore();
-        if (!$big && ($result->getCriterionVersion()->getCriterion()->getInputType() === Criterion::INPUT_TYPE_TEXT)) {
+        if (! $big && ($result->getCriterionVersion()->getCriterion()->getInputType() === Criterion::INPUT_TYPE_TEXT)) {
             $big = true;
         }
 
@@ -962,7 +962,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
     public function parseResponse(): Response
     {
         $response = new Response();
-        if (!($this->pdf instanceof TcpdfFpdi)) {
+        if (! ($this->pdf instanceof TcpdfFpdi)) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 

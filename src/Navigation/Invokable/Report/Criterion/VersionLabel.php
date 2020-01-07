@@ -15,7 +15,7 @@ namespace Evaluation\Navigation\Invokable\Report\Criterion;
 use Admin\Navigation\Invokable\AbstractNavigationInvokable;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Version as ReportVersion;
-use Zend\Navigation\Page\Mvc;
+use Laminas\Navigation\Page\Mvc;
 
 /**
  * Class VersionLabel

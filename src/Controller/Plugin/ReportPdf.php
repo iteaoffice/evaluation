@@ -32,7 +32,7 @@ final class ReportPdf extends TcpdfFpdi
     public function Header() : void
     {
         if (null === $this->templatePageId) {
-            if (!file_exists($this->templateFile)) {
+            if (! file_exists($this->templateFile)) {
                 throw new RuntimeException(sprintf('Template %s cannot be found', $this->templateFile));
             }
             $this->setSourceFile($this->templateFile);

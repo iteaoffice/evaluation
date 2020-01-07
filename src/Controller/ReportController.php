@@ -24,18 +24,18 @@ use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Form\Report as EvaluationReportForm;
 use Evaluation\Form\ReportUpload;
 use Evaluation\Service\EvaluationReportService;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Mvc\Plugin\Identity\Identity;
+use Laminas\View\Model\ViewModel;
 use Project\Entity\Report\Report;
 use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Version;
 use Project\Service\ProjectService;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\Mvc\Plugin\Identity\Identity;
-use Zend\View\Model\ViewModel;
 use function array_merge;
 use function sprintf;
 
@@ -72,7 +72,7 @@ final class ReportController extends AbstractActionController
         $reportsNew = $this->evaluationReportService->findReviewReportsByContact($this->identity(), $status);
         $hasNew = false;
         foreach ($reportsNew as $container) {
-            if (!empty($container['reviews'])) {
+            if (! empty($container['reviews'])) {
                 $hasNew = true;
                 break;
             }
@@ -204,7 +204,7 @@ final class ReportController extends AbstractActionController
 
         // Pre-fill FPP form with PO data
         $evaluationReportType = $evaluationReport->getVersion()->getReportType();
-        if (!$request->isPost() && ($evaluationReportType->getId() === EvaluationReport\Type::TYPE_FPP_VERSION)) {
+        if (! $request->isPost() && ($evaluationReportType->getId() === EvaluationReport\Type::TYPE_FPP_VERSION)) {
             $this->evaluationReportService->preFillFppReport($evaluationReport);
         }
 
@@ -223,10 +223,10 @@ final class ReportController extends AbstractActionController
             if ($request->isPost()) {
                 $uploadForm->setData(array_merge($request->getPost()->toArray(), $request->getFiles()->toArray()));
                 $excel = $uploadForm->get('excel')->getValue();
-                if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
+                if ($uploadForm->isValid() && ! empty($excel['name']) && ($excel['error'] === 0)) {
                     $success = false;
                     $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
-                    if (!$importHelper->hasParseErrors()) {
+                    if (! $importHelper->hasParseErrors()) {
                         $success = $importHelper->import($evaluationReport);
                     }
                     if ($success) {
@@ -247,23 +247,22 @@ final class ReportController extends AbstractActionController
                         ['id' => $evaluationReport->getId()],
                         ['fragment' => 'report']
                     );
-                } else {
-                    $this->flashMessenger()->setNamespace('error')->addMessage(sprintf(
-                        $this->translator->translate('txt-please-provide-a-valid-excel-file'),
-                        $label
-                    ));
-
-                    return $this->redirect()->toRoute('community/evaluation/report/list');
                 }
+
+                $this->flashMessenger()->setNamespace('error')->addMessage(sprintf(
+                    $this->translator->translate('txt-please-provide-a-valid-excel-file'),
+                    $label
+                ));
+
+                return $this->redirect()->toRoute('community/evaluation/report/list');
             } // Download excel
-            else {
-                return $this->evaluationReportExcelExport($evaluationReport)->parseResponse();
-            }
+
+            return $this->evaluationReportExcelExport($evaluationReport)->parseResponse();
         }
 
         $form = new EvaluationReportForm($evaluationReport, $this->evaluationReportService, $this->entityManager);
 
-        if ($request->isPost() && !$offlineMode) {
+        if ($request->isPost() && ! $offlineMode) {
             $data = $request->getPost()->toArray();
 
             if (isset($data['cancel'])) {
@@ -320,7 +319,7 @@ final class ReportController extends AbstractActionController
         }
 
         // Final reports can't be edited any more in online mode
-        if (!$offlineMode && $evaluationReport->getFinal()) {
+        if (! $offlineMode && $evaluationReport->getFinal()) {
             $this->flashMessenger()->addSuccessMessage(
                 $this->translator->translate('txt-evaluation-report-is-final-and-cant-be-edited-any-more')
             );
@@ -368,10 +367,10 @@ final class ReportController extends AbstractActionController
                 $data = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
                 $uploadForm->setData($data);
                 $excel = $uploadForm->get('excel')->getValue();
-                if ($uploadForm->isValid() && !empty($excel['name']) && ($excel['error'] === 0)) {
+                if ($uploadForm->isValid() && ! empty($excel['name']) && ($excel['error'] === 0)) {
                     $success = false;
                     $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
-                    if (!$importHelper->hasParseErrors()) {
+                    if (! $importHelper->hasParseErrors()) {
                         // Prevent duplicate entries by clearing old results when an outdated Excel is used
                         if ($importHelper->excelIsOutdated($evaluationReport)) {
                             $evaluationReport->getResults()->clear();

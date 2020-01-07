@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Evaluation;
 
-use Zend\ModuleManager\Feature;
+use Laminas\ModuleManager\Feature;
 
 /**
  *

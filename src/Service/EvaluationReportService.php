@@ -144,7 +144,7 @@ class EvaluationReportService extends AbstractService
         /** @var EvaluationReport\Result $result */
         foreach ($evaluationReport->getResults() as $result) {
             if ($result->getCriterionVersion()->getRequired()
-                && ((($result->getScore() !== null) && ($result->getScore() !== -1)) || !empty($result->getValue()))
+                && ((($result->getScore() !== null) && ($result->getScore() !== -1)) || ! empty($result->getValue()))
             ) {
                 $resultCount++;
             }
@@ -156,7 +156,7 @@ class EvaluationReportService extends AbstractService
         }
 
         $key = $evaluationReport->getVersion()->getId();
-        if (!isset($requiredCounts[$key])) {
+        if (! isset($requiredCounts[$key])) {
             $requiredCounts[$key] = $this->entityManager->getRepository(CriterionVersion::class)->count([
                 'reportVersion' => $evaluationReport->getVersion(),
                 'required'      => true
@@ -275,7 +275,7 @@ class EvaluationReportService extends AbstractService
             $result->setCriterionVersion($criterionVersion);
             $result->setEvaluationReport($evaluationReport);
             $defaultValue = $criterionVersion->getDefaultValue();
-            if (!empty($defaultValue)) {
+            if (! empty($defaultValue)) {
                 if ($criterionVersion->getCriterion()->getValues() !== null) {
                     $result->setValue($defaultValue);
                 } else {

@@ -16,11 +16,11 @@ use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use DoctrineORMModule\Form\Element\EntityRadio;
 use Evaluation\Entity;
-use Zend\Form\Annotation\AnnotationBuilder;
-use Zend\Form\Element;
-use Zend\Form\Element\Radio;
-use Zend\Form\Fieldset;
-use Zend\Form\FieldsetInterface;
+use Laminas\Form\Annotation\AnnotationBuilder;
+use Laminas\Form\Element;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Fieldset;
+use Laminas\Form\FieldsetInterface;
 
 /**
  * Class ObjectFieldset
@@ -63,7 +63,7 @@ class ObjectFieldset extends Fieldset
         foreach ($dataFieldset->getElements() as $element) {
             $this->parseElement($element, $object, $entityManager);
             // Add only when a type is provided
-            if (!\array_key_exists('type', $element->getAttributes())) {
+            if (! \array_key_exists('type', $element->getAttributes())) {
                 continue;
             }
 
@@ -103,7 +103,7 @@ class ObjectFieldset extends Fieldset
      */
     protected function parseElement(Element $element, ?Entity\AbstractEntity $object, EntityManager $entityManager)
     {
-        if (($element instanceof Radio) && !($element instanceof EntityRadio)
+        if (($element instanceof Radio) && ! ($element instanceof EntityRadio)
             && ($object instanceof Entity\AbstractEntity)
         ) {
             $attributes = $element->getAttributes();

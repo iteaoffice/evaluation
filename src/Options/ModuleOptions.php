@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Evaluation\Options;
 
-use Zend\Stdlib\AbstractOptions;
+use Laminas\Stdlib\AbstractOptions;
 
 /**
  * AbstractServiceTest mocks this class, so can't be final

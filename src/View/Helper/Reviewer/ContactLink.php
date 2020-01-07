@@ -32,7 +32,7 @@ final class ContactLink extends AbstractLink
 
         $routeParams = [];
         $showOptions = [];
-        if (!$reviewContact->isEmpty()) {
+        if (! $reviewContact->isEmpty()) {
             $routeParams['id']     = $reviewContact->getId();
             $showOptions['handle'] = $reviewContact->getHandle();
         }

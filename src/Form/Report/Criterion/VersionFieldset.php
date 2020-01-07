@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityManager;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Form\ObjectFieldset;
-use Zend\Form\Element\Select;
+use Laminas\Form\Element\Select;
 use function sprintf;
 
 final class VersionFieldset extends ObjectFieldset

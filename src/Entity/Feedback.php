@@ -17,12 +17,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Project\Entity\Funding\Status;
 use Project\Entity\Version\Version;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_feedback")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\FeedbackRepository")
- * @Annotation\Hydrator("Zend\Hydrator\ObjectProperty")
+ * @Annotation\Hydrator("Laminas\Hydrator\ObjectProperty")
  * @Annotation\Name("evaluation_feedback")
  */
 class Feedback extends AbstractEntity
@@ -68,7 +68,7 @@ class Feedback extends AbstractEntity
     private $version;
     /**
      * @ORM\Column(name="mandatory_improvements", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-mandatory-improvements","help-block": "txt-mandatory-improvements-explanation"})
      *
@@ -77,7 +77,7 @@ class Feedback extends AbstractEntity
     private $mandatoryImprovements;
     /**
      * @ORM\Column(name="recommended_improvements", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-recommended-improvements","help-block": "txt-recommended-improvements-explanation"})
      *
@@ -86,7 +86,7 @@ class Feedback extends AbstractEntity
     private $recommendedImprovements;
     /**
      * @ORM\Column(name="review_feedback", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-review-feedback","help-block": "txt-review-feedback-explanation"})
      *
@@ -95,7 +95,7 @@ class Feedback extends AbstractEntity
     private $reviewFeedback;
     /**
      * @ORM\Column(name="evaluation_feedback", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-evaluation-feedback","help-block": "txt-evaluation-feedback-explanation"})
      *
@@ -104,7 +104,7 @@ class Feedback extends AbstractEntity
     private $evaluationFeedback;
     /**
      * @ORM\Column(name="evaluation_conclusion", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-evaluation-conclusion","help-block": "txt-evaluation-conclusion-explanation"})
      *

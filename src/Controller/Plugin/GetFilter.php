@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Evaluation\Controller\Plugin;
 
 use Doctrine\Common\Collections\Criteria;
-use Zend\Http\Request;
-use Zend\Mvc\Application;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Mvc\Controller\PluginManager;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\Http\Request;
+use Laminas\Mvc\Application;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\PluginManager;
+use Laminas\ServiceManager\ServiceManager;
 use function base64_decode;
 use function base64_encode;
 use function http_build_query;
@@ -55,7 +55,7 @@ final class GetFilter extends AbstractPlugin
         /** @var Request $request */
         $request = $application->getMvcEvent()->getRequest();
 
-        if (!empty($encodedFilter)) {
+        if (! empty($encodedFilter)) {
             // Take the filter from the URL
             $filter = (array)json_decode(base64_decode($encodedFilter), true, 512, JSON_THROW_ON_ERROR);
         }
@@ -72,7 +72,7 @@ final class GetFilter extends AbstractPlugin
         }
 
         // Add a default order and direction if not known in the filter
-        if (!isset($filter['order'])) {
+        if (! isset($filter['order'])) {
             $filter['order'] = '';
             $filter['direction'] = Criteria::ASC;
         }

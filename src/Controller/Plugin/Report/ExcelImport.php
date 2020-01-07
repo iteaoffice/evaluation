@@ -22,7 +22,7 @@ use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result as EvaluationReportResult;
 use Evaluation\Service\EvaluationReportService;
 use RuntimeException;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use function sprintf;
 use function unlink;
 
@@ -95,7 +95,7 @@ final class ExcelImport extends AbstractPlugin
     public function excelIsOutdated(EvaluationReport $evaluationReport): bool
     {
         foreach ($this->data as $row) {
-            if (!empty($row[1])) {
+            if (! empty($row[1])) {
                 // An Excel with result IDs is never outdated, so short-circuit
                 return false;
             }

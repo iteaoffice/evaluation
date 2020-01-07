@@ -14,7 +14,7 @@ namespace Evaluation\Navigation\Invokable\Report;
 
 use Admin\Navigation\Invokable\AbstractNavigationInvokable;
 use Evaluation\Entity\Report\Window;
-use Zend\Navigation\Page\Mvc;
+use Laminas\Navigation\Page\Mvc;
 
 /**
  * Class WindowLabel

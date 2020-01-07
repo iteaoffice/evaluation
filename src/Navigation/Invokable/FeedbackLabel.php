@@ -16,7 +16,7 @@ use Admin\Navigation\Invokable\AbstractNavigationInvokable;
 use Evaluation\Entity\Feedback;
 use Project\Entity\Project;
 use Project\Entity\Version\Version;
-use Zend\Navigation\Page\Mvc;
+use Laminas\Navigation\Page\Mvc;
 
 /**
  * Class FeedbackLabel

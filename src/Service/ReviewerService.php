@@ -108,7 +108,7 @@ class ReviewerService extends AbstractService
         /** @var ProjectCalendar $projectCalendar */
         foreach ($project->getProjectCalendar() as $projectCalendar) {
             // Add the FE reviewers for calendar items in the future, limiting to max 1 FE line
-            if (!$hasFE && ($projectCalendar->getCalendar()->getDateFrom() >= $tomorrow)) {
+            if (! $hasFE && ($projectCalendar->getCalendar()->getDateFrom() >= $tomorrow)) {
                 $sortKey = $projectCalendar->getCalendar()->getDateFrom()->format('Y-m-d|H:i:s')
                     . '|' . self::TYPE_FE;
                 /** @var CalendarContact $attendee */

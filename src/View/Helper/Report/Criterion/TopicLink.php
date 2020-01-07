@@ -32,7 +32,7 @@ final class TopicLink extends AbstractLink
 
         $routeParams = [];
         $showOptions = [];
-        if (!$topic->isEmpty()) {
+        if (! $topic->isEmpty()) {
             $routeParams['id']   = $topic->getId();
             $showOptions['name'] = $topic->getTopic();
         }

@@ -14,7 +14,7 @@ namespace Evaluation\Navigation\Invokable\Report\Criterion;
 
 use Admin\Navigation\Invokable\AbstractNavigationInvokable;
 use Evaluation\Entity\Report\Criterion\Type;
-use Zend\Navigation\Page\Mvc;
+use Laminas\Navigation\Page\Mvc;
 
 final class TypeLabel extends AbstractNavigationInvokable
 {

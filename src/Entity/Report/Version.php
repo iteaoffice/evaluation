@@ -18,7 +18,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\AbstractEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_version")
@@ -50,7 +50,7 @@ class Version extends AbstractEntity
     private $reportType;
     /**
      * @ORM\Column(name="label", type="string", nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-label",
      *     "help-block":"txt-evaluation-report-version-label-help-block"
@@ -61,7 +61,7 @@ class Version extends AbstractEntity
     private $label;
     /**
      * @ORM\Column(name="description", length=65535, type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Options({
      *     "label":"txt-description",
      *     "help-block":"txt-evaluation-report-version-description-help-block"
@@ -72,7 +72,7 @@ class Version extends AbstractEntity
     private $description;
     /**
      * @ORM\Column(name="archived", type="boolean", length=1, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-archived",
      *     "help-block":"txt-evaluation-report-version-archived-help-block"

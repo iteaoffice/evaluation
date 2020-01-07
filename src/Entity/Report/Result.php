@@ -18,7 +18,7 @@ use Evaluation\Entity\AbstractEntity;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * Evaluation Report Project Report (This are the real reports)
@@ -32,7 +32,7 @@ class Result extends AbstractEntity
 {
     public const SCORE_NOT_EVALUATED = -1;
 
-    protected static $scoreValues = [
+    protected static array $scoreValues = [
         self::SCORE_NOT_EVALUATED => 'txt-not-evaluated-yet',
         0                         => 'txt-very-low:-unacceptable-or-missing',
         1                         => 'txt-low:-insufficient-lacking-or-inadequate',
@@ -41,7 +41,7 @@ class Result extends AbstractEntity
         4                         => 'txt-excellent:-outstanding-work'
     ];
 
-    protected static $scoreColors = [
+    protected static array $scoreColors = [
         self::SCORE_NOT_EVALUATED => 'FFFFFF',
         0                         => 'FF0000',
         1                         => 'FF8C00',

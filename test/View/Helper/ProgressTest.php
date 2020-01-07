@@ -9,7 +9,7 @@ use Evaluation\Service\EvaluationReportService;
 use Evaluation\View\Helper\Report\Progress;
 use PHPUnit\Framework\MockObject\MockObject;
 use Testing\Util\AbstractServiceTest;
-use Zend\I18n\Translator\TranslatorInterface;
+use Laminas\I18n\Translator\TranslatorInterface;
 
 class ProgressTest extends AbstractServiceTest
 {

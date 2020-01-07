@@ -26,7 +26,7 @@ use Project\Form\MatrixFilter;
 use Evaluation\Service\EvaluationService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use function round;
 use function ucwords;
 
@@ -36,26 +36,11 @@ use function ucwords;
  */
 final class CreateEvaluation extends AbstractPlugin
 {
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var VersionService
-     */
-    private $versionService;
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
-    /**
-     * @var AffiliationService
-     */
-    private $affiliationService;
-    /**
-     * @var CountryService
-     */
-    private $countryService;
+    private ProjectService $projectService;
+    private VersionService $versionService;
+    private EvaluationService $evaluationService;
+    private AffiliationService $affiliationService;
+    private CountryService $countryService;
 
     public function __construct(
         ProjectService     $projectService,

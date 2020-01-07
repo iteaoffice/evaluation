@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Evaluation\Entity;
 
 use InvalidArgumentException;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use function array_slice;
 use function explode;
 use function implode;

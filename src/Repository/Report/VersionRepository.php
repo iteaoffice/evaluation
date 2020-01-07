@@ -102,7 +102,7 @@ use function strtoupper;
         $queryBuilder->setParameter('archived', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
-        if (!empty($result)) {
+        if (! empty($result)) {
             return reset($result);
         }
 
@@ -124,7 +124,7 @@ use function strtoupper;
         $queryBuilder->setParameter('archived', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
-        if (!empty($result)) {
+        if (! empty($result)) {
             return reset($result);
         }
 

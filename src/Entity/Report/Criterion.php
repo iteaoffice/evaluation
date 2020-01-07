@@ -17,7 +17,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\AbstractEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_criterion")
@@ -30,7 +30,7 @@ class Criterion extends AbstractEntity
     public const INPUT_TYPE_TEXT = 3; // Input type is a multi-line textarea
     public const INPUT_TYPE_SELECT = 4; // Input type is select box
 
-    protected static $inputTypeTemplates
+    protected static array $inputTypeTemplates
         = [
             self::INPUT_TYPE_BOOL   => 'txt-input-type-bool',
             self::INPUT_TYPE_STRING => 'txt-input-type-string',
@@ -50,7 +50,7 @@ class Criterion extends AbstractEntity
     /**
      *
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("\Zend\Form\Element\Number")
+     * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({
      *     "label":"txt-sequence",
      *     "help-block":"txt-evaluation-report-criterion-sequence-help-block"
@@ -62,7 +62,7 @@ class Criterion extends AbstractEntity
     private $sequence = 0;
     /**
      * @ORM\Column(name="criterion", type="string", nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-criterion-label",
      *     "help-block":"txt-evaluation-report-criterion-help-block"
@@ -73,7 +73,7 @@ class Criterion extends AbstractEntity
     private $criterion;
     /**
      * @ORM\Column(name="help_block", type="text", length=65535, nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-criterion-help-block-label",
      *     "help-block":"txt-evaluation-report-criterion-help-block-help-block"
@@ -84,7 +84,7 @@ class Criterion extends AbstractEntity
     private $helpBlock;
     /**
      * @ORM\Column(name="input_type", type="smallint", length=5, options={"unsigned":true}, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Radio")
+     * @Annotation\Type("Laminas\Form\Element\Radio")
      * @Annotation\Attributes({"array":"inputTypeTemplates"})
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-criterion-input-type-label",
@@ -96,7 +96,7 @@ class Criterion extends AbstractEntity
     private $inputType = self::INPUT_TYPE_STRING;
     /**
      * @ORM\Column(name="`values`", type="text", length=65535, nullable=true)
-     * @Annotation\Type("Zend\Form\Element\Textarea")
+     * @Annotation\Type("Laminas\Form\Element\Textarea")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-criterion-values-label",
      *     "help-block":"txt-evaluation-report-criterion-values-help-block-label"
@@ -107,7 +107,7 @@ class Criterion extends AbstractEntity
     private $values;
     /**
      * @ORM\Column(name="has_score", type="boolean", length=1, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-has-score",
      *     "help-block":"txt-evaluation-report-criterion-has-score-help-block"
@@ -118,7 +118,7 @@ class Criterion extends AbstractEntity
     private $hasScore = true;
     /**
      * @ORM\Column(name="archived", type="boolean", length=1, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-archived",
      *     "help-block":"txt-evaluation-report-criterion-archived-help-block"

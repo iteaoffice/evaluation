@@ -19,9 +19,9 @@ use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Evaluation\Service\EvaluationReportService;
 use Project\Service\ProjectService;
-use Zend\Permissions\Acl\Acl;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
 use function count;
 
 /**
@@ -113,7 +113,7 @@ final class ReportAssertion extends AbstractAssertion
                 }
 
                 // When no evaluation report is set, get it by ID from the route param
-                if (!($evaluationReport instanceof EvaluationReport)) {
+                if (! ($evaluationReport instanceof EvaluationReport)) {
                     $id = $this->getRouteMatch()->getParam('id');
                     if ($id === null) {
                         return false;

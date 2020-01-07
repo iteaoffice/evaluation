@@ -32,7 +32,7 @@ final class CriterionLink extends AbstractLink
 
         $routeParams = [];
         $showOptions = [];
-        if (!$criterion->isEmpty()) {
+        if (! $criterion->isEmpty()) {
             $routeParams['id']   = $criterion->getId();
             $showOptions['name'] = $criterion->getCriterion();
         }
