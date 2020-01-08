@@ -17,5 +17,5 @@ namespace Evaluation\Version;
  */
 final class Version
 {
-    public const VERSION = '1.0.1';
+    public const VERSION = '1.0.1-DEV';
 }
