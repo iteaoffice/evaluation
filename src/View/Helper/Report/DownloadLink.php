@@ -14,7 +14,7 @@ use General\View\Helper\AbstractLink;
 final class DownloadLink extends AbstractLink
 {
     public function __invoke(
-        int    $status = null,
+        int $status = null,
         string $action = 'download-combined',
         string $show = 'button'
     ): string {

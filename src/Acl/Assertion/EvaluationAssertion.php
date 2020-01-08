@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -29,6 +30,7 @@ use Project\Service\VersionService;
 use Laminas\Permissions\Acl\Acl;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Laminas\Permissions\Acl\Role\RoleInterface;
+
 use function in_array;
 
 /**
@@ -71,8 +73,8 @@ final class EvaluationAssertion extends AbstractAssertion
     }
 
     public function assert(
-        Acl               $acl,
-        RoleInterface     $role = null,
+        Acl $acl,
+        RoleInterface $role = null,
         ResourceInterface $resource = null,
         $privilege = null
     ): bool {
@@ -180,7 +182,8 @@ final class EvaluationAssertion extends AbstractAssertion
                 $contactCountry = $this->contactService->parseCountry($this->contact);
                 $countries = $this->countryService->findCountryByProject($resource->getProject());
                 foreach ($countries as $country) {
-                    if (! $contactActiveInCountry
+                    if (
+                        ! $contactActiveInCountry
                         && null !== $contactCountry
                         && $contactCountry->getId() === $country->getId()
                     ) {
@@ -213,7 +216,8 @@ final class EvaluationAssertion extends AbstractAssertion
 
                 $countries = $this->countryService->findCountryByProject($resource->getProject());
                 foreach ($countries as $country) {
-                    if (! $contactActiveInCountry
+                    if (
+                        ! $contactActiveInCountry
                         && null !== $contactCountry
                         && $contactCountry->getId() === $country->getId()
                     ) {

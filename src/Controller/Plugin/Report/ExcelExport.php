@@ -52,6 +52,7 @@ use Laminas\Http\Response;
 use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\Json\Json;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+
 use function array_keys;
 use function array_map;
 use function ceil;
@@ -115,10 +116,10 @@ final class ExcelExport extends AbstractPlugin
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ProjectService          $projectService,
-        VersionService          $versionService,
-        ModuleOptions           $moduleOptions,
-        TranslatorInterface     $translator
+        ProjectService $projectService,
+        VersionService $versionService,
+        ModuleOptions $moduleOptions,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->projectService          = $projectService;
@@ -129,8 +130,8 @@ final class ExcelExport extends AbstractPlugin
 
     public function __invoke(
         EvaluationReport $evaluationReport,
-        bool             $isFinal = false,
-        bool             $forDistribution = false
+        bool $isFinal = false,
+        bool $forDistribution = false
     ): ExcelExport {
         $this->evaluationReport = $evaluationReport;
         $this->excel            = new Spreadsheet();
@@ -264,7 +265,8 @@ final class ExcelExport extends AbstractPlugin
                 $currentCategory = $category;
             }
 
-            if (($type !== $currentType)
+            if (
+                ($type !== $currentType)
                 && (
                     ! $this->forDistribution
                     || ! $this->evaluationReportService->typeIsConfidential(
@@ -530,11 +532,12 @@ final class ExcelExport extends AbstractPlugin
     ): void {
         // Stg decision
         $displaySheet->getRowDimension($row)->setRowHeight(20);
-        if (in_array(
-            $reportType,
-            [EvaluationReport\Type::TYPE_MAJOR_CR_VERSION, EvaluationReport\Type::TYPE_MINOR_CR_VERSION],
-            true
-        )
+        if (
+            in_array(
+                $reportType,
+                [EvaluationReport\Type::TYPE_MAJOR_CR_VERSION, EvaluationReport\Type::TYPE_MINOR_CR_VERSION],
+                true
+            )
         ) {
             $this->parseCriterionLabel(
                 $displaySheet,
@@ -791,11 +794,12 @@ final class ExcelExport extends AbstractPlugin
                 $displaySheet->setCellValue($scoreSelectCell, $result->getComment());
             }
         } else {
-            if (in_array(
-                $result->getCriterionVersion()->getCriterion()->getInputType(),
-                [Criterion::INPUT_TYPE_TEXT, Criterion::INPUT_TYPE_STRING],
-                true
-            )
+            if (
+                in_array(
+                    $result->getCriterionVersion()->getCriterion()->getInputType(),
+                    [Criterion::INPUT_TYPE_TEXT, Criterion::INPUT_TYPE_STRING],
+                    true
+                )
             ) {
                 $mergeCell = $scoreSelectCell . ':' . $resultCell;
                 $displaySheet->mergeCells($mergeCell);

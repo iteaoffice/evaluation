@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -30,6 +31,7 @@ use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
+
 use function in_array;
 
 /**
@@ -147,7 +149,8 @@ final class VersionController extends AbstractActionController
             $topic = $fieldset->get('topic');
             $valueOptions = $topic->getValueOptions();
             foreach ($valueOptions as $key => $option) {
-                if (! in_array($option['value'], $allowedValueOptions)
+                if (
+                    ! in_array($option['value'], $allowedValueOptions)
                     && ($fieldset->get('topic')->getValue() !== $option['value'])
                 ) {
                     unset($valueOptions[$key]);

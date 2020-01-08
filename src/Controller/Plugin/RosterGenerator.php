@@ -30,6 +30,7 @@ use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+
 use function array_keys;
 use function array_merge;
 use function in_array;
@@ -76,7 +77,7 @@ final class RosterGenerator extends AbstractPlugin
     public function __construct(
         ReviewRosterService $reviewRosterService,
         TranslatorInterface $translator,
-        ModuleOptions       $moduleOptions
+        ModuleOptions $moduleOptions
     ) {
         $this->reviewRosterService = $reviewRosterService;
         $this->translator          = $translator;
@@ -95,9 +96,9 @@ final class RosterGenerator extends AbstractPlugin
     public function __invoke(
         string $type,
         string $configFile,
-        int    $reviewersPerProject,
-        bool   $includeSpareReviewers = false,
-        ?int   $forceProjectsPerRound = null
+        int $reviewersPerProject,
+        bool $includeSpareReviewers = false,
+        ?int $forceProjectsPerRound = null
     ): RosterGenerator {
         $this->type       = $type;
         $this->config     = $this->reviewRosterService->parseConfigFile($configFile);

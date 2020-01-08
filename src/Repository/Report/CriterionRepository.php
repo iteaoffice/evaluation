@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -20,6 +21,7 @@ use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Type;
 use Evaluation\Entity\Report\Version as ReportVersion;
 use Evaluation\Repository\FilteredObjectRepository;
+
 use function array_key_exists;
 use function implode;
 use function in_array;
@@ -39,7 +41,8 @@ final class CriterionRepository extends SortableRepository implements FilteredOb
         $queryBuilder->innerJoin('cr.reportTypes', 'rt');
 
         $direction = Criteria::ASC;
-        if (isset($filter['direction'])
+        if (
+            isset($filter['direction'])
             && in_array(strtoupper($filter['direction']), [Criteria::ASC, Criteria::DESC], true)
         ) {
             $direction = strtoupper($filter['direction']);

@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -38,8 +39,8 @@ final class WindowController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService,
-        TranslatorInterface     $translator
+        FormService $formService,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;

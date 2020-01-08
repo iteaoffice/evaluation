@@ -16,7 +16,7 @@ final class PresentationLink extends AbstractLink
 {
     public function __invoke(
         Parameters $parameters = null,
-        string     $show = 'button'
+        string $show = 'button'
     ): string {
         return $this->parse(Link::fromArray([
             'icon'        => 'fa-download',

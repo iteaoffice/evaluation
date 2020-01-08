@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -25,6 +26,7 @@ use Project\Entity\Project;
 use Project\Entity\Report\Report;
 use Project\Search\Service\ProjectSearchService;
 use Project\Service\ProjectService;
+
 use function array_diff;
 use function array_key_exists;
 use function array_keys;
@@ -201,10 +203,11 @@ class ReviewRosterService
                 $this->log(__LINE__, sprintf('Retry %d of %d', $try, self::MAX_RETRIES));
                 if ($type === ReviewerService::TYPE_CR) {
                     $rosterData = $this->generateCrRosterData($projectReviewerScores, $allReviewers);
-                } elseif (in_array(
-                    $type,
-                    [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP, ReviewerService::TYPE_PPR]
-                )
+                } elseif (
+                    in_array(
+                        $type,
+                        [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP, ReviewerService::TYPE_PPR]
+                    )
                 ) {
                     $rosterData = $this->generatePoFppPprRosterData($roundAssignments, $allReviewers);
                 }
@@ -449,7 +452,8 @@ class ReviewRosterService
                     if (count($reviewersAssigned) === $this->reviewersPerProject) {
                         break;
                     }
-                    if (isset($reviewerData[$handle])
+                    if (
+                        isset($reviewerData[$handle])
                         // Prevent rare cases where a preferred reviewer is also an ignored one (after org merge)
                         && ($projectReviewerScores[$projectIndex]['scores'][$handle] !== self::REVIEWER_IGNORED)
                         // Prevent reviewers from the same company being added
@@ -506,7 +510,8 @@ class ReviewRosterService
             while ((count($reviewersAssigned) < $this->reviewersPerProject) && ($iteration <= $reviewers)) {
                 foreach (array_keys($reviewerLoad) as $handle) {
                     // Add reviewers with low load and not from the same organisation as reviewers already assigned
-                    if (($assignment['scores'][$handle] === 0)
+                    if (
+                        ($assignment['scores'][$handle] === 0)
                         && ! $this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
                     ) {
                         $reviewersAssigned[] = $handle;
@@ -569,7 +574,8 @@ class ReviewRosterService
     private function sameOrganisation(string $handle, array $otherHandles, array $reviewerData): bool
     {
         foreach ($otherHandles as $otherHandle) {
-            if (($reviewerData[$handle]['organisation'] === $reviewerData[$otherHandle]['organisation'])
+            if (
+                ($reviewerData[$handle]['organisation'] === $reviewerData[$otherHandle]['organisation'])
                 || (
                     ($reviewerData[$handle]['parent'] !== null)
                     && ($reviewerData[$handle]['parent'] === $reviewerData[$otherHandle]['parent'])
@@ -1021,7 +1027,8 @@ class ReviewRosterService
                                     $handle = $bestMatchesByProject[$projectIndex][$index]['handle'];
                                     $excludeFromProject[] = $handle;
                                     // When excluded from this project, also remove this project from the best matches by handle
-                                    if (isset($bestMatchByHandle[$handle])
+                                    if (
+                                        isset($bestMatchByHandle[$handle])
                                         && ($bestMatchByHandle[$handle]['projectIndex'] === $projectIndex)
                                     ) {
                                         unset($bestMatchByHandle[$handle]);
@@ -1033,7 +1040,8 @@ class ReviewRosterService
 
                     foreach ($bestMatchesByProject[$projectIndex] as $handleData) {
                         $handle = $handleData['handle'];
-                        if (// Not explicitly excluded
+                        if (
+// Not explicitly excluded
                             ! in_array($handle, $excludeFromProject)
                             // Not yet assigned in this round
                             && ! in_array($handle, $handlesAssigned[$round])
@@ -1084,7 +1092,8 @@ class ReviewRosterService
                     if (count($reviewersAssigned) === $this->reviewersPerProject) {
                         break;
                     }
-                    if (// Not explicitly excluded
+                    if (
+// Not explicitly excluded
                         ($score > self::REVIEWER_IGNORED) && ! in_array($handle, $excludeFromProject)
                         // Not yet assigned in this round
                         && ! in_array($handle, $handlesAssigned[$round])
@@ -1099,7 +1108,8 @@ class ReviewRosterService
                         && ! $this->sameOrganisation($handle, $reviewersAssigned, $reviewerData)
                     ) {
                         // When no experienced reviewer has been assigned yet, skip inexperienced reviewers
-                        if ((count($reviewersAssigned) === ($this->reviewersPerProject - 1))
+                        if (
+                            (count($reviewersAssigned) === ($this->reviewersPerProject - 1))
                             && ! $hasExperiencedReviewer
                             && ! $reviewerData[$handle]['experienced']
                         ) {

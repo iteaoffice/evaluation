@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Evaluation\Controller\Plugin\Report;
 
 use Contact\Entity\Contact;
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Evaluation\Entity\Report as EvaluationReport;
@@ -25,6 +24,7 @@ use Laminas\Http\Response;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Laminas\Mvc\Controller\PluginManager;
 use ZipArchive;
+
 use function file_exists;
 use function file_get_contents;
 use function filesize;
@@ -57,7 +57,7 @@ final class ExcelDownload extends AbstractPlugin
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        PluginManager           $pluginManager
+        PluginManager $pluginManager
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->reportExcelExport       = $pluginManager->get(ExcelExport::class);

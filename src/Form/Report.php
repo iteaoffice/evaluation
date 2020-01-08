@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -32,9 +33,9 @@ use Laminas\InputFilter\InputFilter;
 final class Report extends Form
 {
     public function __construct(
-        EvaluationReport        $report,
+        EvaluationReport $report,
         EvaluationReportService $reportService,
-        EntityManager           $entityManager
+        EntityManager $entityManager
     ) {
         parent::__construct($report->get('underscore_entity_name'));
         $this->setAttributes(

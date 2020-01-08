@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -41,10 +42,12 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Paginator\Paginator;
 use Laminas\View\Model\ViewModel;
+
 use function array_keys;
 use function array_merge;
 use function ceil;
 use function reset;
+
 use const PHP_INT_MAX;
 
 /**
@@ -362,11 +365,13 @@ final class ReportManagerController extends AbstractActionController
 
         $evaluationReports = [];
         foreach ($reportQuery->getQuery()->getResult() as $item) {
-            if (($item instanceof ProjectVersion)
+            if (
+                ($item instanceof ProjectVersion)
                 && ($item->getProjectVersionReport() instanceof ProjectVersionReport)
             ) {
                 $evaluationReports[] = $item->getProjectVersionReport()->getEvaluationReport();
-            } elseif (($item instanceof ProjectReport)
+            } elseif (
+                ($item instanceof ProjectReport)
                 && ($item->getProjectReportReport() instanceof ProjectReportReport)
             ) {
                 $evaluationReports[] = $item->getProjectReportReport()->getEvaluationReport();

@@ -20,6 +20,7 @@ use General\ValueObject\Link\Link;
 use General\ValueObject\Link\LinkDecoration;
 use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
+
 use function sprintf;
 
 /**
@@ -31,11 +32,11 @@ final class ReportLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         EvaluationReport $evaluationReport = null,
-        string           $action = 'view',
-        string           $show = LinkDecoration::SHOW_TEXT,
-        bool             $shortLabel = false,
-        ReportReviewer   $reportReviewer = null,
-        VersionReviewer  $versionReviewer = null
+        string $action = 'view',
+        string $show = LinkDecoration::SHOW_TEXT,
+        bool $shortLabel = false,
+        ReportReviewer $reportReviewer = null,
+        VersionReviewer $versionReviewer = null
     ): string {
         $evaluationReport ??= new EvaluationReport();
 

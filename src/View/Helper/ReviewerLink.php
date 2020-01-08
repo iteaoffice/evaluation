@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -28,9 +29,9 @@ final class ReviewerLink extends AbstractLink
 {
     public function __invoke(
         Reviewer $reviewer = null,
-        string   $action = 'new',
-        string   $show = LinkDecoration::SHOW_TEXT,
-        Project  $project = null
+        string $action = 'new',
+        string $show = LinkDecoration::SHOW_TEXT,
+        Project $project = null
     ): string {
         $reviewer ??= new Reviewer();
 

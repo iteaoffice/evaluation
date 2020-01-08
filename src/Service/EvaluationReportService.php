@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -32,6 +33,7 @@ use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Type as VersionType;
 use Project\Entity\Version\Version;
+
 use function array_keys;
 use function reset;
 use function sprintf;
@@ -143,7 +145,8 @@ class EvaluationReportService extends AbstractService
         $resultCount = 0;
         /** @var EvaluationReport\Result $result */
         foreach ($evaluationReport->getResults() as $result) {
-            if ($result->getCriterionVersion()->getRequired()
+            if (
+                $result->getCriterionVersion()->getRequired()
                 && ((($result->getScore() !== null) && ($result->getScore() !== -1)) || ! empty($result->getValue()))
             ) {
                 $resultCount++;
@@ -233,7 +236,7 @@ class EvaluationReportService extends AbstractService
      */
     public function prepareEvaluationReport(
         EvaluationReportVersion $evaluationReportVersion,
-        int                     $reviewerId
+        int $reviewerId
     ): EvaluationReport {
         $evaluationReport = new EvaluationReport();
         $evaluationReport->setVersion($evaluationReportVersion);
@@ -297,7 +300,8 @@ class EvaluationReportService extends AbstractService
     public function preFillFppReport(EvaluationReport $fppEvaluationReport): void
     {
         // Only allow individual FPP based evaluation reports
-        if (($fppEvaluationReport->getVersion()->getReportType()->getId() === EvaluationReportType::TYPE_FPP_VERSION)
+        if (
+            ($fppEvaluationReport->getVersion()->getReportType()->getId() === EvaluationReportType::TYPE_FPP_VERSION)
             && ($fppEvaluationReport->getProjectVersionReport()->getVersion() === null)
         ) {
             $now       = new DateTime();
@@ -321,7 +325,8 @@ class EvaluationReportService extends AbstractService
                         foreach ($fppEvaluationReport->getResults() as &$fppResult) {
                             // Matching criterion? Transfer the result.
                             // We assume the new $fppEvaluationReport has been pre-filled with empty results.
-                            if ($poResult->getCriterionVersion()->getCriterion()->getId()
+                            if (
+                                $poResult->getCriterionVersion()->getCriterion()->getId()
                                 === $fppResult->getCriterionVersion()->getCriterion()->getId()
                             ) {
                                 $fppResult->setDateCreated($now);

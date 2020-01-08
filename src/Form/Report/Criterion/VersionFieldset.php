@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -17,6 +18,7 @@ use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Form\ObjectFieldset;
 use Laminas\Form\Element\Select;
+
 use function sprintf;
 
 final class VersionFieldset extends ObjectFieldset

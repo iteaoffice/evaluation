@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -24,6 +25,7 @@ use Laminas\Http\Request;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Paginator\Paginator;
 use Laminas\View\Model\ViewModel;
+
 use function ceil;
 use function urlencode;
 
@@ -39,7 +41,7 @@ final class ContactManagerController extends AbstractActionController
 
     public function __construct(
         ReviewerService $reviewerService,
-        FormService     $formService
+        FormService $formService
     ) {
         $this->reviewerService = $reviewerService;
         $this->formService     = $formService;

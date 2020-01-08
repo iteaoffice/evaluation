@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -24,6 +25,7 @@ use Laminas\Http\Request;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Paginator\Paginator;
 use Laminas\View\Model\ViewModel;
+
 use function ceil;
 use function urlencode;
 
@@ -38,8 +40,8 @@ final class TypeController extends AbstractActionController
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService,
-        EntityManager           $entityManager
+        FormService $formService,
+        EntityManager $entityManager
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;

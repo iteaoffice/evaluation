@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -27,6 +28,7 @@ use Evaluation\Service\EvaluationService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+
 use function round;
 use function ucwords;
 
@@ -43,11 +45,11 @@ final class CreateEvaluation extends AbstractPlugin
     private CountryService $countryService;
 
     public function __construct(
-        ProjectService     $projectService,
-        VersionService     $versionService,
-        EvaluationService  $evaluationService,
+        ProjectService $projectService,
+        VersionService $versionService,
+        EvaluationService $evaluationService,
         AffiliationService $affiliationService,
-        CountryService     $countryService
+        CountryService $countryService
     ) {
         $this->projectService     = $projectService;
         $this->versionService     = $versionService;
@@ -63,10 +65,12 @@ final class CreateEvaluation extends AbstractPlugin
 
         /** @var Project $project */
         foreach ($projects as $project) {
-            foreach ($this->countryService->findCountryByProject(
-                $project,
-                AffiliationService::WHICH_ONLY_ACTIVE
-            ) as $country) {
+            foreach (
+                $this->countryService->findCountryByProject(
+                    $project,
+                    AffiliationService::WHICH_ONLY_ACTIVE
+                ) as $country
+            ) {
                 $iso3 = $country->getIso3();
                 /*
                  * Create an array of countries to serialize it normally

@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -20,6 +21,7 @@ use Project\Entity\Project;
 use Project\Entity\Version\Type;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use ZfcTwig\View\TwigRenderer;
+
 use function defined;
 use function in_array;
 
@@ -72,7 +74,8 @@ final class RenderProjectEvaluation extends AbstractPlugin
                 $template = str_replace('blank-template-firstpage', 'euripides-template', $originalTemplate);
             }
 
-            if (in_array('Penta', $project->parsePrograms(), true)
+            if (
+                in_array('Penta', $project->parsePrograms(), true)
                 && in_array(
                     'EURIPIDES',
                     $project->parsePrograms(),

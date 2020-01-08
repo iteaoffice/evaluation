@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -19,6 +20,7 @@ use Gedmo\Sortable\Entity\Repository\SortableRepository;
 use Evaluation\Entity\Report\Version;
 use Evaluation\Entity\Report\Window;
 use Evaluation\Repository\FilteredObjectRepository;
+
 use function array_key_exists;
 use function in_array;
 use function strtoupper;

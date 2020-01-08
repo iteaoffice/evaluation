@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -12,6 +13,7 @@
  *
  * @link        http://github.com/iteaoffice/Contact for the canonical source repository
  */
+
 declare(strict_types=1);
 
 namespace Evaluation\Service;
@@ -23,6 +25,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilter;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+
 use function is_string;
 
 /**

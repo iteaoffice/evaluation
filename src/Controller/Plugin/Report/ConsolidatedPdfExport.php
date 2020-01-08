@@ -44,6 +44,7 @@ use Laminas\Json\Json;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Laminas\Mvc\Controller\PluginManager;
 use ZfcTwig\View\TwigRenderer;
+
 use function array_map;
 use function array_sum;
 use function ceil;
@@ -215,7 +216,8 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 $template = str_replace('blank-template-firstpage', 'euripides-template', $originalTemplate);
             }
 
-            if (in_array('Penta', $project->parsePrograms(), true)
+            if (
+                in_array('Penta', $project->parsePrograms(), true)
                 && in_array(
                     'EURIPIDES',
                     $project->parsePrograms(),

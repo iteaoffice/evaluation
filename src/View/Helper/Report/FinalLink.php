@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -7,6 +8,7 @@
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
  */
+
 declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
@@ -27,10 +29,10 @@ final class FinalLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         EvaluationReport $evaluationReport = null,
-        string           $action = 'view',
-        string           $show = LinkDecoration::SHOW_TEXT,
-        ProjectReport    $projectReport = null,
-        ProjectVersion   $projectVersion = null
+        string $action = 'view',
+        string $show = LinkDecoration::SHOW_TEXT,
+        ProjectReport $projectReport = null,
+        ProjectVersion $projectVersion = null
     ): string {
         $evaluationReport ??= new EvaluationReport();
         if (! $this->hasAccess($evaluationReport, ReportAssertion::class, $action)) {

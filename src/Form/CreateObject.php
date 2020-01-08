@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -27,8 +28,8 @@ use Laminas\Form\Form;
 final class CreateObject extends Form
 {
     public function __construct(
-        EntityManager           $entityManager,
-        AbstractEntity          $object,
+        EntityManager $entityManager,
+        AbstractEntity $object,
         ContainerInterface $container
     ) {
         parent::__construct($object->get('entity_name'));

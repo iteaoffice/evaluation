@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -15,6 +16,7 @@ namespace Evaluation\View\Helper\Report;
 use Evaluation\Entity\Report\Criterion;
 use General\ValueObject\Link\Link;
 use General\View\Helper\AbstractLink;
+
 use function sprintf;
 
 /**
@@ -25,8 +27,8 @@ final class CriterionLink extends AbstractLink
 {
     public function __invoke(
         Criterion $criterion = null,
-        string    $action = 'view',
-        string    $show = 'name'
+        string $action = 'view',
+        string $show = 'name'
     ): string {
         $criterion ??= new Criterion();
 

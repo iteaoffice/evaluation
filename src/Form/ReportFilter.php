@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -20,6 +21,7 @@ use Evaluation\Service\EvaluationReportService;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
+
 use function array_combine;
 use function array_reverse;
 use function date;

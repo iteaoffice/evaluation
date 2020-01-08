@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Jield BV all rights reserved
  *
@@ -25,6 +26,7 @@ use Laminas\Authentication\AuthenticationService;
 use Laminas\Http\Request;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Router\Http\RouteMatch;
+
 use function array_map;
 use function count;
 use function in_array;
@@ -156,7 +158,8 @@ abstract class AbstractAssertion implements AssertionInterface
             if ($role === Access::ACCESS_PUBLIC) {
                 return true;
             }
-            if ($this->hasContact()
+            if (
+                $this->hasContact()
                 && in_array(
                     $role,
                     $this->adminService->findAccessRolesByContactAsArray($this->contact),

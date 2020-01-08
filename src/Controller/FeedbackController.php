@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -23,6 +24,7 @@ use Laminas\View\Model\ViewModel;
 use Project\Controller\Plugin\GetFilter;
 use Project\Entity\Version\Version;
 use Project\Service\VersionService;
+
 use function array_merge_recursive;
 use function sprintf;
 
@@ -66,9 +68,9 @@ final class FeedbackController extends AbstractActionController
         $proxy = $form->get('evaluation_entity_feedback')->get('version')->getProxy();
         $proxy->setLabelGenerator(
             fn (Version $version) => sprintf(
-            '%s (%s)',
-            $version->getProject(),
-            $version->getVersionType()
+                '%s (%s)',
+                $version->getProject(),
+                $version->getVersionType()
             )
         );
 
@@ -103,9 +105,9 @@ final class FeedbackController extends AbstractActionController
         $proxy = $form->get('evaluation_entity_feedback')->get('version')->getProxy();
         $proxy->setLabelGenerator(
             fn (Version $version) => sprintf(
-            '%s (%s)',
-            $version->getProject(),
-            $version->getVersionType()
+                '%s (%s)',
+                $version->getProject(),
+                $version->getVersionType()
             )
         );
 

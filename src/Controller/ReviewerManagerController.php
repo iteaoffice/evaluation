@@ -24,6 +24,7 @@ use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
+
 use function array_merge_recursive;
 use function in_array;
 use function iconv;
@@ -47,10 +48,10 @@ final class ReviewerManagerController extends AbstractActionController
     private TranslatorInterface $translator;
 
     public function __construct(
-        ReviewerService     $reviewerService,
-        ProjectService      $projectService,
-        FormService         $formService,
-        EntityManager       $entityManager,
+        ReviewerService $reviewerService,
+        ProjectService $projectService,
+        FormService $formService,
+        EntityManager $entityManager,
         TranslatorInterface $translator
     ) {
         $this->reviewerService = $reviewerService;

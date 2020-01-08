@@ -24,7 +24,7 @@ use General\ValueObject\Link\Link;
 final class TypeLink extends AbstractLink
 {
     public function __invoke(
-        Type   $type = null,
+        Type $type = null,
         string $action = 'view',
         string $show = 'name'
     ): string {

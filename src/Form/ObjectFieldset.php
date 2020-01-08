@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -54,10 +55,10 @@ class ObjectFieldset extends Fieldset
      * @param Fieldset|null              $baseFieldset
      */
     protected function addElements(
-        Fieldset               $dataFieldset,
-        EntityManager          $entityManager,
+        Fieldset $dataFieldset,
+        EntityManager $entityManager,
         ?Entity\AbstractEntity $object,
-        Fieldset               $baseFieldset = null
+        Fieldset $baseFieldset = null
     ) {
         /** @var Element $element */
         foreach ($dataFieldset->getElements() as $element) {
@@ -103,7 +104,8 @@ class ObjectFieldset extends Fieldset
      */
     protected function parseElement(Element $element, ?Entity\AbstractEntity $object, EntityManager $entityManager)
     {
-        if (($element instanceof Radio) && ! ($element instanceof EntityRadio)
+        if (
+            ($element instanceof Radio) && ! ($element instanceof EntityRadio)
             && ($object instanceof Entity\AbstractEntity)
         ) {
             $attributes = $element->getAttributes();

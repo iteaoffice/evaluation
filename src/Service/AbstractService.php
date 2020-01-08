@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -16,6 +17,7 @@ use Evaluation\Repository\FilteredObjectRepository;
 use Evaluation\Entity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+
 use function class_implements;
 use function in_array;
 

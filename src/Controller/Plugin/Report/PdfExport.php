@@ -37,6 +37,7 @@ use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+
 use function array_map;
 use function array_reverse;
 use function array_slice;
@@ -149,10 +150,10 @@ final class PdfExport extends AbstractPlugin
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ProjectService          $projectService,
-        VersionService          $versionService,
-        ModuleOptions           $moduleOptions,
-        TranslatorInterface     $translator
+        ProjectService $projectService,
+        VersionService $versionService,
+        ModuleOptions $moduleOptions,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->projectService          = $projectService;
@@ -194,7 +195,8 @@ final class PdfExport extends AbstractPlugin
                 );
             }
 
-            if (in_array('Penta', $project->parsePrograms(), true)
+            if (
+                in_array('Penta', $project->parsePrograms(), true)
                 && in_array('EURIPIDES', $project->parsePrograms(), true)
             ) {
                 $template = str_replace(

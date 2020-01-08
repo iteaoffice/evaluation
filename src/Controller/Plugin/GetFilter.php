@@ -19,6 +19,7 @@ use Laminas\Mvc\Application;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Laminas\Mvc\Controller\PluginManager;
 use Laminas\ServiceManager\ServiceManager;
+
 use function base64_decode;
 use function base64_encode;
 use function http_build_query;

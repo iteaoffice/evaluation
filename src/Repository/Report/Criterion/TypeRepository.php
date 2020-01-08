@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -32,7 +33,8 @@ final class TypeRepository extends SortableRepository implements FilteredObjectR
         $queryBuilder->innerJoin('t.category', 'c');
 
         $direction = Criteria::ASC;
-        if (isset($filter['direction'])
+        if (
+            isset($filter['direction'])
             && \in_array(\strtoupper($filter['direction']), [Criteria::ASC, Criteria::DESC])
         ) {
             $direction = \strtoupper($filter['direction']);

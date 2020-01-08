@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -29,6 +30,7 @@ use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Type as VersionType;
 use Project\Entity\Version\Version;
+
 use function array_merge;
 use function in_array;
 
@@ -42,8 +44,8 @@ use function in_array;
 {
     public function findReviewReportsByContact(
         Contact $contact,
-        int     $status = EvaluationReportService::STATUS_NEW,
-        bool    $onlyActiveWindow = true
+        int $status = EvaluationReportService::STATUS_NEW,
+        bool $onlyActiveWindow = true
     ): array {
         $return = [];
 
@@ -247,7 +249,8 @@ use function in_array;
         $finalReport = (array_key_exists('type', $filter) && ($filter['type'] === EvaluationReport::TYPE_FINAL));
 
         // Progress report review evaluation
-        if (array_key_exists('subject', $filter)
+        if (
+            array_key_exists('subject', $filter)
             && ($filter['subject'] === (string) EvaluationReportType::TYPE_REPORT)
         ) {
             // Final evaluation report

@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -16,6 +17,7 @@ use Doctrine\ORM\QueryBuilder;
 use Evaluation\Entity\Report\Criterion\Category;
 use Evaluation\Repository\FilteredObjectRepository;
 use Gedmo\Sortable\Entity\Repository\SortableRepository;
+
 use function array_key_exists;
 use function in_array;
 

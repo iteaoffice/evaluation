@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -27,6 +28,7 @@ use Evaluation\Entity\Reviewer as ProjectReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Version;
 use Evaluation\Repository\Reviewer\ContactRepository as ReviewContactRepository;
+
 use function in_array;
 use function ksort;
 use function sprintf;
@@ -135,7 +137,8 @@ class ReviewerService extends AbstractService
                 // Merge data above with actual data from the calendar items and add reviewers from more recent meetings
                 foreach ($projectCalendar->getCalendar()->getCalendarContact() as $attendee) {
                     // The attendee is a project reviewer and status = accepted (assume that reviewer was present)
-                    if (in_array($attendee->getRole()->getId(), $stgRoles)
+                    if (
+                        in_array($attendee->getRole()->getId(), $stgRoles)
                         && ($attendee->getStatus()->getId() === ContactStatus::STATUS_ACCEPT)
                     ) {
                         $handle = $this->parseReviewHandle($attendee->getContact());

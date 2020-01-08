@@ -18,6 +18,7 @@ use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Version as ReportVersion;
 use General\ValueObject\Link\Link;
 use General\View\Helper\AbstractLink;
+
 use function sprintf;
 
 /**
@@ -28,9 +29,9 @@ final class VersionLink extends AbstractLink
 {
     public function __invoke(
         CriterionVersion $criterionVersion = null,
-        string           $action = 'view',
-        string           $show = 'name',
-        ReportVersion    $reportVersion = null
+        string $action = 'view',
+        string $show = 'name',
+        ReportVersion $reportVersion = null
     ): string {
         $criterionVersion ??= (new CriterionVersion())->setCriterion(new Criterion());
 

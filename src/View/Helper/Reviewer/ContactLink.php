@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -25,8 +26,8 @@ final class ContactLink extends AbstractLink
 {
     public function __invoke(
         Contact $reviewContact = null,
-        string  $action = 'view',
-        string  $show = LinkDecoration::SHOW_TEXT
+        string $action = 'view',
+        string $show = LinkDecoration::SHOW_TEXT
     ): string {
         $reviewContact ??= new Contact();
 

@@ -24,7 +24,7 @@ use General\ValueObject\Link\Link;
 final class TopicLink extends AbstractLink
 {
     public function __invoke(
-        Topic  $topic = null,
+        Topic $topic = null,
         string $action = 'view',
         string $show = 'name'
     ): string {

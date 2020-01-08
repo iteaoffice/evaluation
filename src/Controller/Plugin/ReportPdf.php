@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -14,6 +15,7 @@ namespace Evaluation\Controller\Plugin;
 
 use RuntimeException;
 use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
+
 use function file_exists;
 use function sprintf;
 
@@ -26,10 +28,10 @@ final class ReportPdf extends TcpdfFpdi
 {
     public const DEFAULT_FONT = 'freesans';
 
-    private ? string $templatePageId = null;
+    private ?string $templatePageId = null;
     private string $templateFile;
 
-    public function Header() : void
+    public function Header(): void
     {
         if (null === $this->templatePageId) {
             if (! file_exists($this->templateFile)) {
