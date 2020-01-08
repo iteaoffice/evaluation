@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -20,13 +16,11 @@ namespace Evaluation\Entity\Report\Criterion;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
-use Zend\Form\Annotation;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Laminas\Form\Annotation;
 
 /**
- * Evaluation report criterion category
- *
  * @ORM\Table(name="evaluation_report2_criterion_category")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\Criterion\CategoryRepository")
  */
@@ -36,15 +30,15 @@ class Category extends AbstractEntity
      * @ORM\Column(name="category_id", type="integer", options={"unsigned":true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Annotation\Exclude()
+     * @Annotation\Type("\Laminas\Form\Element\Hidden")
      *
-     * @var integer
+     * @var int
      */
     private $id;
     /**
      * @Gedmo\SortablePosition
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("\Zend\Form\Element\Number")
+     * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({"label":"txt-sequence"})
      *
      * @var int
@@ -52,7 +46,7 @@ class Category extends AbstractEntity
     private $sequence = 0;
     /**
      * @ORM\Column(name="category", type="string", length=255, nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({"label":"txt-category"})
      *
      * @var string
@@ -75,7 +69,7 @@ class Category extends AbstractEntity
 
     public function __toString(): string
     {
-        return (string) $this->category;
+        return (string)$this->category;
     }
 
     public function getId(): ?int

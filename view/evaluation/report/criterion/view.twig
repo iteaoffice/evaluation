@@ -1,0 +1,37 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-evaluation")) %}
+{% do headTitle().append(translate("txt-evaluation-report-criterion-%s")|format(criterion)) %}
+
+<h1>{{ criterion }}</h1>
+
+<dl class="dl-horizontal">
+    <dt>{{ translate("txt-id") }}</dt>
+    <dd>{{ criterion.id }}</dd>
+    <dt>{{ translate("txt-sequence") }}</dt>
+    <dd>{{ criterion.sequence }}</dd>
+    <dt>{{ translate("txt-name") }}</dt>
+    <dd>{{ criterion.criterion }}</dd>
+    <dt>{{ translate("txt-help-block") }}</dt>
+    <dd>{{ criterion.helpBlock|default('-') }}</dd>
+    <dt>{{ translate("txt-input-type") }}</dt>
+    <dd>{{ translate(criterion.parseInputType()) }}</dd>
+    <dt>{{ translate("txt-evaluation-report-types") }}</dt>
+    <dd>{% for reportType in criterion.reportTypes %}
+            {{ reportType.type }} {% if not loop.last %}<br>{% endif %}
+        {% else %}
+            -
+        {% endfor %}
+    </dd>
+    {% if criterion.values is not empty %}
+        <dt>{{ translate("txt-values") }}</dt>
+        <dd>{{ criterion.values|join(', ') }}</dd>
+    {% endif %}
+    <dt>{{ translate("txt-has-score") }}</dt>
+    <dd>{% if criterion.hasScore %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
+    <dt>{{ translate("txt-archived") }}</dt>
+    <dd>{% if criterion.archived %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
+    <dt>{{ translate("txt-in-report-versions") }}</dt>
+    <dd>{{ versions }}</dd>
+</dl>
+
+{{ reportCriterionLink(criterion,'edit','button') }}

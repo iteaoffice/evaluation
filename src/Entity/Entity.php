@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -14,5 +15,5 @@ namespace Evaluation\Entity;
 
 interface Entity
 {
-    public function getId(): ?int;
+    public function getId();
 }

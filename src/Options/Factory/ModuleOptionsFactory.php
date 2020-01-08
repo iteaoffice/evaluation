@@ -1,29 +1,30 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
  * PHP Version 7
  *
- * @category    Affiliation
+ * @category    Evaluation
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2004-2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
- * @link        http://github.com/iteaoffice/main for the canonical source repository
+ * @link        http://github.com/iteaoffice/evaluation for the canonical source repository
  */
+
 declare(strict_types=1);
 
 namespace Evaluation\Options\Factory;
 
 use Interop\Container\ContainerInterface;
-use Project\Options\ModuleOptions;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Evaluation\Options\ModuleOptions;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Class ModuleOptionsFactory
- *
- * @package Project\Factory
+ * @package Evaluation\Options\Factory
  */
 final class ModuleOptionsFactory implements FactoryInterface
 {
@@ -31,6 +32,6 @@ final class ModuleOptionsFactory implements FactoryInterface
     {
         $config = $container->get('Config');
 
-        return new ModuleOptions($config['evaluation_option'] ?? []);
+        return new ModuleOptions($config['evaluation_options'] ?? []);
     }
 }

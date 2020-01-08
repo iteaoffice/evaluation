@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -21,7 +17,7 @@ use Admin\Navigation\Invokable\AbstractNavigationInvokable;
 use Evaluation\Entity\Feedback;
 use Project\Entity\Project;
 use Project\Entity\Version\Version;
-use Zend\Navigation\Page\Mvc;
+use Laminas\Navigation\Page\Mvc;
 
 /**
  * Class FeedbackLabel
@@ -38,6 +34,7 @@ final class FeedbackLabel extends AbstractNavigationInvokable
             /** @var Feedback $feedback */
             $feedback = $entities->get(Feedback::class);
 
+            /** @var Version $version */
             $version = $feedback->getVersion();
             $entities->set(Version::class, $version);
 
@@ -50,7 +47,7 @@ final class FeedbackLabel extends AbstractNavigationInvokable
             ));
             $entities->set(Project::class, $feedback->getVersion()->getProject());
             $label = sprintf(
-                $this->translator->translate("txt-feedback-on-%s"),
+                $this->translator->translate('txt-feedback-on-%s'),
                 $feedback->getVersion()->getVersionType()->getDescription()
             );
         }
@@ -68,7 +65,7 @@ final class FeedbackLabel extends AbstractNavigationInvokable
             ));
             $entities->set(Project::class, $version->getProject());
             $label = sprintf(
-                $this->translator->translate("txt-create-feedback-on-%s"),
+                $this->translator->translate('txt-create-feedback-on-%s'),
                 $version->getVersionType()->getDescription()
             );
         }

@@ -3,10 +3,12 @@
 {{ form().openTag(form)|raw }}
 {% set type = form.get('evaluation_entity_report_criterion_type') %}
 
-{{ ztbformelement(form.get('csrf')) }}
+{{ ztbformelement(type.get('id')) }}
 {{ ztbformelement(type.get('category')) }}
 {{ ztbformelement(type.get('type')) }}
 {{ ztbformelement(type.get('sequence')) }}
+
+{{ ztbformelement(form.get('csrf')) }}
 
 <div class="form-group row">
     <div class="offset-sm-3 col-sm-9">

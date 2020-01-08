@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -24,6 +20,7 @@ use Gedmo\Sortable\Entity\Repository\SortableRepository;
 use Evaluation\Entity\Report\Version;
 use Evaluation\Entity\Report\Window;
 use Evaluation\Repository\FilteredObjectRepository;
+
 use function array_key_exists;
 use function in_array;
 use function strtoupper;

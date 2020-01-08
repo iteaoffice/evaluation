@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -18,13 +14,13 @@ declare(strict_types=1);
 namespace Evaluation\Acl\Assertion;
 
 use Admin\Entity\Access;
+use Evaluation\Entity\Feedback;
+use Evaluation\Service\EvaluationService;
 use Interop\Container\ContainerInterface;
 use Project\Acl\Assertion\Project;
-use Evaluation\Entity\Feedback;
-use Project\Service\ProjectService;
-use Zend\Permissions\Acl\Acl;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
 
 /**
  * Class Feedback
@@ -34,9 +30,9 @@ use Zend\Permissions\Acl\Role\RoleInterface;
 final class FeedbackAssertion extends AbstractAssertion
 {
     /**
-     * @var ProjectService
+     * @var EvaluationService
      */
-    private $projectService;
+    private $evaluationService;
     /**
      * @var Project
      */
@@ -46,7 +42,7 @@ final class FeedbackAssertion extends AbstractAssertion
     {
         parent::__construct($container);
 
-        $this->projectService = $container->get(ProjectService::class);
+        $this->evaluationService = $container->get(EvaluationService::class);
         $this->projectAssertion = $container->get(Project::class);
     }
 
@@ -59,11 +55,11 @@ final class FeedbackAssertion extends AbstractAssertion
         $this->setPrivilege($privilege);
         $id = $this->getId();
 
-        if (!$feedback instanceof Feedback && null !== $id) {
-            $feedback = $this->projectService->find(Feedback::class, (int)$id);
+        if (! $feedback instanceof Feedback && null !== $id) {
+            $feedback = $this->evaluationService->find(Feedback::class, (int)$id);
         }
 
-        if (!$this->hasContact() || null === $feedback) {
+        if (! $this->hasContact() || null === $feedback) {
             return false;
         }
 

@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -22,7 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2")
@@ -41,11 +37,6 @@ class Report extends AbstractEntity
     public const TYPE_INDIVIDUAL = 'individual'; // Individual review
     public const TYPE_FINAL      = 'final'; // Final review
 
-    /**
-     * Templates for the version-based report scores.
-     *
-     * @var array
-     */
     private static $versionScores = [
         self::SCORE_TOP          => 'txt-score-top-project',
         self::SCORE_MIDDLE_PLUS  => 'txt-score-middle+',
@@ -53,11 +44,7 @@ class Report extends AbstractEntity
         self::SCORE_MIDDLE_MINUS => 'txt-score-middle-',
         self::SCORE_LOW          => 'txt-score-low-quality'
     ];
-    /**
-     * Templates for the report-based evaluation report scores.
-     *
-     * @var array
-     */
+
     private static $reportScores = [
         self::SCORE_APPROVED => 'txt-approved',
         self::SCORE_REJECTED => 'txt-rejected'
@@ -68,7 +55,7 @@ class Report extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Exclude()
      *
-     * @var integer
+     * @var int
      */
     private $id;
     /**
@@ -81,7 +68,7 @@ class Report extends AbstractEntity
     private $version;
     /**
      * @ORM\Column(name="final", length=1, type="boolean", nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-final",
      *     "help-block":"txt-evaluation-report-final-help-block"
@@ -92,7 +79,7 @@ class Report extends AbstractEntity
     private $final = false;
     /**
      * @ORM\Column(name="score", type="smallint", length=5, nullable=true)
-     * @Annotation\Type("Zend\Form\Element\Select")
+     * @Annotation\Type("Laminas\Form\Element\Select")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-score-label",
      *     "help-block":"txt-evaluation-report-score-help-block",
@@ -166,12 +153,12 @@ class Report extends AbstractEntity
         return $this;
     }
 
-    public function getVersion(): Report\Version
+    public function getVersion(): ?Report\Version
     {
         return $this->version;
     }
 
-    public function setVersion(Report\Version $version): Report
+    public function setVersion(?Report\Version $version): Report
     {
         $this->version = $version;
         return $this;
@@ -226,7 +213,7 @@ class Report extends AbstractEntity
         return $this->projectReportReport;
     }
 
-    public function setProjectReportReport(Report\ProjectReport $projectReportReport): Report
+    public function setProjectReportReport(?Report\ProjectReport $projectReportReport): Report
     {
         $this->projectReportReport = $projectReportReport;
         return $this;
@@ -237,7 +224,7 @@ class Report extends AbstractEntity
         return $this->projectVersionReport;
     }
 
-    public function setProjectVersionReport(Report\ProjectVersion $projectVersionReport): Report
+    public function setProjectVersionReport(?Report\ProjectVersion $projectVersionReport): Report
     {
         $this->projectVersionReport = $projectVersionReport;
         return $this;

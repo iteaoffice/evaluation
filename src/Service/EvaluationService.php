@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -26,6 +22,9 @@ use Project\Entity\Funding\Funding;
 use Project\Entity\Funding\Source;
 use Project\Entity\Funding\Status;
 use Project\Entity\Project;
+
+use function in_array;
+use function strlen;
 
 /**
  * Class EvaluationService
@@ -56,18 +55,11 @@ class EvaluationService extends AbstractService
             ->findBy(['project' => $project,], ['type' => 'ASC']);
     }
 
-    public function findFundingByAffiliationAndSourceAndYear(
-        Affiliation $affiliation,
-        Source $source,
-        int $year
-    ): ?Funding {
-        return $this->entityManager->getRepository(Funding::class)
-            ->findFundingByAffiliationAndSourceAndYear($affiliation, $source, $year);
-    }
+
 
     public function isFundingDecisionGiven(Evaluation $evaluation): bool
     {
-        return \in_array(
+        return in_array(
             $evaluation->getStatus()->getId(),
             [
                 Status::STATUS_ALL_GOOD,
@@ -111,7 +103,7 @@ class EvaluationService extends AbstractService
 
     public function isDecision(Status $status): bool
     {
-        return \in_array(
+        return in_array(
             $status->getId(),
             [Status::STATUS_ALL_GOOD, Status::STATUS_GOOD, Status::STATUS_SELF_FUNDED, Status::STATUS_BAD],
             false
@@ -120,8 +112,8 @@ class EvaluationService extends AbstractService
 
     public function hasFeedbackFromProjectConsortium(Feedback $feedback): bool
     {
-        return \strlen((string)$feedback->getEvaluationFeedback()) > 12
-            && \strlen((string)$feedback->getReviewFeedback()) > 0;
+        return strlen((string)$feedback->getEvaluationFeedback()) > 12
+            && (string)$feedback->getReviewFeedback() !== '';
     }
 
     public function getFundingStatusList(int $type = self::TYPE_EVALUATION): ?array

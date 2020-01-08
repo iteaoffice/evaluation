@@ -11,7 +11,9 @@
 </div>
 {{ ztbformelement(criterionFieldset.get('sequence')) }}
 {{ ztbformelement(criterionFieldset.get('criterion')) }}
+{{ ztbformelement(criterionFieldset.get('defaultValue')) }}
 {{ ztbformelement(criterionFieldset.get('type')) }}
+{% if reportVersion.topics|length > 0 %}
 <div class="form-group row">
     <label class="col-sm-3 col-form-label">{{ translate(criterionFieldset.get('versionTopics').getOption('label')) }}</label>
     <div class="col-sm-9">
@@ -39,10 +41,12 @@
         <small class="form-text text-muted">{{ translate("txt-add-topic-help-block") }}</small>
     </div>
 </div>
+{% endif %}
 
 {{ ztbformelement(criterionFieldset.get('required')) }}
 {{ ztbformelement(criterionFieldset.get('confidential')) }}
 {{ ztbformelement(criterionFieldset.get('highlighted')) }}
+{{ formelement(form.get('csrf')) }}
 
 <div class="form-group row">
     <div class="offset-sm-3 col-sm-9">
@@ -55,15 +59,16 @@
 </div>
 {{ form().closeTag()|raw }}
 
+{% if reportVersion.topics|length > 0 %}
 <div id="template" class="d-none">
     <div class="card mb-2">
         <div class="card-body row">
             <div class="col">
                 <div class="form-group">
                     <label for="topic-__index__">{{ translate("txt-topic") }}</label>
-                    <select id="topic-__index__" name="project_entity_evaluation_report2_criterion_version[versionTopics][__index__][topic]"
+                    <select id="topic-__index__" name="evaluation_entity_report_criterion_version[versionTopics][__index__][topic]"
                             class="form-control">
-                        {% for topic in topics %}
+                        {% for topic in reportVersion.topics %}
                             <option value="{{ topic.id }}">{{ topic.topic }}</option>
                         {% endfor %}
                     </select>
@@ -72,7 +77,7 @@
             <div class="col">
                 <div class="form-group">
                     <label for="weight-__index__">{{ translate("txt-weight") }}</label>
-                    <input id="weight-__index__" name="project_entity_evaluation_report2_criterion_version[versionTopics][__index__][weight]"
+                    <input id="weight-__index__" name="evaluation_entity_report_criterion_version[versionTopics][__index__][weight]"
                            class="form-control" value="" type="number">
                 </div>
             </div>
@@ -97,3 +102,4 @@
         $(html).hide().appendTo(topics).fadeIn(300);
     });
 </script>
+{% endif %}

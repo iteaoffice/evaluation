@@ -1,0 +1,11 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-review-contact")) %}
+
+<h1>{{ translate("txt-review-contact") }} {{ reviewerContactLink(reviewerContact,'edit','button') }}</h1>
+
+<dl class="dl-horizontal">
+    <dt>{{ translate("txt-handle") }}</dt>
+    <dd>{{ reviewerContact.handle }}</dd>
+    <dt>{{ translate("txt-contact") }}</dt>
+    <dd>{{ contactLink(reviewerContact.getContact(), 'view-admin', 'name') }}</dd>
+</dl>

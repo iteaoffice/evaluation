@@ -1,14 +1,9 @@
 <?php
 
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Bart van Eijck <bart.van.eijck@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -20,25 +15,29 @@ namespace Evaluation\Controller\Plugin\Report;
 
 use DateTime;
 use JpGraph\JpGraph;
+use LinearScale;
 use Project\Entity\Challenge;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Result;
+use Evaluation\Controller\Plugin\ReportPdf;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Result;
+use Evaluation\Service\EvaluationReportService;
+use Evaluation\Options\ModuleOptions;
 use Project\Entity\Rationale;
-use Project\Entity\Report\Review as ReportReviewer;
-use Project\Entity\Version\Review as VersionReviewer;
+use Project\Entity\Report\Reviewer as ReportReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Version;
-use Project\Options\ModuleOptions;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
+use RadarAxis;
 use RadarGraph;
 use RadarPlot;
 use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
-use Zend\Http\Headers;
-use Zend\Http\Response;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+
 use function array_map;
 use function array_reverse;
 use function array_slice;
@@ -151,10 +150,10 @@ final class PdfExport extends AbstractPlugin
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ProjectService          $projectService,
-        VersionService          $versionService,
-        ModuleOptions           $moduleOptions,
-        TranslatorInterface     $translator
+        ProjectService $projectService,
+        VersionService $versionService,
+        ModuleOptions $moduleOptions,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->projectService          = $projectService;
@@ -163,24 +162,24 @@ final class PdfExport extends AbstractPlugin
         $this->translator              = $translator;
     }
 
-    public function __invoke(EvaluationReport $evaluationReport, bool $forDistribution = false): Report2PdfExport
+    public function __invoke(EvaluationReport $evaluationReport, bool $forDistribution = false): PdfExport
     {
         $this->evaluationReport   = $evaluationReport;
         $this->forDistribution    = $forDistribution;
         $reportType               = $this->evaluationReportService->parseEvaluationReportType($evaluationReport);
-        $this->showGraphAndScores = (!$this->forDistribution || ($reportType === EvaluationReport\Type::TYPE_REPORT));
+        $this->showGraphAndScores = (! $this->forDistribution || ($reportType === EvaluationReport\Type::TYPE_REPORT));
         $this->results            = $this->evaluationReportService->getSortedResults($evaluationReport);
 
         $pdf = new ReportPdf();
-        $pdf->setTemplate($this->moduleOptions->getEvaluationReportTemplate());
+        $pdf->setTemplate($this->moduleOptions->getReportTemplate());
 
         //@todo Change this so the template is taken from the program
         if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
-            $originalTemplate = $this->moduleOptions->getEvaluationReportTemplate();
-            $project          = $this->evaluationReportService->getProject($this->evaluationReport);
+            $originalTemplate = $this->moduleOptions->getReportTemplate();
+            $project          = EvaluationReportService::getProject($this->evaluationReport);
 
             $template = $originalTemplate;
-            if (in_array('Penta', $project->parsePrograms())) {
+            if (in_array('Penta', $project->parsePrograms(), true)) {
                 $template = str_replace(
                     'evaluation-report-template',
                     'evaluation-report-template.penta',
@@ -188,7 +187,7 @@ final class PdfExport extends AbstractPlugin
                 );
             }
 
-            if (in_array('EURIPIDES', $project->parsePrograms())) {
+            if (in_array('EURIPIDES', $project->parsePrograms(), true)) {
                 $template = str_replace(
                     'evaluation-report-template',
                     'evaluation-report-template.euripides',
@@ -196,8 +195,9 @@ final class PdfExport extends AbstractPlugin
                 );
             }
 
-            if (in_array('Penta', $project->parsePrograms())
-                && in_array('EURIPIDES', $project->parsePrograms())
+            if (
+                in_array('Penta', $project->parsePrograms(), true)
+                && in_array('EURIPIDES', $project->parsePrograms(), true)
             ) {
                 $template = str_replace(
                     'evaluation-report-template',
@@ -214,10 +214,10 @@ final class PdfExport extends AbstractPlugin
         $pdf->setFooterMargin(0);
         $pdf->SetDisplayMode('real');
         $pdf->SetAutoPageBreak(true, 10);
-        $pdf->SetAuthor($this->moduleOptions->getEvaluationReportAuthor());
+        $pdf->SetAuthor($this->moduleOptions->getReportAuthor());
         $title = sprintf(
             $this->translator->translate('txt-final-evaluation-report-for-%s'),
-            $this->evaluationReportService->parseLabel($evaluationReport)
+            EvaluationReportService::parseLabel($evaluationReport)
         );
         $pdf->setTitle($title);
         $this->fileName = $title . '.pdf';
@@ -235,12 +235,13 @@ final class PdfExport extends AbstractPlugin
 
         // No STG decision in export PO/FPP evaluation
         $hideDetailsFor = [EvaluationReport\Type::TYPE_PO_VERSION, EvaluationReport\Type::TYPE_FPP_VERSION];
-        $showDetails    = (!$this->forDistribution || !in_array($reportType, $hideDetailsFor));
+        $showDetails    = (! $this->forDistribution || ! in_array($reportType, $hideDetailsFor, true));
 
         /** @var Result $result */
         foreach ($this->results as $result) {
             /** @var Criterion\Type $type */
-            $type     = $result->getCriterion()->getType();
+            $type     = $result->getCriterionVersion()->getType();
+            /** @var Criterion\Category $category */
             $category = $type->getCategory();
 
             if ($category->getCategory() !== $currentCategory) {
@@ -263,14 +264,14 @@ final class PdfExport extends AbstractPlugin
                 $result->getCriterionVersion()->getType(),
                 $this->evaluationReport->getVersion()
             );
-            if (($type->getType() !== $currentType) && !$confidentialType) {
+            if (($type->getType() !== $currentType) && ! $confidentialType) {
                 // Only a short header when no details are shown and it's the first one
-                $this->parseType($type->getType(), ($firstType && $this->showGraphAndScores && !$showDetails));
+                $this->parseType($type->getType(), ($firstType && $this->showGraphAndScores && ! $showDetails));
                 $currentType = $type->getType();
                 $firstType   = false;
             }
 
-            if (!$result->getCriterion()->getConfidential()) {
+            if (! $result->getCriterionVersion()->getConfidential()) {
                 $this->parseResult($result);
             }
 
@@ -368,11 +369,15 @@ final class PdfExport extends AbstractPlugin
         $chart->ShowMinorTickMarks(true);
 
         $chart->img->SetAntiAliasing(true);
-        $chart->yscale->ticks->Set(1, (($maxTopicWeight === 1) ? 0.2 : 0.5));
+        /** @var LinearScale $yScale */
+        $yScale = $chart->yscale;
+        $yScale->ticks->Set(1, (($maxTopicWeight === 1) ? 0.2 : 0.5));
         $chart->title->SetFont(FF_USERFONT, FS_NORMAL, 16);
         $chart->title->Set($this->translator->translate('txt-evaluation-topic-scores'));
-        $chart->axis->SetFont(FF_USERFONT, FS_NORMAL, 12);
-        $chart->axis->title->SetFont(FF_USERFONT, FS_NORMAL, 14);
+        /** @var RadarAxis $axis */
+        $axis = $chart->axis;
+        $axis->SetFont(FF_USERFONT, FS_NORMAL, 12);
+        $axis->title->SetFont(FF_USERFONT, FS_NORMAL, 14);
 
         $plot = new RadarPlot($chartData);
         $plot->SetFillColor([167, 216, 184]);
@@ -417,7 +422,7 @@ final class PdfExport extends AbstractPlugin
     private function parseProjectData(): void
     {
         $lineHeight       = self::$lineHeights['line'];
-        $thirdColumnWidth = !$this->showGraphAndScores ? self::$colWidths[3] : self::$colWidths[2];
+        $thirdColumnWidth = ! $this->showGraphAndScores ? self::$colWidths[3] : self::$colWidths[2];
 
         // Project name + report/version
         $project = $this->evaluationReportService->getProject($this->evaluationReport);
@@ -496,7 +501,7 @@ final class PdfExport extends AbstractPlugin
         // Latest project version (only for PPR)
         if ($this->evaluationReport->getProjectReportReport() !== null) {
             $this->parseCriterionLabel($this->translator->translate('txt-latest-project-version'));
-            $latestVersion = $this->projectService->getLatestProjectVersion($project);
+            $latestVersion = $this->projectService->getLatestApprovedProjectVersion($project);
 
             if (null !== $latestVersion) {
                 $this->pdf->Cell(self::$colWidths[2], $lineHeight, $latestVersion->getVersionType()->getDescription());
@@ -545,7 +550,7 @@ final class PdfExport extends AbstractPlugin
                 $version = $projectVersionReport->getVersion();
             }
         } else {
-            $version = $this->projectService->getLatestProjectVersion($project);
+            $version = $this->projectService->getLatestApprovedProjectVersion($project);
         }
         $this->parseCriterionLabel($this->translator->translate('txt-project-size'));
         $this->pdf->Cell(
@@ -694,7 +699,7 @@ final class PdfExport extends AbstractPlugin
         $this->parseContentField($finalScore, $fillColor);
 
         // Stg reviewers
-        if (!$this->forDistribution) {
+        if (! $this->forDistribution) {
             $reviewers = [];
             $this->parseCriterionLabel($this->translator->translate('txt-steering-group-reviewers'));
             /** @var VersionReviewer|ReportReviewer $reviewer */
@@ -789,7 +794,7 @@ final class PdfExport extends AbstractPlugin
             case Criterion::INPUT_TYPE_BOOL:
                 $this->parseCriterionLabel($result->getCriterionVersion()->getCriterion()->getCriterion());
                 $value = $this->translator->translate('txt-yes');
-                if (!$isNew && ($result->getValue() === 'No')) {
+                if (! $isNew && ($result->getValue() === 'No')) {
                     $value = $this->translator->translate('txt-no');
                 }
                 $this->parseContentField($value, $fillColor);
@@ -798,7 +803,7 @@ final class PdfExport extends AbstractPlugin
             case Criterion::INPUT_TYPE_SELECT:
                 $this->parseCriterionLabel($result->getCriterionVersion()->getCriterion()->getCriterion());
                 $selectValues = json_decode($result->getCriterionVersion()->getCriterion()->getValues(), true);
-                if (!$isNew && null !== $result->getValue()) {
+                if (! $isNew && null !== $result->getValue()) {
                     $this->parseContentField($result->getValue(), $fillColor);
                 } else {
                     $this->parseContentField(reset($selectValues), $fillColor);
@@ -813,7 +818,7 @@ final class PdfExport extends AbstractPlugin
     private function parseCriterionRow(Result $result, array $fillColor): void
     {
         $big = $hasScore = $result->getCriterionVersion()->getCriterion()->getHasScore();
-        if (!$big && ($result->getCriterionVersion()->getCriterion()->getInputType() === Criterion::INPUT_TYPE_TEXT)) {
+        if (! $big && ($result->getCriterionVersion()->getCriterion()->getInputType() === Criterion::INPUT_TYPE_TEXT)) {
             $big = true;
         }
 
@@ -839,7 +844,7 @@ final class PdfExport extends AbstractPlugin
     public function parseResponse(): Response
     {
         $response = new Response();
-        if (!($this->pdf instanceof TcpdfFpdi)) {
+        if (! ($this->pdf instanceof TcpdfFpdi)) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 

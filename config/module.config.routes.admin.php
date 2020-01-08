@@ -5,12 +5,12 @@
  * @category    Contact
  * @package     Config
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  */
 
 use Evaluation\Controller;
-use Zend\Router\Http\Segment;
-use Zend\Router\Http\Literal;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'router' => [
@@ -27,7 +27,7 @@ return [
                         ],
                         'may_terminate' => false,
                         'child_routes'  => [
-                            'matrix'  => [
+                            'matrix'   => [
                                 'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/matrix[/source-:source][/call-:call[/type-[:type[/display-:display]]]].html',
@@ -36,10 +36,10 @@ return [
                                     ],
                                 ],
                             ],
-                            'report2' => [
+                            'report'   => [
                                 'type'          => Literal::class,
                                 'options'       => [
-                                    'route'    => '/report2',
+                                    'route'    => '/report',
                                     'defaults' => [
                                         'action'     => 'list',
                                         'controller' => Controller\ReportManagerController::class,
@@ -47,6 +47,16 @@ return [
                                 ],
                                 'may_terminate' => true,
                                 'child_routes'  => [
+                                    'migrate'                => [
+                                        'type'     => Segment::class,
+                                        'priority' => 1000,
+                                        'options'  => [
+                                            'route'    => '/migrate.html',
+                                            'defaults' => [
+                                                'action' => 'migrate',
+                                            ],
+                                        ],
+                                    ],
                                     'list'                => [
                                         'type'     => Segment::class,
                                         'priority' => 1000,
@@ -123,6 +133,16 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'presentation'            => [
+                                        'type'    => Segment::class,
+                                        'options' => [
+                                            'route'    => '/presentation.html',
+                                            'defaults' => [
+                                                'action' => 'presentation',
+
+                                            ],
+                                        ],
+                                    ],
                                     'version'             => [
                                         'type'          => Literal::class,
                                         'options'       => [
@@ -172,7 +192,7 @@ return [
                                                     ],
                                                 ],
                                             ],
-                                            'copy'  => [
+                                            'copy' => [
                                                 'type'    => Segment::class,
                                                 'options' => [
                                                     'route'    => '/copy/[:id].html',
@@ -480,9 +500,156 @@ return [
                                     ],
                                 ],
                             ],
+                            'reviewer' => [
+                                'type'          => 'Segment',
+                                'options'       => [
+                                    'route'    => '/reviewer',
+                                    'defaults' => [
+                                        'controller' => Controller\ReviewerManagerController::class,
+                                        'action'     => 'list',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes'  => [
+                                    'roster'  => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'    => '/roster.html',
+                                            'defaults' => [
+                                                'action' => 'roster',
+                                            ],
+                                        ],
+                                    ],
+                                    'list'    => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'    => '/list/project-[:projectId].html',
+                                            'defaults' => [
+                                                'action' => 'list',
+                                            ],
+                                        ],
+                                    ],
+                                    'new'     => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'    => '/new/project-[:projectId].html',
+                                            'defaults' => [
+                                                'action' => 'new',
+                                            ],
+                                        ],
+                                    ],
+                                    'edit'    => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'    => '/edit/[:id].html',
+                                            'defaults' => [
+                                                'action' => 'edit',
+                                            ],
+                                        ],
+                                    ],
+                                    'delete'  => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'    => '/delete/[:id].html',
+                                            'defaults' => [
+                                                'action' => 'delete',
+                                            ],
+                                        ],
+                                    ],
+                                    'contact' => [
+                                        'type'          => 'Segment',
+                                        'options'       => [
+                                            'route'    => '/contact',
+                                            'defaults' => [
+                                                'controller' => Controller\Reviewer\ContactManagerController::class,
+                                                'action'     => 'list',
+                                            ],
+                                        ],
+                                        'may_terminate' => false,
+                                        'child_routes'  => [
+                                            'list' => [
+                                                'type'    => 'Segment',
+                                                'options' => [
+                                                    'route'    => '/list[/f-:encodedFilter][/page-:page].html',
+                                                    'defaults' => [
+                                                        'action' => 'list',
+                                                    ],
+                                                ],
+                                            ],
+                                            'view' => [
+                                                'type'    => 'Segment',
+                                                'options' => [
+                                                    'route'    => '/view/[:id].html',
+                                                    'defaults' => [
+                                                        'action' => 'view',
+                                                    ],
+                                                ],
+                                            ],
+                                            'edit' => [
+                                                'type'    => 'Segment',
+                                                'options' => [
+                                                    'route'    => '/edit/[:id].html',
+                                                    'defaults' => [
+                                                        'action' => 'edit',
+                                                    ],
+                                                ],
+                                            ],
+                                            'new'  => [
+                                                'type'    => 'Literal',
+                                                'options' => [
+                                                    'route'    => '/new.html',
+                                                    'defaults' => [
+                                                        'action' => 'new',
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
-                    /*'project'    => [
+                    'feedback'   => [
+                        'type'          => 'Segment',
+                        'options'       => [
+                            'route'    => '/feedback',
+                            'defaults' => [
+                                'controller' => Controller\FeedbackController::class,
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes'  => [
+                            'new'  => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/new/version-[:version].html',
+                                    'defaults' => [
+                                        'action' => 'new',
+                                    ],
+                                ],
+                            ],
+                            'view' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/view/[:id].html',
+                                    'defaults' => [
+                                        'action' => 'view',
+
+                                    ],
+                                ],
+                            ],
+                            'edit' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/edit/[:id].html',
+                                    'defaults' => [
+                                        'action' => 'edit',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'project'    => [
                         'child_routes'  => [
                             'evaluation'       => [
                                 'type'          => 'Segment',
@@ -516,7 +683,7 @@ return [
                                 ],
                             ],
                         ],
-                    ],*/
+                    ],
                 ],
             ],
         ],

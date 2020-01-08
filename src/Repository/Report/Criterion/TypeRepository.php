@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -37,7 +33,8 @@ final class TypeRepository extends SortableRepository implements FilteredObjectR
         $queryBuilder->innerJoin('t.category', 'c');
 
         $direction = Criteria::ASC;
-        if (isset($filter['direction'])
+        if (
+            isset($filter['direction'])
             && \in_array(\strtoupper($filter['direction']), [Criteria::ASC, Criteria::DESC])
         ) {
             $direction = \strtoupper($filter['direction']);
@@ -60,6 +57,9 @@ final class TypeRepository extends SortableRepository implements FilteredObjectR
                 break;
             case 'type':
                 $queryBuilder->addOrderBy('t.type', $direction);
+                break;
+            case 'category':
+                $queryBuilder->addOrderBy('c.category', $direction);
                 break;
             default:
                 $queryBuilder->addOrderBy('t.sequence', $direction);

@@ -1,14 +1,9 @@
 <?php
 
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -18,66 +13,73 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
 
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Criterion;
+use General\ValueObject\Link\Link;
+use General\View\Helper\AbstractLink;
+
+use function sprintf;
 
 /**
  * Class CriterionLink
  * @package Evaluation\View\Helper\Report
  */
-final class CriterionLink extends LinkAbstract
+final class CriterionLink extends AbstractLink
 {
-    /**
-     * @var Criterion
-     */
-    private $criterion;
-
     public function __invoke(
         Criterion $criterion = null,
-        $action = 'view',
-        $show = 'name'
-    ): string
-    {
-        $this->criterion = $criterion ?? new Criterion();
-        $this->setAction($action);
-        $this->setShow($show);
+        string $action = 'view',
+        string $show = 'name'
+    ): string {
+        $criterion ??= new Criterion();
 
-        $this->addRouterParam('id', $this->criterion->getId());
-        $this->setShowOptions(['name' => $this->criterion->getCriterion()]);
+        $routeParams = [];
+        $showOptions = [];
+        if (! $criterion->isEmpty()) {
+            $routeParams['id']   = $criterion->getId();
+            $showOptions['name'] = $criterion->getCriterion();
+        }
 
-        return $this->createLink();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function parseAction(): void
-    {
-        switch ($this->getAction()) {
+        switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/new');
-                $this->setText($this->translator->translate("txt-new-evaluation-report-criterion"));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/new',
+                    'text'  => $showOptions[$show]
+                        ?? $this->translator->translate('txt-new-evaluation-report-criterion')
+                ];
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/list');
-                $this->setText($this->translator->translate("txt-list-evaluation-report-criterion-list"));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/list',
+                    'text'  => $showOptions[$show]
+                        ?? $this->translator->translate('txt-evaluation-report-criterion-list')
+                ];
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/view');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-view-evaluation-report-criterion-%s"),
-                    $this->criterion->getCriterion()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/view',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                        $this->translator->translate('txt-view-evaluation-report-criterion-%s'),
+                        $criterion->getCriterion()
+                    )
+                ];
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/edit');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-edit-evaluation-report-criterion-%s"),
-                    $this->criterion->getCriterion()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/edit',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                        $this->translator->translate('txt-edit-evaluation-report-criterion-%s'),
+                        $criterion->getCriterion()
+                    )
+                ];
                 break;
             default:
-                throw new \Exception(\sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
+                return '';
         }
+        $linkParams['maxLength']   = 40;
+        $linkParams['action']      = $action;
+        $linkParams['show']        = $show;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

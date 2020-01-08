@@ -11,9 +11,9 @@
     <dd>{{ criterionVersion.sequence }}</dd>
     <dt>{{ translate("txt-criterion") }}</dt>
     <dd>{% if criterionVersion.criterion.archived %}
-            <del>{{ report2CriterionLink(criterionVersion.criterion, 'view', 'name') }}</del>
+            <del>{{ reportCriterionLink(criterionVersion.criterion, 'view', 'name') }}</del>
         {% else %}
-            {{ report2CriterionLink(criterionVersion.criterion, 'view', 'name') }}
+            {{ reportCriterionLink(criterionVersion.criterion, 'view', 'name') }}
         {% endif %}</dd>
     <dt>{{ translate("txt-help-block") }}</dt>
     <dd>{{ criterionVersion.criterion.helpBlock|default('-') }}</dd>
@@ -33,10 +33,6 @@
     <dd>{% if criterionVersion.confidential %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
     <dt>{{ translate("txt-highlighted") }}</dt>
     <dd>{% if criterionVersion.highlighted %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</dd>
-    <dt>{{ translate("txt-results") }}</dt>
-    <dd>0</dd>
-    <dt>{{ translate("txt-in-report-versions") }}</dt>
-    <dd>0</dd>
 </dl>
 
-{{ report2CriterionVersionLink(criterionVersion, 'edit', 'button') }}
+{{ reportCriterionVersionLink(criterionVersion, 'edit', 'button') }}

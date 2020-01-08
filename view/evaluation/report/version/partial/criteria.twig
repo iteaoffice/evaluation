@@ -8,41 +8,48 @@
         {% endif %}
         {% set currentCategory = criterionVersion.type.category.category %}
         {% if currentCategory != activeCategory %}
-            <h3{% if loop.index > 1 %} class="mt-5"{% endif %}>{{ currentCategory }}</h3>
+            <h3{% if loop.index > 1 %} class="mt-5"{% endif %}><small
+                        class="text-muted">{{ criterionVersion.type.category.sequence }}:
+                </small> {{ currentCategory }} {{ reportCriterionCategoryLink(criterionVersion.type.category, 'edit','icon') }}
+            </h3>
             {% set activeCategory = currentCategory %}
         {% endif %}
-        <h4><span class="badge badge-secondary">{{ currentType }}</span></h4>
-            <table class="table table-hover table-sm">
-                <thead>
-                    <tr>
-                        <th>{{ translate("txt-id") }}</th>
-                        <th>{{ translate("txt-sequence") }}</th>
-                        <th>{{ translate("txt-criterion") }}</th>
-                        <th>{{ translate("txt-topics") }}</th>
-                        <th>{{ translate("txt-input-type") }}</th>
-                        <th>{{ translate("txt-has-score") }}</th>
-                        <th>{{ translate("txt-required") }}</th>
-                        <th>{{ translate("txt-confidential") }}</th>
-                        <th>{{ translate("txt-highlighted") }}</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <h4><span class="badge badge-secondary"><small>{{ criterionVersion.type.sequence }}:
+                </small> {{ currentType }}</span> {{ reportCriterionTypeLink(criterionVersion.type, 'edit','icon') }}
+        </h4>
+        <table class="table table-hover table-striped table-sm">
+        <thead>
+        <tr>
+            <th>{{ translate("txt-id") }}</th>
+            <th>{{ translate("txt-sequence") }}</th>
+            <th>{{ translate("txt-criterion") }}</th>
+            <th>{{ translate("txt-default-value") }}</th>
+            <th>{{ translate("txt-topics") }}</th>
+            <th>{{ translate("txt-input-type") }}</th>
+            <th>{{ translate("txt-has-score") }}</th>
+            <th>{{ translate("txt-required") }}</th>
+            <th>{{ translate("txt-confidential") }}</th>
+            <th>{{ translate("txt-highlighted") }}</th>
+        </tr>
+        </thead>
+        <tbody>
     {% endif %}
     <tr{% if criterionVersion.highlighted %} class="table-warning"{% endif %}>
-        <td>{{ criterionVersion.id }}
+        <td><small class="text-muted">{{ criterionVersion.id }}</small>
             {% if not reportVersion.archived and not readonly %}
-                {{ report2CriterionVersionLink(criterionVersion, 'edit', 'icon') }}
+                {{ reportCriterionVersionLink(criterionVersion, 'edit', 'icon') }}
             {% endif %}
         </td>
         <td>{{ criterionVersion.sequence }}</td>
         <td>{% if criterionVersion.criterion.archived %}
-                <del>{{ report2CriterionVersionLink(criterionVersion, 'view', 'name') }}</del>
+                <del>{{ reportCriterionVersionLink(criterionVersion, 'view', 'name') }}</del>
             {% else %}
-                {{ report2CriterionVersionLink(criterionVersion, 'view', 'name') }}
+                {{ reportCriterionVersionLink(criterionVersion, 'view', 'name') }}
             {% endif %}
         </td>
+        <td>{{ criterionVersion.defaultValue|length > 10 ? criterionVersion.defaultValue|slice(0, 10) ~ '…' : criterionVersion.defaultValue|default('-')  }}</td>
         <td>{% for versionTopic in criterionVersion.versionTopics %}
-                {{ report2CriterionTopicLink(versionTopic.topic, 'view', 'name') }} ({{ versionTopic.weight }})
+                {{ reportCriterionTopicLink(versionTopic.topic, 'view', 'name') }} ({{ versionTopic.weight }})
                 {% if not loop.last %}<br>{% endif %}
             {% else %}
                 -

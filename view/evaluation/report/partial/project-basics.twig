@@ -1,0 +1,114 @@
+<h2>{{ translate("txt-general") }}</h2>
+<div class="row">
+    <div class="col-md-12">
+        <dl class="dl-horizontal">
+            <dt>{{ translate("txt-project-name") }}</dt>
+            <dd>{{ project.parseFullName }} {{ projectLink(project,'view-admin','icon') }}</dd>
+            {% if projectService.isLabelled(project) %}
+                <dt>{{ translate("txt-public-project-website") }}</dt>
+                <dd>{{ projectLink(project,'view','name-without-number') }}</dd>
+            {% endif %}
+            <dt>{{ translate("txt-project-title") }}</dt>
+            <dd>{{ project.title }}</dd>
+            <dt>{{ translate("txt-status") }}</dt>
+            <dd>{{ projectService.parseStatus(project) }}</dd>
+            <dt>{{ translate("txt-project-leader") }}</dt>
+            <dd>{{ project.contact.displayName() }}
+                ({{ project.contact.contactOrganisation.organisation|trim }})
+                <a href="mailto:{{ project.contact.email }}"><i class="fa fa-envelope-o"></i></a>
+                {{ contactLink(project.contact,'view-admin','icon') }}
+            </dd>
+            <dt>{{ translate("txt-call-name") }}</dt>
+            <dd>{{ project.call }}</dd>
+            <dt>{{ translate("txt-start-date") }}</dt>
+            <dd>
+                {% if projectService.isPrepareMode(project) %}
+                    {% if projectService.parseOfficialDateStart(project) != project.dateStart and projectService.hasVersions(project) %}
+                        <span class="text-highlight"
+                              title="{{ translate("txt-item-has-changed-and-will-be-saved-when-a-%s-version-is-created")|format(projectService.getNextMode(project).versionType) }}">
+                    {{ project.dateStart|string_date }}
+                        </span>
+                    {% else %}
+                        {{ project.dateStart|string_date }}
+                    {% endif %}
+                {% elseif (projectService.parseOfficialDateStart(project) ) %}
+                    {{ projectService.parseOfficialDateStart(project)|string_date }}
+                {% elseif (project.dateStart ) %}
+                    {{ project.dateStart|string_date }}
+                {% else %}
+                    {{ translate("txt-start-date-unknown") }}
+                {% endif %}
+            </dd>
+            <dt>{{ translate("txt-end-date") }}</dt>
+            <dd>
+                {% if projectService.isPrepareMode(project) %}
+                    {% if projectService.parseOfficialDateEnd(project) != project.dateEnd and projectService.hasVersions(project) %}
+                        <span class="text-highlight"
+                              title="{{ translate("txt-item-has-changed-and-will-be-saved-when-a-%s-version-is-created")|format(projectService.getNextMode(project).versionType) }}">
+                    {{ project.dateEnd|string_date }}
+                        </span>
+                    {% else %}
+                        {{ project.dateEnd|string_date }}
+                    {% endif %}
+                {% elseif (projectService.parseOfficialDateEnd(project) ) %}
+                    {{ projectService.parseOfficialDateEnd(project)|string_date }}
+                {% elseif (project.dateEnd ) %}
+                    {{ project.dateEnd|string_date }}
+                {% else %}
+                    {{ translate("txt-end-date-unknown") }}
+                {% endif %}
+            </dd>
+            <dt>{{ translate("txt-website") }}</dt>
+            {% for web in project.web|filter(web => web.isMain()) -%}
+                <dd><a href="{{ web.web }}">{% if web.label %}{{ web.label }}{% else %}{{ web.web }}{% endif %}</a></dd>
+            {% else %}
+                <dd>{{ translate("txt-no-website-could-be-found") }}</dd>
+            {% endfor %}
+            {% if project.projectChallenge.count() > 0 %}
+                <dt>{{ translate("txt-challenge") }}</dt>
+                {% for projectChallenge in project.projectChallenge %}
+                    <dd>{{ challengeIcon(projectChallenge.challenge, 15) }}
+                        {{ challengeLink(projectChallenge.challenge, 'view') }}</dd>
+                {% endfor %}
+            {% endif %}
+        </dl>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>{{ translate("txt-project") }} {{ translate("txt-description")|lower }}</h2>
+        <p>{{ project.description }}</p>
+
+        {% if type is constant("Evaluation\\Entity\\Report\\Type::TYPE_GENERAL_VERSION") %}
+            <h2>{{ review.version.versionType }} {{ translate("txt-documents")|lower }}</h2>
+            {% if review.version.versionDocument.count() > 0 %}
+                <table class="table table-hover table-sm table-striped">
+                    <thead>
+                    <tr>
+                        <th>{{ translate("txt-document") }}</th>
+                        <th>{{ translate("txt-document-type") }}</th>
+                        <th>{{ translate("txt-date-created") }}</th>
+                        <th>{{ translate("txt-size") }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for document in review.version.versionDocument %}
+                        <tr>
+                            <td>{{ contentTypeIcon(document.contentType) }}
+                                {{ versionDocumentLink(document,'view-community','name') }}
+                                {{ versionDocumentLink(document,'download','icon') }}
+                            </td>
+                            <td>{{ document.type }}</td>
+                            <td>{{ document.dateCreated|string_date }}</td>
+                            <td>{{ document.size|parse_size }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                {{ ztbalert().info(translate("txt-no-documents-have-been-uploaded-yet"))|raw }}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

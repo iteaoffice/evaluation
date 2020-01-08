@@ -1,0 +1,15 @@
+<h2>{{ translate("txt-download") }}</h2>
+{% if action == 'new' %}
+    {% if type is constant("Evaluation\\Entity\\Report\\Type::TYPE_GENERAL_REPORT") %}
+        {{ evaluationReportLink(null, 'download-offline-form', 'button', true, review, null) }}
+    {% elseif type is constant("Evaluation\\Entity\\Report\\Type::TYPE_GENERAL_VERSION") %}
+        {{ evaluationReportLink(null, 'download-offline-form', 'button', true, null, review) }}
+    {% endif %}
+{% elseif action == 'edit' %}
+    {{ evaluationReportLink(report, 'download-offline-form', 'button') }}
+{% endif %}
+<hr>
+{% if not report.final %}
+    <h2>{{ translate("txt-upload") }}</h2>
+    {% include 'evaluation/partial/form/report/upload' %}
+{% endif %}

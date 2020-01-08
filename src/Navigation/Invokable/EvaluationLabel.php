@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -21,7 +17,7 @@ use Admin\Navigation\Invokable\AbstractNavigationInvokable;
 use Program\Entity\Call\Call;
 use Evaluation\Entity\Evaluation;
 use Project\Entity\Project;
-use Zend\Navigation\Page\Mvc;
+use Laminas\Navigation\Page\Mvc;
 
 /**
  * Class EvaluationLabel

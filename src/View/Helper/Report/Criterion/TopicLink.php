@@ -1,14 +1,9 @@
 <?php
 
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @topic       Project
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -19,7 +14,8 @@ declare(strict_types=1);
 namespace Evaluation\View\Helper\Report\Criterion;
 
 use Evaluation\Entity\Report\Criterion\Topic;
-use Evaluation\View\Helper\AbstractLink;
+use General\View\Helper\AbstractLink;
+use General\ValueObject\Link\Link;
 
 /**
  * Class TopicLink
@@ -27,56 +23,58 @@ use Evaluation\View\Helper\AbstractLink;
  */
 final class TopicLink extends AbstractLink
 {
-    /**
-     * @var Topic
-     */
-    private $topic;
-
     public function __invoke(
-        Topic  $topic = null,
+        Topic $topic = null,
         string $action = 'view',
         string $show = 'name'
     ): string {
-        $this->topic = $topic ?? new Topic();
-        $this->setAction($action);
-        $this->setShow($show);
+        $topic ??= new Topic();
 
-        $this->addRouterParam('id', $this->topic->getId());
-        $this->setShowOptions(['name' => $this->topic->getTopic()]);
+        $routeParams = [];
+        $showOptions = [];
+        if (! $topic->isEmpty()) {
+            $routeParams['id']   = $topic->getId();
+            $showOptions['name'] = $topic->getTopic();
+        }
 
-        return $this->createLink();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function parseAction(): void
-    {
-        switch ($this->getAction()) {
+        switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/topic/new');
-                $this->setText($this->translator->translate("txt-new-evaluation-report-critertion-topic"));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/topic/new',
+                    'text'  => $showOptions[$show]
+                        ?? $this->translator->translate('txt-new-evaluation-report-criterion-topic')
+                ];
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/topic/list');
-                $this->setText($this->translator->translate("txt-evaluation-report-critertion-topic-list"));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/topic/list',
+                    'text'  => $showOptions[$show]
+                        ?? $this->translator->translate('txt-evaluation-report-criterion-topic-list')
+                ];
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/topic/view');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-view-evaluation-report-critertion-topic-%s"),
-                    $this->topic->getTopic()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/topic/view',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                        $this->translator->translate('txt-view-evaluation-report-criterion-topic-%s'),
+                        $topic->getTopic()
+                    )
+                ];
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/topic/edit');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-edit-evaluation-report-critertion-topic-%s"),
-                    $this->topic->getTopic()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/topic/edit',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                        $this->translator->translate('txt-edit-evaluation-report-criterion-topic-%s'),
+                        $topic->getTopic()
+                    )
+                ];
                 break;
-            default:
-                throw new \Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
         }
+        $linkParams['action']      = $action;
+        $linkParams['show']        = $show;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

@@ -1,0 +1,17 @@
+{% do headTitle().append(translate("txt-review-roster")).append(translate("txt-admin")) %}
+
+{{ form().openTag(form)|raw }}
+
+<h1>{{ translate("txt-review-roster") }}</h1>
+
+{{ ztbformelement(form.get('type')) }}
+{{ ztbformelement(form.get('excel')) }}
+{{ ztbformelement(form.get('nr')) }}
+{{ ztbformelement(form.get('include-spare')) }}
+{{ ztbformelement(form.get('projects')) }}
+
+<div class="col-md-9 offset-md-3">
+    {{ ztbformelement(form.get('submit')) }}
+</div>
+
+{{ form().closeTag()|raw }}

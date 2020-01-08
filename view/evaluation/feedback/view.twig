@@ -1,0 +1,47 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-%s-feedback-for-project-%s")|format(feedback.version.versionType.type|upper, feedback.version.project)) %}
+
+{% do headLink().appendStylesheet(url('assets/funding-status-css')) %}
+
+<h1>{{ translate("txt-%s-feedback-for-project-%s")|format(feedback.version.versionType.type|upper, feedback.version.project) }} {{ feedbackLink(feedback,'edit-admin', 'button') }}</h1>
+
+{% set totalEffort = projectService.findTotalEffortByProject(feedback.version.project) %}
+
+<h2>{{ translate("txt-project-information") }}</h2>
+<dl class="dl-horizontal">
+    <dt>{{ translate("txt-project") }}</dt>
+    <dd>{{ projectLink(feedback.version.project, 'view-community','name') }} {{ projectLink(feedback.version.project,'view-admin','icon') }}</dd>
+    <dt>{{ translate("txt-version") }}</dt>
+    <dd>{{ feedback.version.versionType }}</dd>
+    <dt>{{ translate("txt-funding-status") }}</dt>
+    <dd>{{ feedback.status }}</dd>
+    <dt>{{ translate("txt-version-status") }}</dt>
+    <dd>{{ versionService.parseStatus(feedback.version) }}</dd>
+    <dt>{{ translate("txt-mandatory-improvements") }}</dt>
+    <dd>{{ feedback.mandatoryImprovements }}</dd>
+    <dt>{{ translate("txt-recommended-improvements") }}</dt>
+    <dd>{{ feedback.recommendedImprovements }}</dd>
+</dl>
+
+<h2>{{ translate("txt-review-feedback") }}</h2>
+{% if feedback.reviewFeedback|length > 0 %}
+    {{ feedback.reviewFeedback|raw|nl2br }}
+{% else %}
+    {{ ztbalert().info(translate("txt-no-review-feedback-given-yet"))|raw }}
+{% endif %}
+
+<h2>{{ translate("txt-evaluation-feedback") }}</h2>
+{% if feedback.evaluationFeedback|length > 0 %}
+    {{ feedback.evaluationFeedback|raw|nl2br }}
+{% else %}
+    {{ ztbalert().info(translate("txt-no-evaluation-feedback-given-yet"))|raw }}
+{% endif %}
+
+<h2>{{ translate("txt-evaluation-conclusion") }}</h2>
+{% if feedback.evaluationConclusion|length > 0 %}
+    {{ feedback.evaluationConclusion|raw|nl2br }}
+{% else %}
+    {{ ztbalert().info(translate("txt-no-evaluation-conclusion-given-yet"))|raw }}
+{% endif %}
+
+

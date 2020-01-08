@@ -2,9 +2,9 @@
 {% do headTitle().append(translate("txt-create-new-evaluation-report-version")) %}
 
 <h1>{{ translate("txt-create-new-evaluation-report-version") }}</h1>
-<p class="lead">{{ translate("txt-copied-from") }} {{ report2VersionLink(reportVersion,'view') }}</p>
+<p class="lead">{{ translate("txt-copied-from") }} {{ reportVersionLink(reportVersion,'view') }}</p>
 <h2>{{ translate("txt-general") }}</h2>
-{% include 'project/partial/form/evaluation/report2-version' %}
+{% include 'evaluation/partial/form/report/version' %}
 
 <h2>{{ translate("txt-criteria") }}</h2>
-{% include 'project/evaluation/report2-version/partial/criteria' with {'readonly': true} %}
+{% include 'evaluation/report/version/partial/criteria' with {'readonly': true} %}

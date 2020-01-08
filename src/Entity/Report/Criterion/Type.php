@@ -7,13 +7,11 @@ namespace Evaluation\Entity\Report\Criterion;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
-use Zend\Form\Annotation;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Laminas\Form\Annotation;
 
 /**
- * Evaluation report criterion type
- *
  * @ORM\Table(name="evaluation_report2_criterion_type")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\Criterion\TypeRepository")
  */
@@ -23,26 +21,27 @@ class Type extends AbstractEntity
      * @ORM\Column(name="type_id", type="integer", options={"unsigned":true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Annotation\Exclude()
+     * @Annotation\Type("\Laminas\Form\Element\Hidden")
      *
-     * @var integer
+     * @var int
+     * r
      */
     private $id;
     /**
      * @Gedmo\SortablePosition
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("\Zend\Form\Element\Number")
+     * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({
      *     "label":"txt-report-criterion-type-sequence-label",
      *     "help-block":"txt-report-criterion-type-sequence-help-block"
      * })
      *
-     * @var integer
+     * @var int
      */
     private $sequence = 0;
     /**
      * @ORM\Column(name="type", type="string", length=255, nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-report-criterion-type-label",
      *     "help-block":"txt-report-criterion-type-help-block"
@@ -73,9 +72,6 @@ class Type extends AbstractEntity
      */
     private $criterionVersions;
 
-    /**
-     * Type constructor.
-     */
     public function __construct()
     {
         $this->criterionVersions = new ArrayCollection();
@@ -83,21 +79,14 @@ class Type extends AbstractEntity
 
     public function __toString(): string
     {
-        return (string) $this->type;
+        return (string)$this->type;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     * @return Type
-     */
     public function setId(int $id): Type
     {
         $this->id = $id;
@@ -131,16 +120,17 @@ class Type extends AbstractEntity
         return $this->category;
     }
 
-    // Used in \Entity\Evaluation\Report2\Criterion\Version to fill the optgroup label with optgroup_identifier
-    public function getCategoryLabel(): string
-    {
-        return (string) $this->category;
-    }
+    // Used in Evaluation\Entity\Report\Criterion\Version to fill the optgroup label with optgroup_identifier
 
     public function setCategory(Category $category): Type
     {
         $this->category = $category;
         return $this;
+    }
+
+    public function getCategoryLabel(): string
+    {
+        return (string)$this->category;
     }
 
     public function getCriterionVersions(): Collection

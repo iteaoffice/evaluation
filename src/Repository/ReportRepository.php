@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -18,28 +14,33 @@ declare(strict_types=1);
 namespace Evaluation\Repository;
 
 use Contact\Entity\Contact;
+use DateTime;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Program\Entity\Call\Call;
 use Program\Repository\Call\Call as CallRepository;
-use Project\Entity\ChangeRequest\Process;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Entity\Report\Version as EvaluationReportVersion;
+use Evaluation\Service\EvaluationReportService;
+use Project\Entity\ChangeRequest\Process;
 use Project\Entity\Report\Report as ProjectReport;
-use Project\Entity\Report\Review as ReportReview;
-use Project\Entity\Version\Review as VersionReview;
+use Project\Entity\Report\Reviewer as ReportReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Type as VersionType;
 use Project\Entity\Version\Version;
-use Project\Repository\FilteredObjectRepository;
-use Project\Service\EvaluationReportService;
+
+use function array_merge;
+use function in_array;
 
 /**
- * Class Report2Repository
- * @package Project\Repository\Evaluation
+ * Can't be final because of unit test
+ *
+ * Class ReportRepository
+ * @package Evaluation\Repository
  */
-final class ReportRepository extends EntityRepository implements FilteredObjectRepository
+/*final*/ class ReportRepository extends EntityRepository implements FilteredObjectRepository
 {
     public function findReviewReportsByContact(
         Contact $contact,
@@ -65,7 +66,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                     )
                 )
             );
-            $qbWindow->setParameter('now', new \DateTime());
+            $qbWindow->setParameter('now', new DateTime());
         }
         $windows = $qbWindow->getQuery()->getResult();
 
@@ -83,18 +84,23 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                         $versionType = $reportVersion->getReportType()->getVersionType();
 
                         // Window is for a version
-                        if (($versionType !== null) && !\in_array($versionType->getId(), $versionTypes)) {
+                        if (($versionType !== null) && ! in_array($versionType->getId(), $versionTypes)) {
                             $qb1 = $this->_em->createQueryBuilder();
                             $qb1->select('vr');
-                            $qb1->from(VersionReview::class, 'vr');
+                            $qb1->from(VersionReviewer::class, 'vr');
                             $qb1->innerJoin('vr.version', 'v');
                             $qb1->innerJoin('v.versionType', 'vt');
-                            $qb1->leftJoin('vr.projectVersionReport2', 'pvr');
+                            $qb1->leftJoin('vr.projectVersionReport', 'pvr');
+                            $qb1->leftJoin('v.changerequestProcess', 'crp');
                             $qb1->where($qb1->expr()->eq('vr.contact', ':contact'));
                             $qb1->andWhere($qb1->expr()->isNull('pvr.id'));
                             $qb1->andWhere($qb1->expr()->eq('v.versionType', ':versionType'));
                             $qb1->andWhere($qb1->expr()->gte('v.dateSubmitted', ':dateStartSelection'));
                             $qb1->andWhere($qb1->expr()->isNull('v.dateReviewed'));
+                            $qb1->andWhere($qb1->expr()->orX(
+                                $qb1->expr()->isNull('crp.id'),
+                                $qb1->expr()->eq('crp.type', ':processType')
+                            ));
                             if ($window->getDateEndSelection() !== null) {
                                 $qb1->andWhere($qb1->expr()->lt('v.dateSubmitted', ':dateEndSelection'));
                                 $qb1->setParameter('dateEndSelection', $window->getDateEndSelection());
@@ -103,8 +109,9 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb1->setParameter('contact', $contact);
                             $qb1->setParameter('versionType', $versionType);
                             $qb1->setParameter('dateStartSelection', $window->getDateStartSelection());
+                            $qb1->setParameter('processType', $reportVersion->getReportType()->getProcessType());
 
-                            $return[$window->getId()]['reviews'] = \array_merge(
+                            $return[$window->getId()]['reviews'] = array_merge(
                                 $return[$window->getId()]['reviews'],
                                 $qb1->getQuery()->useQueryCache(true)->getResult()
                             );
@@ -114,9 +121,9 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                         elseif ($reportVersion->getReportType()->getId() === EvaluationReportType::TYPE_REPORT) {
                             $qb2 = $this->_em->createQueryBuilder();
                             $qb2->select('rr');
-                            $qb2->from(ReportReview::class, 'rr');
+                            $qb2->from(ReportReviewer::class, 'rr');
                             $qb2->innerJoin('rr.projectReport', 'pr');
-                            $qb2->leftJoin('rr.projectReportReport2', 'prr');
+                            $qb2->leftJoin('rr.projectReportReport', 'prr');
                             $qb2->where($qb2->expr()->eq('rr.contact', ':contact'));
                             $qb2->andWhere($qb2->expr()->isNull('prr.id'));
                             $qb2->andWhere($qb2->expr()->gte('pr.dateFinal', ':dateStartSelection'));
@@ -128,7 +135,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb2->setParameter('contact', $contact);
                             $qb2->setParameter('dateStartSelection', $window->getDateStartSelection());
 
-                            $return[$window->getId()]['reviews'] = \array_merge(
+                            $return[$window->getId()]['reviews'] = array_merge(
                                 $return[$window->getId()]['reviews'],
                                 $qb2->getQuery()->useQueryCache(true)->getResult()
                             );
@@ -150,12 +157,12 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                         $versionType = $reportVersion->getReportType()->getVersionType();
 
                         // Window is for a version
-                        if (($versionType !== null) && !\in_array($versionType->getId(), $versionTypes)) {
+                        if (($versionType !== null) && ! in_array($versionType->getId(), $versionTypes)) {
                             $qb1 = $this->_em->createQueryBuilder();
                             $qb1->select('er');
                             $qb1->from(EvaluationReport::class, 'er');
                             $qb1->innerJoin('er.projectVersionReport', 'pvr');
-                            $qb1->innerJoin('pvr.review', 'vr');
+                            $qb1->innerJoin('pvr.reviewer', 'vr');
                             $qb1->innerJoin('vr.version', 'v');
                             $qb1->innerJoin('v.versionType', 'vt');
                             $qb1->where($qb1->expr()->eq('vr.contact', ':contact'));
@@ -182,7 +189,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                             $qb2->select('er');
                             $qb2->from(EvaluationReport::class, 'er');
                             $qb2->innerJoin('er.projectReportReport', 'prr');
-                            $qb2->innerJoin('prr.review', 'rr');
+                            $qb2->innerJoin('prr.reviewer', 'rr');
                             $qb2->innerJoin('rr.projectReport', 'pr');
                             $qb2->where($qb2->expr()->eq('rr.contact', ':contact'));
                             $qb2->andWhere($qb2->expr()->eq('er.final', ':final'));
@@ -207,9 +214,9 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $qb->select('er');
                 $qb->from(EvaluationReport::class, 'er');
                 $qb->leftJoin('er.projectVersionReport', 'pvr');
-                $qb->leftJoin('pvr.review', 'vr');
+                $qb->leftJoin('pvr.reviewer', 'vr');
                 $qb->leftJoin('er.projectReportReport', 'prr');
-                $qb->leftJoin('prr.review', 'rr');
+                $qb->leftJoin('prr.reviewer', 'rr');
                 $qb->where($qb->expr()->orX(
                     $qb->expr()->eq('vr.contact', ':contact'),
                     $qb->expr()->eq('rr.contact', ':contact')
@@ -235,14 +242,15 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
         /** @var CallRepository $callRepository */
         $callRepository = $this->_em->getRepository(Call::class);
         $call           = null;
-        if (isset($filter['call']) && !empty($filter['call'])) {
+        if (isset($filter['call']) && ! empty($filter['call'])) {
             $call = $callRepository->find($filter['call']);
         }
 
         $finalReport = (array_key_exists('type', $filter) && ($filter['type'] === EvaluationReport::TYPE_FINAL));
 
         // Progress report review evaluation
-        if (array_key_exists('subject', $filter)
+        if (
+            array_key_exists('subject', $filter)
             && ($filter['subject'] === (string) EvaluationReportType::TYPE_REPORT)
         ) {
             // Final evaluation report
@@ -250,8 +258,8 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $queryBuilder->select('pr', 'prr');
                 $queryBuilder->from(ProjectReport::class, 'pr');
                 $queryBuilder->innerJoin('pr.project', 'p');
-                $queryBuilder->innerJoin('pr.review', 'rr');
-                $queryBuilder->leftJoin('pr.projectReportReport2', 'prr');
+                $queryBuilder->innerJoin('pr.reviewers', 'rr');
+                $queryBuilder->leftJoin('pr.projectReportReport', 'prr');
                 $queryBuilder->leftJoin('prr.evaluationReport', 'er');
                 $queryBuilder->groupBy('pr.id');
                 $queryBuilder->addGroupBy('prr.id');
@@ -259,11 +267,11 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
             // Individual evaluation report
             else {
                 $queryBuilder->select('rr');
-                $queryBuilder->from(ReportReview::class, 'rr');
+                $queryBuilder->from(ReportReviewer::class, 'rr');
                 $queryBuilder->innerJoin('rr.contact', 'c');
                 $queryBuilder->innerJoin('rr.projectReport', 'pr');
                 $queryBuilder->innerJoin('pr.project', 'p');
-                $queryBuilder->leftJoin('rr.projectReportReport2', 'prr');
+                $queryBuilder->leftJoin('rr.projectReportReport', 'prr');
                 $queryBuilder->leftJoin('prr.evaluationReport', 'er');
             }
 
@@ -274,13 +282,13 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
             }
 
             // Add year filter when present
-            if (array_key_exists('year', $filter) && !empty($filter['year'])) {
+            if (array_key_exists('year', $filter) && ! empty($filter['year'])) {
                 $queryBuilder->andWhere($queryBuilder->expr()->eq('pr.year', ':year'));
                 $queryBuilder->setParameter('year', $filter['year']);
             }
 
             // Add period filter when present
-            if (array_key_exists('period', $filter) && !empty($filter['period'])) {
+            if (array_key_exists('period', $filter) && ! empty($filter['period'])) {
                 $queryBuilder->andWhere($queryBuilder->expr()->eq('pr.semester', ':semester'));
                 $queryBuilder->setParameter('semester', $filter['period']);
             }
@@ -342,8 +350,8 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
                 $queryBuilder->from(Version::class, 'v');
                 $queryBuilder->innerJoin('v.versionType', 'vt');
                 $queryBuilder->innerJoin('v.project', 'p');
-                $queryBuilder->innerJoin('v.versionReview', 'vr');
-                $queryBuilder->leftJoin('v.projectVersionReport2', 'vrr');
+                $queryBuilder->innerJoin('v.reviewers', 'vr');
+                $queryBuilder->leftJoin('v.projectVersionReport', 'vrr');
                 $queryBuilder->leftJoin('vrr.evaluationReport', 'rr');
                 $queryBuilder->groupBy('v.id');
                 $queryBuilder->addGroupBy('vrr.id');
@@ -351,12 +359,12 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
             // Individual evaluation report
             else {
                 $queryBuilder->select('vr');
-                $queryBuilder->from(VersionReview::class, 'vr');
+                $queryBuilder->from(VersionReviewer::class, 'vr');
                 $queryBuilder->innerJoin('vr.contact', 'c');
                 $queryBuilder->innerJoin('vr.version', 'v');
                 $queryBuilder->innerJoin('v.versionType', 'vt');
                 $queryBuilder->innerJoin('v.project', 'p');
-                $queryBuilder->leftJoin('vr.projectVersionReport2', 'vrr');
+                $queryBuilder->leftJoin('vr.projectVersionReport', 'vrr');
                 $queryBuilder->leftJoin('vrr.evaluationReport', 'rr');
             }
 
@@ -367,7 +375,7 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
             }
 
             // Add version type filter when present
-            if (array_key_exists('subject', $filter) && !empty($filter['subject'])) {
+            if (array_key_exists('subject', $filter) && ! empty($filter['subject'])) {
                 $reportTypeSelect = $this->_em->createQueryBuilder();
                 $reportTypeSelect->select('rt')
                     ->from(EvaluationReportType::class, 'rt')
@@ -442,11 +450,11 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
         }
 
         // Add search when present
-        if (array_key_exists('search', $filter) && !empty($filter['search'])) {
+        if (array_key_exists('search', $filter) && ! empty($filter['search'])) {
             $match      = sprintf("%%%s%%", $filter['search']);
             $expression = $queryBuilder->expr()->like('p.project', ':project');
 
-            if (!$finalReport) {
+            if (! $finalReport) {
                 $contactName = $queryBuilder->expr()->concat(
                     'c.firstName',
                     $queryBuilder->expr()->concat($queryBuilder->expr()->literal(' '), 'c.lastName')
@@ -470,22 +478,22 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
         $queryBuilder = $this->_em->createQueryBuilder();
         $queryBuilder->select('rr', 'cv', 'c', 'ct', 'cc');
         $queryBuilder->from(EvaluationReport\Result::class, 'rr');
-        $queryBuilder->innerJoin('rr.report', 'r');
         $queryBuilder->innerJoin('rr.criterionVersion', 'cv');
         $queryBuilder->innerJoin('cv.criterion', 'c');
         $queryBuilder->innerJoin('cv.type', 'ct');
         $queryBuilder->innerJoin('ct.category', 'cc');
-        $queryBuilder->where($queryBuilder->expr()->eq('rr.report', ':report'));
+        $queryBuilder->where($queryBuilder->expr()->eq('rr.evaluationReport', ':report'));
+
         $queryBuilder->orderBy('cc.sequence', Criteria::ASC);
         $queryBuilder->addOrderBy('ct.sequence', Criteria::ASC);
-        $queryBuilder->addOrderBy('c.sequence', Criteria::ASC);
+        $queryBuilder->addOrderBy('cv.sequence', Criteria::ASC);
 
         $queryBuilder->setParameter('report', $evaluationReport);
 
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function getSortedCriteriaVersions(EvaluationReportVersion $reportVersion): array
+    public function getSortedCriterionVersions(EvaluationReportVersion $reportVersion): array
     {
         $queryBuilder = $this->_em->createQueryBuilder();
         $queryBuilder->select('cv', 'c', 'ct', 'cc', 'cvt', 't');
@@ -497,9 +505,10 @@ final class ReportRepository extends EntityRepository implements FilteredObjectR
         $queryBuilder->leftJoin('cvt.topic', 't');
         $queryBuilder->where($queryBuilder->expr()->eq('cv.reportVersion', ':reportVersion'));
         $queryBuilder->andWhere($queryBuilder->expr()->eq('c.archived', 0));
+
         $queryBuilder->orderBy('cc.sequence', Criteria::ASC);
         $queryBuilder->addOrderBy('ct.sequence', Criteria::ASC);
-        $queryBuilder->addOrderBy('c.sequence', Criteria::ASC);
+        $queryBuilder->addOrderBy('cv.sequence', Criteria::ASC);
 
         $queryBuilder->setParameter('reportVersion', $reportVersion);
 

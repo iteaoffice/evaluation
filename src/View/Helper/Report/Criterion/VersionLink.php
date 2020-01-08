@@ -1,14 +1,9 @@
 <?php
 
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -18,72 +13,72 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report\Criterion;
 
-use Project\Entity\Evaluation\Report2\Criterion;
-use Project\Entity\Evaluation\Report2\Criterion\Version as CriterionVersion;
-use Project\Entity\Evaluation\Report2\Version as ReportVersion;
-use Project\View\Helper\LinkAbstract;
+use Evaluation\Entity\Report\Criterion;
+use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
+use Evaluation\Entity\Report\Version as ReportVersion;
+use General\ValueObject\Link\Link;
+use General\View\Helper\AbstractLink;
+
+use function sprintf;
 
 /**
  * Class VersionLink
  * @package Evaluation\View\Helper\Report\Criterion
  */
-final class VersionLink extends LinkAbstract
+final class VersionLink extends AbstractLink
 {
-    /**
-     * @var CriterionVersion
-     */
-    private $criterionVersion;
-
     public function __invoke(
         CriterionVersion $criterionVersion = null,
-        string           $action = 'view',
-        string           $show = 'name',
-        ReportVersion    $reportVersion = null
-    ): string
-    {
-        $this->criterionVersion = $criterionVersion ?? new CriterionVersion();
-        if ($this->criterionVersion->getCriterion() === null) {
-            $this->criterionVersion->setCriterion(new Criterion());
+        string $action = 'view',
+        string $show = 'name',
+        ReportVersion $reportVersion = null
+    ): string {
+        $criterionVersion ??= (new CriterionVersion())->setCriterion(new Criterion());
+
+        $routeParams = [];
+        $showOptions = [];
+        if (! $criterionVersion->isEmpty()) {
+            $routeParams['id']   = $criterionVersion->getId();
+            $showOptions['name'] = (string) $criterionVersion->getCriterion();
         }
 
-        $this->setAction($action);
-        $this->setShow($show);
-
-        $this->addRouterParam('id', $this->criterionVersion->getId());
-        if ($reportVersion instanceof ReportVersion) {
-            $this->addRouterParam('reportVersionId', $reportVersion->getId());
+        if (null !== $reportVersion) {
+            $routeParams['reportVersionId'] = $reportVersion->getId();
         }
-        $this->setShowOptions(['name' => (string) $this->criterionVersion->getCriterion()]);
 
-        return $this->createLink();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function parseAction(): void
-    {
-        switch ($this->getAction()) {
+        switch ($action) {
             case 'add':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/version/add');
-                $this->setText($this->translator->translate("txt-add-new-evaluation-report-criterion"));
+                $linkParams = [
+                    'icon'  => 'fa-plus',
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/add',
+                    'text'  => $this->translator->translate('txt-add-new-evaluation-report-criterion')
+                ];
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/version/view');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-view-evaluation-report-criterion-%s"),
-                    $this->criterionVersion->getCriterion()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/view',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                        $this->translator->translate('txt-view-evaluation-report-criterion-%s'),
+                        $criterionVersion->getCriterion()
+                    )
+                ];
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report2/criterion/version/edit');
-                $this->setText(\sprintf(
-                    $this->translator->translate("txt-edit-evaluation-report-criterion-%s"),
-                    $this->criterionVersion->getCriterion()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/edit',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                        $this->translator->translate('txt-edit-evaluation-report-criterion-%s'),
+                        $criterionVersion->getCriterion()
+                    )
+                ];
                 break;
             default:
-                throw new \Exception(\sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
+                return '';
         }
+        $linkParams['action']      = $action;
+        $linkParams['show']        = $show;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -22,7 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Evaluation\Entity\AbstractEntity;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * Evaluation Report window (Time frame in which the evaluation has to take place)
@@ -43,7 +39,7 @@ class Window extends AbstractEntity
     private $id;
     /**
      * @ORM\Column(name="title", type="string", length=255, nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Attributes({})
      * @Annotation\Options({
      *     "label":"txt-title",
@@ -55,7 +51,7 @@ class Window extends AbstractEntity
     private $title;
     /**
      * @ORM\Column(name="description", length=65535, type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Options({
      *     "label":"txt-description",
      *     "help-block":"txt-evaluation-report-window-description-help-block"
@@ -68,7 +64,7 @@ class Window extends AbstractEntity
      * Start date from which a reviewer can create an evaluation report
      *
      * @ORM\Column(name="date_start_report", type="datetime", nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Date")
+     * @Annotation\Type("\Laminas\Form\Element\Date")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-window-start-report-label",
      *     "help-block":"txt-evaluation-report-window-start-report-help-block"
@@ -81,7 +77,7 @@ class Window extends AbstractEntity
      * End date until which a reviewer can create an evaluation report
      *
      * @ORM\Column(name="date_end_report", type="datetime", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Date")
+     * @Annotation\Type("\Laminas\Form\Element\Date")
      * @Annotation\Required(false)
      * @Annotation\AllowEmpty(true)
      * @Annotation\Options({
@@ -96,7 +92,7 @@ class Window extends AbstractEntity
      * Start date for the selection of entities matching the chosen evaluation report type (PPR, PO, FPP, etc.)
      *
      * @ORM\Column(name="date_start_selection", type="datetime", nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Date")
+     * @Annotation\Type("\Laminas\Form\Element\Date")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-window-start-selection-label",
      *     "help-block":"txt-evaluation-report-window-start-selection-help-block"
@@ -109,9 +105,8 @@ class Window extends AbstractEntity
      * End date for the selection of entities matching the chosen evaluation report type (PPR, PO, FPP, etc.)
      *
      * @ORM\Column(name="date_end_selection", type="datetime", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Date")
+     * @Annotation\Type("\Laminas\Form\Element\Date")
      * @Annotation\Required(false)
-     * @Annotation\AllowEmpty(true)
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-window-end-selection-label",
      *     "help-block":"txt-evaluation-report-window-end-selection-help-block"

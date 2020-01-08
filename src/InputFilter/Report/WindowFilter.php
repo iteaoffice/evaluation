@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -17,7 +13,7 @@ declare(strict_types=1);
 
 namespace Evaluation\InputFilter\Report;
 
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 
 /**
  * Class WindowFilter
@@ -25,12 +21,13 @@ use Zend\InputFilter\InputFilter;
  */
 final class WindowFilter extends InputFilter
 {
-    /**
-     * WindowFilter constructor.
-     */
     public function __construct()
     {
         $inputFilter = new InputFilter();
+        $inputFilter->add([
+            'name'     => 'reportVersions',
+            'required' => false,
+        ]);
         $inputFilter->add([
             'name'     => 'title',
             'required' => true,

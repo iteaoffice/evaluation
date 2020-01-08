@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -20,10 +16,12 @@ namespace Evaluation\Repository\Report;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Evaluation\Entity\Report\Result;
 use Evaluation\Entity\Report\Type;
 use Evaluation\Entity\Report\Version;
 use Evaluation\Repository\FilteredObjectRepository;
 use Project\Entity\Version\Version as ProjectVersion;
+
 use function array_key_exists;
 use function implode;
 use function in_array;
@@ -32,9 +30,10 @@ use function strtoupper;
 
 /**
  * Class VersionRepository
+ *
  * @package Evaluation\Repository\Report
  */
-final class VersionRepository extends EntityRepository implements FilteredObjectRepository
+/*final*/ class VersionRepository extends EntityRepository implements FilteredObjectRepository
 {
     public function findFiltered(array $filter = []): QueryBuilder
     {
@@ -44,7 +43,8 @@ final class VersionRepository extends EntityRepository implements FilteredObject
         $queryBuilder->innerJoin('v.reportType', 'rt');
 
         $direction = Criteria::DESC;
-        if (isset($filter['direction'])
+        if (
+            isset($filter['direction'])
             && in_array(strtoupper($filter['direction']), [Criteria::ASC, Criteria::DESC], true)
         ) {
             $direction = strtoupper($filter['direction']);
@@ -105,7 +105,7 @@ final class VersionRepository extends EntityRepository implements FilteredObject
         $queryBuilder->setParameter('archived', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
-        if (!empty($results)) {
+        if (! empty($result)) {
             return reset($result);
         }
 
@@ -127,7 +127,7 @@ final class VersionRepository extends EntityRepository implements FilteredObject
         $queryBuilder->setParameter('archived', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
-        if (!empty($result)) {
+        if (! empty($result)) {
             return reset($result);
         }
 

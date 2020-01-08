@@ -1,16 +1,17 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
  * PHP Version 7
  *
- * @category    Project
+ * @category    Evaluation
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2004-2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
- * @link        http://github.com/iteaoffice/project for the canonical source repository
+ * @link        http://github.com/iteaoffice/evaluation for the canonical source repository
  */
 
 declare(strict_types=1);
@@ -24,11 +25,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Version as ReportVersion;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
- * Evaluation report criterion version
- *
  * @ORM\Table(name="evaluation_report2_criterion_version", uniqueConstraints={
  *      @ORM\UniqueConstraint(name="criterion_version", columns={"criterion_id", "version_id"})
  * })
@@ -89,7 +88,7 @@ class Version extends AbstractEntity
     /**
      *
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("Zend\Form\Element\Number")
+     * @Annotation\Type("Laminas\Form\Element\Number")
      * @Annotation\Options({
      *     "label":"txt-sequence",
      *     "help-block":"txt-evaluation-report-criterion-sequence-help-block"
@@ -100,8 +99,8 @@ class Version extends AbstractEntity
      */
     private $sequence = 0;
     /**
-     * @ORM\Column(name="required", type="boolean", length=1, options={"unsigned":true}, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @ORM\Column(name="required", type="boolean", length=1,  nullable=false)
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-required",
      *     "help-block":"txt-evaluation-report-criterion-is-required-help-block"
@@ -111,8 +110,8 @@ class Version extends AbstractEntity
      */
     private $required = true;
     /**
-     * @ORM\Column(name="confidential", type="boolean", length=1, options={"unsigned":true}, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @ORM\Column(name="confidential", type="boolean", length=1, nullable=false)
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-confidential",
      *     "help-block":"txt-evaluation-report-criterion-is-confidential-help-block"
@@ -122,8 +121,8 @@ class Version extends AbstractEntity
      */
     private $confidential = false;
     /**
-     * @ORM\Column(name="highlighted", type="boolean", length=1, options={"unsigned":true}, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @ORM\Column(name="highlighted", type="boolean", length=1, nullable=false)
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-highlighted",
      *     "help-block":"txt-evaluation-report-criterion-is-highlighted-help-block"
@@ -132,6 +131,17 @@ class Version extends AbstractEntity
      * @var bool
      */
     private $highlighted = false;
+    /**
+     * @ORM\Column(name="defaultValue", type="string", nullable=true)
+     * @Annotation\Type("Laminas\Form\Element\Text")
+     * @Annotation\Options({
+     *     "label":"txt-default-value",
+     *     "help-block":"txt-evaluation-report-criterion-default-value-help-block"
+     * })
+     *
+     * @var string
+     */
+    private $defaultValue;
     /**
      * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Criterion\VersionTopic", cascade={"persist","remove"}, mappedBy="criterionVersion", orphanRemoval=true)
      * @Annotation\ComposedObject({
@@ -161,6 +171,7 @@ class Version extends AbstractEntity
     public function __construct()
     {
         $this->versionTopics = new ArrayCollection();
+        $this->results       = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -195,7 +206,7 @@ class Version extends AbstractEntity
         return $this->reportVersion;
     }
 
-    public function setReportVersion(ReportVersion $reportVersion): Version
+    public function setReportVersion(?ReportVersion $reportVersion): Version
     {
         $this->reportVersion = $reportVersion;
         return $this;
@@ -206,7 +217,7 @@ class Version extends AbstractEntity
         return $this->type;
     }
 
-    public function setType(Type $type): Version
+    public function setType(?Type $type): Version
     {
         $this->type = $type;
         return $this;
@@ -256,12 +267,23 @@ class Version extends AbstractEntity
         return $this;
     }
 
+    public function getDefaultValue(): ?string
+    {
+        return $this->defaultValue;
+    }
+
+    public function setDefaultValue(?string $defaultValue): Version
+    {
+        $this->defaultValue = $defaultValue;
+        return $this;
+    }
+
     public function getVersionTopics(): Collection
     {
         return $this->versionTopics;
     }
 
-    public function setVersionTopics(Collection $versionTopics): Version
+    public function setVersionTopics($versionTopics): Version
     {
         $this->versionTopics = $versionTopics;
         return $this;
@@ -269,7 +291,9 @@ class Version extends AbstractEntity
 
     public function addVersionTopics(Collection $versionTopics): void
     {
+        /** @var VersionTopic $versionTopic */
         foreach ($versionTopics as $versionTopic) {
+            $versionTopic->setCriterionVersion($this);
             $this->versionTopics->add($versionTopic);
         }
     }
@@ -281,12 +305,12 @@ class Version extends AbstractEntity
         }
     }
 
-    public function getResults(): Collection
+    public function getResults(): ?Collection
     {
         return $this->results;
     }
 
-    public function setResults(Collection $results): Version
+    public function setResults(?Collection $results): Version
     {
         $this->results = $results;
         return $this;

@@ -4,6 +4,7 @@
 {% set category = form.get('evaluation_entity_report_criterion_category') %}
 
 {{ ztbformelement(form.get('csrf')) }}
+{{ ztbformelement(category.get('id')) }}
 {{ ztbformelement(category.get('category')) }}
 {{ ztbformelement(category.get('sequence')) }}
 

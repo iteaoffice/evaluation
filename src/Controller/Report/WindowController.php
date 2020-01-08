@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -24,40 +20,27 @@ use Evaluation\Entity\Report\Window;
 use Evaluation\Form\Report\WindowFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Http\Request;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
 
 /**
- * Class WindowController
- *
- * @method GetFilter getProjectFilter()
+ * @method GetFilter getEvaluationFilter()
  * @method FlashMessenger flashMessenger()
- * @package Evaluation\Controller\Report
  */
 final class WindowController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-    /**
-     * @var FormService
-     */
-    private $formService;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
+    private TranslatorInterface $translator;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService,
-        TranslatorInterface     $translator
+        FormService $formService,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
@@ -67,7 +50,7 @@ final class WindowController extends AbstractActionController
     public function listAction()
     {
         $page         = $this->params()->fromRoute('page', 1);
-        $filterPlugin = $this->getProjectFilter();
+        $filterPlugin = $this->getEvaluationFilter();
         $query        = $this->evaluationReportService->findFiltered(Window::class, $filterPlugin->getFilter());
         $paginator    = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
         $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);
@@ -88,7 +71,7 @@ final class WindowController extends AbstractActionController
 
     public function viewAction(): ViewModel
     {
-        $window = $this->evaluationReportService->find(Window::class, (int) $this->params('id'));
+        $window = $this->evaluationReportService->find(Window::class, (int)$this->params('id'));
 
         if ($window === null) {
             return $this->notFoundAction();
@@ -103,14 +86,14 @@ final class WindowController extends AbstractActionController
     {
         /** @var Request $request */
         $request = $this->getRequest();
-        $data    = $request->getPost()->toArray();
-        $form    = $this->formService->prepare(new Window(), $data);
+        $data = $request->getPost()->toArray();
+        $form = $this->formService->prepare(new Window(), $data);
         $form->setInputFilter(new \Evaluation\InputFilter\Report\WindowFilter());
         $form->remove('delete');
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                $this->redirect()->toRoute('zfcadmin/evaluation/report2/window/list');
+                return  $this->redirect()->toRoute('zfcadmin/evaluation/report/window/list');
             }
 
             if ($form->isValid()) {
@@ -120,8 +103,8 @@ final class WindowController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate('txt-evaluation-report-window-has-successfully-been-saved')
                 );
-                $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/window/view',
+                return $this->redirect()->toRoute(
+                    'zfcadmin/evaluation/report/window/view',
                     ['id' => $window->getId()]
                 );
             }
@@ -135,7 +118,7 @@ final class WindowController extends AbstractActionController
         /** @var Request $request */
         $request = $this->getRequest();
         /** @var Window $window */
-        $window = $this->evaluationReportService->find(Window::class, (int) $this->params('id'));
+        $window = $this->evaluationReportService->find(Window::class, (int)$this->params('id'));
 
         if ($window === null) {
             return $this->notFoundAction();
@@ -148,7 +131,7 @@ final class WindowController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/window/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/window/list');
             }
 
             if ($form->isValid()) {
@@ -156,18 +139,20 @@ final class WindowController extends AbstractActionController
                 $window = $form->getData();
                 $this->evaluationReportService->save($window);
                 $this->flashMessenger()->addSuccessMessage(
-                    $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
+                    $this->translator->translate('txt-evaluation-report-window-has-successfully-been-saved')
                 );
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/window/view',
+                    'zfcadmin/evaluation/report/window/view',
                     ['id' => $window->getId()]
                 );
             }
         }
 
-        return new ViewModel([
-            'form'   => $form,
-            'window' => $window
-        ]);
+        return new ViewModel(
+            [
+                'form'   => $form,
+                'window' => $window
+            ]
+        );
     }
 }

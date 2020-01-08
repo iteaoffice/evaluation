@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -12,47 +13,39 @@
  *
  * @link        http://github.com/iteaoffice/Contact for the canonical source repository
  */
+
 declare(strict_types=1);
 
 namespace Evaluation\Service;
 
+use Doctrine\ORM\EntityManager;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Form\CreateObject;
-use Doctrine\ORM\EntityManager;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilter;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+
 use function is_string;
 
 /**
  * Class FormService
+ *
  * @package Evaluation\Service
  */
-final class FormService
+class FormService
 {
-    /**
-     * @var ServiceLocatorInterface
-     */
-    private $container;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private ContainerInterface $container;
+    private EntityManager $entityManager;
 
-    public function __construct(ServiceLocatorInterface $container, EntityManager $entityManager)
+    public function __construct(ContainerInterface $container, EntityManager $entityManager)
     {
-        $this->container     = $container;
+        $this->container = $container;
         $this->entityManager = $entityManager;
     }
 
     public function prepare($classNameOrEntity, array $data = [], array $options = []): Form
     {
-        /**
-         * The form can be created from an empty element, we then expect the $formClassName to be filled
-         * This should be a string, indicating the class
-         *
-         * But if the class a class is injected, we will change it into the className but hint the user to use a string
-         */
         if (is_string($classNameOrEntity)) {
             $classNameOrEntity = new $classNameOrEntity();
         }
@@ -65,7 +58,7 @@ final class FormService
 
     private function getForm(AbstractEntity $entity, array $options = []): Form
     {
-        $formName   = $entity->get('entity_form_name');
+        $formName = $entity->get('entity_form_name');
         $filterName = $entity->get('entity_inputfilter_name');
 
         /**

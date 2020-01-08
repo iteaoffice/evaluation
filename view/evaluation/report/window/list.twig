@@ -6,7 +6,7 @@
 {{ form().openTag(form)|raw }}
 {% set filter = form.get('filter') %}
 
-<h1>{{ translate("txt-evaluation-report-window-list") }} {{ report2WindowLink(null,'new','button') }}</h1>
+<h1>{{ translate("txt-evaluation-report-window-list") }} {{ reportWindowLink(null,'new','button') }}</h1>
 
 <div class="row">
     <div class="col-md-6">
@@ -26,22 +26,22 @@
     <table class="table table-hover table-striped table-sm">
         <thead>
         <tr>
-            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/window/list', 'criteria': 'id', 'text': translate('txt-id')} %}</th>
-            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/window/list', 'criteria': 'title', 'text': translate('txt-title')} %}</th>
-            <th>{{ translate('txt-report-versions') }}</th>
-            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/window/list', 'criteria': 'report-start', 'text': translate("txt-report-start-date")} %}</th>
-            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/window/list', 'criteria': 'report-end', 'text': translate("txt-report-end-date")} %}</th>
-            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/window/list', 'criteria': 'selection-start', 'text': translate("txt-selection-start-date")} %}</th>
-            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/window/list', 'criteria': 'selection-end', 'text': translate("txt-selection-end-date")} %}</th>
+            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/window/list', 'criteria': 'id', 'text': translate("txt-id")} %}</th>
+            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/window/list', 'criteria': 'title', 'text': translate("txt-title")} %}</th>
+            <th>{{ translate("txt-report-versions") }}</th>
+            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/window/list', 'criteria': 'report-start', 'text': translate("txt-report-start-date")} %}</th>
+            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/window/list', 'criteria': 'report-end', 'text': translate("txt-report-end-date")} %}</th>
+            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/window/list', 'criteria': 'selection-start', 'text': translate("txt-selection-start-date")} %}</th>
+            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/window/list', 'criteria': 'selection-end', 'text': translate("txt-selection-end-date")} %}</th>
         </tr>
         </thead>
         <tbody>
         {% for window in paginator.getCurrentItems() %}
             <tr>
-                <td>{{ window.id }} {{ report2WindowLink(window,'edit','icon') }}</td>
-                <td>{{ report2WindowLink(window,'view','name') }}</td>
+                <td>{{ window.id }} {{ reportWindowLink(window,'edit','icon') }}</td>
+                <td>{{ reportWindowLink(window,'view','name') }}</td>
                 <td>{% for reportVersion in window.reportVersions %}
-                        {{ report2VersionLink(reportVersion, 'view') }}
+                        {{ reportVersionLink(reportVersion, 'view') }}
                         {% if not loop.last %}<br>{% endif %}
                     {% else %}
                         -

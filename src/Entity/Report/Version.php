@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -21,13 +17,11 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
-use Zend\Form\Annotation;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Laminas\Form\Annotation;
 
 /**
- * Evaluation report version
- *
  * @ORM\Table(name="evaluation_report2_version")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\VersionRepository")
  */
@@ -39,7 +33,7 @@ class Version extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Exclude()
      *
-     * @var integer
+     * @var int
      */
     private $id;
     /**
@@ -57,7 +51,7 @@ class Version extends AbstractEntity
     private $reportType;
     /**
      * @ORM\Column(name="label", type="string", nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-label",
      *     "help-block":"txt-evaluation-report-version-label-help-block"
@@ -68,7 +62,7 @@ class Version extends AbstractEntity
     private $label;
     /**
      * @ORM\Column(name="description", length=65535, type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Options({
      *     "label":"txt-description",
      *     "help-block":"txt-evaluation-report-version-description-help-block"
@@ -78,8 +72,8 @@ class Version extends AbstractEntity
      */
     private $description;
     /**
-     * @ORM\Column(name="archived", type="boolean", length=1, options={"unsigned":true}, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @ORM\Column(name="archived", type="boolean", length=1, nullable=false)
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-archived",
      *     "help-block":"txt-evaluation-report-version-archived-help-block"
@@ -97,7 +91,7 @@ class Version extends AbstractEntity
      */
     private $dateCreated;
     /**
-     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report", cascade={"persist"}, mappedBy="version", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report", cascade={"persist","remove"}, mappedBy="version", orphanRemoval=true)
      * @Annotation\Exclude()
      *
      * @var Collection
@@ -144,19 +138,34 @@ class Version extends AbstractEntity
     private $windows;
 
     /**
-     * Version constructor.
+     * @ORM\OneToMany(targetEntity="Project\Entity\Report\Report", mappedBy="evaluationReportVersion")
+     * @Annotation\Exclude()
+     *
+     * @var Collection
      */
+    private $projectReports;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Project\Entity\Version\Version", mappedBy="evaluationReportVersion")
+     * @Annotation\Exclude()
+     *
+     * @var Collection
+     */
+    private $projectVersions;
+
     public function __construct()
     {
         $this->evaluationReports = new ArrayCollection();
         $this->criterionVersions = new ArrayCollection();
-        $this->topics            = new ArrayCollection();
-        $this->windows           = new ArrayCollection();
+        $this->topics = new ArrayCollection();
+        $this->windows = new ArrayCollection();
+        $this->projectReports = new ArrayCollection();
+        $this->projectVersions = new ArrayCollection();
     }
 
     public function __toString(): string
     {
-        return (string) $this->label;
+        return (string)$this->label;
     }
 
     public function getId(): ?int
@@ -295,5 +304,16 @@ class Version extends AbstractEntity
         foreach ($windows as $window) {
             $this->windows->removeElement($window);
         }
+    }
+
+    public function getProjectReports(): Collection
+    {
+        return $this->projectReports;
+    }
+
+    public function setProjectReports(Collection $projectReports): Version
+    {
+        $this->projectReports = $projectReports;
+        return $this;
     }
 }

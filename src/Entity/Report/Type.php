@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -20,14 +16,12 @@ namespace Evaluation\Entity\Report;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Project\Entity\Version\Type as VersionType;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
- * Evaluation report type
- *
  * @ORM\Table(name="evaluation_report2_type")
  * @ORM\Entity(repositoryClass="Gedmo\Sortable\Entity\Repository\SortableRepository")
  */
@@ -48,7 +42,7 @@ class Type extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Exclude()
      *
-     * @var integer
+     * @var int
      */
     private $id;
     /**
@@ -61,12 +55,12 @@ class Type extends AbstractEntity
      *
      * @Gedmo\SortablePosition
      *
-     * @var integer
+     * @var int
      */
     private $sequence;
     /**
      * @ORM\Column(name="type", type="string", nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-type-type-label",
      *     "help-block":"txt-evaluation-report-type-type-help-block"
@@ -75,6 +69,12 @@ class Type extends AbstractEntity
      * @var string
      */
     private $type;
+    /**
+     * @ORM\Column(name="process_type", type="smallint", options={"unsigned":true}, nullable=true)
+     *
+     * @var int
+     */
+    private $processType;
     /**
      * @ORM\ManyToOne(targetEntity="Project\Entity\Version\Type", cascade={"persist"}, inversedBy="evaluationReportType")
      * @ORM\JoinColumn(name="version_type_id", referencedColumnName="type_id", nullable=true)
@@ -101,12 +101,12 @@ class Type extends AbstractEntity
     public function __construct()
     {
         $this->reportVersions = new ArrayCollection();
-        $this->criteria       = new ArrayCollection();
+        $this->criteria = new ArrayCollection();
     }
 
     public function __toString(): string
     {
-        return (string) $this->type;
+        return (string)$this->type;
     }
 
     public function getId(): ?int
@@ -139,6 +139,17 @@ class Type extends AbstractEntity
     public function setType(string $type): Type
     {
         $this->type = $type;
+        return $this;
+    }
+
+    public function getProcessType(): ?int
+    {
+        return $this->processType;
+    }
+
+    public function setProcessType(int $processType): Type
+    {
+        $this->processType = $processType;
         return $this;
     }
 

@@ -2,7 +2,7 @@
 {% do headTitle().append(translate("txt-evaluation")) %}
 {% do headTitle().append(translate("txt-evaluation-report-criterion-topic-%s")|format(topic)) %}
 
-<h1>{{ translate("txt-evaluation-report-criterion-topic-%s")|format(topic) }}</h1>
+<h1>{{ topic }}</h1>
 
 <dl class="dl-horizontal">
     <dt>{{ translate("txt-id") }}</dt>
@@ -10,9 +10,12 @@
     <dt>{{ translate("txt-topic") }}</dt>
     <dd>{{ topic.topic }}</dd>
     <dt>{{ translate("txt-active-report-versions") }}</dt>
-    {% for reportVersion in topic.reportVersions if not reportVersion.archived %}
-        <dd>{{ report2VersionLink(reportVersion, 'view') }}</dd>
+    {% for reportVersion in topic.reportVersions|filter(reportVersion => not reportVersion.archived) -%}
+        <dd>{{ reportVersionLink(reportVersion, 'view') }}</dd>
+    {% else %}
+        <dd>{{ translate("txt-none") }}</dd>
     {% endfor %}
 </dl>
 
-{{ report2CriterionTopicLink(topic,'edit','button') }}
+{{ reportCriterionTopicLink(topic,'edit','button') }}
+

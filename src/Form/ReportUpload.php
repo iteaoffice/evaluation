@@ -1,21 +1,22 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
  * @category    Content
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  */
 
 declare(strict_types=1);
 
 namespace Evaluation\Form;
 
-use Zend\Form\Element;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilter;
-use Zend\Validator\File\Extension;
+use Laminas\Form\Element;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Validator\File\Extension;
 
 /**
  * Class ReportUpload
@@ -23,13 +24,10 @@ use Zend\Validator\File\Extension;
  */
 final class ReportUpload extends Form
 {
-    /**
-     * ReportUpload constructor.
-     * @param string $action
-     */
-    public function __construct(string $action = '')
+    public function __construct(string $action)
     {
         parent::__construct('evaluation_report_upload');
+
         $this->setAttributes([
             'method' => 'post',
             'role'   => 'form',
@@ -37,7 +35,7 @@ final class ReportUpload extends Form
             'action' => $action
         ]);
 
-        // Set a basic inputfilter
+        // Set a basic input filter
         $inputFilter = new InputFilter();
         $inputFilter->add([
             'name'       => 'excel',

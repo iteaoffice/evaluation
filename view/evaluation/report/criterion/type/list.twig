@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-10">
-        <h1>{{ translate("txt-evaluation-report-criterion-type-list") }} {{ report2CriterionTypeLink(null,'new','button') }}</h1>
+        <h1>{{ translate("txt-evaluation-report-criterion-type-list") }} {{ reportCriterionTypeLink(null,'new','button') }}</h1>
 
         <div class="row">
             <div class="col-md-6">
@@ -28,10 +28,10 @@
             <table class="table table-hover table-striped table-sm">
                 <thead>
                 <tr>
-                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/criterion/type/list', 'criteria': 'id', 'text': translate('txt-id')} %}</th>
-                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/criterion/type/list', 'criteria': 'type', 'text': translate('txt-type')} %}</th>
-                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/criterion/type/list', 'criteria': 'category', 'text': translate('txt-category')} %}</th>
-                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report2/criterion/type/list', 'criteria': 'sequence', 'text': translate('txt-sequence')} %}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/type/list', 'criteria': 'id', 'text': translate("txt-id")} %}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/type/list', 'criteria': 'type', 'text': translate("txt-type")} %}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/type/list', 'criteria': 'category', 'text': translate("txt-category")} %}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/type/list', 'criteria': 'sequence', 'text': translate("txt-sequence")} %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -39,9 +39,9 @@
                     <tr>
                         <td>
                             {{ type.id }}
-                            {{ report2CriterionTypeLink(type,'edit','icon') }}
+                            {{ reportCriterionTypeLink(type,'edit','icon') }}
                         </td>
-                        <td>{{ report2CriterionTypeLink(type,'view','name') }}</td>
+                        <td>{{ reportCriterionTypeLink(type,'view','name') }}</td>
                         <td>{{ type.category }}</td>
                         <td>{{ type.sequence }}</td>
                     </tr>

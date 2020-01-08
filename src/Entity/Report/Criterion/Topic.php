@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -22,7 +18,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 
 /**
  * Evaluation report criterion category
@@ -38,13 +34,13 @@ class Topic extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Exclude()
      *
-     * @var integer
+     * @var int
      */
     private $id;
     /**
      * @Gedmo\SortablePosition
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("\Zend\Form\Element\Number")
+     * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({"label":"txt-sequence"})
      *
      * @var int
@@ -52,7 +48,7 @@ class Topic extends AbstractEntity
     private $sequence = 0;
     /**
      * @ORM\Column(name="topic", type="string", length=255, nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({"label":"txt-topic"})
      *
      * @var string

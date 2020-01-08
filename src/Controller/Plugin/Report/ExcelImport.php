@@ -1,14 +1,9 @@
 <?php
 
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Bart van Eijck <bart.van.eijck@itea3.org>
- * @copyright   Copyright (c) 2004-2018 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -26,7 +21,11 @@ use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result as EvaluationReportResult;
 use Evaluation\Service\EvaluationReportService;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use RuntimeException;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+
+use function sprintf;
+use function unlink;
 
 /**
  * Class ExcelImport
@@ -63,26 +62,30 @@ final class ExcelImport extends AbstractPlugin
         $this->evaluationReportService = $evaluationReportService;
     }
 
-    public function __invoke(string $file): ReportExcelImport
+    public function __invoke(string $file): ExcelImport
     {
-        $this->data = [];
-        try {
-            $fileType            = IOFactory::identify($file);
-            $reader              = IOFactory::createReader($fileType);
-            $excel               = $reader->load($file);
-            $sheet               = $excel->getSheet(2);
-            $highestRow          = $sheet->getHighestRow();
-            $this->data          = $sheet->rangeToArray('A1:E' . $highestRow, null, true, false);
-            // Will have to use the deprecated getCalculatedValue() as getOldCalculatedValue() gives an empty result
-            $finalScore          = $sheet->getCell('F1')->getCalculatedValue();
-            $this->finalScore    = (empty($finalScore) ? null : (int)$finalScore);
-            $projectStatus       = $sheet->getCell('G1')->getCalculatedValue();
-            $this->projectStatus = (empty($projectStatus) ? null : (int)$projectStatus);
-            unset($excel);
-        } catch (Exception $exception) {
-            $this->data = [];
-            $this->hasParseErrors = true;
+        $this->hasParseErrors = true;
+        if (file_exists($file)) {
+            try {
+                $fileType             = IOFactory::identify($file);
+                $reader               = IOFactory::createReader($fileType);
+                $excel                = $reader->load($file);
+                $sheet                = $excel->getSheet(2);
+                $highestRow           = $sheet->getHighestRow();
+                $this->data           = $sheet->rangeToArray('A1:E' . $highestRow, null, true, false);
+                // Will have to use the deprecated getCalculatedValue() as getOldCalculatedValue() gives an empty result
+                $finalScore           = $sheet->getCell('F1')->getCalculatedValue();
+                $this->finalScore     = (empty($finalScore) ? null : (int)$finalScore);
+                $projectStatus        = $sheet->getCell('G1')->getCalculatedValue();
+                $this->projectStatus  = (empty($projectStatus) ? null : (int)$projectStatus);
+                $excel                = null;
+                $this->hasParseErrors = false;
+            } catch (Exception $exception) {
+                $this->data = [];
+            }
+            unlink($file);
         }
+
         return $this;
     }
 
@@ -93,7 +96,7 @@ final class ExcelImport extends AbstractPlugin
     public function excelIsOutdated(EvaluationReport $evaluationReport): bool
     {
         foreach ($this->data as $row) {
-            if (!empty($row[1])) {
+            if (! empty($row[1])) {
                 // An Excel with result IDs is never outdated, so short-circuit
                 return false;
             }
@@ -129,6 +132,14 @@ final class ExcelImport extends AbstractPlugin
                 $result->setEvaluationReport($evaluationReport);
                 /** @var Criterion\Version $criterionVersion */
                 $criterionVersion = $this->evaluationReportService->find(Criterion\Version::class, (int)$row[0]);
+                if ($criterionVersion === null) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Criterion version with ID %d not found. Are you trying to import an older evaluation template?',
+                            (int)$row[0]
+                        )
+                    );
+                }
                 $result->setCriterionVersion($criterionVersion);
                 $result->setScore($score);
                 $result->setValue($value);

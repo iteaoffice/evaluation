@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -19,35 +15,29 @@ namespace Evaluation\Entity\Report;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
 use Evaluation\Entity\Report as EvaluationReport;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Project\Entity\Report\Report;
-use Project\Entity\Report\Review;
-use Zend\Form\Annotation;
+use Project\Entity\Report\Reviewer;
+use Laminas\Form\Annotation;
 
 /**
- * Evaluation Report Project Report (These are the real reports)
- *
  * @ORM\Table(name="evaluation_report2_project_report")
  * @ORM\Entity
  */
 class ProjectReport extends AbstractEntity
 {
     public const PROJECT_STATUS_EXCELLENT = 1; // Excellent project status
-    public const PROJECT_STATUS_AVERAGE   = 2; // Average project status
+    public const PROJECT_STATUS_ADEQUATE  = 2; // Adequate project status
     public const PROJECT_STATUS_ALARMING  = 3; // Bad project status
 
-    /**
-     * Templates for the report-based evaluation report project status.
-     *
-     * @var array
-     */
-    private static $projectStatuses = [
-        self::PROJECT_STATUS_EXCELLENT => 'txt-excellent',
-        self::PROJECT_STATUS_AVERAGE   => 'txt-average',
-        self::PROJECT_STATUS_ALARMING  => 'txt-alarming'
-    ];
+    private static $projectStatuses
+        = [
+            self::PROJECT_STATUS_EXCELLENT => 'txt-excellent',
+            self::PROJECT_STATUS_ADEQUATE  => 'txt-adequate',
+            self::PROJECT_STATUS_ALARMING  => 'txt-alarming'
+        ];
 
     /**
      * @ORM\Column(name="project_report_id", type="integer", options={"unsigned":true})
@@ -55,7 +45,7 @@ class ProjectReport extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Exclude()
      *
-     * @var integer
+     * @var int
      */
     private $id;
     /**
@@ -67,28 +57,8 @@ class ProjectReport extends AbstractEntity
      */
     private $evaluationReport;
     /**
-     * Only set for individual evaluations (so is nullable)
-     *
-     * @ORM\OneToOne(targetEntity="Project\Entity\Report\Review", cascade={"persist"}, inversedBy="projectReportReport2")
-     * @ORM\JoinColumn(name="report_review_id", referencedColumnName="review_id", nullable=true)
-     * @Annotation\Exclude()
-     *
-     * @var Review|null
-     */
-    private $reviewer;
-    /**
-     * Only set for final evaluations (so is nullable)
-     *
-     * @ORM\OneToOne(targetEntity="Project\Entity\Report\Report", cascade={"persist"}, inversedBy="projectReportReport2")
-     * @ORM\JoinColumn(name="report_id", referencedColumnName="report_id", nullable=true)
-     * @Annotation\Exclude()
-     *
-     * @var Report|null
-     */
-    private $report;
-    /**
      * @ORM\Column(name="project_status", type="smallint", length=5, options={"unsigned":true}, nullable=true)
-     * @Annotation\Type("Zend\Form\Element\Select")
+     * @Annotation\Type("Laminas\Form\Element\Select")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-project-status-label",
      *     "help-block":"txt-evaluation-report-project-status-help-block",
@@ -98,6 +68,16 @@ class ProjectReport extends AbstractEntity
      * @var int
      */
     private $projectStatus;
+    /**
+     * Only set for final evaluations (so is nullable)
+     *
+     * @ORM\OneToOne(targetEntity="Project\Entity\Report\Report", cascade={"persist"}, inversedBy="projectReportReport")
+     * @ORM\JoinColumn(name="report_id", referencedColumnName="report_id", nullable=true)
+     * @Annotation\Exclude()
+     *
+     * @var Report
+     */
+    private $report;
     /**
      * @ORM\Column(name="date_created", type="datetime", nullable=false)
      * @Gedmo\Timestampable(on="create")
@@ -114,6 +94,16 @@ class ProjectReport extends AbstractEntity
      * @var DateTime
      */
     private $dateUpdated;
+    /**
+     * Only set for individual review reports (so is nullable)
+     *
+     * @ORM\OneToOne(targetEntity="Project\Entity\Report\Reviewer", cascade={"persist"}, inversedBy="projectReportReport")
+     * @ORM\JoinColumn(name="report_review_id", referencedColumnName="review_id", nullable=true)
+     * @Annotation\Exclude()
+     *
+     * @var Reviewer
+     */
+    private $reviewer;
 
     public static function getProjectStatuses(): array
     {
@@ -139,29 +129,6 @@ class ProjectReport extends AbstractEntity
     public function setEvaluationReport(EvaluationReport $evaluationReport): ProjectReport
     {
         $this->evaluationReport = $evaluationReport;
-        return $this;
-    }
-
-    public function getReviewer(): ?Review
-    {
-        return $this->reviewer;
-    }
-
-    public function setReviewer(Review $reviewer): ProjectReport
-    {
-        $this->reviewer = $reviewer;
-        return $this;
-    }
-
-    public function getReport(): ?Report
-    {
-        return $this->report;
-    }
-
-    public function setReport(Report $report): ProjectReport
-    {
-        $this->report = $report;
-
         return $this;
     }
 
@@ -195,6 +162,28 @@ class ProjectReport extends AbstractEntity
     public function setDateUpdated(DateTime $dateUpdated): ProjectReport
     {
         $this->dateUpdated = $dateUpdated;
+        return $this;
+    }
+
+    public function getReviewer(): ?Reviewer
+    {
+        return $this->reviewer;
+    }
+
+    public function setReviewer(Reviewer $reviewer): ProjectReport
+    {
+        $this->reviewer = $reviewer;
+        return $this;
+    }
+
+    public function getReport(): ?Report
+    {
+        return $this->report;
+    }
+
+    public function setReport(Report $report): ProjectReport
+    {
+        $this->report = $report;
         return $this;
     }
 }

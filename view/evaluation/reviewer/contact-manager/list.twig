@@ -1,0 +1,53 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-review-contact-list")) %}
+
+{% do form.prepare() %}
+{{ form().openTag(form)|raw }}
+{% set filter = form.get('filter') %}
+
+<div class="row">
+    <div class="col-md-10">
+        <h1>{{ translate("txt-review-contact-list") }} {{ reviewerContactLink(null, 'new', 'button') }}</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p class="lead">{{ translate("txt-review-contact-list-explanation") }}</p>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    {{ formelement(filter.get('search')) }}
+                    <div class="input-group-append input-group-btn">
+                        {{ formelement(form.get('submit')) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if paginator.pageRange > 0 %}
+            <table class="table table-hover table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/reviewer/contact/list', 'criteria': 'id', 'text': translate("txt-id")} %}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/reviewer/contact/list', 'criteria': 'handle', 'text': translate("txt-handle")} %}</th>
+                    <th>{{ translate("txt-contact") }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for reviewerContact in paginator.getCurrentItems() %}
+                    <tr>
+                        <td>{{ reviewerContact.id }} {{ reviewerContactLink(reviewerContact, 'edit', 'icon') }}</td>
+                        <td>{{ reviewerContactLink(reviewerContact, 'view', 'handle') }}</td>
+                        <td>{{ contactLink(reviewerContact.getContact(),'view-admin','name') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% include 'application/partial/pagination-control' %}
+        {% else %}
+            {{ ztbalert().info(translate("txt-no-review-contacts-could-be-found"))|raw }}
+        {% endif %}
+    </div>
+</div>
+
+{{ form().closeTag()|raw }}
+

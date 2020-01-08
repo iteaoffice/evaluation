@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -17,9 +13,15 @@ declare(strict_types=1);
 
 namespace Evaluation\Controller;
 
-use Affiliation\Service\AffiliationService;
+use Contact\Entity\Contact;
 use Contact\Service\ContactService;
 use Doctrine\ORM\EntityManager;
+use Evaluation\Controller\Plugin\CreateEvaluation;
+use Evaluation\Controller\Plugin\RenderProjectEvaluation;
+use Evaluation\Entity;
+use Evaluation\Entity\Type;
+use Evaluation\Service\EvaluationService;
+use Evaluation\Service\FormService;
 use General\Entity\Country;
 use General\Service\CountryService;
 use General\Service\GeneralService;
@@ -29,63 +31,45 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Program\Entity\Call\Call;
 use Program\Service\CallService;
-use Evaluation\Entity;
-use Evaluation\Form;
-use Evaluation\Service\EvaluationService;
-use Project\Service\FormService;
+use Project\Entity\Project;
+use Project\Entity\Version\Type as VersionType;
+use Project\Entity\Version\Version;
+use Project\Form\MatrixFilter;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
-use Zend\Http\Response;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Mvc\Plugin\Identity\Identity;
+use Laminas\View\Model\ViewModel;
+
+use function array_merge_recursive;
+use function file_exists;
+use function sprintf;
+use function strlen;
+use function strtoupper;
+use function sys_get_temp_dir;
 
 /**
- * Class EvaluationController
- * @package Evaluation\Controller
+ * @method CreateEvaluation createEvaluation(array $projects, Type $evaluationType, int $display, int $source)
+ * @method Identity|Contact identity()
+ * @method RenderProjectEvaluation renderProjectEvaluation()
+ * @method FlashMessenger flashMessenger()
  */
 final class EvaluationController extends AbstractActionController
 {
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var VersionService
-     */
-    private $versionService;
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
-    /**
-     * @var CallService
-     */
-    private $callService;
-    /**
-     * @var ContactService
-     */
-    private $contactService;
-    /**
-     * @var GeneralService
-     */
-    private $generalService;
-    /**
-     * @var CountryService
-     */
-    private $countryService;
-    /**
-     * @var FormService
-     */
-    private $formService;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private ProjectService $projectService;
+    private VersionService $versionService;
+    private EvaluationService $evaluationService;
+    private CallService $callService;
+    private ContactService $contactService;
+    private GeneralService $generalService;
+    private CountryService $countryService;
+    private FormService $formService;
+    private EntityManager $entityManager;
+    private TranslatorInterface $translator;
 
     public function __construct(
         ProjectService $projectService,
@@ -111,75 +95,73 @@ final class EvaluationController extends AbstractActionController
         $this->translator = $translator;
     }
 
-    /**
-     * @return Response|ViewModel
-     * @deprecated
-     */
     public function indexAction()
     {
         $call = $this->callService->findLastActiveCall();
-
         if (null === $call) {
             return $this->notFoundAction();
         }
-
         return $this->redirect()->toRoute('community/evaluation/overview', ['call' => $call->getId()]);
     }
 
-    public function overviewAction(): ViewModel
+    public function overviewAction()
     {
-        $display = $this->params('display', Entity\Evaluation\Evaluation::DISPLAY_PARTNERS);
+        /** @var Request $request */
+        $request = $this->getRequest();
+        $display = $this->params('display', Entity\Evaluation::DISPLAY_PARTNERS);
         $show = $this->params('show', 'proposals');
 
-        $source = $this->params('source', Form\MatrixFilter::SOURCE_VERSION);
+        $source = $this->params('source', MatrixFilter::SOURCE_VERSION);
         $typeId = $this->params('type', 1);
         $callId = $this->params('call');
 
-        $evaluationTypes = $this->projectService->findAll(Entity\Evaluation\Type::class);
-        $versionTypes = $this->projectService->findAll(Entity\Version\Type::class);
+        $evaluationTypes = $this->evaluationService->findAll(Entity\Type::class);
+        $versionTypes = $this->projectService->findAll(VersionType::class);
         $projects = [];
 
         /*
          * The form can be used to overrule some parameters. We therefore need to check if the form is set
          * posted correctly and need to update the params when the form has been post
          */
-        $form = new Form\MatrixFilter($this->entityManager);
+        $form = new MatrixFilter($this->entityManager);
 
-        $form->setData($this->getRequest()->getPost()->toArray());
+        $form->setData($request->getPost()->toArray());
 
-        if ($this->getRequest()->isPost() && $form->isValid()) {
+        if ($request->isPost() && $form->isValid()) {
             $formData = $form->getData();
 
-            $this->redirect()->toRoute(
+            return $this->redirect()->toRoute(
                 'community/evaluation/overview',
                 [
-                    'show'    => 'matrix',
-                    'type'    => $typeId,
-                    'source'  => (int)$formData['source'],
-                    'call'    => (int)$formData['call'],
+                    'show' => 'matrix',
+                    'type' => $typeId,
+                    'source' => (int)$formData['source'],
+                    'call' => (int)$formData['call'],
                     'display' => $display,
 
                 ]
             );
-        } else {
-            $form->setData(
-                [
-                    'call'   => $callId,
-                    'source' => $source,
-                ]
-            );
         }
+
+
+        $form->setData(
+            [
+                'call' => $callId,
+                'source' => $source,
+            ]
+        );
+
 
         /** @var Call $call */
         $call = $this->callService->findCallById((int)$callId);
-        /** @var Entity\Evaluation\Type $evaluationType */
-        $evaluationType = $this->evaluationService->find(Entity\Evaluation\Type::class, (int)$typeId);
+        /** @var Entity\Type $evaluationType */
+        $evaluationType = $this->evaluationService->find(Entity\Type::class, (int)$typeId);
         $fundingStatuses = $this->evaluationService->getFundingStatusList(
             $this->evaluationService->parseMainEvaluationType($evaluationType)
         );
-        /** @var Entity\Version\Type $versionType */
+        /** @var VersionType $versionType */
         $versionType = $this->projectService->find(
-            Entity\Version\Type::class,
+            VersionType::class,
             $evaluationType->getVersionType()
         );
         $viewParameters = [];
@@ -197,12 +179,12 @@ final class EvaluationController extends AbstractActionController
                 break;
             case 'matrix':
                 switch ($evaluationType->getId()) {
-                    case Entity\Evaluation\Type::TYPE_PO_EVALUATION:
-                    case Entity\Evaluation\Type::TYPE_FPP_EVALUATION:
+                    case Entity\Type::TYPE_PO_EVALUATION:
+                    case Entity\Type::TYPE_FPP_EVALUATION:
                         // Collect the data add it in the matrix
                         $projects = $this->projectService->findProjectsByCallAndVersionType($call, $versionType);
                         break;
-                    case Entity\Evaluation\Type::TYPE_FUNDING_STATUS:
+                    case Entity\Type::TYPE_FUNDING_STATUS:
                     default:
                         $which = ProjectService::WHICH_ONLY_ACTIVE;
 
@@ -226,24 +208,24 @@ final class EvaluationController extends AbstractActionController
         }
 
         return new ViewModel(
-            \array_merge_recursive(
+            array_merge_recursive(
                 [
-                    'isEvaluation'    => $this->evaluationService->isEvaluation($evaluationType),
-                    'projects'        => $projects,
+                    'isEvaluation' => $this->evaluationService->isEvaluation($evaluationType),
+                    'projects' => $projects,
                     'fundingStatuses' => $fundingStatuses,
                     'evaluationTypes' => $evaluationTypes,
-                    'versionTypes'    => $versionTypes,
-                    'call'            => $call,
-                    'contactCountry'  => $this->contactService->parseCountry($this->identity()),
-                    'show'            => $show,
-                    'typeId'          => $typeId,
-                    'source'          => $source,
-                    'display'         => (int)$display,
-                    'form'            => $form,
-                    'generalService'  => $this->generalService,
-                    'projectService'  => $this->projectService,
-                    'countryService'  => $this->countryService,
-                    'evaluation'      => new Entity\Evaluation\Evaluation(),
+                    'versionTypes' => $versionTypes,
+                    'call' => $call,
+                    'contactCountry' => $this->contactService->parseCountry($this->identity()),
+                    'show' => $show,
+                    'typeId' => $typeId,
+                    'source' => $source,
+                    'display' => (int)$display,
+                    'form' => $form,
+                    'generalService' => $this->generalService,
+                    'projectService' => $this->projectService,
+                    'countryService' => $this->countryService,
+                    'evaluation' => new Entity\Evaluation(),
                 ],
                 $viewParameters
             )
@@ -257,19 +239,19 @@ final class EvaluationController extends AbstractActionController
 
         /** @var Call $call */
         $call = $this->callService->findCallById((int)$callId);
-        /** @var Entity\Evaluation\Type $evaluationType */
-        $evaluationType = $this->projectService->find(Entity\Evaluation\Type::class, (int)$typeId);
-        /** @var Entity\Version\Type $versionType */
+        /** @var Entity\Type $evaluationType */
+        $evaluationType = $this->evaluationService->find(Entity\Type::class, (int)$typeId);
+        /** @var VersionType $versionType */
         $versionType = $this->projectService
-            ->find(Entity\Version\Type::class, $evaluationType->getVersionType());
+            ->find(VersionType::class, $evaluationType->getVersionType());
 
         $fileName = sprintf('%s Evaluation Overview (%s).xlsx', $evaluationType, (string)$call);
 
         /*
          * delete the file
          */
-        if (\file_exists(\sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName)) {
-            unlink(\sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName);
+        if (file_exists(sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName)) {
+            unlink(sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName);
         }
 
         $xls = new Spreadsheet();
@@ -291,9 +273,8 @@ final class EvaluationController extends AbstractActionController
 
         $row = 1;
 
-        /** @var Entity\Project $project */
+        /** @var Project $project */
         foreach ($projects as $project) {
-            /** @var ProjectService $projectService */
             $sheet->setCellValue('A' . $row, $project->parseFullName());
             $sheet->setCellValue('B' . $row, 'Country');
             $sheet->setCellValue('C' . $row, 'Eligibility');
@@ -308,13 +289,14 @@ final class EvaluationController extends AbstractActionController
             $sheet->getStyle($cell)->getFill()->getStartColor()->setRGB('CCCCCC');
 
             //Find the latest version of the version type
-            $latestVersion = $this->projectService->getLatestProjectVersion($project, $versionType);
+            /** @var Version $latestVersion */
+            $latestVersion = $this->projectService->getLatestNotRejectedProjectVersion($project, $versionType);
             $totalEffort = $this->versionService->findTotalEffortVersion($latestVersion);
             $evaluationResult = $this->createEvaluation(
                 [$project],
                 $evaluationType,
-                Entity\Evaluation\Evaluation::DISPLAY_EFFORT,
-                Form\MatrixFilter::SOURCE_VERSION
+                Entity\Evaluation::DISPLAY_EFFORT,
+                MatrixFilter::SOURCE_VERSION
             );
 
             //Create also a new row when a new country is added
@@ -323,13 +305,10 @@ final class EvaluationController extends AbstractActionController
             /*
              * Add now the countries to the excel
              */
-            foreach ($this->countryService->findCountryByProject(
-                $project,
-                AffiliationService::WHICH_ONLY_ACTIVE
-            ) as $country) {
+            foreach ($this->countryService->findCountryByProject($project) as $country) {
                 $projectEvaluation = $evaluationResult[$country->getId()][$project->getId()];
                 /**
-                 * @var $evaluation Entity\Evaluation\Evaluation
+                 * @var $evaluation Entity\Evaluation
                  */
                 $evaluation = $projectEvaluation['evaluation'];
                 $value = $projectEvaluation['value'];
@@ -344,13 +323,13 @@ final class EvaluationController extends AbstractActionController
                 if ($totalEffort != 0) {
                     $sheet->setCellValue(
                         'E' . $row,
-                        \sprintf("%s%%", number_format(($value / $totalEffort) * 100, 0, '.', ','))
+                        sprintf("%s%%", number_format(($value / $totalEffort) * 100))
                     );
                 }
                 $sheet->setCellValue('F' . $row, $evaluation->getStatus()->getStatusFunding());
                 $sheet->getStyle('F' . $row)->getFill()->setFillType(Fill::FILL_SOLID);
                 $sheet->getStyle('F' . $row)->getFill()->getStartColor()->setRGB(
-                    \strtoupper($evaluation->getStatus()->getColor())
+                    strtoupper($evaluation->getStatus()->getColor())
                 );
                 $sheet->setCellValue('G' . $row, $evaluation->getDescription());
                 $sheet->getStyle('G' . $row)->getAlignment()->setWrapText(true);
@@ -391,17 +370,17 @@ final class EvaluationController extends AbstractActionController
             return $this->notFoundAction();
         }
 
-        /** @var Entity\Evaluation\Type $evaluationType */
-        $evaluationType = $this->projectService
-            ->find(Entity\Evaluation\Type::class, (int)$routeMatch->getParam('type'));
-        $project = $this->projectService->findProjectById((int) $routeMatch->getParam('project'));
+        /** @var Entity\Type $evaluationType */
+        $evaluationType = $this->evaluationService
+            ->find(Entity\Type::class, (int)$routeMatch->getParam('type'));
+        $project = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
 
         if (null === $project) {
             return $this->notFoundAction();
         }
 
-        /** @var Entity\Evaluation\Type $evaluationTypes */
-        $evaluationTypes = $this->projectService->findAll(Entity\Evaluation\Type::class);
+        /** @var Entity\Type $evaluationTypes */
+        $evaluationTypes = $this->evaluationService->findAll(Entity\Type::class);
         $data = $this->getRequest()->getPost()->toArray();
         /*
          * The evaluation can be there, or be null, then we need to create it.
@@ -409,7 +388,7 @@ final class EvaluationController extends AbstractActionController
         $evaluation = $this->evaluationService
             ->findEvaluationByCountryAndTypeAndProject($country, $evaluationType, $project);
         if (null === $evaluation) {
-            $evaluation = new Entity\Evaluation\Evaluation();
+            $evaluation = new Entity\Evaluation();
             $evaluation->setProject($project);
             $evaluation->setContact($this->identity());
             $evaluation->setType($evaluationType);
@@ -418,10 +397,10 @@ final class EvaluationController extends AbstractActionController
         $form = $this->formService->prepare($evaluation, $data);
 
         /** Remove the fields not present in this view */
-        $form->getInputFilter()->get('project_entity_evaluation_evaluation')->get('contact')->setRequired(false);
-        $form->getInputFilter()->get('project_entity_evaluation_evaluation')->get('country')->setRequired(false);
-        $form->getInputFilter()->get('project_entity_evaluation_evaluation')->get('type')->setRequired(false);
-        $form->getInputFilter()->get('project_entity_evaluation_evaluation')->get('project')->setRequired(false);
+        $form->getInputFilter()->get('evaluation_entity_evaluation')->get('contact')->setRequired(false);
+        $form->getInputFilter()->get('evaluation_entity_evaluation')->get('country')->setRequired(false);
+        $form->getInputFilter()->get('evaluation_entity_evaluation')->get('type')->setRequired(false);
+        $form->getInputFilter()->get('evaluation_entity_evaluation')->get('project')->setRequired(false);
 
         if ($this->getRequest()->isPost()) {
             if (isset($data['cancel'])) {
@@ -429,22 +408,22 @@ final class EvaluationController extends AbstractActionController
                     'community/evaluation/overview-project',
                     [
                         'country' => $country->getId(),
-                        'type'    => $evaluationType->getId(),
+                        'type' => $evaluationType->getId(),
                         'project' => $project->getId(),
                     ]
                 );
             }
 
             if ($form->isValid()) {
-                /** @var Entity\Evaluation\Evaluation $evaluation */
+                /** @var Entity\Evaluation $evaluation */
                 $evaluation = $form->getData();
-                $this->projectService->save($evaluation);
+                $this->evaluationService->save($evaluation);
 
                 return $this->redirect()->toRoute(
                     'community/evaluation/overview-project',
                     [
                         'country' => $country->getId(),
-                        'type'    => $evaluationType->getId(),
+                        'type' => $evaluationType->getId(),
                         'project' => $project->getId(),
                     ]
                 );
@@ -453,27 +432,26 @@ final class EvaluationController extends AbstractActionController
         /*
          * Check to see if we have an active version
          */
-        /** @var Entity\Version\Type $versionType */
+        /** @var VersionType $versionType */
         $versionType = $this->versionService
-            ->find(Entity\Version\Type::class, $evaluationType->getVersionType());
+            ->find(VersionType::class, $evaluationType->getVersionType());
         $version = $this->versionService->findLatestVersionByType($project, $versionType);
 
         return new ViewModel(
             [
-                'evaluation'      => $evaluation,
-                'evaluationType'  => $evaluationType,
+                'evaluation' => $evaluation,
+                'evaluationType' => $evaluationType,
                 'evaluationTypes' => $evaluationTypes,
-                'version'         => $version,
-                'form'            => $form,
+                'version' => $version,
+                'form' => $form,
             ]
         );
     }
 
     public function editAction()
     {
-        /** @var Entity\Evaluation\Evaluation $evaluation */
-        $evaluation = $this->evaluationService
-            ->find(Entity\Evaluation\Evaluation::class, (int)$this->params('id'));
+        /** @var Entity\Evaluation $evaluation */
+        $evaluation = $this->evaluationService->find(Entity\Evaluation::class, (int)$this->params('id'));
 
         if (null === $evaluation) {
             return $this->notFoundAction();
@@ -499,7 +477,7 @@ final class EvaluationController extends AbstractActionController
                 $this->evaluationService->delete($evaluation);
 
                 $this->flashMessenger()->addSuccessMessage(
-                    \sprintf(
+                    sprintf(
                         $this->translator->translate('txt-%s-evaluation-%s-has-successfully-been-updated'),
                         $evaluation->getType()->getType(),
                         $evaluation->getProject()
@@ -516,13 +494,13 @@ final class EvaluationController extends AbstractActionController
 
             if ($form->isValid()) {
                 /**
-                 * @var $evaluation Entity\Evaluation\Evaluation
+                 * @var $evaluation Entity\Evaluation
                  */
                 $evaluation = $form->getData();
                 $this->evaluationService->save($evaluation);
 
                 $this->flashMessenger()->addSuccessMessage(
-                    \sprintf(
+                    sprintf(
                         $this->translator->translate('txt-%s-evaluation-%s-has-successfully-been-updated'),
                         $evaluation->getType()->getType(),
                         $evaluation->getProject()
@@ -554,7 +532,7 @@ final class EvaluationController extends AbstractActionController
             $this->getRequest()->getPost()->toArray()
         );
 
-        $evaluation = new Entity\Evaluation\Evaluation();
+        $evaluation = new Entity\Evaluation();
         $form = $this->formService->prepare($evaluation, $data);
         $form->setAttribute('class', 'form-horizontal');
         $form->remove('delete');
@@ -573,7 +551,7 @@ final class EvaluationController extends AbstractActionController
 
             if ($form->isValid()) {
                 /**
-                 * @var $evaluation Entity\Evaluation\Evaluation
+                 * @var $evaluation Entity\Evaluation
                  */
                 $evaluation = $form->getData();
                 $this->evaluationService->save($evaluation);
@@ -605,53 +583,51 @@ final class EvaluationController extends AbstractActionController
             return $this->notFoundAction();
         }
         $country = $this->generalService->find(Country::class, (int)$routeMatch->getParam('country'));
-        /** @var Entity\Evaluation\Type $evaluationType */
-        $evaluationType = $this->projectService
-            ->find(Entity\Evaluation\Type::class, (int)$routeMatch->getParam('type'));
-        $project = $this->projectService->findProjectById((int) $routeMatch->getParam('project'));
+        /** @var Entity\Type $evaluationType */
+        $evaluationType = $this->evaluationService
+            ->find(Entity\Type::class, (int)$routeMatch->getParam('type'));
+        $project = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
 
         if (null === $project) {
             return $this->notFoundAction();
         }
 
-        $evaluationTypes = $this->projectService->findAll(Entity\Evaluation\Type::class);
+        $evaluationTypes = $this->evaluationService->findAll(Entity\Type::class);
         $countries = $this->countryService->findCountryByProject(
-            $project,
-            AffiliationService::WHICH_ONLY_ACTIVE
+            $project
         );
         /*
          * Check to see if we have an active version
          */
-        /** @var Entity\Version\Type $versionType */
+        /** @var VersionType $versionType */
         $versionType = $this->versionService
-            ->find(Entity\Version\Type::class, $evaluationType->getVersionType());
+            ->find(VersionType::class, $evaluationType->getVersionType());
         $version = $this->versionService->findLatestVersionByType($project, $versionType);
         $evaluationResult = $this->createEvaluation(
             [$project],
             $evaluationType,
-            Entity\Evaluation\Evaluation::DISPLAY_EFFORT,
-            Form\MatrixFilter::SOURCE_VERSION
+            Entity\Evaluation::DISPLAY_EFFORT,
+            MatrixFilter::SOURCE_VERSION
         );
 
         return new ViewModel(
             [
-                'country'          => $country,
-                'countries'        => $countries,
-                'totalEffort'      => null !== $version ? $this->versionService->findTotalEffortVersion($version)
+                'country' => $country,
+                'countries' => $countries,
+                'totalEffort' => null !== $version ? $this->versionService->findTotalEffortVersion($version)
                     : 0,
-                'contactCountry'   => $this->contactService->parseCountry(
-                    $this->zfcUserAuthentication()
-                        ->getIdentity()
+                'contactCountry' => $this->contactService->parseCountry(
+                    $this->identity()
                 ),
-                'projectService'   => $this->projectService,
-                'generalService'   => $this->generalService,
-                'versionService'   => $this->versionService,
-                'evaluationType'   => $evaluationType,
-                'evaluationTypes'  => $evaluationTypes,
+                'projectService' => $this->projectService,
+                'generalService' => $this->generalService,
+                'versionService' => $this->versionService,
+                'evaluationType' => $evaluationType,
+                'evaluationTypes' => $evaluationTypes,
                 'evaluationResult' => $evaluationResult,
-                'version'          => $version,
-                'project'          => $project,
-                'versionType'      => $versionType,
+                'version' => $version,
+                'project' => $project,
+                'versionType' => $versionType,
             ]
         );
     }
@@ -666,30 +642,29 @@ final class EvaluationController extends AbstractActionController
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 
-        /** @var Entity\Evaluation\Type $evaluationType */
-        $evaluationType = $this->projectService
-            ->find(Entity\Evaluation\Type::class, (int)$routeMatch->getParam('type'));
-        $project = $this->projectService->findProjectById((int) $routeMatch->getParam('project'));
+        /** @var Entity\Type $evaluationType */
+        $evaluationType = $this->evaluationService
+            ->find(Entity\Type::class, (int)$routeMatch->getParam('type'));
+        $project = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
 
         if (null === $project) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 
         $countries = $this->countryService->findCountryByProject(
-            $project,
-            AffiliationService::WHICH_ONLY_ACTIVE
+            $project
         );
         /*
          * Check to see if we have an active version
          */
-        /** @var Entity\Version\Type $versionType */
+        /** @var VersionType $versionType */
         $versionType = $this->versionService
-            ->find(Entity\Version\Type::class, $evaluationType->getVersionType());
+            ->find(VersionType::class, $evaluationType->getVersionType());
         $evaluationResult = $this->createEvaluation(
             [$project],
             $evaluationType,
-            Entity\Evaluation\Evaluation::DISPLAY_EFFORT,
-            Form\MatrixFilter::SOURCE_VERSION
+            Entity\Evaluation::DISPLAY_EFFORT,
+            MatrixFilter::SOURCE_VERSION
         );
 
         //Find the corresponding feedback
@@ -719,7 +694,7 @@ final class EvaluationController extends AbstractActionController
                 'attachment; filename="evaluation-overview-' . $project->parseFullName() . '.pdf"'
             )
             ->addHeaderLine('Content-Type: application/pdf')
-            ->addHeaderLine('Content-Length', \strlen($projectEvaluationOverview->getPDFData()));
+            ->addHeaderLine('Content-Length', strlen($projectEvaluationOverview->getPDFData()));
         $response->setContent($projectEvaluationOverview->getPDFData());
 
         return $response;

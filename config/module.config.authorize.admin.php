@@ -15,6 +15,50 @@ return [
              */
             Route::class => [
                 [
+                    'route' => 'zfcadmin/evaluation/reviewer',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/roster',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/list',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/new',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/edit',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/delete',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/contact',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/contact/list',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/contact/view',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/contact/edit',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/reviewer/contact/new',
+                    'roles' => ['office'],
+                ],
+                [
                     'route' => 'zfcadmin/project/evaluation/edit',
                     'roles' => ['office'],
                 ],
@@ -27,153 +71,174 @@ return [
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/upload',
+                    'route' => 'zfcadmin/evaluation/report/migrate',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/download',
+                    'route' => 'zfcadmin/evaluation/report/upload',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/list',
+                    'route' => 'zfcadmin/evaluation/report/download',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/create-from-report',
+                    'route' => 'zfcadmin/evaluation/report/presentation',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/create-from-version',
+                    'route' => 'zfcadmin/evaluation/report/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/view',
+                    'route' => 'zfcadmin/evaluation/report/create-from-report',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/update',
+                    'route' => 'zfcadmin/evaluation/report/create-from-version',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/finalise',
+                    'route' => 'zfcadmin/evaluation/report/view',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/undo-final',
+                    'route' => 'zfcadmin/evaluation/report/update',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/edit',
+                    'route' => 'zfcadmin/evaluation/report/finalise',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/new',
+                    'route' => 'zfcadmin/evaluation/report/undo-final',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/list',
+                    'route' => 'zfcadmin/evaluation/report/criterion/edit',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/view',
+                    'route' => 'zfcadmin/evaluation/report/criterion/new',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/category/edit',
+                    'route' => 'zfcadmin/evaluation/report/criterion/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/category/new',
+                    'route' => 'zfcadmin/evaluation/report/criterion/view',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/category/list',
+                    'route' => 'zfcadmin/evaluation/report/criterion/category/edit',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/category/view',
+                    'route' => 'zfcadmin/evaluation/report/criterion/category/new',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/type/edit',
+                    'route' => 'zfcadmin/evaluation/report/criterion/category/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/type/new',
+                    'route' => 'zfcadmin/evaluation/report/criterion/category/view',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/type/list',
+                    'route' => 'zfcadmin/evaluation/report/criterion/type/edit',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/type/view',
+                    'route' => 'zfcadmin/evaluation/report/criterion/type/new',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/topic/edit',
+                    'route' => 'zfcadmin/evaluation/report/criterion/type/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/topic/new',
+                    'route' => 'zfcadmin/evaluation/report/criterion/type/view',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/topic/list',
+                    'route' => 'zfcadmin/evaluation/report/criterion/topic/edit',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/topic/view',
+                    'route' => 'zfcadmin/evaluation/report/criterion/topic/new',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/window/list',
+                    'route' => 'zfcadmin/evaluation/report/criterion/topic/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/window/view',
+                    'route' => 'zfcadmin/evaluation/report/criterion/topic/view',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/window/new',
+                    'route' => 'zfcadmin/evaluation/report/window/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/window/edit',
+                    'route' => 'zfcadmin/evaluation/report/window/view',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/version/edit',
+                    'route' => 'zfcadmin/evaluation/report/window/new',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/version/new',
+                    'route' => 'zfcadmin/evaluation/report/window/edit',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/version/list',
+                    'route' => 'zfcadmin/evaluation/report/version/edit',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/version/view',
+                    'route' => 'zfcadmin/evaluation/report/version/new',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/version/copy',
+                    'route' => 'zfcadmin/evaluation/report/version/list',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/version/edit',
+                    'route' => 'zfcadmin/evaluation/report/version/view',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/version/add',
+                    'route' => 'zfcadmin/evaluation/report/version/copy',
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/evaluation/report2/criterion/version/view',
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/edit',
                     'roles' => ['office'],
                 ],
+                [
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/add',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/evaluation/report/criterion/version/view',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/feedback/new',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/feedback/view',
+                    'roles' => ['office'],
+                ],
+                [
+                    'route' => 'zfcadmin/feedback/edit',
+                    'roles' => ['office'],
+                ],
+
             ],
         ],
     ],

@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -19,18 +15,16 @@ namespace Evaluation\InputFilter\Report\Criterion;
 
 use Doctrine\ORM\EntityManager;
 use DoctrineModule\Validator\UniqueObject;
-use Project\Entity\Evaluation\Report\Criterion\Category;
-use Zend\InputFilter\InputFilter;
+use Evaluation\Entity\Report\Criterion\Category;
+use Laminas\InputFilter\InputFilter;
 
 /**
  * Class CategoryFilter
+ *
  * @package Evaluation\InputFilter\Report\Criterion
  */
 final class CategoryFilter extends InputFilter
 {
-    /**
-     * @param EntityManager $entityManager
-     */
     public function __construct(EntityManager $entityManager)
     {
         $inputFilter = new InputFilter();
@@ -51,7 +45,7 @@ final class CategoryFilter extends InputFilter
                             'max'      => 100,
                         ],
                     ],
-                    /*[
+                    [
                         'name'    => UniqueObject::class,
                         'options' => [
                             'object_repository' => $entityManager->getRepository(Category::class),
@@ -59,7 +53,7 @@ final class CategoryFilter extends InputFilter
                             'use_context'       => true,
                             'fields'            => 'category',
                         ],
-                    ],*/
+                    ],
                 ],
             ]
         );

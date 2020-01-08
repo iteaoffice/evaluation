@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -7,7 +8,7 @@
  * @topic       Project
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -22,53 +23,42 @@ use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as PaginatorAdapter;
 use Evaluation\Controller\Plugin\GetFilter;
 use Evaluation\Entity\Report\Criterion;
-use Evaluation\Entity\Report\Result;
 use Evaluation\Form\Report\CriterionFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
 
 /**
- * Class Report2CriterionController
- *
- * @method GetFilter getProjectFilter()
- * @package Evaluation\Controller\Report
+ * @method GetFilter getEvaluationFilter()
  */
 final class CriterionController extends AbstractActionController
 {
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-
-    /**
-     * @var FormService
-     */
-    private $formService;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
+    private EntityManager $entityManager;
+    private TranslatorInterface $translator;
 
     public function __construct(
-        EntityManager           $entityManager,
         EvaluationReportService $evaluationReportService,
-        FormService             $formService
+        FormService $formService,
+        EntityManager $entityManager,
+        TranslatorInterface $translator
     ) {
-        $this->entityManager           = $entityManager;
         $this->evaluationReportService = $evaluationReportService;
-        $this->formService             = $formService;
+        $this->formService = $formService;
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
     }
 
     public function listAction()
     {
-        $page         = $this->params()->fromRoute('page', 1);
-        $filterPlugin = $this->getProjectFilter();
-        $query        = $this->evaluationReportService->findFiltered(Criterion::class, $filterPlugin->getFilter());
+        $page = $this->params()->fromRoute('page', 1);
+        $filterPlugin = $this->getEvaluationFilter();
+        $query = $this->evaluationReportService->findFiltered(Criterion::class, $filterPlugin->getFilter());
 
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
         $paginator::setDefaultItemCountPerPage(($page === 'all') ? PHP_INT_MAX : 20);
@@ -79,17 +69,17 @@ final class CriterionController extends AbstractActionController
         $form->setData(['filter' => $filterPlugin->getFilter()]);
 
         return new ViewModel([
-            'paginator'     => $paginator,
-            'form'          => $form,
+            'paginator' => $paginator,
+            'form' => $form,
             'encodedFilter' => urlencode($filterPlugin->getHash()),
-            'order'         => $filterPlugin->getOrder(),
-            'direction'     => $filterPlugin->getDirection(),
+            'order' => $filterPlugin->getOrder(),
+            'direction' => $filterPlugin->getDirection(),
         ]);
     }
 
     public function viewAction()
     {
-        $criterion = $this->evaluationReportService->find(Criterion::class, (int) $this->params('id'));
+        $criterion = $this->evaluationReportService->find(Criterion::class, (int)$this->params('id'));
 
         if ($criterion === null) {
             return $this->notFoundAction();
@@ -97,8 +87,7 @@ final class CriterionController extends AbstractActionController
 
         return new ViewModel([
             'criterion' => $criterion,
-            'results'   => $this->evaluationReportService->count(Result::class, ['criterion' => $criterion]),
-            'versions'  => $this->evaluationReportService->count(Criterion\Version::class, ['criterion' => $criterion])
+            'versions' => $this->evaluationReportService->count(Criterion\Version::class, ['criterion' => $criterion])
         ]);
     }
 
@@ -106,21 +95,21 @@ final class CriterionController extends AbstractActionController
     {
         /** @var Request $request */
         $request = $this->getRequest();
-        $data    = $request->getPost()->toArray();
-        $form    = $this->formService->prepare(new Criterion(), $data);
+        $data = $request->getPost()->toArray();
+        $form = $this->formService->prepare(new Criterion(), $data);
         $form->remove('delete');
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/list');
             }
 
             if ($form->isValid()) {
                 /** @var Criterion $criterion */
                 $criterion = $form->getData();
                 $this->evaluationReportService->save($criterion);
-               return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/view',
+                return $this->redirect()->toRoute(
+                    'zfcadmin/evaluation/report/criterion/view',
                     ['id' => $criterion->getId()]
                 );
             }
@@ -134,33 +123,32 @@ final class CriterionController extends AbstractActionController
     public function editAction()
     {
         /** @var Request $request */
-        $request   = $this->getRequest();
+        $request = $this->getRequest();
         /** @var Criterion $criterion */
-        $criterion = $this->evaluationReportService->find(Criterion::class, (int) $this->params('id'));
+        $criterion = $this->evaluationReportService->find(Criterion::class, (int)$this->params('id'));
 
         if ($criterion === null) {
             return $this->notFoundAction();
         }
 
-        $data        = $request->getPost()->toArray();
-        $form        = $this->formService->prepare($criterion, $data);
-        $hasResults  = ($this->evaluationReportService->count(Result::class, ['criterion' => $criterion]) > 0);
+        $data = $request->getPost()->toArray();
+        $form = $this->formService->prepare($criterion, $data);
         $hasVersions = ($this->evaluationReportService->count(
             Criterion\Version::class,
             ['criterion' => $criterion]
         ) > 0);
-        if ($hasResults || $hasVersions) {
+        if ($hasVersions) {
             $form->remove('delete');
         }
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/list');
             }
 
-            if (isset($data['delete']) && !$hasResults && !$hasVersions) {
+            if (isset($data['delete']) && ! $hasVersions) {
                 $this->evaluationReportService->delete($criterion);
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/list');
             }
 
             if ($form->isValid()) {
@@ -168,14 +156,14 @@ final class CriterionController extends AbstractActionController
                 $criterion = $form->getData();
                 $this->evaluationReportService->save($criterion);
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/view',
+                    'zfcadmin/evaluation/report/criterion/view',
                     ['id' => $criterion->getId()]
                 );
             }
         }
 
         return new ViewModel([
-            'form'      => $form,
+            'form' => $form,
             'criterion' => $criterion,
         ]);
     }

@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -21,6 +17,7 @@ use Evaluation\Repository\FilteredObjectRepository;
 use Evaluation\Entity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+
 use function class_implements;
 use function in_array;
 
@@ -30,10 +27,7 @@ use function in_array;
  */
 abstract class AbstractService
 {
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
+    protected EntityManager $entityManager;
 
     public function __construct(EntityManager $entityManager)
     {
@@ -44,7 +38,7 @@ abstract class AbstractService
     {
         /** @var FilteredObjectRepository $repository */
         $repository = $this->entityManager->getRepository($entity);
-        if (in_array(FilteredObjectRepository::class, class_implements($repository))) {
+        if (in_array(FilteredObjectRepository::class, class_implements($repository), true)) {
             return $repository->findFiltered($filter);
         }
         return null;
@@ -72,7 +66,7 @@ abstract class AbstractService
 
     public function save(Entity\AbstractEntity $entity): Entity\AbstractEntity
     {
-        if (!$this->entityManager->contains($entity)) {
+        if (! $this->entityManager->contains($entity)) {
             $this->entityManager->persist($entity);
         }
 

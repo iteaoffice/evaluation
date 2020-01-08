@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -17,16 +13,17 @@ declare(strict_types=1);
 
 namespace Evaluation\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Zend\Form\Annotation;
+use Project\Entity\Funding\Status;
+use Project\Entity\Version\Version;
+use Laminas\Form\Annotation;
 
 /**
- * Feedback.
- *
  * @ORM\Table(name="evaluation_feedback")
- * @ORM\Entity(repositoryClass="Project\Repository\Evaluation\Feedback")
- * @Annotation\Hydrator("Zend\Hydrator\ObjectProperty")
+ * @ORM\Entity(repositoryClass="Evaluation\Repository\FeedbackRepository")
+ * @Annotation\Hydrator("Laminas\Hydrator\ObjectProperty")
  * @Annotation\Name("evaluation_feedback")
  */
 class Feedback extends AbstractEntity
@@ -37,7 +34,7 @@ class Feedback extends AbstractEntity
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @Annotation\Exclude()
      *
-     * @var integer
+     * @var int
      */
     private $id;
     /**
@@ -45,14 +42,12 @@ class Feedback extends AbstractEntity
      * @Gedmo\Timestampable(on="update")
      * @Annotation\Exclude()
      *
-     * @var \DateTime
+     * @var DateTime
      */
     private $dateUpdated;
     /**
      * @ORM\OneToOne(targetEntity="Project\Entity\Version\Version", cascade="persist", inversedBy="feedback")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
      *      "target_class":"Project\Entity\Version\Version",
@@ -69,12 +64,12 @@ class Feedback extends AbstractEntity
      * )
      * @Annotation\Attributes({"label":"txt-version", "required":"true"})
      *
-     * @var \Project\Entity\Version\Version
+     * @var Version
      */
     private $version;
     /**
      * @ORM\Column(name="mandatory_improvements", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-mandatory-improvements","help-block": "txt-mandatory-improvements-explanation"})
      *
@@ -83,7 +78,7 @@ class Feedback extends AbstractEntity
     private $mandatoryImprovements;
     /**
      * @ORM\Column(name="recommended_improvements", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-recommended-improvements","help-block": "txt-recommended-improvements-explanation"})
      *
@@ -92,7 +87,7 @@ class Feedback extends AbstractEntity
     private $recommendedImprovements;
     /**
      * @ORM\Column(name="review_feedback", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-review-feedback","help-block": "txt-review-feedback-explanation"})
      *
@@ -101,7 +96,7 @@ class Feedback extends AbstractEntity
     private $reviewFeedback;
     /**
      * @ORM\Column(name="evaluation_feedback", type="text", nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Attributes({"rows":10})
      * @Annotation\Options({"label":"txt-evaluation-feedback","help-block": "txt-evaluation-feedback-explanation"})
      *
@@ -109,176 +104,121 @@ class Feedback extends AbstractEntity
      */
     private $evaluationFeedback;
     /**
+     * @ORM\Column(name="evaluation_conclusion", type="text", nullable=true)
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
+     * @Annotation\Attributes({"rows":10})
+     * @Annotation\Options({"label":"txt-evaluation-conclusion","help-block": "txt-evaluation-conclusion-explanation"})
+     *
+     * @var string
+     */
+    private $evaluationConclusion;
+    /**
      * @ORM\ManyToOne(targetEntity="Project\Entity\Funding\Status", cascade="persist", inversedBy="feedback")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="status_id", referencedColumnName="status_id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="status_id", referencedColumnName="status_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({"target_class":"Project\Entity\Funding\Status"})
      * @Annotation\Attributes({"label":"txt-evaluation-status", "required":"true"})
      *
-     * @var \Project\Entity\Funding\Status
+     * @var Status
      */
     private $status;
 
-    /**
-     * Magic Getter.
-     *
-     * @param $property
-     *
-     * @return mixed
-     */
-    public function __get($property)
-    {
-        return $this->$property;
-    }
-
-    /**
-     * Magic Setter.
-     *
-     * @param $property
-     * @param $value
-     */
-    public function __set($property, $value)
-    {
-        $this->$property = $value;
-    }
-
-    /**
-     * @param $property
-     *
-     * @return bool
-     */
-    public function __isset($property)
-    {
-        return isset($this->$property);
-    }
-
-    /**
-     * @return int
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId($id): Feedback
     {
         $this->id = $id;
+        return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDateUpdated()
+    public function getDateUpdated(): ?DateTime
     {
         return $this->dateUpdated;
     }
 
-    /**
-     * @param \DateTime $dateUpdated
-     */
-    public function setDateUpdated($dateUpdated)
+    public function setDateUpdated(DateTime $dateUpdated): Feedback
     {
         $this->dateUpdated = $dateUpdated;
+        return $this;
     }
 
-    /**
-     * @return \Project\Entity\Version\Version
-     */
-    public function getVersion()
+    public function getVersion(): ?Version
     {
         return $this->version;
     }
 
-    /**
-     * @param \Project\Entity\Version\Version $version
-     */
-    public function setVersion($version)
+    public function setVersion(Version $version): Feedback
     {
         $this->version = $version;
+        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getMandatoryImprovements()
+    public function getMandatoryImprovements(): ?string
     {
         return $this->mandatoryImprovements;
     }
 
-    /**
-     * @param string $mandatoryImprovements
-     */
-    public function setMandatoryImprovements($mandatoryImprovements)
+    public function setMandatoryImprovements(?string $mandatoryImprovements): Feedback
     {
         $this->mandatoryImprovements = $mandatoryImprovements;
+        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRecommendedImprovements()
+    public function getRecommendedImprovements(): ?string
     {
         return $this->recommendedImprovements;
     }
 
-    /**
-     * @param string $recommendedImprovements
-     */
-    public function setRecommendedImprovements($recommendedImprovements)
+    public function setRecommendedImprovements(?string $recommendedImprovements): Feedback
     {
         $this->recommendedImprovements = $recommendedImprovements;
+        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getReviewFeedback()
+    public function getReviewFeedback(): ?string
     {
         return $this->reviewFeedback;
     }
 
-    /**
-     * @param string $reviewFeedback
-     */
-    public function setReviewFeedback($reviewFeedback)
+    public function setReviewFeedback(?string $reviewFeedback): Feedback
     {
         $this->reviewFeedback = $reviewFeedback;
+        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getEvaluationFeedback()
+    public function getEvaluationFeedback(): ?string
     {
         return $this->evaluationFeedback;
     }
 
-    /**
-     * @param string $evaluationFeedback
-     */
-    public function setEvaluationFeedback($evaluationFeedback)
+    public function setEvaluationFeedback(string $evaluationFeedback): Feedback
     {
         $this->evaluationFeedback = $evaluationFeedback;
+        return $this;
     }
 
-    /**
-     * @return \Project\Entity\Funding\Status
-     */
-    public function getStatus()
+    public function getEvaluationConclusion(): ?string
+    {
+        return $this->evaluationConclusion;
+    }
+
+    public function setEvaluationConclusion(?string $evaluationConclusion): Feedback
+    {
+        $this->evaluationConclusion = $evaluationConclusion;
+        return $this;
+    }
+
+    public function getStatus(): ?Status
     {
         return $this->status;
     }
 
-    /**
-     * @param \Project\Entity\Funding\Status $status
-     */
-    public function setStatus($status)
+    public function setStatus(Status $status): Feedback
     {
         $this->status = $status;
+        return $this;
     }
 }

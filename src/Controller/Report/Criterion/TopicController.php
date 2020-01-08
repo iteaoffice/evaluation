@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -7,7 +8,7 @@
  * @topic       Project
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -24,43 +25,30 @@ use Evaluation\Entity\Report\Criterion\Topic;
 use Evaluation\Form\Report\Criterion\TopicFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Http\Request;
-use Zend\I18n\Translator\TranslatorInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
+
 use function ceil;
 use function urlencode;
 
 /**
- * Class TopicController
- *
- * @method GetFilter getProjectFilter()
+ * @method GetFilter getEvaluationFilter()
  * @method FlashMessenger flashMessenger()
- * @package Evaluation\Controller\Report
  */
 final class TopicController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-
-    /**
-     * @var FormService
-     */
-    private $formService;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
+    private TranslatorInterface $translator;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService,
-        TranslatorInterface     $translator
+        FormService $formService,
+        TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
@@ -70,7 +58,7 @@ final class TopicController extends AbstractActionController
     public function listAction()
     {
         $page         = $this->params()->fromRoute('page', 1);
-        $filterPlugin = $this->getProjectFilter();
+        $filterPlugin = $this->getEvaluationFilter();
         $query        = $this->evaluationReportService->findFiltered(Topic::class, $filterPlugin->getFilter());
 
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
@@ -113,7 +101,7 @@ final class TopicController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/topic/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/topic/list');
             }
 
             if ($form->isValid()) {
@@ -124,7 +112,7 @@ final class TopicController extends AbstractActionController
                     $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
                 );
                 return $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/topic/view',
+                    'zfcadmin/evaluation/report/criterion/topic/view',
                     ['id' => $topic->getId()]
                 );
             }
@@ -152,7 +140,7 @@ final class TopicController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/topic/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/topic/list');
             }
 
             if (isset($data['delete'])) {
@@ -160,7 +148,7 @@ final class TopicController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-deleted')
                 );
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/topic/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/topic/list');
             }
 
             if ($form->isValid()) {
@@ -170,8 +158,8 @@ final class TopicController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                     $this->translator->translate('txt-evaluation-report-criterion-topic-has-successfully-been-saved')
                 );
-                $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/topic/view',
+                return $this->redirect()->toRoute(
+                    'zfcadmin/evaluation/report/criterion/topic/view',
                     ['id' => $topic->getId()]
                 );
             }

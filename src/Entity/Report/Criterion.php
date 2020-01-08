@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -20,34 +16,28 @@ namespace Evaluation\Entity\Report;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Evaluation\Entity\AbstractEntity;
-use Zend\Form\Annotation;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Laminas\Form\Annotation;
 
 /**
- * Evaluation report criterion
- *
  * @ORM\Table(name="evaluation_report2_criterion")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\Report\CriterionRepository")
  */
 class Criterion extends AbstractEntity
 {
-    public const INPUT_TYPE_BOOL   = 1; // Input type is Yes/No
+    public const INPUT_TYPE_BOOL = 1; // Input type is Yes/No
     public const INPUT_TYPE_STRING = 2; // Input type is a single line textfield
-    public const INPUT_TYPE_TEXT   = 3; // Input type is a multi-line textarea
+    public const INPUT_TYPE_TEXT = 3; // Input type is a multi-line textarea
     public const INPUT_TYPE_SELECT = 4; // Input type is select box
 
-    /**
-     * Templates for the input types.
-     *
-     * @var array
-     */
-    protected static $inputTypeTemplates = [
-        self::INPUT_TYPE_BOOL   => 'txt-input-type-bool',
-        self::INPUT_TYPE_STRING => 'txt-input-type-string',
-        self::INPUT_TYPE_TEXT   => 'txt-input-type-text',
-        self::INPUT_TYPE_SELECT => 'txt-input-type-select',
-    ];
+    protected static array $inputTypeTemplates
+        = [
+            self::INPUT_TYPE_BOOL   => 'txt-input-type-bool',
+            self::INPUT_TYPE_STRING => 'txt-input-type-string',
+            self::INPUT_TYPE_TEXT   => 'txt-input-type-text',
+            self::INPUT_TYPE_SELECT => 'txt-input-type-select',
+        ];
 
     /**
      * @ORM\Column(name="criterion_id", type="integer", options={"unsigned":true})
@@ -61,7 +51,7 @@ class Criterion extends AbstractEntity
     /**
      *
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
-     * @Annotation\Type("\Zend\Form\Element\Number")
+     * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({
      *     "label":"txt-sequence",
      *     "help-block":"txt-evaluation-report-criterion-sequence-help-block"
@@ -73,7 +63,7 @@ class Criterion extends AbstractEntity
     private $sequence = 0;
     /**
      * @ORM\Column(name="criterion", type="string", nullable=false)
-     * @Annotation\Type("\Zend\Form\Element\Text")
+     * @Annotation\Type("\Laminas\Form\Element\Text")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-criterion-label",
      *     "help-block":"txt-evaluation-report-criterion-help-block"
@@ -84,7 +74,7 @@ class Criterion extends AbstractEntity
     private $criterion;
     /**
      * @ORM\Column(name="help_block", type="text", length=65535, nullable=true)
-     * @Annotation\Type("\Zend\Form\Element\Textarea")
+     * @Annotation\Type("\Laminas\Form\Element\Textarea")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-criterion-help-block-label",
      *     "help-block":"txt-evaluation-report-criterion-help-block-help-block"
@@ -95,7 +85,7 @@ class Criterion extends AbstractEntity
     private $helpBlock;
     /**
      * @ORM\Column(name="input_type", type="smallint", length=5, options={"unsigned":true}, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Radio")
+     * @Annotation\Type("Laminas\Form\Element\Radio")
      * @Annotation\Attributes({"array":"inputTypeTemplates"})
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-criterion-input-type-label",
@@ -107,7 +97,7 @@ class Criterion extends AbstractEntity
     private $inputType = self::INPUT_TYPE_STRING;
     /**
      * @ORM\Column(name="`values`", type="text", length=65535, nullable=true)
-     * @Annotation\Type("Zend\Form\Element\Textarea")
+     * @Annotation\Type("Laminas\Form\Element\Textarea")
      * @Annotation\Options({
      *     "label":"txt-evaluation-report-criterion-values-label",
      *     "help-block":"txt-evaluation-report-criterion-values-help-block-label"
@@ -117,8 +107,8 @@ class Criterion extends AbstractEntity
      */
     private $values;
     /**
-     * @ORM\Column(name="has_score", type="boolean", length=1, options={"unsigned":true}, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @ORM\Column(name="has_score", type="boolean", length=1, nullable=false)
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-has-score",
      *     "help-block":"txt-evaluation-report-criterion-has-score-help-block"
@@ -128,8 +118,8 @@ class Criterion extends AbstractEntity
      */
     private $hasScore = true;
     /**
-     * @ORM\Column(name="archived", type="boolean", length=1, options={"unsigned":true}, nullable=false)
-     * @Annotation\Type("Zend\Form\Element\Checkbox")
+     * @ORM\Column(name="archived", type="boolean", length=1, nullable=false)
+     * @Annotation\Type("Laminas\Form\Element\Checkbox")
      * @Annotation\Options({
      *     "label":"txt-archived",
      *     "help-block":"txt-evaluation-report-criterion-archived-help-block"
@@ -166,18 +156,32 @@ class Criterion extends AbstractEntity
 
     public function __construct()
     {
-        $this->versions    = new ArrayCollection();
+        $this->versions = new ArrayCollection();
         $this->reportTypes = new ArrayCollection();
-    }
-
-    public function __toString(): string
-    {
-        return (string) $this->criterion;
     }
 
     public static function getInputTypeTemplates(): array
     {
         return self::$inputTypeTemplates;
+    }
+
+    public function __toString(): string
+    {
+        return (string)$this->criterion;
+    }
+
+    public function addReportTypes(Collection $reportTypes): void
+    {
+        foreach ($reportTypes as $reportType) {
+            $this->reportTypes->add($reportType);
+        }
+    }
+
+    public function removeReportTypes(Collection $reportTypes): void
+    {
+        foreach ($reportTypes as $reportType) {
+            $this->reportTypes->removeElement($reportType);
+        }
     }
 
     public function getId(): ?int
@@ -229,15 +233,15 @@ class Criterion extends AbstractEntity
         return $this->inputType;
     }
 
-    public function parseInputType(): string
-    {
-        return self::$inputTypeTemplates[$this->inputType];
-    }
-
     public function setInputType(int $inputType): Criterion
     {
         $this->inputType = $inputType;
         return $this;
+    }
+
+    public function parseInputType(): string
+    {
+        return self::$inputTypeTemplates[$this->inputType];
     }
 
     public function getValues(): ?string
@@ -293,19 +297,5 @@ class Criterion extends AbstractEntity
     {
         $this->reportTypes = $reportTypes;
         return $this;
-    }
-
-    public function addTopicReportTypes(Collection $reportTypes): void
-    {
-        foreach ($reportTypes as $reportType) {
-            $this->reportTypes->add($reportType);
-        }
-    }
-
-    public function removeTopicReportTypes(Collection $reportTypes): void
-    {
-        foreach ($reportTypes as $reportType) {
-            $this->reportTypes->removeElement($reportType);
-        }
     }
 }

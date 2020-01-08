@@ -1,0 +1,30 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-edit-feedback")) %}
+
+<h1>{{ translate("txt-edit-feedback") }}</h1>
+
+{% do form.prepare() %}
+{{ form().openTag(form)|raw }}
+
+{% set feedback = form.get('evaluation_entity_feedback') %}
+
+<fieldset>
+    {{ ztbformelement(feedback.get('version')) }}
+    {{ ztbformelement(feedback.get('status')) }}
+    {{ ztbformelement(feedback.get('mandatoryImprovements')) }}
+    {{ ztbformelement(feedback.get('recommendedImprovements')) }}
+    {{ ztbformelement(feedback.get('reviewFeedback')) }}
+    {{ ztbformelement(feedback.get('evaluationFeedback')) }}
+    {{ ztbformelement(feedback.get('evaluationConclusion')) }}
+</fieldset>
+
+<div class="form-group row">
+    <div class="offset-sm-3 col-sm-9">
+        {{ ztbformelement(form.get('csrf')) }}
+        {{ ztbformelement(form.get('submit')) }}
+        {{ ztbformelement(form.get('delete')) }}
+        {{ ztbformelement(form.get('cancel')) }}
+    </div>
+</div>
+
+{{ form().closeTag()|raw }}

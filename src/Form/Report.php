@@ -1,11 +1,12 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
  * @category    Content
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  */
 
 declare(strict_types=1);
@@ -19,11 +20,11 @@ use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result;
 use Evaluation\InputFilter\Report\ResultFilter;
 use Evaluation\Service\EvaluationReportService;
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
-use Zend\InputFilter\CollectionInputFilter;
-use Zend\InputFilter\InputFilter;
+use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Form;
+use Laminas\InputFilter\CollectionInputFilter;
+use Laminas\InputFilter\InputFilter;
 
 /**
  * Class Report
@@ -32,9 +33,9 @@ use Zend\InputFilter\InputFilter;
 final class Report extends Form
 {
     public function __construct(
-        EvaluationReport        $report,
+        EvaluationReport $report,
         EvaluationReportService $reportService,
-        EntityManager           $entityManager
+        EntityManager $entityManager
     ) {
         parent::__construct($report->get('underscore_entity_name'));
         $this->setAttributes(
@@ -170,7 +171,9 @@ final class Report extends Form
         $scores = ($report->getProjectReportReport() === null)
             ? $report::getVersionScores() : $report::getReportScores();
         $translatedScores = array_map(
-            function ($scoreLabel) { return _($scoreLabel); },
+            function ($scoreLabel) {
+                return _($scoreLabel);
+            },
             $scores
         );
         $this->add(

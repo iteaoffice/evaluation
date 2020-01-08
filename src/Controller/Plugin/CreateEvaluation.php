@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -31,7 +27,8 @@ use Project\Form\MatrixFilter;
 use Evaluation\Service\EvaluationService;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+
 use function round;
 use function ucwords;
 
@@ -41,33 +38,18 @@ use function ucwords;
  */
 final class CreateEvaluation extends AbstractPlugin
 {
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-    /**
-     * @var VersionService
-     */
-    private $versionService;
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
-    /**
-     * @var AffiliationService
-     */
-    private $affiliationService;
-    /**
-     * @var CountryService
-     */
-    private $countryService;
+    private ProjectService $projectService;
+    private VersionService $versionService;
+    private EvaluationService $evaluationService;
+    private AffiliationService $affiliationService;
+    private CountryService $countryService;
 
     public function __construct(
-        ProjectService     $projectService,
-        VersionService     $versionService,
-        EvaluationService  $evaluationService,
+        ProjectService $projectService,
+        VersionService $versionService,
+        EvaluationService $evaluationService,
         AffiliationService $affiliationService,
-        CountryService     $countryService
+        CountryService $countryService
     ) {
         $this->projectService     = $projectService;
         $this->versionService     = $versionService;
@@ -83,10 +65,12 @@ final class CreateEvaluation extends AbstractPlugin
 
         /** @var Project $project */
         foreach ($projects as $project) {
-            foreach ($this->countryService->findCountryByProject(
-                $project,
-                AffiliationService::WHICH_ONLY_ACTIVE
-            ) as $country) {
+            foreach (
+                $this->countryService->findCountryByProject(
+                    $project,
+                    AffiliationService::WHICH_ONLY_ACTIVE
+                ) as $country
+            ) {
                 $iso3 = $country->getIso3();
                 /*
                  * Create an array of countries to serialize it normally
@@ -136,7 +120,7 @@ final class CreateEvaluation extends AbstractPlugin
                 if ($this->evaluationService->isEvaluation($evaluationType)) {
                     $version = $this->versionService->findLatestVersionByType($project, $versionType);
                 } else {
-                    $version = $this->projectService->getLatestProjectVersion($project);
+                    $version = $this->projectService->getLatestApprovedProjectVersion($project);
                 }
 
                 /*

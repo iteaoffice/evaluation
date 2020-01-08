@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -19,12 +15,13 @@ namespace Evaluation\Form;
 
 use Doctrine\ORM\EntityManager;
 use Program\Entity\Call\Call;
-use Project\Entity\Evaluation\Report2 as EvaluationReport;
-use Project\Entity\Evaluation\Report2\Type as ReportType;
-use Project\Service\EvaluationReport2Service as EvaluationReportService;
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
+use Evaluation\Entity\Report as EvaluationReport;
+use Evaluation\Entity\Report\Type as ReportType;
+use Evaluation\Service\EvaluationReportService;
+use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Form;
+
 use function array_combine;
 use function array_reverse;
 use function date;
@@ -33,7 +30,7 @@ use function sprintf;
 
 /**
  * Class ReportFilter
- * @package Project\Form\Evaluation\Report2
+ * @package Evaluation\Form
  */
 final class ReportFilter extends Form
 {
@@ -155,16 +152,6 @@ final class ReportFilter extends Form
                 'id'    => 'submit',
                 'class' => 'btn btn-primary',
                 'value' => _('txt-filter'),
-            ],
-        ]);
-
-        $this->add([
-            'type'       => Element\Submit::class,
-            'name'       => 'presentation',
-            'attributes' => [
-                'id'    => 'submit',
-                'class' => 'btn btn-primary',
-                'value' => _('txt-download-presentation'),
             ],
         ]);
 

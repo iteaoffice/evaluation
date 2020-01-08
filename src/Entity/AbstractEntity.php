@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ITEA Office all rights reserved
  *
@@ -13,7 +14,8 @@ declare(strict_types=1);
 namespace Evaluation\Entity;
 
 use InvalidArgumentException;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+
 use function array_slice;
 use function explode;
 use function implode;
@@ -28,8 +30,6 @@ use function strtolower;
  */
 abstract class AbstractEntity implements Entity, ResourceInterface
 {
-    abstract public function getId(): ?int;
-
     public function getResourceId(): string
     {
         return sprintf('%s:%s', $this->get('full_entity_name'), $this->getId());
@@ -48,28 +48,30 @@ abstract class AbstractEntity implements Entity, ResourceInterface
                 return strtolower(implode('_', explode('\\', $this->get('class_name'))));
             case 'entity_fieldset_name':
                 return sprintf(
-                    "%sFieldset",
+                    '%sFieldset',
                     str_replace('Entity\\', 'Form\\', $this->get('class_name'))
                 ); //Run\Form\RunFieldset
             case 'entity_form_name':
                 return sprintf(
-                    "%sForm",
+                    '%sForm',
                     str_replace('Entity\\', 'Form\\', $this->get('class_name'))
                 ); //Run\Form\RunForm
             case 'entity_inputfilter_name':
                 return sprintf(
-                    "%sFilter",
+                    '%sFilter',
                     str_replace('Entity\\', 'InputFilter\\', $this->get('class_name'))
                 ); //Run\InputFilter\RunFilter
             case 'entity_assertion_name':
                 return sprintf(
-                    "%s",
+                    '%s',
                     str_replace('Entity', 'Acl\\Assertion', $this->get('class_name'))
                 ); //Run\Acl\Assertion\Run
             default:
-                throw new InvalidArgumentException(sprintf("Unknown option %s for get entity name", $what));
+                throw new InvalidArgumentException(sprintf('Unknown option %s for get entity name', $what));
         }
     }
+
+    abstract public function getId();
 
     public function __toString(): string
     {

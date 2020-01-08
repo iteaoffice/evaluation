@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -20,29 +16,38 @@ namespace Evaluation\Acl\Assertion;
 use Admin\Entity\Access;
 use Interop\Container\ContainerInterface;
 use Evaluation\Entity\Report as EvaluationReport;
-use Project\Entity\Report\Review as ReportReview;
-use Project\Entity\Version\Review as VersionReview;
+use Project\Entity\Report\Reviewer as ReportReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Evaluation\Service\EvaluationReportService;
-use Zend\Permissions\Acl\Acl;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Project\Service\ProjectService;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
+
+use function count;
 
 /**
- * Class Report
- * @package Project\Acl\Assertion\Evaluation
+ * Class ReportAssertion
+ * @package Evaluation\Acl\Assertion
  */
-final class Report extends AbstractAssertion
+final class ReportAssertion extends AbstractAssertion
 {
     /**
      * @var EvaluationReportService
      */
     private $evaluationReportService;
 
+    /**
+     * @var ProjectService
+     */
+    private $projectService;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
 
         $this->evaluationReportService = $container->get(EvaluationReportService::class);
+        $this->projectService          = $container->get(ProjectService::class);
     }
 
     public function assert(
@@ -64,21 +69,19 @@ final class Report extends AbstractAssertion
                     return true;
                 }
 
-                $reportReviewId  = $this->getRouteMatch()->getParam('reportReview');
-                $versionReviewId = $this->getRouteMatch()->getParam('versionReview');
+                $reportReviewId  = $this->getRouteMatch()->getParam('reportReviewer');
+                $versionReviewId = $this->getRouteMatch()->getParam('versionReviewer');
 
                 if ($reportReviewId) {
-                    /** @var ReportReview $reportReview */
-                    $reportReview = $this->evaluationReportService
-                        ->find(ReportReview::class, (int)$reportReviewId);
+                    /** @var ReportReviewer $reportReview */
+                    $reportReview = $this->projectService->find(ReportReviewer::class, (int)$reportReviewId);
 
                     return (($reportReview !== null) && ($reportReview->getContact()->getId() === $contact->getId()));
                 }
 
                 if ($versionReviewId) {
-                    /** @var VersionReview $versionReview */
-                    $versionReview = $this->evaluationReportService
-                        ->find(VersionReview::class, (int)$versionReviewId);
+                    /** @var VersionReviewer $versionReview */
+                    $versionReview = $this->projectService->find(VersionReviewer::class, (int)$versionReviewId);
 
                     return (($versionReview !== null) && ($versionReview->getContact()->getId() === $contact->getId()));
                 }
@@ -95,10 +98,10 @@ final class Report extends AbstractAssertion
                     return true;
                 }
 
-                $reportReviews  = $contact->getProjectReportReview();
-                $versionReviews = $contact->getProjectVersionReview();
+                $reportReviews  = $contact->getProjectReportReviewers();
+                $versionReviews = $contact->getProjectVersionReviewers();
 
-                return ((\count($reportReviews) + \count($versionReviews)) > 0);
+                return ((count($reportReviews) + count($versionReviews)) > 0);
 
             case 'view':
             case 'download':
@@ -112,7 +115,7 @@ final class Report extends AbstractAssertion
                 }
 
                 // When no evaluation report is set, get it by ID from the route param
-                if (!($evaluationReport instanceof EvaluationReport)) {
+                if (! ($evaluationReport instanceof EvaluationReport)) {
                     $id = $this->getRouteMatch()->getParam('id');
                     if ($id === null) {
                         return false;

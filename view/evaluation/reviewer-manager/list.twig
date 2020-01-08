@@ -1,0 +1,83 @@
+{% do headTitle().append(project.parseFullName()).append(translate("txt-project-reviewers")).append(translate("txt-admin")) %}
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>{{ translate("txt-manually-added") }}</h2>
+        <hr>
+        <h3>{{ translate("txt-preferred-reviewers") }}</h3>
+        {% if projectPreferredReviewers is not empty %}
+            <table class="table table-hover table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>{{ translate("txt-contact") }}</th>
+                    <th>{{ translate("txt-handle") }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for reviewer in projectPreferredReviewers %}
+                    <tr>
+                        <td>{{ contactLink(reviewer.getContact(), 'view-admin', 'name') }} {{ reviewerLink(reviewer, 'edit', 'icon') }} {{ reviewerLink(reviewer, 'delete', 'icon') }}</td>
+                        <td>{{ reviewerContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            {{ ztbalert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
+        {% endif %}
+
+        {{ reviewerLink(null, 'new', 'button', project) }}
+    </div>
+    <div class="col-md-6">
+        <h2>{{ translate("txt-automatically-generated") }}</h2>
+        <hr>
+        <h3>{{ translate("txt-ignored-reviewers") }}</h3>
+        {% if projectIgnoredReviewers is not empty %}
+            <table class="table table-hover table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>{{ translate("txt-contact") }}</th>
+                    <th>{{ translate("txt-handle") }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for reviewer in projectIgnoredReviewers %}
+                    <tr>
+                        <td>{{ contactLink(reviewer.getContact(), 'view-admin', 'name') }}</td>
+                        <td>{{ reviewerContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            {{ ztbalert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
+        {% endif %}
+
+        <h3>{{ translate("txt-future-evaluation-reviewers") }}</h3>
+        {% if projectFutureReviewers is not empty %}
+            <table class="table table-hover table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>{{ translate("txt-contact") }}</th>
+                    <th>{{ translate("txt-handle") }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for reviewer in projectFutureReviewers %}
+                    <tr>
+                        <td>{{ contactLink(reviewer.getContact(), 'view-admin', 'name') }}</td>
+                        <td>{{ reviewerContactLink(reviewer.getContact().getProjectReviewerContact(), 'view', 'handle') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <dl>
+                <dt>{{ translate("txt-meeting") }}</dt>
+                <dd>{{ calendarLink(calendarItem,'view-admin', 'name') }} {{ calendarItem.dateFrom|from_to_date(calendarItem.dateEnd) }}</dd>
+            </dl>
+        {% else %}
+            {{ ztbalert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
+        {% endif %}
+    </div>
+</div>
+

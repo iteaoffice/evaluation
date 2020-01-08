@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -18,10 +14,11 @@ declare(strict_types=1);
 namespace Evaluation\Form;
 
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use Evaluation\Entity\AbstractEntity;
-use Zend\Form\Element;
-use Zend\Form\Form;
+use Laminas\Form\Element;
+use Laminas\Form\Form;
 
 /**
  * Class CreateObject
@@ -31,9 +28,9 @@ use Zend\Form\Form;
 final class CreateObject extends Form
 {
     public function __construct(
-        EntityManager           $entityManager,
-        AbstractEntity          $object,
-        ServiceLocatorInterface $serviceManager
+        EntityManager $entityManager,
+        AbstractEntity $object,
+        ContainerInterface $container
     ) {
         parent::__construct($object->get('entity_name'));
 
@@ -47,8 +44,8 @@ final class CreateObject extends Form
         /**
          * Load a specific fieldSet when present
          */
-        if ($serviceManager->has($objectSpecificFieldset)) {
-            $objectFieldset = $serviceManager->build($objectSpecificFieldset, ['object' => $object]);
+        if ($container->has($objectSpecificFieldset)) {
+            $objectFieldset = $container->build($objectSpecificFieldset, ['object' => $object]);
         } elseif (\class_exists($objectSpecificFieldset)) {
             $objectFieldset = new $objectSpecificFieldset($entityManager, $object);
         } else {

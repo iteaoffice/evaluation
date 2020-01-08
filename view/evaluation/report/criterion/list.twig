@@ -1,0 +1,79 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-evaluation")) %}
+{% do headTitle().append(translate("txt-evaluation-report-criterion-list")) %}
+
+{% do form.prepare() %}
+{{ form().openTag(form)|raw }}
+{% set filter = form.get('filter') %}
+
+<div class="row">
+    <div class="col-md-10">
+        <h1>{{ translate("txt-evaluation-report-criterion-list") }} {{ reportCriterionLink(null,'new','button') }}</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="lead">{{ translate("txt-evaluation-report-criterion-list-explanation") }}</p>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    {{ formelement(filter.get('search')) }}
+                    <div class="input-group-append input-group-btn">
+                        {{ formelement(form.get('submit')) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if paginator.pageRange > 0 %}
+            <table class="table table-hover table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/list', 'criteria': 'id', 'text': translate("txt-id")} %}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/list', 'criteria': 'sequence', 'text': translate("txt-sequence")} %}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/list', 'criteria': 'criterion', 'text': translate("txt-criterion")} %}</th>
+                    <th>{{ translate("txt-report-input-type") }}</th>
+                    <th>{{ translate("txt-report-types") }}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/list', 'criteria': 'has-score', 'text': translate("txt-has-score")} %}</th>
+                    <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/list', 'criteria': 'archived', 'text': translate("txt-archived")} %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for criterion in paginator.getCurrentItems() %}
+                    <tr>
+                        <td>
+                            {{ criterion.id }}
+                            {{ reportCriterionLink(criterion,'edit','icon') }}
+                        </td>
+                        <td>{{ criterion.sequence }}</td>
+                        <td>{{ reportCriterionLink(criterion,'view','name') }}</td>
+                        <td>{{ translate(criterion.parseInputType()) }}</td>
+                        <td>{% for reportType in criterion.reportTypes %}
+                                {{ reportType }}
+                                {% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{% if criterion.hasScore %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</td>
+                        <td>{% if criterion.archived %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% include 'application/partial/pagination-control' %}
+        {% else %}
+            {{ ztbalert().info(translate("txt-no-evaluation-report-criteria-could-be-found"))|raw }}
+        {% endif %}
+    </div>
+    <div class="col-md-2">
+        <div class="well well-sm">
+            <fieldset>
+                {{ ztbformelement(filter.get('show'), true) }}
+                {{ ztbformelement(filter.get('has-score'), true) }}
+                {{ ztbformelement(filter.get('type'), true) }}
+                {{ ztbformelement(form.get('submit')) }}
+                {{ ztbformelement(form.get('clear')) }}
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+{{ form().closeTag()|raw }}
+

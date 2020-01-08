@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -21,11 +17,11 @@ use Doctrine\ORM\EntityManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use DoctrineORMModule\Form\Element\EntityRadio;
 use Evaluation\Entity;
-use Zend\Form\Annotation\AnnotationBuilder;
-use Zend\Form\Element;
-use Zend\Form\Element\Radio;
-use Zend\Form\Fieldset;
-use Zend\Form\FieldsetInterface;
+use Laminas\Form\Annotation\AnnotationBuilder;
+use Laminas\Form\Element;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Fieldset;
+use Laminas\Form\FieldsetInterface;
 
 /**
  * Class ObjectFieldset
@@ -59,16 +55,16 @@ class ObjectFieldset extends Fieldset
      * @param Fieldset|null              $baseFieldset
      */
     protected function addElements(
-        Fieldset               $dataFieldset,
-        EntityManager          $entityManager,
+        Fieldset $dataFieldset,
+        EntityManager $entityManager,
         ?Entity\AbstractEntity $object,
-        Fieldset               $baseFieldset = null
+        Fieldset $baseFieldset = null
     ) {
         /** @var Element $element */
         foreach ($dataFieldset->getElements() as $element) {
             $this->parseElement($element, $object, $entityManager);
             // Add only when a type is provided
-            if (!\array_key_exists('type', $element->getAttributes())) {
+            if (! \array_key_exists('type', $element->getAttributes())) {
                 continue;
             }
 
@@ -108,7 +104,8 @@ class ObjectFieldset extends Fieldset
      */
     protected function parseElement(Element $element, ?Entity\AbstractEntity $object, EntityManager $entityManager)
     {
-        if (($element instanceof Radio) && !($element instanceof EntityRadio)
+        if (
+            ($element instanceof Radio) && ! ($element instanceof EntityRadio)
             && ($object instanceof Entity\AbstractEntity)
         ) {
             $attributes = $element->getAttributes();

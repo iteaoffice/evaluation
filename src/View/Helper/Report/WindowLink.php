@@ -8,7 +8,7 @@
  * @topic       Project
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -19,7 +19,9 @@ declare(strict_types=1);
 namespace Evaluation\View\Helper\Report;
 
 use Evaluation\Entity\Report\Window;
-use Evaluation\View\Helper\AbstractLink;
+use General\ValueObject\Link\Link;
+use General\ValueObject\Link\LinkDecoration;
+use General\View\Helper\AbstractLink;
 
 /**
  * Class WindowLink
@@ -27,61 +29,60 @@ use Evaluation\View\Helper\AbstractLink;
  */
 final class WindowLink extends AbstractLink
 {
-    /**
-     * @var Window
-     */
-    private $window;
-
     public function __invoke(
         Window $window = null,
         string $action = 'view',
-        string $show = 'name'
-    ): string
-    {
-        $this->window = $window ?? new Window();
-        $this->setAction($action);
-        $this->setShow($show);
+        string $show = LinkDecoration::SHOW_TEXT
+    ): string {
+        $window ??= new Window();
 
-        if ($this->window instanceof Window) {
-            $this->addRouterParam('id', $this->window->getId());
-            $this->setShowOptions([
-                'name' => $this->window->getTitle()
-            ]);
+        $routeParams = [];
+        $showOptions = [];
+        if (! $window->isEmpty()) {
+            $routeParams['id']   = $window->getId();
+            $showOptions['name'] = $window->getTitle();
         }
 
-        return $this->createLink();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function parseAction(): void
-    {
-        switch ($this->getAction()) {
+        switch ($action) {
             case 'new':
-                $this->setRouter('zfcadmin/evaluation/report2/window/new');
-                $this->setText($this->translator->translate("txt-new-evaluation-report-window"));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/window/new',
+                    'text'  => $showOptions[$show]
+                        ?? $this->translator->translate('txt-new-evaluation-report-window')
+                ];
                 break;
             case 'list':
-                $this->setRouter('zfcadmin/evaluation/report2/window/list');
-                $this->setText($this->translator->translate("txt-list-evaluation-report-window-list"));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/window/list',
+                    'text'  => $showOptions[$show]
+                        ?? $this->translator->translate('txt-list-evaluation-report-window-list')
+                ];
                 break;
             case 'view':
-                $this->setRouter('zfcadmin/evaluation/report2/window/view');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-view-evaluation-report-window-%s"),
-                    $this->window->getTitle()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/window/view',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                        $this->translator->translate('txt-view-evaluation-report-window-%s'),
+                        $window->getTitle()
+                    )
+                ];
                 break;
             case 'edit':
-                $this->setRouter('zfcadmin/evaluation/report2/window/edit');
-                $this->setText(sprintf(
-                    $this->translator->translate("txt-edit-evaluation-report-window-%s"),
-                    $this->window->getTitle()
-                ));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/window/edit',
+                    'text'  => $showOptions[$show] ?? sprintf(
+                        $this->translator->translate('txt-edit-evaluation-report-window-%s'),
+                        $window->getTitle()
+                    )
+                ];
                 break;
             default:
-                throw new \Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
+                return '';
         }
+        $linkParams['action']      = $action;
+        $linkParams['show']        = $show;
+        $linkParams['routeParams'] = $routeParams;
+
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

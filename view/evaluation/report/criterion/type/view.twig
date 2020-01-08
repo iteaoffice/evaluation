@@ -2,13 +2,52 @@
 {% do headTitle().append(translate("txt-evaluation")) %}
 {% do headTitle().append(translate("txt-evaluation-report-criterion-type-%s")|format(type)) %}
 
-<h1>{{ translate("txt-evaluation-report-criterion-type-%s")|format(type) }} {{ report2CriterionTypeLink(type,'edit','button') }}</h1>
+<h1>{{ type }} {{ reportCriterionTypeLink(type,'edit','button') }}</h1>
 
 <dl class="dl-horizontal">
     <dt>{{ translate("txt-type-id") }}</dt>
     <dd>{{ type.id }}</dd>
     <dt>{{ translate("txt-category") }}</dt>
-    <dd>{{ report2CriterionCategoryLink(type.category) }}</dd>
+    <dd>{{ reportCriterionCategoryLink(type.category) }}</dd>
 </dl>
 
-{{ report2CriterionTypeLink(null,'new','button',type) }}
+
+<table class="table table-hover table-striped table-sm">
+    <thead>
+    <tr>
+        <th>{{ translate("txt-id") }}</th>
+        <th>{{ translate("txt-report-version") }}</th>
+        <th>{{ translate("txt-sequence") }}</th>
+        <th>{{ translate("txt-criterion") }}</th>
+        <th>{{ translate("txt-report-input-type") }}</th>
+        <th>{{ translate("txt-report-types") }}</th>
+        <th>{{ translate("txt-has-score") }}</th>
+        <th>{{ translate("txt-archived") }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for criterionVersion in type.criterionVersions %}
+        {% set criterion = criterionVersion.criterion %}
+        <tr>
+            <td>
+                {{ criterion.id }}
+                {{ reportCriterionLink(criterion,'edit','icon') }}
+            </td>
+            <td>{{ reportVersionLink(criterionVersion.reportVersion) }}</td>
+            <td>{{ criterion.sequence }}</td>
+            <td>{{ reportCriterionLink(criterion,'view','name') }}</td>
+            <td>{{ translate(criterion.parseInputType()) }}</td>
+            <td>{% for reportType in criterion.reportTypes %}
+                    {{ reportType }}
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>{% if criterion.hasScore %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</td>
+            <td>{% if criterion.archived %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{{ reportCriterionTypeLink(null,'new','button',type) }}

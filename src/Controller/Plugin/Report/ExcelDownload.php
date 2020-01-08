@@ -1,14 +1,9 @@
 <?php
 
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Bart van Eijck <bart.van.eijck@itea3.org>
- * @copyright   Copyright (c) 2004-2018 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -19,16 +14,17 @@ declare(strict_types=1);
 namespace Evaluation\Controller\Plugin\Report;
 
 use Contact\Entity\Contact;
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Evaluation\Entity\Report as EvaluationReport;
-use Project\Entity\Version\Review as VersionReview;
+use Project\Entity\Version\Reviewer as VersionReviewer;
 use Evaluation\Service\EvaluationReportService;
-use Zend\Http\Headers;
-use Zend\Http\Response;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\PluginManager;
 use ZipArchive;
+
 use function file_exists;
 use function file_get_contents;
 use function filesize;
@@ -57,26 +53,20 @@ final class ExcelDownload extends AbstractPlugin
     /**
      * @var string
      */
-    private $zipTempFile;
+    private $zipTempFile = '';
 
-    /**
-     * ReportExcelDownload constructor.
-     *
-     * @param EvaluationReportService $evaluationReportService
-     * @param ExcelExport       $reportExcelExport
-     */
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        ExcelExport             $reportExcelExport
+        PluginManager $pluginManager
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->reportExcelExport       = $reportExcelExport;
+        $this->reportExcelExport       = $pluginManager->get(ExcelExport::class);
     }
 
     /*
      * Download Excel .xlsx files combined in a .zip
      */
-    public function __invoke(Contact $contact, int $status, bool $forDistribution = false): ReportExcelDownload
+    public function __invoke(Contact $contact, int $status, bool $forDistribution = false): ExcelDownload
     {
         $this->zipTempFile = tempnam(sys_get_temp_dir(), 'zip');
         $zip               = new ZipArchive();
@@ -86,8 +76,8 @@ final class ExcelDownload extends AbstractPlugin
         foreach ($windows as $window) {
             foreach ($window['reviews'] as $content) {
                 $report = $content;
-                if (!($content instanceof EvaluationReport)) {
-                    if ($content instanceof VersionReview) {
+                if (! ($content instanceof EvaluationReport)) {
+                    if ($content instanceof VersionReviewer) {
                         $reportVersion = $this->evaluationReportService->findReportVersionForProjectVersion(
                             $content->getVersion()
                         );
@@ -102,7 +92,7 @@ final class ExcelDownload extends AbstractPlugin
 
                 /** @var Xlsx $writer */
                 $writer = IOFactory::createWriter($excel, 'Xlsx');
-                $writer->setIncludeCharts(!$forDistribution);
+                $writer->setIncludeCharts(! $forDistribution);
                 ob_start();
                 $writer->save('php://output');
                 $zip->addFromString($fileName, ob_get_clean());
@@ -119,7 +109,7 @@ final class ExcelDownload extends AbstractPlugin
     public function parseResponse(): Response
     {
         $response = new Response();
-        if (!file_exists($this->zipTempFile)) {
+        if (! file_exists($this->zipTempFile)) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 

@@ -1,14 +1,9 @@
 <?php
 
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -18,174 +13,132 @@ declare(strict_types=1);
 
 namespace Evaluation\View\Helper;
 
-use Evaluation\Acl\Assertion\Report as EvaluationReportAssertion;
+use Evaluation\Acl\Assertion\ReportAssertion;
 use Evaluation\Entity\Report as EvaluationReport;
-use Project\Entity\Report\Review as ReportReview;
-use Project\Entity\Version\Review as VersionReview;
 use Evaluation\Service\EvaluationReportService;
+use General\ValueObject\Link\Link;
+use General\ValueObject\Link\LinkDecoration;
+use Project\Entity\Report\Reviewer as ReportReviewer;
+use Project\Entity\Version\Reviewer as VersionReviewer;
+
 use function sprintf;
 
 /**
  * Class ReportLink
+ *
  * @package Evaluation\View\Helper
  */
-final class ReportLink extends AbstractLink
+final class ReportLink extends \General\View\Helper\AbstractLink
 {
-    /**
-     * @var EvaluationReport
-     */
-    protected $evaluationReport;
-
-    /**
-     * @var ReportReview
-     */
-    private $reportReview;
-
-    /**
-     * @var VersionReview
-     */
-    private $versionReview;
-
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-
-    /**
-     * @var bool
-     */
-    private $shortLabel = false;
-
     public function __invoke(
         EvaluationReport $evaluationReport = null,
-        string           $action = 'view',
-        string           $show = 'text',
-        bool             $shortLabel = false,
-        ReportReview     $reportReview = null,
-        VersionReview    $versionReview = null
+        string $action = 'view',
+        string $show = LinkDecoration::SHOW_TEXT,
+        bool $shortLabel = false,
+        ReportReviewer $reportReviewer = null,
+        VersionReviewer $versionReviewer = null
     ): string {
-        $this->evaluationReport = $evaluationReport ?? new EvaluationReport();
-        $this->shortLabel       = $shortLabel;
-        $this->reportReview     = $reportReview ?? new ReportReview();
-        $this->versionReview    = $versionReview ?? new VersionReview();
-        $this->setAction($action);
-        $this->setShow($show);
+        $evaluationReport ??= new EvaluationReport();
 
-        if (!$this->evaluationReport->isEmpty()) {
-            $this->addRouterParam('id', $this->evaluationReport->getId());
-        }
-
-        if (!$this->hasAccess($this->evaluationReport, EvaluationReportAssertion::class, $this->getAction())) {
+        if (! $this->hasAccess($evaluationReport, ReportAssertion::class, $action)) {
             return '';
         }
 
-        return $this->createLink();
-    }
+        $routeParams = [];
+        if (! $evaluationReport->isEmpty()) {
+            $routeParams['id'] = $evaluationReport->getId();
+        }
 
-    /**
-     * @throws \Exception
-     * @return void
-     */
-    public function parseAction(): void
-    {
-        switch ($this->getAction()) {
+        switch ($action) {
             case 'overview':
-                $this->setRouter('community/evaluation/report2/list');
-                $this->setShowOptions([
-                    'notification' => $this->translator->translate('txt-new-project-evaluations-pending')
-                ]);
+                $linkParams = [
+                    'route' => 'community/evaluation/report/list',
+                ];
                 break;
             case 'new':
             case 'new-list':
                 $route = 'community';
                 $subject = '';
-                if (!$this->reportReview->isEmpty()) {
-                    $route = 'community/evaluation/report2/create-from-report-review';
+                if (null !== $reportReviewer) {
+                    $route = 'community/evaluation/report/create-from-report-review';
                     $subject = sprintf(
                         '%s - %s - %s',
-                        $this->reportReview->getProjectReport()->getProject()->getCall(),
-                        $this->reportReview->getProjectReport()->getProject()->parseFullName(),
-                        $this->reportReview->getProjectReport()->parseName()
+                        $reportReviewer->getProjectReport()->getProject()->getCall(),
+                        $reportReviewer->getProjectReport()->getProject()->parseFullName(),
+                        $reportReviewer->getProjectReport()->parseName()
                     );
-                    $this->addRouterParam('reportReview', $this->reportReview->getId());
-                } elseif (!$this->versionReview->isEmpty()) {
-                    $route = 'community/evaluation/report2/create-from-version-review';
+                    $routeParams['reportReviewer'] = $reportReviewer->getId();
+                } elseif (null !== $versionReviewer) {
+                    $route = 'community/evaluation/report/create-from-version-review';
                     $subject = sprintf(
                         '%s - %s - %s',
-                        $this->versionReview->getVersion()->getProject()->getCall(),
-                        $this->versionReview->getVersion()->getProject()->parseFullName(),
-                        $this->versionReview->getVersion()->getVersionType()
+                        $versionReviewer->getVersion()->getProject()->getCall(),
+                        $versionReviewer->getVersion()->getProject()->parseFullName(),
+                        $versionReviewer->getVersion()->getVersionType()
                     );
-                    $this->addRouterParam('versionReview', $this->versionReview->getId());
+                    $routeParams['versionReviewer'] = $versionReviewer->getId();
                 }
-                $this->setRouter($route);
-                $fullLabel = sprintf($this->translator->translate('txt-create-evaluation-report-for-%s'), $subject);
-                $this->setText($fullLabel);
-                if ($this->shortLabel) {
-                    $this->setShowOptions(['name' => $subject]);
-                } else {
-                    $this->setShowOptions(['name' => $fullLabel]);
-                }
-                $this->setFragment('offline');
+                $text = $shortLabel
+                    ? $subject
+                    : sprintf($this->translator->translate('txt-create-evaluation-report-for-%s'), $subject);
+                $linkParams = [
+                    'route' => $route,
+                    'text'  => $text
+                ];
                 break;
             case 'download-offline-form':
                 $route = 'community';
-                if (!$this->reportReview->isEmpty()) {
-                    $route = 'community/evaluation/report2/create-from-report-review';
-                    $this->addRouterParam('reportReview', $this->reportReview->getId());
-                } elseif (!$this->versionReview->isEmpty()) {
-                    $route = 'community/evaluation/report2/create-from-version-review';
-                    $this->addRouterParam('versionReview', $this->versionReview->getId());
-                } elseif (!$this->evaluationReport->isEmpty()) {
-                    $route = 'community/evaluation/report2/update';
+                if (null !== $reportReviewer) {
+                    $route = 'community/evaluation/report/create-from-report-review';
+                    $routeParams['reportReviewer'] = $reportReviewer->getId();
+                } elseif (null !== $versionReviewer) {
+                    $route = 'community/evaluation/report/create-from-version-review';
+                    $routeParams['versionReviewer'] = $versionReviewer->getId();
+                } elseif (null !== $evaluationReport) {
+                    $route = 'community/evaluation/report/update';
                 }
-
-                $this->setRouter($route);
-                $this->setQuery(['mode' => 'offline']);
-                $this->setText($this->translator->translate('txt-download-offline-form'));
+                $linkParams = [
+                    'icon'        => 'fa-file-excel-o',
+                    'route'       => $route,
+                    'queryParams' => ['mode' => 'offline'],
+                    'text'        => $this->translator->translate('txt-download-offline-form')
+                ];
                 break;
             case 'view':
-                $this->setRouter('community/evaluation/report2/view');
-                if ($this->shortLabel) {
-                    $label = $this->getEvaluationReportService()->parseLabel($this->evaluationReport, '%3$s');
-                } else {
-                    $label = $this->getEvaluationReportService()->parseLabel($this->evaluationReport);
-                }
-                $this->setText(sprintf($this->translator->translate('txt-view-evaluation-report-for-%s'), $label));
-                $this->setShowOptions(['name' => $label]);
+                $label = $shortLabel ? EvaluationReportService::parseLabel($evaluationReport, '%3$s')
+                    : EvaluationReportService::parseLabel($evaluationReport);
+                $linkParams = [
+                    'route' => 'community/evaluation/report/view',
+                    'text'  => sprintf($this->translator->translate('txt-view-evaluation-report-for-%s'), $label)
+                ];
                 break;
             case 'edit':
-                $this->setRouter('community/evaluation/report2/update');
-                if ($this->shortLabel) {
-                    $label = $this->getEvaluationReportService()->parseLabel($this->evaluationReport, '%3$s');
-                } else {
-                    $label = $this->getEvaluationReportService()->parseLabel($this->evaluationReport);
-                }
-                $this->setText(sprintf($this->translator->translate('txt-update-evaluation-report-for-%s'), $label));
-                $this->setShowOptions(['name' => $label]);
+                $label = $shortLabel ? EvaluationReportService::parseLabel($evaluationReport, '%3$s')
+                    : EvaluationReportService::parseLabel($evaluationReport);
+                $linkParams = [
+                    'route' => 'community/evaluation/report/update',
+                    'text'  => sprintf($this->translator->translate('txt-update-evaluation-report-for-%s'), $label)
+                ];
                 break;
             case 'finalise':
-                $this->setRouter('community/evaluation/report2/finalise');
-                $this->setText($this->translator->translate('txt-finalise-evaluation-report'));
+                $linkParams = [
+                    'route' => 'community/evaluation/report/finalise',
+                    'text'  => $this->translator->translate('txt-finalise-evaluation-report')
+                ];
                 break;
             case 'undo-final':
-                $this->setRouter('zfcadmin/evaluation/report2/undo-final');
-                $this->setText($this->translator->translate('txt-undo-finalisation'));
+                $linkParams = [
+                    'route' => 'zfcadmin/evaluation/report/undo-final',
+                    'text'  => $this->translator->translate('txt-undo-finalisation')
+                ];
                 break;
             default:
-                throw new \Exception(sprintf("%s is an incorrect action for %s", $this->getAction(), __CLASS__));
+                return '';
         }
-    }
+        $linkParams['action']      = $action;
+        $linkParams['show']        = $show;
+        $linkParams['routeParams'] = $routeParams;
 
-    /**
-     * @return EvaluationReportService
-     */
-    protected function getEvaluationReportService()
-    {
-        if ($this->evaluationReportService === null) {
-            $this->evaluationReportService = $this->getServiceManager()->get(EvaluationReportService::class);
-        }
-
-        return $this->evaluationReportService;
+        return $this->parse(Link::fromArray($linkParams));
     }
 }

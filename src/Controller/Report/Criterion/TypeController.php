@@ -1,13 +1,9 @@
 <?php
+
 /**
- * ITEA Office all rights reserved
- *
- * PHP Version 7
- *
- * @category    Project
- *
+*
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2004-2017 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
@@ -25,38 +21,27 @@ use Evaluation\Entity\Report\Criterion\Type;
 use Evaluation\Form\Report\Criterion\TypeFilter;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\FormService;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
+
 use function ceil;
 use function urlencode;
 
 /**
- * Class TypeController
- *
- * @method GetFilter getProjectFilter()
- * @package Evaluation\Controller\Report\Criterion
+ * @method GetFilter getEvaluationFilter()
  */
 final class TypeController extends AbstractActionController
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-    /**
-     * @var FormService
-     */
-    private $formService;
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private EvaluationReportService $evaluationReportService;
+    private FormService $formService;
+    private EntityManager $entityManager;
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
-        FormService             $formService,
-        EntityManager           $entityManager
+        FormService $formService,
+        EntityManager $entityManager
     ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->formService             = $formService;
@@ -66,7 +51,7 @@ final class TypeController extends AbstractActionController
     public function listAction()
     {
         $page         = $this->params()->fromRoute('page', 1);
-        $filterPlugin = $this->getProjectFilter();
+        $filterPlugin = $this->getEvaluationFilter();
         $query        = $this->evaluationReportService->findFiltered(Type::class, $filterPlugin->getFilter());
 
         $paginator = new Paginator(new PaginatorAdapter(new ORMPaginator($query, false)));
@@ -86,7 +71,7 @@ final class TypeController extends AbstractActionController
         ]);
     }
 
-    public function viewAction()
+    public function viewAction(): ViewModel
     {
         $type = $this->evaluationReportService->find(Type::class, (int)$this->params('id'));
 
@@ -109,15 +94,15 @@ final class TypeController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/type/list');
             }
 
             if ($form->isValid()) {
                 /* @var $type Type */
                 $type = $form->getData();
                 $this->evaluationReportService->save($type);
-                $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/type/view',
+                return $this->redirect()->toRoute(
+                    'zfcadmin/evaluation/report/criterion/type/view',
                     ['id' => $type->getId()]
                 );
             }
@@ -136,7 +121,8 @@ final class TypeController extends AbstractActionController
         $type    = $this->evaluationReportService->find(Type::class, (int)$this->params('id'));
         $data    = $request->getPost()->toArray();
         $form    = $this->formService->prepare($type, $data);
-        if (!$this->evaluationReportService->typeIsDeletable($type)) {
+
+        if (! $this->evaluationReportService->typeIsDeletable($type)) {
             $form->remove('delete');
         }
 
@@ -146,20 +132,20 @@ final class TypeController extends AbstractActionController
 
         if ($request->isPost()) {
             if (isset($data['cancel'])) {
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/type/list');
             }
 
             if (isset($data['delete'])) {
                 $this->evaluationReportService->delete($type);
-                return $this->redirect()->toRoute('zfcadmin/evaluation/report2/criterion/type/list');
+                return $this->redirect()->toRoute('zfcadmin/evaluation/report/criterion/type/list');
             }
 
             if ($form->isValid()) {
                 /** @var Type $type */
                 $type = $form->getData();
                 $this->evaluationReportService->save($type);
-                $this->redirect()->toRoute(
-                    'zfcadmin/evaluation/report2/criterion/type/view',
+                return $this->redirect()->toRoute(
+                    'zfcadmin/evaluation/report/criterion/type/view',
                     ['id' => $type->getId()]
                 );
             }
