@@ -40,14 +40,14 @@
         "rulin132/jpgraph": "^4.2.6"
     },
     "require-dev": {
-        "iteaoffice/testing": "^2.1",
-        "iteaoffice/general": "^5.1",
-        "iteaoffice/affiliation": "^5.1",
-        "iteaoffice/contact": "^5.1",
-        "iteaoffice/organisation": "^5.1",
-        "iteaoffice/search": "^2.1",
-        "iteaoffice/program": "^5.1",
-        "iteaoffice/project": "^5.1"
+        "iteaoffice/testing": "2.*",
+        "iteaoffice/general": "5.*",
+        "iteaoffice/affiliation": "5.*",
+        "iteaoffice/contact": "5.*",
+        "iteaoffice/organisation": "5.*",
+        "iteaoffice/search": "2.*",
+        "iteaoffice/program": "5.*",
+        "iteaoffice/project": "5.*"
     },
     "autoload": {
         "psr-4": {
@@ -61,8 +61,8 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-DEV",
-            "dev-develop": "1.1-DEV"
+            "dev-master": "1.0-dev",
+            "dev-develop": "1.1-dev"
         }
     },
     "scripts": {
