@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Evaluation;
 
-
 use Evaluation\Entity\Report;
 use Evaluation\Navigation\Invokable;
 use Program\Entity\Call\Call;
