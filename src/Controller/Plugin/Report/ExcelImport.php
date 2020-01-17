@@ -1,7 +1,7 @@
 <?php
 
 /**
-*
+ *
  * @author      Bart van Eijck <bart.van.eijck@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -14,15 +14,15 @@ declare(strict_types=1);
 namespace Evaluation\Controller\Plugin\Report;
 
 use Doctrine\Common\Collections\Collection;
-use PhpOffice\PhpSpreadsheet\Exception;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result as EvaluationReportResult;
 use Evaluation\Service\EvaluationReportService;
-use RuntimeException;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use PhpOffice\PhpSpreadsheet\Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use RuntimeException;
 
 use function sprintf;
 use function unlink;
@@ -67,12 +67,12 @@ final class ExcelImport extends AbstractPlugin
         $this->hasParseErrors = true;
         if (file_exists($file)) {
             try {
-                $fileType             = IOFactory::identify($file);
-                $reader               = IOFactory::createReader($fileType);
-                $excel                = $reader->load($file);
-                $sheet                = $excel->getSheet(2);
-                $highestRow           = $sheet->getHighestRow();
-                $this->data           = $sheet->rangeToArray('A1:E' . $highestRow, null, true, false);
+                $fileType   = IOFactory::identify($file);
+                $reader     = IOFactory::createReader($fileType);
+                $excel      = $reader->load($file);
+                $sheet      = $excel->getSheet(2);
+                $highestRow = $sheet->getHighestRow();
+                $this->data = $sheet->rangeToArray('A1:E' . $highestRow, null, true, false);
                 // Will have to use the deprecated getCalculatedValue() as getOldCalculatedValue() gives an empty result
                 $finalScore           = $sheet->getCell('F1')->getCalculatedValue();
                 $this->finalScore     = (empty($finalScore) ? null : (int)$finalScore);
@@ -145,8 +145,7 @@ final class ExcelImport extends AbstractPlugin
                 $result->setValue($value);
                 $result->setComment($comment);
                 $evaluationReport->getResults()->add($result);
-            }
-            // Update existing result
+            } // Update existing result
             else {
                 /** @var EvaluationReportResult $result */
                 $result = $this->findInCollection($evaluationReport->getResults(), (int)$row[1]);

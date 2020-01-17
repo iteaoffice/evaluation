@@ -68,9 +68,9 @@ final class FeedbackController extends AbstractActionController
         $proxy = $form->get('evaluation_entity_feedback')->get('version')->getProxy();
         $proxy->setLabelGenerator(
             fn (Version $version) => sprintf(
-                '%s (%s)',
-                $version->getProject(),
-                $version->getVersionType()
+            '%s (%s)',
+            $version->getProject(),
+            $version->getVersionType()
             )
         );
 
@@ -105,9 +105,9 @@ final class FeedbackController extends AbstractActionController
         $proxy = $form->get('evaluation_entity_feedback')->get('version')->getProxy();
         $proxy->setLabelGenerator(
             fn (Version $version) => sprintf(
-                '%s (%s)',
-                $version->getProject(),
-                $version->getVersionType()
+            '%s (%s)',
+            $version->getProject(),
+            $version->getVersionType()
             )
         );
 

@@ -51,7 +51,8 @@ class AbstractServiceTest extends UtilAbstractServiceTest
             ->method('getRepository')
             ->will($this->returnValueMap($map));
 
-        $service = new class($entityManagerMock) extends AbstractService {};
+        $service = new class ($entityManagerMock) extends AbstractService {
+        };
 
         $this->assertEquals($queryBuilderMock, $service->findFiltered($entity, []));
         $this->assertNull($service->findFiltered(Reviewer::class, []));
@@ -79,7 +80,8 @@ class AbstractServiceTest extends UtilAbstractServiceTest
             ->with($entity)
             ->willReturn($evaluationReportRepositoryMock);
 
-        $service = new class($entityManagerMock) extends AbstractService {};
+        $service = new class ($entityManagerMock) extends AbstractService {
+        };
         $this->assertEquals([], $service->findAll($entity));
     }
 
@@ -106,7 +108,8 @@ class AbstractServiceTest extends UtilAbstractServiceTest
             ->with($entity)
             ->willReturn($evaluationReportRepositoryMock);
 
-        $service = new class($entityManagerMock) extends AbstractService {};
+        $service = new class ($entityManagerMock) extends AbstractService {
+        };
         $this->assertNull($service->find($entity, 1));
     }
 
@@ -133,8 +136,9 @@ class AbstractServiceTest extends UtilAbstractServiceTest
             ->with($entity)
             ->willReturn($evaluationReportRepositoryMock);
 
-        $service = new class($entityManagerMock) extends AbstractService {};
-        $this->assertNull($service->findByName($entity, 'name' , 'pietje'));
+        $service = new class ($entityManagerMock) extends AbstractService {
+        };
+        $this->assertNull($service->findByName($entity, 'name', 'pietje'));
     }
 
     public function testCount()
@@ -161,7 +165,8 @@ class AbstractServiceTest extends UtilAbstractServiceTest
             ->with($entity)
             ->willReturn($evaluationReportRepositoryMock);
 
-        $service = new class($entityManagerMock) extends AbstractService {};
+        $service = new class ($entityManagerMock) extends AbstractService {
+        };
         $this->assertEquals(1, $service->count($entity, $criteria));
     }
 
@@ -185,7 +190,8 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock->expects($this->once())->method('flush');
 
-        $service = new class($entityManagerMock) extends AbstractService {};
+        $service = new class ($entityManagerMock) extends AbstractService {
+        };
         $this->assertEquals($entity, $service->save($entity));
     }
 
@@ -204,7 +210,8 @@ class AbstractServiceTest extends UtilAbstractServiceTest
 
         $entityManagerMock->expects($this->once())->method('flush');
 
-        $service = new class($entityManagerMock) extends AbstractService {};
+        $service = new class ($entityManagerMock) extends AbstractService {
+        };
         $this->assertNull($service->delete($entity));
     }
 
@@ -221,7 +228,8 @@ class AbstractServiceTest extends UtilAbstractServiceTest
             ->method('refresh')
             ->with($entity);
 
-        $service = new class($entityManagerMock) extends AbstractService {};
+        $service = new class ($entityManagerMock) extends AbstractService {
+        };
         $this->assertNull($service->refresh($entity));
     }
 }

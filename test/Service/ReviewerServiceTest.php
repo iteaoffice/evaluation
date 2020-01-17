@@ -21,6 +21,7 @@ use Project\Entity\Report\Report;
 use Project\Entity\Version\Type;
 use Project\Entity\Version\Version;
 use Testing\Util\AbstractServiceTest;
+
 use function array_values;
 
 class ReviewerServiceTest extends AbstractServiceTest

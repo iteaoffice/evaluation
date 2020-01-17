@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -225,5 +226,3 @@ return [
         ],
     ]
 ];
-
-
