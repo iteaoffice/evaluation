@@ -36,8 +36,8 @@
     "doctrine/doctrine-orm-module": "@stable",
     "phpoffice/phppresentation": "^0.9",
     "phpoffice/phpword": "^0.17",
-    "phpoffice/phpspreadsheet": "1.10.0",
-    "rulin132/jpgraph": "^4.2.6"
+    "phpoffice/phpspreadsheet": "1.10.1",
+    "amenadiel/jpgraph": "^4.0.3"
   },
   "require-dev": {
     "iteaoffice/testing": "^2.1",
