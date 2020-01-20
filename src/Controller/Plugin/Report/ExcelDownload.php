@@ -103,9 +103,6 @@ final class ExcelDownload extends AbstractPlugin
         return $this;
     }
 
-    /**
-     * @return Response
-     */
     public function parseResponse(): Response
     {
         $response = new Response();
@@ -130,17 +127,11 @@ final class ExcelDownload extends AbstractPlugin
         return $response;
     }
 
-    /**
-     * @return string
-     */
     public function getZipTempFile(): string
     {
         return $this->zipTempFile;
     }
 
-    /**
-     * Class destructor
-     */
     public function __destruct()
     {
         if (file_exists($this->zipTempFile)) {

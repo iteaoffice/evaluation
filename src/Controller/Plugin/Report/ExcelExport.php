@@ -1,7 +1,7 @@
 <?php
 
 /**
-*
+ *
  * @author      Bart van Eijck <bart.van.eijck@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -21,6 +21,11 @@ use Evaluation\Entity\Report\Result;
 use Evaluation\Options\ModuleOptions;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\ReviewerService;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Json\Json;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Organisation\Entity\Organisation;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\Chart\Axis;
@@ -47,11 +52,6 @@ use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Version;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
-use Laminas\Http\Headers;
-use Laminas\Http\Response;
-use Laminas\I18n\Translator\TranslatorInterface;
-use Laminas\Json\Json;
-use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 
 use function array_keys;
 use function array_map;
@@ -135,7 +135,8 @@ final class ExcelExport extends AbstractPlugin
     ): ExcelExport {
         $this->evaluationReport = $evaluationReport;
         $this->excel            = new Spreadsheet();
-        $this->forDistribution  = $forDistribution;
+
+        $this->forDistribution = $forDistribution;
 
         $displaySheet = $this->excel->getActiveSheet();
         $displaySheet->setShowGridlines(false);
@@ -176,14 +177,14 @@ final class ExcelExport extends AbstractPlugin
         $this->excel->addNamedRange(new NamedRange('yesNo', $lookupSheet, 'D1:D2'));
 
         // Steering group decision
-        $row = 1;
+        $row        = 1;
         $reportType = $this->evaluationReportService->parseEvaluationReportType($evaluationReport);
         $reportOrCr = [
             EvaluationReport\Type::TYPE_REPORT,
             EvaluationReport\Type::TYPE_MAJOR_CR_VERSION,
             EvaluationReport\Type::TYPE_MINOR_CR_VERSION
         ];
-        $scores = in_array($reportType, $reportOrCr, true)
+        $scores     = in_array($reportType, $reportOrCr, true)
             ? EvaluationReport::getReportScores() : EvaluationReport::getVersionScores();
 
         foreach ($scores as $scoreValue => $scoreLabel) {
@@ -197,7 +198,7 @@ final class ExcelExport extends AbstractPlugin
 
         // Project status (PPR-only)
         if ($this->evaluationReport->getProjectReportReport() !== null) {
-            $row = 1;
+            $row      = 1;
             $statuses = EvaluationReport\ProjectReport::getProjectStatuses();
             foreach ($statuses as $statusValue => $statusLabel) {
                 $lookupSheet->setCellValue('J' . $row, $this->translator->translate($statusLabel));
@@ -228,7 +229,7 @@ final class ExcelExport extends AbstractPlugin
                 $chartDataSheet->setTitle('ChartData');
                 $chartDataSheet->setSheetState(Worksheet::SHEETSTATE_VERYHIDDEN);
                 $chartDataRow = 1;
-                $column = 'A';
+                $column       = 'A';
                 /** @var Topic $topic */
                 foreach ($allTopics as $topic) {
                     $chartDataSheet->setCellValue($column . $chartDataRow, $topic->getTopic());
@@ -246,7 +247,7 @@ final class ExcelExport extends AbstractPlugin
 
         /** @var Result $result */
         foreach ($this->evaluationReportService->getSortedResults($evaluationReport) as $result) {
-            $type = $result->getCriterionVersion()->getType()->getType();
+            $type     = $result->getCriterionVersion()->getType()->getType();
             $category = $result->getCriterionVersion()->getType()->getCategory()->getCategory();
 
             if ($category !== $currentCategory) {
@@ -294,6 +295,7 @@ final class ExcelExport extends AbstractPlugin
             $chart = $this->parseRadarChart($allTopics);
             $chart->setTopLeftPosition('E2');
             $chart->setBottomRightPosition('K20');
+
             $displaySheet->addChart($chart);
         }
 
@@ -319,7 +321,7 @@ final class ExcelExport extends AbstractPlugin
             $displaySheet->mergeCells('A' . $row . ':C' . $row);
             $row++;
         }
-        $cellA = 'A' . $row;
+        $cellA  = 'A' . $row;
         $cellAC = $cellA . ':C' . $row;
         $displaySheet->mergeCells($cellAC);
         $displaySheet->getRowDimension($row)->setRowHeight(25);
@@ -335,7 +337,7 @@ final class ExcelExport extends AbstractPlugin
     {
         $displaySheet->getRowDimension($row)->setRowHeight(5);
         $row++;
-        $cellA = 'A' . $row;
+        $cellA  = 'A' . $row;
         $cellAC = $cellA . ':C' . $row;
         $displaySheet->mergeCells($cellAC);
         $displaySheet->getRowDimension($row)->setRowHeight(20);
@@ -505,7 +507,7 @@ final class ExcelExport extends AbstractPlugin
         string $criterionLabel,
         ?string $helpBlock = null
     ): void {
-        $criterionCell = 'A' . $row;
+        $criterionCell      = 'A' . $row;
         $criterionAlignment = $displaySheet->getStyle($criterionCell)->getAlignment();
         $criterionAlignment->setVertical(Alignment::VERTICAL_CENTER);
         $criterionAlignment->setHorizontal(Alignment::HORIZONTAL_RIGHT);
@@ -683,15 +685,15 @@ final class ExcelExport extends AbstractPlugin
     ): void {
         // Data
         $criterionIdCell = 'A' . $dataRow;
-        $resultIdCell = 'B' . $dataRow;
-        $scoreCell = 'C' . $dataRow;
-        $valueCell = 'D' . $dataRow;
-        $commentCell = 'E' . $dataRow;
+        $resultIdCell    = 'B' . $dataRow;
+        $scoreCell       = 'C' . $dataRow;
+        $valueCell       = 'D' . $dataRow;
+        $commentCell     = 'E' . $dataRow;
         // Presentation
         $scoreSelectCell = 'B' . $row;
-        $resultCell = 'C' . $row;
-        $sheetName = "'" . $this->translator->translate('txt-evaluation-report') . "'";
-        $scores = Result::getScoreValues();
+        $resultCell      = 'C' . $row;
+        $sheetName       = "'" . $this->translator->translate('txt-evaluation-report') . "'";
+        $scores          = Result::getScoreValues();
         $displaySheet->getRowDimension($row)->setRowHeight(20);
 
         // Fill the hidden columns, set formulas
@@ -834,7 +836,7 @@ final class ExcelExport extends AbstractPlugin
         int &$chartDataRow,
         int $dataRow
     ): void {
-        $topicCount = count($allTopics);
+        $topicCount   = count($allTopics);
         $topicWeights = $result->getCriterionVersion()->getVersionTopics()->toArray();
         if (! empty($topicWeights)) {
             // Add topic weight and topic weight score totals
@@ -858,7 +860,7 @@ final class ExcelExport extends AbstractPlugin
             // Add chart axis data
             $column++;
             $topicWeightColumn = 'A';
-            $topicScoreColumn = $this->getColumnFromIndex($topicCount + 2);
+            $topicScoreColumn  = $this->getColumnFromIndex($topicCount + 2);
             for ($i = 0; $i < $topicCount; $i++) {
                 $chartDataSheet->setCellValue(
                     $column . '2',
@@ -914,7 +916,7 @@ final class ExcelExport extends AbstractPlugin
 
     private function parseRadarChart(array $allTopics): Chart
     {
-        $topicCount = count($allTopics);
+        $topicCount  = count($allTopics);
         $scoreLabels = Result::getScoreValues();
         $scoreValues = array_keys($scoreLabels);
         sort($scoreValues);
@@ -932,8 +934,8 @@ final class ExcelExport extends AbstractPlugin
             )
         ];
 
-        $rangeColumnStart = 'A';
-        $rangeColumnEnd = $this->getColumnFromIndex($topicCount);
+        $rangeColumnStart     = 'A';
+        $rangeColumnEnd       = $this->getColumnFromIndex($topicCount);
         $dataSeriesAxisLabels = [
             new DataSeriesValues(
                 'String',
@@ -944,7 +946,7 @@ final class ExcelExport extends AbstractPlugin
         ];
 
         $rangeColumnStart = $this->getColumnFromIndex(($topicCount * 2) + 3);
-        $rangeColumnEnd = $this->getColumnFromIndex($topicCount, $rangeColumnStart);
+        $rangeColumnEnd   = $this->getColumnFromIndex($topicCount, $rangeColumnStart);
         $dataSeriesValues = [
             new DataSeriesValues(
                 'Number',
@@ -1047,13 +1049,13 @@ final class ExcelExport extends AbstractPlugin
     public function parseFileName(): string
     {
         $fileNameTemplate = '%d_%s_%s%s_evaluation.xlsx';
-        $project = EvaluationReportService::getProject($this->evaluationReport);
-        $typeId = $this->evaluationReportService->parseEvaluationReportType($this->evaluationReport);
-        $period = '';
+        $project          = EvaluationReportService::getProject($this->evaluationReport);
+        $typeId           = $this->evaluationReportService->parseEvaluationReportType($this->evaluationReport);
+        $period           = '';
         // Parse the period for project report evaluations
         if ($typeId === EvaluationReport\Type::TYPE_REPORT) {
             $periodTemplate = '_%dH%d';
-            $report = $this->evaluationReport->getProjectReportReport()->getReport();
+            $report         = $this->evaluationReport->getProjectReportReport()->getReport();
             if ($report === null) {
                 $report = $this->evaluationReport->getProjectReportReport()->getReviewer()->getProjectReport();
             }
@@ -1067,7 +1069,7 @@ final class ExcelExport extends AbstractPlugin
             EvaluationReport\Type::TYPE_MAJOR_CR_VERSION => ReviewerService::TYPE_CR,
             EvaluationReport\Type::TYPE_MINOR_CR_VERSION => ReviewerService::TYPE_CR
         ];
-        $type = ($typeId && isset($lookup[$typeId])) ? $lookup[$typeId] : '';
+        $type   = ($typeId && isset($lookup[$typeId])) ? $lookup[$typeId] : '';
 
         return sprintf($fileNameTemplate, $project->getNumber(), $project->getProject(), $type, $period);
     }
