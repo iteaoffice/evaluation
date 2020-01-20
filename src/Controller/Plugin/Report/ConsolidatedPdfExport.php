@@ -1,7 +1,7 @@
 <?php
 
 /**
-*
+ *
  * @author      Bart van Eijck <bart.van.eijck@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -27,6 +27,12 @@ use Evaluation\Service\EvaluationReportService;
 use Evaluation\Service\EvaluationService;
 use General\Service\CountryService;
 use InvalidArgumentException;
+use Laminas\Http\Headers;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Json\Json;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\PluginManager;
 use Organisation\Entity\Organisation;
 use Project\Entity\Challenge;
 use Project\Entity\Rationale;
@@ -37,12 +43,6 @@ use Project\Form\MatrixFilter;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
 use setasign\Fpdi\Tcpdf\Fpdi as TcpdfFpdi;
-use Laminas\Http\Headers;
-use Laminas\Http\Response;
-use Laminas\I18n\Translator\TranslatorInterface;
-use Laminas\Json\Json;
-use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
-use Laminas\Mvc\Controller\PluginManager;
 use ZfcTwig\View\TwigRenderer;
 
 use function array_map;
@@ -66,97 +66,37 @@ use function sprintf;
  */
 final class ConsolidatedPdfExport extends AbstractPlugin
 {
-    private static $colWidths = [1 => 60, 2 => 60, 3 => 60];
-    private static $lineHeights
-        = [
-            'category' => 8, 'type' => 6, 'line' => 5, 'bigLine' => 15
-        ];
-    private static $topMargin = ITEAOFFICE_HOST === 'itea' ? 30 : 70;
-    private static $bottomMargin = ITEAOFFICE_HOST === 'itea' ? 30 : 20;
-    private static $orientation = 'P';
-    private static $fontSize = 9;
+    private static array $colWidths = [1 => 60, 2 => 60, 3 => 60];
+    private static array $lineHeights = [
+        'category' => 8, 'type' => 6, 'line' => 5, 'bigLine' => 15
+    ];
+    private static int $topMargin = ITEAOFFICE_HOST === 'itea' ? 30 : 70;
+    private static int $bottomMargin = ITEAOFFICE_HOST === 'itea' ? 30 : 20;
+    private static string $orientation = 'P';
+    private static int $fontSize = 9;
 
-    private static $mainColor = ITEAOFFICE_HOST === 'itea' ? [0, 166, 81] : [142, 198, 80];
-    private static $subColor = ITEAOFFICE_HOST === 'itea' ? [128, 130, 133] : [8, 118, 183];
-    private static $gray = [151, 151, 151];
+    private static array $mainColor = ITEAOFFICE_HOST === 'itea' ? [0, 166, 81] : [142, 198, 80];
+    private static array $subColor = ITEAOFFICE_HOST === 'itea' ? [128, 130, 133] : [8, 118, 183];
+    private static array $gray = [151, 151, 151];
 
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
+    private EvaluationReportService $evaluationReportService;
+    private Version $version;
+    private Type $versionType;
+    private ProjectService $projectService;
+    private VersionService $versionService;
+    private EvaluationService $evaluationService;
+    private AffiliationService $affiliationService;
+    private CountryService $countryService;
+    private ModuleOptions $moduleOptions;
+    private EvaluationReport $evaluationReport;
+    private TwigRenderer $renderer;
+    private TranslatorInterface $translator;
+    private PluginManager $controllerPluginManager;
+    private TcpdfFpdi $pdf;
+    private string $fileName;
+    private bool $forDistribution = true;
 
-    /**
-     * @var Version
-     */
-    private $version;
-
-    /**
-     * @var Type
-     */
-    private $versionType;
-
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-
-    /**
-     * @var VersionService
-     */
-    private $versionService;
-    /**
-     * @var EvaluationService
-     */
-    private $evaluationService;
-
-    /**
-     * @var AffiliationService
-     */
-    private $affiliationService;
-
-    /**
-     * @var CountryService
-     */
-    private $countryService;
-
-    /**
-     * @var ModuleOptions
-     */
-    private $moduleOptions;
-
-    /**
-     * @var EvaluationReport
-     */
-    private $evaluationReport;
-
-    /**
-     * @var TwigRenderer
-     */
-    private $renderer;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var PluginManager
-     */
-    private $controllerPluginManager;
-
-    /**
-     * @var TcpdfFpdi
-     */
-    private $pdf;
-
-    /**
-     * @var string
-     */
-    private $fileName;
-
-    private $forDistribution = true;
-
-    private $results = [];
+    private array $results = [];
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
@@ -171,21 +111,21 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->projectService = $projectService;
-        $this->versionService = $versionService;
-        $this->evaluationService = $evaluationService;
-        $this->affiliationService = $affiliationService;
-        $this->countryService = $countryService;
-        $this->moduleOptions = $moduleOptions;
+        $this->projectService          = $projectService;
+        $this->versionService          = $versionService;
+        $this->evaluationService       = $evaluationService;
+        $this->affiliationService      = $affiliationService;
+        $this->countryService          = $countryService;
+        $this->moduleOptions           = $moduleOptions;
         $this->controllerPluginManager = $controllerPluginManager;
-        $this->renderer = $renderer;
-        $this->translator = $translator;
+        $this->renderer                = $renderer;
+        $this->translator              = $translator;
     }
 
     public function __invoke(EvaluationReport $evaluationReport, bool $forDistribution = false): self
     {
         $this->evaluationReport = $evaluationReport;
-        $this->forDistribution = $forDistribution;
+        $this->forDistribution  = $forDistribution;
 
         $this->version = $evaluationReport->getProjectVersionReport()->getVersion();
 
@@ -204,23 +144,24 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         //@todo Change this so the template is taken from the program
         if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
-            $project = EvaluationReportService::getProject($this->evaluationReport);
+            $project          = EvaluationReportService::getProject($this->evaluationReport);
             $originalTemplate = $this->moduleOptions->getProjectTemplate();
+            $programs         = array_map('strtolower', $project->parsePrograms());
 
             $template = $originalTemplate;
-            if (in_array('Penta', $project->parsePrograms(), true)) {
+            if (in_array('penta', $programs, true)) {
                 $template = str_replace('blank-template-firstpage', 'penta-template', $originalTemplate);
             }
 
-            if (in_array('EURIPIDES', $project->parsePrograms(), true)) {
+            if (in_array('euripides', $programs, true)) {
                 $template = str_replace('blank-template-firstpage', 'euripides-template', $originalTemplate);
             }
 
             if (
-                in_array('Penta', $project->parsePrograms(), true)
+                in_array('penta', $programs, true)
                 && in_array(
-                    'EURIPIDES',
-                    $project->parsePrograms(),
+                    'euripides',
+                    $programs,
                     true
                 )
             ) {
@@ -229,7 +170,6 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
             $pdf->setTemplate($template);
         }
-
 
         $pdf->SetFontSize(self::$fontSize);
         $pdf->SetTopMargin(self::$topMargin);
@@ -243,15 +183,15 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         );
         $pdf->setTitle($title);
         $this->fileName = $title . '.pdf';
-        $this->pdf = $pdf;
+        $this->pdf      = $pdf;
         $this->pdf->AddPage(self::$orientation);
 
         // Add the results
         $margins = $this->pdf->getMargins();
         $this->pdf->SetY($margins['top']);
-        $categoryCount = 1;
+        $categoryCount   = 1;
         $currentCategory = '';
-        $currentType = '';
+        $currentType     = '';
 
         $this->parseHeader();
 
@@ -268,7 +208,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
                     $this->parseProjectData();
                     // No STG decision in export PO/FPP evaluation
-                    $hideFor = [EvaluationReport\Type::TYPE_PO_VERSION, EvaluationReport\Type::TYPE_FPP_VERSION];
+                    $hideFor    = [EvaluationReport\Type::TYPE_PO_VERSION, EvaluationReport\Type::TYPE_FPP_VERSION];
                     $reportType = $this->evaluationReportService->parseEvaluationReportType($evaluationReport);
                     if (! $this->forDistribution || ! in_array($reportType, $hideFor, false)) {
                         $this->parseHeading($this->translator->translate('txt-review-details'), 15, 'L', 'sub');
@@ -331,10 +271,10 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         }
 
         // Some explansion
-        $lineHeight = self::$lineHeights['line'];
+        $lineHeight       = self::$lineHeights['line'];
         $thirdColumnWidth = $this->forDistribution ? self::$colWidths[3] : self::$colWidths[2];
-        $cellWidth = (self::$colWidths[2] + $thirdColumnWidth);
-        $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $explanation) + 10;
+        $cellWidth        = (self::$colWidths[2] + $thirdColumnWidth);
+        $cellHeight       = $this->getCellHeight($lineHeight, $cellWidth, $explanation) + 10;
 
         $this->pdf->MultiCell(
             $cellWidth,
@@ -411,7 +351,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
     private function parseProjectData(): void
     {
-        $lineHeight = self::$lineHeights['line'];
+        $lineHeight       = self::$lineHeights['line'];
         $thirdColumnWidth = $this->forDistribution ? self::$colWidths[3] : self::$colWidths[2];
 
         // Project name + report/version
@@ -422,7 +362,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $this->pdf->Cell($thirdColumnWidth, $lineHeight, $reportOrVersion, 0, 1);
 
         // Project title
-        $cellWidth = (self::$colWidths[2] + $thirdColumnWidth);
+        $cellWidth  = (self::$colWidths[2] + $thirdColumnWidth);
         $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $project->getTitle());
         $this->parseCriterionLabel($this->translator->translate('txt-project-title'));
         $this->pdf->MultiCell(
@@ -466,7 +406,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         $this->pdf->Ln();
         // Project size
-        $version = new Version();
+        $version              = new Version();
         $projectVersionReport = $this->evaluationReport->getProjectVersionReport();
 
         if ($projectVersionReport !== null) {
@@ -508,7 +448,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         // Project start and end date
         $this->parseCriterionLabel($this->translator->translate('txt-project-start-and-end-date'));
         $startDate = $this->projectService->parseOfficialDateStart($project);
-        $endDate = $this->projectService->parseOfficialDateEnd($project);
+        $endDate   = $this->projectService->parseOfficialDateEnd($project);
         if ($startDate instanceof DateTime) {
             $ln = ($endDate instanceof DateTime) ? 0 : 1;
             $this->pdf->Cell(self::$colWidths[2], $lineHeight, $startDate->format('j M Y'), 0, $ln);
@@ -519,7 +459,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         // Consortium
         $this->parseCriterionLabel($this->translator->translate('txt-consortium'));
-        $countries = implode(
+        $countries  = implode(
             ', ',
             array_map(
                 static function (Rationale $rationale) {
@@ -528,7 +468,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 $project->getRationale()->toArray()
             )
         );
-        $cellWidth = (self::$colWidths[2] + $thirdColumnWidth);
+        $cellWidth  = (self::$colWidths[2] + $thirdColumnWidth);
         $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $countries);
         $this->pdf->MultiCell(
             $cellWidth,
@@ -581,7 +521,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $this->parseHeading($this->translator->translate('txt-participating-companies-and-countries'), 15, 'L', 'sub');
 
         $affiliationOverview = $this->affiliationService->findAffiliationByProjectAndWhich($project);
-        $latestVersion = $this->projectService->getLatestApprovedProjectVersion($project);
+        $latestVersion       = $this->projectService->getLatestApprovedProjectVersion($project);
 
         $affCountries = [];
         foreach ($affiliationOverview as $affiliation) {
@@ -719,7 +659,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
     private function parseContentField(string $content, array $fillColor, int $height = null, int $score = null): void
     {
         $this->pdf->SetFillColor(...$fillColor);
-        $borders = [
+        $borders      = [
             'LRTB' => ['width' => 0.3, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => [187, 187, 187]],
         ];
         $commentWidth = ($height > self::$lineHeights['line'])
@@ -731,7 +671,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         if ($score !== null) {
             $commentWidth = self::$colWidths[3];
-            $scoreValues = Result::getScoreValues();
+            $scoreValues  = Result::getScoreValues();
             $this->pdf->MultiCell(
                 self::$colWidths[2],
                 $height,
@@ -778,9 +718,9 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             $big = true;
         }
 
-        $content = $hasScore ? (string)$result->getComment() : (string)$result->getValue();
+        $content    = $hasScore ? (string)$result->getComment() : (string)$result->getValue();
         $lineHeight = $big ? self::$lineHeights['bigLine'] : self::$lineHeights['line'];
-        $width = $big ? (self::$colWidths[2] + self::$colWidths[3]) : self::$colWidths[2];
+        $width      = $big ? (self::$colWidths[2] + self::$colWidths[3]) : self::$colWidths[2];
 
         $calcLineHeight = $this->pdf->getStringHeight($width, $content);
         if ($calcLineHeight > $lineHeight) {
@@ -854,7 +794,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $this->parseHeading('', 15, 'L', 'sub');
 
         $explanation = 'EMPTY';
-        $project = EvaluationReportService::getProject($this->evaluationReport);
+        $project     = EvaluationReportService::getProject($this->evaluationReport);
 
         if ($this->versionType->getId() === Type::TYPE_PO) {
             if ($this->version->isApproved()) {
@@ -912,7 +852,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         // Some explanation
         $lineHeight = self::$lineHeights['line'];
-        $cellWidth = 3 * self::$colWidths[2];
+        $cellWidth  = 3 * self::$colWidths[2];
         $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $explanation) + 10;
 
         $this->pdf->MultiCell(
@@ -938,7 +878,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
             // Some explansion
             $lineHeight = self::$lineHeights['line'];
-            $cellWidth = 3 * self::$colWidths[2];
+            $cellWidth  = 3 * self::$colWidths[2];
             $cellHeight = $this->getCellHeight($lineHeight, $cellWidth, $conclusion) + 10;
 
             $this->pdf->MultiCell(
