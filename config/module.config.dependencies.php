@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Evaluation;
 
+use Admin\Navigation\Service\NavigationService;
 use Affiliation\Service\AffiliationService;
 use Contact\Service\ContactService;
 use Contact\Service\SelectionContactService;
@@ -224,5 +225,10 @@ return [
         View\Helper\Report\Score::class                       => [
             TranslatorInterface::class
         ],
+        Navigation\Invokable\ReportLabel::class               => [
+            Service\EvaluationReportService::class,
+            NavigationService::class,
+            TranslatorInterface::class
+        ]
     ]
 ];

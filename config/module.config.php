@@ -11,8 +11,8 @@
 
 namespace Evaluation;
 
+use Admin\Navigation\Factory\NavigationInvokableFactory;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
-use Evaluation\View\Factory\ViewHelperFactory;
 use General\View\Factory\LinkHelperFactory;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
 use Laminas\Stdlib;
@@ -136,21 +136,20 @@ $config = [
             Service\ReviewRosterService::class                         => ConfigAbstractFactory::class,
             Service\ReviewerService::class                             => ConfigAbstractFactory::class,
             // Navigation
-            Navigation\Invokable\ReportLabel::class                    => Factory\InvokableFactory::class,
-            Navigation\Invokable\Report\CriterionLabel::class          => Factory\InvokableFactory::class,
-            Navigation\Invokable\Report\VersionLabel::class            => Factory\InvokableFactory::class,
-            Navigation\Invokable\Report\WindowLabel::class             => Factory\InvokableFactory::class,
-            Navigation\Invokable\Report\Criterion\CategoryLabel::class => Factory\InvokableFactory::class,
-            Navigation\Invokable\Report\Criterion\TypeLabel::class     => Factory\InvokableFactory::class,
-            Navigation\Invokable\Report\Criterion\TopicLabel::class    => Factory\InvokableFactory::class,
-            Navigation\Invokable\Report\Criterion\VersionLabel::class  => Factory\InvokableFactory::class,
-            Navigation\Invokable\Reviewer\ContactLabel::class          => Factory\InvokableFactory::class,
-
-            Navigation\Invokable\EvaluateProjectLabel::class => Factory\InvokableFactory::class,
-            Navigation\Invokable\EvaluationLabel::class      => Factory\InvokableFactory::class,
-            Navigation\Invokable\FeedbackLabel::class        => Factory\InvokableFactory::class,
+            Navigation\Invokable\ReportLabel::class                    => ConfigAbstractFactory::class,
+            Navigation\Invokable\Report\CriterionLabel::class          => NavigationInvokableFactory::class,
+            Navigation\Invokable\Report\VersionLabel::class            => NavigationInvokableFactory::class,
+            Navigation\Invokable\Report\WindowLabel::class             => NavigationInvokableFactory::class,
+            Navigation\Invokable\Report\Criterion\CategoryLabel::class => NavigationInvokableFactory::class,
+            Navigation\Invokable\Report\Criterion\TypeLabel::class     => NavigationInvokableFactory::class,
+            Navigation\Invokable\Report\Criterion\TopicLabel::class    => NavigationInvokableFactory::class,
+            Navigation\Invokable\Report\Criterion\VersionLabel::class  => NavigationInvokableFactory::class,
+            Navigation\Invokable\Reviewer\ContactLabel::class          => NavigationInvokableFactory::class,
+            Navigation\Invokable\EvaluateProjectLabel::class           => NavigationInvokableFactory::class,
+            Navigation\Invokable\EvaluationLabel::class                => NavigationInvokableFactory::class,
+            Navigation\Invokable\FeedbackLabel::class                  => NavigationInvokableFactory::class,
             // Misc
-            Options\ModuleOptions::class                     => Options\Factory\ModuleOptionsFactory::class
+            Options\ModuleOptions::class                               => Options\Factory\ModuleOptionsFactory::class
         ],
     ],
     'doctrine'           => [
