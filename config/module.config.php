@@ -11,7 +11,7 @@
 
 namespace Evaluation;
 
-use Admin\Navigation\Factory\NavigationInvokableFactory;
+use General\Navigation\Factory\NavigationInvokableFactory;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use General\View\Factory\LinkHelperFactory;
 use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;

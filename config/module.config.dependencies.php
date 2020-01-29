@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Evaluation;
 
-use Admin\Navigation\Service\NavigationService;
+use General\Navigation\Service\NavigationService;
 use Affiliation\Service\AffiliationService;
 use Contact\Service\ContactService;
 use Contact\Service\SelectionContactService;

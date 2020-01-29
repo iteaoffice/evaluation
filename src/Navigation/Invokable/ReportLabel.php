@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Evaluation\Navigation\Invokable;
 
-use Admin\Navigation\Invokable\AbstractNavigationInvokable;
-use Admin\Navigation\Service\NavigationService;
+use General\Navigation\Invokable\AbstractNavigationInvokable;
+use General\Navigation\Service\NavigationService;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Entity\Report as EvaluationReport;
 use Laminas\I18n\Translator\TranslatorInterface;

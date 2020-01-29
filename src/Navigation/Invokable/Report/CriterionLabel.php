@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Evaluation\Navigation\Invokable\Report;
 
-use Admin\Navigation\Invokable\AbstractNavigationInvokable;
+use General\Navigation\Invokable\AbstractNavigationInvokable;
 use Evaluation\Entity\Report\Criterion;
 use Laminas\Navigation\Page\Mvc;
 
