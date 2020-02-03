@@ -13,9 +13,11 @@ declare(strict_types=1);
 
 namespace Evaluation\Navigation\Invokable;
 
-use Admin\Navigation\Invokable\AbstractNavigationInvokable;
+use General\Navigation\Invokable\AbstractNavigationInvokable;
+use General\Navigation\Service\NavigationService;
 use Evaluation\Service\EvaluationReportService;
 use Evaluation\Entity\Report as EvaluationReport;
+use Laminas\I18n\Translator\TranslatorInterface;
 use Project\Entity\Report\Report;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Report\Reviewer as ReportReviewer;
@@ -28,6 +30,18 @@ use Laminas\Navigation\Page\Mvc;
  */
 final class ReportLabel extends AbstractNavigationInvokable
 {
+    private EvaluationReportService $evaluationReportService;
+
+    public function __construct(
+        NavigationService       $navigationService,
+        TranslatorInterface     $translator,
+        EvaluationReportService $evaluationReportService
+    )
+    {
+        parent::__construct($navigationService, $translator);
+        $this->evaluationReportService = $evaluationReportService;
+    }
+
     /**
      * Set the Project version evaluation report label
      *
@@ -50,9 +64,8 @@ final class ReportLabel extends AbstractNavigationInvokable
             $label = $this->translator->translate('txt-nav-create-evaluation-report');
         } elseif ($this->getEntities()->containsKey(EvaluationReport::class)) {
             /** @var EvaluationReportService $evaluationReportService */
-            $report                  = $this->getEntities()->get(EvaluationReport::class);
-            $evaluationReportService = $this->getServiceLocator()->get(EvaluationReportService::class);
-            $label                   = $evaluationReportService->parseLabel($report);
+            $report = $this->getEntities()->get(EvaluationReport::class);
+            $label  = $this->evaluationReportService->parseLabel($report);
         }
 
         $page->set('label', $label);
