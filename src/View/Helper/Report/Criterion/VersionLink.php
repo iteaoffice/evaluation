@@ -18,7 +18,6 @@ use Evaluation\Entity\Report\Criterion\Version as CriterionVersion;
 use Evaluation\Entity\Report\Version as ReportVersion;
 use General\ValueObject\Link\Link;
 use General\View\Helper\AbstractLink;
-
 use function sprintf;
 
 /**
@@ -29,15 +28,15 @@ final class VersionLink extends AbstractLink
 {
     public function __invoke(
         CriterionVersion $criterionVersion = null,
-        string $action = 'view',
-        string $show = 'name',
-        ReportVersion $reportVersion = null
+        string           $action = 'view',
+        string           $show = 'name',
+        ReportVersion    $reportVersion = null
     ): string {
         $criterionVersion ??= (new CriterionVersion())->setCriterion(new Criterion());
 
         $routeParams = [];
         $showOptions = [];
-        if (! $criterionVersion->isEmpty()) {
+        if (!$criterionVersion->isEmpty()) {
             $routeParams['id']   = $criterionVersion->getId();
             $showOptions['name'] = (string) $criterionVersion->getCriterion();
         }
@@ -49,7 +48,7 @@ final class VersionLink extends AbstractLink
         switch ($action) {
             case 'add':
                 $linkParams = [
-                    'icon'  => 'fa-plus',
+                    'icon'  => 'fas fa-plus',
                     'route' => 'zfcadmin/evaluation/report/criterion/version/add',
                     'text'  => $this->translator->translate('txt-add-new-evaluation-report-criterion')
                 ];

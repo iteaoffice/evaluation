@@ -83,7 +83,7 @@
                 {% set value = projectEvaluation['value'] %}
                 <tr {% if contactCountry.id == country.id %}class="ownCountry"{% endif %}>
                     <td> {% if contactCountry.id == country.id %}
-                            <span class="fa fa-user-o ownCountry"></span>
+                            <i class="fas fa-user ownCountry"></i>
                         {% endif %} {{ country }}
                     </td>
                     <td>{{ translate(evaluation.getEligible(true)) }}</td>
@@ -119,7 +119,7 @@
             {% set value = projectEvaluation['value'] %}
             <tr {% if contactCountry.id == country.id %}class="ownCountry"{% endif %}>
                 <td> {% if contactCountry.id == country.id %}
-                        <i class="fa fa-user ownCountry"></i>
+                        <i class="fas fa-user ownCountry"></i>
                     {% endif %} {{ country }}
                 </td>
                 <td>{{ translate(evaluation.getEligible(true)) }}</td>

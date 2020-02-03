@@ -1,5 +1,4 @@
 <?php
-
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -8,7 +7,6 @@
  *
  * @link        http://github.com/iteaoffice/project for the canonical source repository
  */
-
 declare(strict_types=1);
 
 namespace Evaluation\View\Helper\Report;
@@ -29,17 +27,17 @@ final class FinalLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         EvaluationReport $evaluationReport = null,
-        string $action = 'view',
-        string $show = LinkDecoration::SHOW_TEXT,
-        ProjectReport $projectReport = null,
-        ProjectVersion $projectVersion = null
+        string           $action = 'view',
+        string           $show = LinkDecoration::SHOW_TEXT,
+        ProjectReport    $projectReport = null,
+        ProjectVersion   $projectVersion = null
     ): string {
         $evaluationReport ??= new EvaluationReport();
-        if (! $this->hasAccess($evaluationReport, ReportAssertion::class, $action)) {
+        if (!$this->hasAccess($evaluationReport, ReportAssertion::class, $action)) {
             return '';
         }
         $routeParams = [];
-        if (! $evaluationReport->isEmpty()) {
+        if (!$evaluationReport->isEmpty()) {
             $routeParams['id'] = $evaluationReport->getId();
         }
         switch ($action) {
@@ -79,14 +77,14 @@ final class FinalLink extends \General\View\Helper\AbstractLink
                 break;
             case 'download':
                 $linkParams = [
-                    'icon'  => 'fa-file-excel-o',
+                    'icon'  => 'far fa-file-excel',
                     'route' => 'zfcadmin/evaluation/report/download',
                     'text'  => $this->translator->translate('txt-download-original-version')
                 ];
                 break;
             case 'download-distributable':
                 $linkParams = [
-                    'icon'        => 'fa-file-excel-o',
+                    'icon'        => 'far fa-file-excel',
                     'route'       => 'zfcadmin/evaluation/report/download',
                     'queryParams' => ['format' => 'distributable'],
                     'text'        => $this->translator->translate('txt-download-distributable-version')
@@ -94,7 +92,7 @@ final class FinalLink extends \General\View\Helper\AbstractLink
                 break;
             case 'download-pdf':
                 $linkParams = [
-                    'icon'        => 'fa-file-pdf-o',
+                    'icon'        => 'far fa-file-pdf',
                     'route'       => 'zfcadmin/evaluation/report/download',
                     'queryParams' => ['format' => 'pdf'],
                     'text'        => $this->translator->translate('txt-download-as-pdf')
@@ -102,7 +100,7 @@ final class FinalLink extends \General\View\Helper\AbstractLink
                 break;
             case 'download-distributable-pdf':
                 $linkParams = [
-                    'icon'        => 'fa-file-pdf-o',
+                    'icon'        => 'far fa-file-pdf',
                     'route'       => 'zfcadmin/evaluation/report/download',
                     'queryParams' => ['format' => 'distributable-pdf'],
                     'text'        => $this->translator->translate('txt-download-distributable-version-as-pdf')
@@ -110,7 +108,7 @@ final class FinalLink extends \General\View\Helper\AbstractLink
                 break;
             case 'download-consolidated-pdf':
                 $linkParams = [
-                    'icon'        => 'fa-file-pdf-o',
+                    'icon'        => 'far fa-file-pdf',
                     'route'       => 'zfcadmin/evaluation/report/download',
                     'queryParams' => ['format' => 'consolidated-pdf'],
                     'text'        => $this->translator->translate('txt-download-consolidated-version-as-pdf')

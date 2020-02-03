@@ -61,7 +61,7 @@
                                 {% endif %}
                                 <td>
                                     {% if userCountryInProject %}
-                                        <i class="fa fa-user text-highlight ownCountry"
+                                        <i class="fas fa-user text-highlight ownCountry"
                                            title="{{ translate("txt-your-country-is-active-in-this-project") }}"></i>
                                         {{ translate("txt-yes") }}
                                     {% endif %}
@@ -168,7 +168,7 @@
                         {# do not use the evaluationLink helper as that is fully built to produce evaluation links#}
                         <a class="btn btn-primary"
                            href="{{ url('community/evaluation/download', {'call': call.id, 'type': typeId}) }}"><i
-                                    class="fa fa-file-excel-o"></i>
+                                    class="far fa-file-excel"></i>
                             {{ translate("txt-download-%s-evaluation-overview-of-call-%s")|format(evaluationType, call) }}
                         </a>
                     {% else %}

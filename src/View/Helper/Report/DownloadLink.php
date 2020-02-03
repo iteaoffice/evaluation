@@ -14,12 +14,12 @@ use General\View\Helper\AbstractLink;
 final class DownloadLink extends AbstractLink
 {
     public function __invoke(
-        int $status = null,
+        int    $status = null,
         string $action = 'download-combined',
         string $show = 'button'
     ): string {
         return $this->parse(Link::fromArray([
-            'icon'        => 'fa-download',
+            'icon'        => 'fas fa-download',
             'route'       => 'community/evaluation/report/download-combined',
             'text'        => $this->translator->translate('txt-download-all'),
             'routeParams' => (null === $status) ? [] : ['status' => $status],

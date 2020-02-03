@@ -15,7 +15,7 @@
             <dt>{{ translate("txt-project-leader") }}</dt>
             <dd>{{ project.contact.displayName() }}
                 ({{ project.contact.contactOrganisation.organisation|trim }})
-                <a href="mailto:{{ project.contact.email }}"><i class="fa fa-envelope-o"></i></a>
+                <a href="mailto:{{ project.contact.email }}"><i class="far fa-envelope"></i></a>
                 {{ contactLink(project.contact,'view-admin','icon') }}
             </dd>
             <dt>{{ translate("txt-call-name") }}</dt>

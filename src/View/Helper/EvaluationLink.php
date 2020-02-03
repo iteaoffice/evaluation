@@ -44,12 +44,12 @@ final class EvaluationLink extends AbstractLink
             $evaluation->setCountry($country ?? new Country());
         }
 
-        if (! $this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
+        if (!$this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
             return '';
         }
 
         $routeParams = [];
-        if (! $evaluation->isEmpty()) {
+        if (!$evaluation->isEmpty()) {
             $routeParams['id'] = $evaluation->getId();
         }
         if (null !== $project) {
@@ -69,7 +69,7 @@ final class EvaluationLink extends AbstractLink
                 // The parameters are the same but the router and the text change
                 if ($action === 'overview-project') {
                     $linkParams = [
-                        'icon' => 'fa-list',
+                        'icon' => 'fas fa-list',
                         'route' => 'community/evaluation/overview-project',
                         'text' => sprintf(
                             $this->translator->translate('txt-overview-%s-evaluation-for-project-%s-in-%s'),
@@ -80,7 +80,7 @@ final class EvaluationLink extends AbstractLink
                     ];
                 } else {
                     $linkParams = [
-                        'icon' => 'fa-list',
+                        'icon' => 'fas fa-list',
                         'route' => 'community/evaluation/evaluate-project',
                         'text' => sprintf(
                             $this->translator->translate('txt-give-%s-evaluation-for-project-%s-in-%s'),
@@ -93,7 +93,7 @@ final class EvaluationLink extends AbstractLink
                 break;
             case 'download-project':
                 $linkParams = [
-                    'icon' => 'fa-file-pdf-o',
+                    'icon' => 'far fa-file-pdf',
                     'route' => 'community/evaluation/download-project',
                     'text' => sprintf(
                         $this->translator->translate('txt-download-overview-%s-evaluation-for-project-%s-in-%s'),
@@ -105,7 +105,7 @@ final class EvaluationLink extends AbstractLink
                 break;
             case 'edit-admin':
                 $linkParams = [
-                    'icon' => 'fa-pencil-square-o',
+                    'icon' => 'far fa-edit',
                     'route' => 'zfcadmin/project/evaluation/edit',
                     'text' => sprintf(
                         $this->translator->translate('txt-edit-%s-evaluation-for-project-%s-in-%s'),
@@ -117,7 +117,7 @@ final class EvaluationLink extends AbstractLink
                 break;
             case 'new-admin':
                 $linkParams = [
-                    'icon' => 'fa-plus',
+                    'icon' => 'fas fa-plus',
                     'route' => 'zfcadmin/project/evaluation/new',
                     'text' => sprintf(
                         $this->translator->translate('txt-add-evaluation-for-project-%s'),

@@ -18,7 +18,6 @@ use Evaluation\Entity\Feedback;
 use General\ValueObject\Link\Link;
 use General\ValueObject\Link\LinkDecoration;
 use Project\Entity\Version\Version;
-
 use function sprintf;
 use function strtoupper;
 
@@ -31,18 +30,18 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
 {
     public function __invoke(
         Feedback $feedback = null,
-        string $action = 'view',
-        string $show = LinkDecoration::SHOW_TEXT,
-        Version $version = null
+        string   $action = 'view',
+        string   $show = LinkDecoration::SHOW_TEXT,
+        Version  $version = null
     ): string {
         $feedback ??= new Feedback();
 
-        if (! $this->hasAccess($feedback, FeedbackAssertion::class, $action)) {
+        if (!$this->hasAccess($feedback, FeedbackAssertion::class, $action)) {
             return '';
         }
 
         $routeParams = [];
-        if (! $feedback->isEmpty()) {
+        if (!$feedback->isEmpty()) {
             $routeParams['id'] = $feedback->getId();
         }
 
@@ -59,7 +58,7 @@ final class FeedbackLink extends \General\View\Helper\AbstractLink
                 break;
             case 'edit-admin':
                 $linkParams = [
-                    'icon'  => 'fa-pencil-square-o',
+                    'icon'  => 'far fa-edit',
                     'route' => 'zfcadmin/feedback/edit',
                     'text'  => sprintf(
                         $this->translator->translate('txt-edit-%s-feedback-of-project-%s'),

@@ -1,5 +1,4 @@
 <?php
-
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -16,7 +15,6 @@ namespace Evaluation\View\Helper\Report;
 use Evaluation\Entity\Report\Version;
 use General\ValueObject\Link\Link;
 use General\View\Helper\AbstractLink;
-
 use function sprintf;
 
 /**
@@ -28,14 +26,14 @@ final class VersionLink extends AbstractLink
 {
     public function __invoke(
         Version $reportVersion = null,
-        string $action = 'view',
-        string $show = 'name'
+        string  $action = 'view',
+        string  $show = 'name'
     ): string {
         $reportVersion ??= new Version();
 
         $routeParams = [];
         $showOptions = [];
-        if (! $reportVersion->isEmpty()) {
+        if (!$reportVersion->isEmpty()) {
             $routeParams['id']   = $reportVersion->getId();
             $showOptions['name'] = $reportVersion->getLabel();
         }
@@ -71,7 +69,7 @@ final class VersionLink extends AbstractLink
                 break;
             case 'copy':
                 $linkParams = [
-                    'icon'  => 'fa-copy',
+                    'icon'  => 'far fa-clone',
                     'route' => 'zfcadmin/evaluation/report/version/copy',
                     'text'  => $showOptions[$show]
                         ?? sprintf($this->translator->translate('txt-copy-%s'), $reportVersion->getLabel())
