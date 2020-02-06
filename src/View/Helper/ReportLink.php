@@ -38,16 +38,15 @@ final class ReportLink extends AbstractLink
         bool $shortLabel = false,
         ReportReviewer $reportReviewer = null,
         VersionReviewer $versionReviewer = null
-    ): string
-    {
+    ): string {
         $evaluationReport ??= new EvaluationReport();
 
-        if (!$this->hasAccess($evaluationReport, ReportAssertion::class, $action)) {
+        if (! $this->hasAccess($evaluationReport, ReportAssertion::class, $action)) {
             return '';
         }
 
         $routeParams = [];
-        if (!$evaluationReport->isEmpty()) {
+        if (! $evaluationReport->isEmpty()) {
             $routeParams['id'] = $evaluationReport->getId();
         }
 

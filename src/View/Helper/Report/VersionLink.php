@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -15,6 +16,7 @@ namespace Evaluation\View\Helper\Report;
 use Evaluation\Entity\Report\Version;
 use General\ValueObject\Link\Link;
 use General\View\Helper\AbstractLink;
+
 use function sprintf;
 
 /**
@@ -26,14 +28,14 @@ final class VersionLink extends AbstractLink
 {
     public function __invoke(
         Version $reportVersion = null,
-        string  $action = 'view',
-        string  $show = 'name'
+        string $action = 'view',
+        string $show = 'name'
     ): string {
         $reportVersion ??= new Version();
 
         $routeParams = [];
         $showOptions = [];
-        if (!$reportVersion->isEmpty()) {
+        if (! $reportVersion->isEmpty()) {
             $routeParams['id']   = $reportVersion->getId();
             $showOptions['name'] = $reportVersion->getLabel();
         }

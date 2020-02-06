@@ -44,12 +44,12 @@ final class EvaluationLink extends AbstractLink
             $evaluation->setCountry($country ?? new Country());
         }
 
-        if (!$this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
+        if (! $this->hasAccess($evaluation, EvaluationAssertion::class, $action)) {
             return '';
         }
 
         $routeParams = [];
-        if (!$evaluation->isEmpty()) {
+        if (! $evaluation->isEmpty()) {
             $routeParams['id'] = $evaluation->getId();
         }
         if (null !== $project) {

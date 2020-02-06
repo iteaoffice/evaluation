@@ -1,4 +1,5 @@
 <?php
+
 /**
 *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
@@ -28,18 +29,18 @@ final class ReviewerLink extends AbstractLink
 {
     public function __invoke(
         Reviewer $reviewer = null,
-        string   $action = 'new',
-        string   $show = LinkDecoration::SHOW_TEXT,
-        Project  $project = null
+        string $action = 'new',
+        string $show = LinkDecoration::SHOW_TEXT,
+        Project $project = null
     ): string {
         $reviewer ??= new Reviewer();
 
-        if (!$this->hasAccess($reviewer, ReviewerAssertion::class, $action)) {
+        if (! $this->hasAccess($reviewer, ReviewerAssertion::class, $action)) {
             return '';
         }
 
         $routeParams = [];
-        if (!$reviewer->isEmpty()) {
+        if (! $reviewer->isEmpty()) {
             $routeParams['id'] = $reviewer->getId();
         }
         if ($project instanceof Project) {

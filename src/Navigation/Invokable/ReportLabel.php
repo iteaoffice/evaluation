@@ -33,11 +33,10 @@ final class ReportLabel extends AbstractNavigationInvokable
     private EvaluationReportService $evaluationReportService;
 
     public function __construct(
-        NavigationService       $navigationService,
-        TranslatorInterface     $translator,
+        NavigationService $navigationService,
+        TranslatorInterface $translator,
         EvaluationReportService $evaluationReportService
-    )
-    {
+    ) {
         parent::__construct($navigationService, $translator);
         $this->evaluationReportService = $evaluationReportService;
     }

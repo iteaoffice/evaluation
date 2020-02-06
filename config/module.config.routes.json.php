@@ -10,13 +10,9 @@ return [
     'router' => [
         'routes' => [
             'json' => [
-                'type'    => 'Literal',
-                'options' => [
-                    'route'    => '/json',
-                    'defaults' => [
-                        'controller' => Controller\EvaluationController::class,
-                        'action'     => 'index',
-                    ],
+                'type'          => 'Literal',
+                'options'       => [
+                    'route' => '/json',
                 ],
                 'may_terminate' => false,
                 'child_routes'  => [
