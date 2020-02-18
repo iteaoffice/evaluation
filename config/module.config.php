@@ -85,7 +85,6 @@ $config = [
             'reportCriterionVersionLink'       => View\Helper\Report\Criterion\VersionLink::class,
             'reviewerLink'                     => View\Helper\ReviewerLink::class,
             'reviewerContactLink'              => View\Helper\Reviewer\ContactLink::class
-
         ],
         'invokables' => [
 
@@ -108,14 +107,6 @@ $config = [
             View\Helper\Report\Criterion\VersionLink::class  => LinkHelperFactory::class,
             View\Helper\ReviewerLink::class                  => LinkHelperFactory::class,
             View\Helper\Reviewer\ContactLink::class          => LinkHelperFactory::class,
-        ],
-    ],
-    'form_elements'      => [
-        'aliases'   => [
-
-        ],
-        'factories' => [
-
         ],
     ],
     'service_manager'    => [

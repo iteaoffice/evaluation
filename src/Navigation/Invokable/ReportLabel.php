@@ -41,13 +41,6 @@ final class ReportLabel extends AbstractNavigationInvokable
         $this->evaluationReportService = $evaluationReportService;
     }
 
-    /**
-     * Set the Project version evaluation report label
-     *
-     * @param Mvc $page
-     *
-     * @return void;
-     */
     public function __invoke(Mvc $page): void
     {
         $label = $this->translator->translate('txt-nav-view');

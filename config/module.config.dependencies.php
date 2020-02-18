@@ -1,7 +1,7 @@
 <?php
 
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Evaluation;
 
-use General\Navigation\Service\NavigationService;
 use Affiliation\Service\AffiliationService;
 use Contact\Service\ContactService;
 use Contact\Service\SelectionContactService;
@@ -21,16 +20,17 @@ use Doctrine\ORM\EntityManager;
 use Evaluation\Options\ModuleOptions;
 use Evaluation\Service\EvaluationService;
 use Evaluation\Service\FormService;
+use General\Navigation\Service\NavigationService;
 use General\Service\CountryService;
 use General\Service\GeneralService;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
+use Laminas\ServiceManager\ServiceManager;
 use Program\Service\CallService;
 use Project\Search\Service\ProjectSearchService;
 use Project\Service\ProjectService;
 use Project\Service\ReportService;
 use Project\Service\VersionService;
-use Laminas\I18n\Translator\TranslatorInterface;
-use Laminas\ServiceManager\AbstractFactory\ConfigAbstractFactory;
-use Laminas\ServiceManager\ServiceManager;
 use ZfcTwig\View\TwigRenderer;
 
 return [
@@ -226,9 +226,9 @@ return [
             TranslatorInterface::class
         ],
         Navigation\Invokable\ReportLabel::class               => [
-            Service\EvaluationReportService::class,
             NavigationService::class,
-            TranslatorInterface::class
+            TranslatorInterface::class,
+            Service\EvaluationReportService::class,
         ]
     ]
 ];

@@ -21,7 +21,6 @@ use Evaluation\Service\EvaluationReportService;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use RuntimeException;
 
 use function sprintf;
@@ -33,29 +32,11 @@ use function unlink;
  */
 final class ExcelImport extends AbstractPlugin
 {
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-
-    /**
-     * @var Spreadsheet
-     */
-    private $data = [];
-
-    /**
-     * @var int
-     */
-    private $finalScore;
-    /**
-     * @var int
-     */
-    private $projectStatus;
-
-    /**
-     * @var bool
-     */
-    private $hasParseErrors = false;
+    private EvaluationReportService $evaluationReportService;
+    private array $data = [];
+    private int $finalScore;
+    private int $projectStatus;
+    private bool $hasParseErrors = false;
 
     public function __construct(EvaluationReportService $evaluationReportService)
     {
@@ -96,7 +77,7 @@ final class ExcelImport extends AbstractPlugin
     public function excelIsOutdated(EvaluationReport $evaluationReport): bool
     {
         foreach ($this->data as $row) {
-            if (! empty($row[1])) {
+            if (!empty($row[1])) {
                 // An Excel with result IDs is never outdated, so short-circuit
                 return false;
             }

@@ -66,87 +66,25 @@ use function sprintf;
  */
 final class PdfExport extends AbstractPlugin
 {
-    /**
-     * @var array
-     */
-    private static $colWidths = [1 => 80, 2 => 45, 3 => 150];
-
-    /**
-     * @var int
-     */
-    private static $lineHeights = [
+    private static array $colWidths = [1 => 80, 2 => 45, 3 => 150];
+    private static array $lineHeights = [
         'category' => 8, 'type' => 6, 'line' => 5, 'bigLine' => 15
     ];
 
-    /**
-     * @var int
-     */
-    private static $topMargin = 25;
-
-    /**
-     * @var int
-     */
-    private static $bottomMargin = 10;
-
-    /**
-     * @var string
-     */
-    private static $orientation = 'L';
-
-    /**
-     * @var EvaluationReportService
-     */
-    private $evaluationReportService;
-
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
-
-    /**
-     * @var VersionService
-     */
-    private $versionService;
-
-    /**
-     * @var ModuleOptions
-     */
-    private $moduleOptions;
-
-    /**
-     * @var EvaluationReport
-     */
-    private $evaluationReport;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var TcpdfFpdi
-     */
-    private $pdf;
-
-    /**
-     * @var string
-     */
-    private $fileName;
-
-    /**
-     * @var bool
-     */
-    private $forDistribution = false;
-
-    /**
-     * @var bool
-     */
-    private $showGraphAndScores = false;
-
-    /**
-     * @var array
-     */
-    private $results = [];
+    private static int $topMargin = 25;
+    private static int $bottomMargin = 10;
+    private static string $orientation = 'L';
+    private EvaluationReportService $evaluationReportService;
+    private ProjectService $projectService;
+    private VersionService $versionService;
+    private ModuleOptions $moduleOptions;
+    private EvaluationReport $evaluationReport;
+    private TranslatorInterface $translator;
+    private TcpdfFpdi $pdf;
+    private string $fileName;
+    private bool $forDistribution = false;
+    private bool $showGraphAndScores = false;
+    private array $results = [];
 
     public function __construct(
         EvaluationReportService $evaluationReportService,
