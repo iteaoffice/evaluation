@@ -1,4 +1,5 @@
 <?php
+
 _('txt-not-evaluated-yet');
 _('txt-very-low:-unacceptable-or-missing');
 _('txt-low:-insufficient-lacking-or-inadequate');

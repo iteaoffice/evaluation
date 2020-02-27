@@ -94,8 +94,7 @@ final class ExcelExport extends AbstractPlugin
         VersionService $versionService,
         ModuleOptions $moduleOptions,
         TranslatorInterface $translator
-    )
-    {
+    ) {
         $this->evaluationReportService = $evaluationReportService;
         $this->projectService          = $projectService;
         $this->versionService          = $versionService;
@@ -107,8 +106,7 @@ final class ExcelExport extends AbstractPlugin
         EvaluationReport $evaluationReport,
         bool $isFinal = false,
         bool $forDistribution = false
-    ): ExcelExport
-    {
+    ): ExcelExport {
         $this->evaluationReport = $evaluationReport;
         $this->excel            = new Spreadsheet();
 
@@ -191,7 +189,7 @@ final class ExcelExport extends AbstractPlugin
         $dataRow   = 1;
         $allTopics = [];
         $hasTopics = false;
-        if (!$this->forDistribution) {
+        if (! $this->forDistribution) {
             // Add a hidden import data sheet
             $dataSheet = $this->excel->createSheet(2);
             $dataSheet->setTitle('ImportData');
@@ -234,7 +232,7 @@ final class ExcelExport extends AbstractPlugin
 
                     // No STG decision in distributed export PO/FPP evaluation
                     $hideFor = [EvaluationReport\Type::TYPE_PO_VERSION, EvaluationReport\Type::TYPE_FPP_VERSION];
-                    if (!$this->forDistribution || !in_array($reportType, $hideFor, true)) {
+                    if (! $this->forDistribution || ! in_array($reportType, $hideFor, true)) {
                         $this->parseType($displaySheet, $row, $this->translator->translate('txt-review-details'));
                         $this->parseSteeringGroupData($displaySheet, $dataSheet, $reportType, $row);
                     }
@@ -245,8 +243,8 @@ final class ExcelExport extends AbstractPlugin
             if (
                 ($type !== $currentType)
                 && (
-                    !$this->forDistribution
-                    || !$this->evaluationReportService->typeIsConfidential(
+                    ! $this->forDistribution
+                    || ! $this->evaluationReportService->typeIsConfidential(
                         $result->getCriterionVersion()->getType(),
                         $this->evaluationReport->getVersion()
                     )
@@ -256,18 +254,18 @@ final class ExcelExport extends AbstractPlugin
                 $currentType = $type;
             }
 
-            if (!$this->forDistribution || !$result->getCriterionVersion()->getConfidential()) {
+            if (! $this->forDistribution || ! $result->getCriterionVersion()->getConfidential()) {
                 $this->parseResult($displaySheet, $dataSheet, $result, $row, $dataRow);
             }
 
-            if (!$this->forDistribution && isset($chartDataSheet) && $hasTopics) {
+            if (! $this->forDistribution && isset($chartDataSheet) && $hasTopics) {
                 $this->parseChartData($chartDataSheet, $result, $allTopics, $chartDataRow, $dataRow);
             }
 
             $categoryCount++;
         }
 
-        if (!$this->forDistribution && $hasTopics) {
+        if (! $this->forDistribution && $hasTopics) {
             $chart = $this->parseRadarChart($allTopics);
             $chart->setTopLeftPosition('E2');
             $chart->setBottomRightPosition('K20');
@@ -482,8 +480,7 @@ final class ExcelExport extends AbstractPlugin
         int &$row,
         string $criterionLabel,
         ?string $helpBlock = null
-    ): void
-    {
+    ): void {
         $criterionCell      = 'A' . $row;
         $criterionAlignment = $displaySheet->getStyle($criterionCell)->getAlignment();
         $criterionAlignment->setVertical(Alignment::VERTICAL_CENTER);
@@ -494,7 +491,7 @@ final class ExcelExport extends AbstractPlugin
         $displaySheet->setCellValue($criterionCell, $criterionLabel);
         if ($helpBlock !== null) {
             $helpBlock = html_entity_decode($helpBlock);
-            if (!empty($helpBlock)) {
+            if (! empty($helpBlock)) {
                 $displaySheet->getComment($criterionCell)->setWidth('320pt');
                 $height = ceil(strlen($helpBlock) / 65) * 14; // By no means accurate, but it will do
                 $displaySheet->getComment($criterionCell)->setHeight($height . 'pt');
@@ -508,16 +505,15 @@ final class ExcelExport extends AbstractPlugin
         ?Worksheet $dataSheet,
         int $reportType,
         int &$row
-    ): void
-    {
+    ): void {
         // Stg decision
         $displaySheet->getRowDimension($row)->setRowHeight(20);
         if (
-        in_array(
-            $reportType,
-            [EvaluationReport\Type::TYPE_MAJOR_CR_VERSION, EvaluationReport\Type::TYPE_MINOR_CR_VERSION],
-            true
-        )
+            in_array(
+                $reportType,
+                [EvaluationReport\Type::TYPE_MAJOR_CR_VERSION, EvaluationReport\Type::TYPE_MINOR_CR_VERSION],
+                true
+            )
         ) {
             $this->parseCriterionLabel(
                 $displaySheet,
@@ -573,7 +569,7 @@ final class ExcelExport extends AbstractPlugin
         }
 
         // Add the final score + project status (only for PPR) when not for distribution
-        if (!$this->forDistribution) {
+        if (! $this->forDistribution) {
             $sheetName = "'" . $this->translator->translate('txt-evaluation-report') . "'";
             $this->parseDropdown($displaySheet, $decisionSelectCell, '=finalScores');
             $dataSheet->setCellValue(
@@ -624,7 +620,7 @@ final class ExcelExport extends AbstractPlugin
         $row++;
 
         // Stg reviewers
-        if (!$this->forDistribution) {
+        if (! $this->forDistribution) {
             $displaySheet->getRowDimension($row)->setRowHeight(20);
             $this->parseCriterionLabel(
                 $displaySheet,
@@ -660,8 +656,7 @@ final class ExcelExport extends AbstractPlugin
         Result $result,
         int &$row,
         int &$dataRow
-    ): void
-    {
+    ): void {
         // Data
         $criterionIdCell = 'A' . $dataRow;
         $resultIdCell    = 'B' . $dataRow;
@@ -676,9 +671,9 @@ final class ExcelExport extends AbstractPlugin
         $displaySheet->getRowDimension($row)->setRowHeight(20);
 
         // Fill the hidden columns, set formulas
-        if (!$this->forDistribution) {
+        if (! $this->forDistribution) {
             $dataSheet->setCellValue($criterionIdCell, $result->getCriterionVersion()->getId());
-            if (!$result->isEmpty()) {
+            if (! $result->isEmpty()) {
                 $dataSheet->setCellValue($resultIdCell, $result->getId());
             }
         }
@@ -704,7 +699,7 @@ final class ExcelExport extends AbstractPlugin
         // Set the input types
         switch ($result->getCriterionVersion()->getCriterion()->getInputType()) {
             case Criterion::INPUT_TYPE_BOOL:
-                if (!$this->forDistribution) {
+                if (! $this->forDistribution) {
                     $this->parseDropdown($displaySheet, $scoreSelectCell, '=yesNo');
                     $dataSheet->setCellValue(
                         $valueCell,
@@ -722,7 +717,7 @@ final class ExcelExport extends AbstractPlugin
                     $result->getCriterionVersion()->getCriterion()->getValues(),
                     Json::TYPE_ARRAY
                 );
-                if (!$this->forDistribution) {
+                if (! $this->forDistribution) {
                     $this->parseDropdown(
                         $displaySheet,
                         $scoreSelectCell,
@@ -740,7 +735,7 @@ final class ExcelExport extends AbstractPlugin
 
         if ($result->getCriterionVersion()->getCriterion()->getHasScore() === true) {
             $displaySheet->getRowDimension($row)->setRowHeight(50);
-            if (!$this->forDistribution) {
+            if (! $this->forDistribution) {
                 $this->parseDropdown($displaySheet, $scoreSelectCell, '=scores');
                 $score = $this->translator->translate($scores[$result->getScore()]);
                 $displaySheet->setCellValue($scoreSelectCell, $score);
@@ -776,11 +771,11 @@ final class ExcelExport extends AbstractPlugin
             }
         } else {
             if (
-            in_array(
-                $result->getCriterionVersion()->getCriterion()->getInputType(),
-                [Criterion::INPUT_TYPE_TEXT, Criterion::INPUT_TYPE_STRING],
-                true
-            )
+                in_array(
+                    $result->getCriterionVersion()->getCriterion()->getInputType(),
+                    [Criterion::INPUT_TYPE_TEXT, Criterion::INPUT_TYPE_STRING],
+                    true
+                )
             ) {
                 $mergeCell = $scoreSelectCell . ':' . $resultCell;
                 $displaySheet->mergeCells($mergeCell);
@@ -791,7 +786,7 @@ final class ExcelExport extends AbstractPlugin
                     $displaySheet->getRowDimension($row)->setRowHeight(50);
                     $displaySheet->getStyle($mergeCell)->getAlignment()->setVertical(Alignment::VERTICAL_TOP);
                 }
-                if (!$this->forDistribution) {
+                if (! $this->forDistribution) {
                     $dataSheet->setCellValue(
                         $valueCell,
                         '=IF(ISBLANK(' . $sheetName . '!' . $scoreSelectCell . '),"",' . $sheetName . '!'
@@ -814,11 +809,10 @@ final class ExcelExport extends AbstractPlugin
         array $allTopics,
         int &$chartDataRow,
         int $dataRow
-    ): void
-    {
+    ): void {
         $topicCount   = count($allTopics);
         $topicWeights = $result->getCriterionVersion()->getVersionTopics()->toArray();
-        if (!empty($topicWeights)) {
+        if (! empty($topicWeights)) {
             // Add topic weight and topic weight score totals
             $column = 'A';
             for ($i = 0; $i < $topicCount; $i++) {
@@ -980,13 +974,13 @@ final class ExcelExport extends AbstractPlugin
     public function parseResponse(): Response
     {
         $response = new Response();
-        if (!($this->excel instanceof Spreadsheet)) {
+        if (! ($this->excel instanceof Spreadsheet)) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 
         /** @var Xlsx $writer */
         $writer = IOFactory::createWriter($this->excel, 'Xlsx');
-        $writer->setIncludeCharts(!$this->forDistribution);
+        $writer->setIncludeCharts(! $this->forDistribution);
 
         ob_start();
         // Gzip the output when possible. @see http://php.net/manual/en/function.ob-gzhandler.php

@@ -1,4 +1,5 @@
 <?php
+
 _('txt-description');
 _('txt-evaluation-description-explanation');
 _('txt-evaluation-status');

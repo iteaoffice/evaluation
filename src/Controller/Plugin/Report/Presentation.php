@@ -76,8 +76,7 @@ final class Presentation extends AbstractPlugin
     public function __construct(
         ModuleOptions $moduleOptions,
         TranslatorInterface $translator
-    )
-    {
+    ) {
         $this->moduleOptions = $moduleOptions;
         $this->translator    = $translator;
     }
@@ -313,7 +312,7 @@ final class Presentation extends AbstractPlugin
     public function parseResponse(): Response
     {
         $response = new Response();
-        if (!($this->presentation instanceof PhpPresentation)) {
+        if (! ($this->presentation instanceof PhpPresentation)) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
         }
 

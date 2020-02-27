@@ -23,7 +23,7 @@ use Laminas\Form\Annotation;
 /**
  * @ORM\Table(name="evaluation_feedback")
  * @ORM\Entity(repositoryClass="Evaluation\Repository\FeedbackRepository")
- * @Annotation\Hydrator("Laminas\Hydrator\ObjectProperty")
+ * @Annotation\Hydrator("Laminas\Hydrator\ObjectPropertyHydrator")
  * @Annotation\Name("evaluation_feedback")
  */
 class Feedback extends AbstractEntity

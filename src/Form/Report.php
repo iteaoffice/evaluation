@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace Evaluation\Form;
 
-use Doctrine\ORM\EntityManager;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result;
@@ -23,6 +21,7 @@ use Evaluation\Service\EvaluationReportService;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
+use Laminas\Hydrator\ObjectPropertyHydrator as DoctrineHydrator;
 use Laminas\InputFilter\CollectionInputFilter;
 use Laminas\InputFilter\InputFilter;
 
@@ -32,11 +31,8 @@ use Laminas\InputFilter\InputFilter;
  */
 final class Report extends Form
 {
-    public function __construct(
-        EvaluationReport $report,
-        EvaluationReportService $reportService,
-        EntityManager $entityManager
-    ) {
+    public function __construct(EvaluationReport $report, EvaluationReportService $reportService)
+    {
         parent::__construct($report->get('underscore_entity_name'));
         $this->setAttributes(
             [
@@ -47,7 +43,7 @@ final class Report extends Form
             ]
         );
         $this->setUseAsBaseFieldset(true);
-        $doctrineHydrator = new DoctrineHydrator($entityManager);
+        $doctrineHydrator = new DoctrineHydrator();
         $this->setHydrator($doctrineHydrator);
         $this->bind($report);
 
@@ -70,6 +66,7 @@ final class Report extends Form
         $resultCollection->setAllowRemove(false);
         /** @var Result $reportResult */
         foreach ($reportService->getSortedResults($report) as $reportResult) {
+            /** @var Criterion $criterion */
             $criterion            = $reportResult->getCriterionVersion()->getCriterion();
             $hasScore             = $criterion->getHasScore();
             $reportResultFieldset = new Fieldset($criterion->getId());
@@ -111,10 +108,10 @@ final class Report extends Form
                             'options'    => array_merge(
                                 $optionTemplate,
                                 [
-                                'value_options' => [
-                                    'Yes' => _('txt-yes'),
-                                    'No'  => _('txt-no'),
-                                ],
+                                    'value_options' => [
+                                        'Yes' => _('txt-yes'),
+                                        'No'  => _('txt-no'),
+                                    ],
                                 ]
                             ),
                         ]
@@ -122,7 +119,7 @@ final class Report extends Form
                     break;
 
                 case Criterion::INPUT_TYPE_TEXT:
-                    $attributes = ($hasScore ? ['placeholder' => 'txt-comments'] : []);
+                    $attributes          = ($hasScore ? ['placeholder' => 'txt-comments'] : []);
                     $attributes['value'] = ($hasScore ? $reportResult->getComment() : $reportResult->getValue());
                     $reportResultFieldset->add(
                         [
@@ -168,7 +165,7 @@ final class Report extends Form
         // Add the result collection to the form
         $this->add($resultCollection);
 
-        $scores = ($report->getProjectReportReport() === null)
+        $scores           = ($report->getProjectReportReport() === null)
             ? $report::getVersionScores() : $report::getReportScores();
         $translatedScores = array_map(
             function ($scoreLabel) {
