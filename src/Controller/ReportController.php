@@ -262,7 +262,7 @@ final class ReportController extends AbstractActionController
             return $this->evaluationReportExcelExport($evaluationReport)->parseResponse();
         }
 
-        $form = new EvaluationReportForm($evaluationReport, $this->evaluationReportService);
+        $form = new EvaluationReportForm($evaluationReport, $this->evaluationReportService, $this->entityManager);
 
         if ($request->isPost() && ! $offlineMode) {
             $data = $request->getPost()->toArray();
@@ -416,7 +416,7 @@ final class ReportController extends AbstractActionController
             }
         }
 
-        $form = new EvaluationReportForm($evaluationReport, $this->evaluationReportService);
+        $form = new EvaluationReportForm($evaluationReport, $this->evaluationReportService, $this->entityManager);
 
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();

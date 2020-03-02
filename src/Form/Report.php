@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Evaluation\Form;
 
+use Doctrine\Laminas\Hydrator\DoctrineObject as DoctrineHydrator;
+use Doctrine\ORM\EntityManager;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion;
 use Evaluation\Entity\Report\Result;
@@ -21,7 +23,6 @@ use Evaluation\Service\EvaluationReportService;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
-use Laminas\Hydrator\ObjectPropertyHydrator as DoctrineHydrator;
 use Laminas\InputFilter\CollectionInputFilter;
 use Laminas\InputFilter\InputFilter;
 
@@ -31,7 +32,7 @@ use Laminas\InputFilter\InputFilter;
  */
 final class Report extends Form
 {
-    public function __construct(EvaluationReport $report, EvaluationReportService $reportService)
+    public function __construct(EvaluationReport $report, EvaluationReportService $reportService, EntityManager $entityManager)
     {
         parent::__construct($report->get('underscore_entity_name'));
         $this->setAttributes(
@@ -43,7 +44,7 @@ final class Report extends Form
             ]
         );
         $this->setUseAsBaseFieldset(true);
-        $doctrineHydrator = new DoctrineHydrator();
+        $doctrineHydrator = new DoctrineHydrator($entityManager);
         $this->setHydrator($doctrineHydrator);
         $this->bind($report);
 

@@ -70,13 +70,13 @@ use Project\Entity\Project;
         prc.*
         FROM affiliation a
         INNER JOIN organisation o ON o.organisation_id = a.organisation_id
-        LEFT JOIN contact_organisation co ON co.organisation_id = o.organisation_id
+        INNER JOIN contact_organisation co ON co.organisation_id = o.organisation_id
         LEFT JOIN organisation_parent_organisation opo ON opo.organisation_id = o.organisation_id
         LEFT JOIN organisation_parent_organisation child_opo ON (child_opo.parent_id = opo.parent_id AND child_opo.organisation_id <> o.organisation_id)
         LEFT JOIN contact_organisation child_co ON child_co.organisation_id = child_opo.organisation_id
         LEFT JOIN selection_contact sc ON (sc.contact_id = co.contact_id OR sc.contact_id = child_co.contact_id)
         INNER JOIN selection s ON s.selection_id = sc.selection_id
-        INNER JOIN project_review_contact prc ON prc.contact_id = sc.contact_id
+        LEFT JOIN project_review_contact prc ON prc.contact_id = sc.contact_id
         WHERE a.project_id = 10293
         AND sc.selection_id IN (46, 47)
         AND a.date_end IS NULL */
@@ -85,7 +85,7 @@ use Project\Entity\Project;
         $queryBuilder->select('prc')->distinct();
         $queryBuilder->from(Affiliation::class, 'a');
         $queryBuilder->innerJoin('a.organisation', 'o');
-        $queryBuilder->leftJoin('o.contactOrganisation', 'co');
+        $queryBuilder->innerJoin('o.contactOrganisation', 'co');
         $queryBuilder->leftJoin('o.parentOrganisation', 'po');
         $queryBuilder->leftJoin(
             ParentOrganisation::class,
