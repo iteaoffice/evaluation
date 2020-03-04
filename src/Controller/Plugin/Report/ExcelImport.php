@@ -34,8 +34,8 @@ final class ExcelImport extends AbstractPlugin
 {
     private EvaluationReportService $evaluationReportService;
     private array $data = [];
-    private int $finalScore;
-    private int $projectStatus;
+    private ?int $finalScore;
+    private ?int $projectStatus;
     private bool $hasParseErrors = false;
 
     public function __construct(EvaluationReportService $evaluationReportService)
