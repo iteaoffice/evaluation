@@ -1,7 +1,7 @@
 <?php
 
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -57,7 +57,7 @@ class Report extends AbstractEntity
      *
      * @var int
      */
-    private int $id;
+    private $id;
     /**
      * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Version", cascade={"persist"}, inversedBy="evaluationReports")
      * @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=false)
@@ -65,7 +65,7 @@ class Report extends AbstractEntity
      *
      * @var Report\Version
      */
-    private Report\Version $version;
+    private $version;
     /**
      * @ORM\Column(name="final", length=1, type="boolean", nullable=false)
      * @Annotation\Type("Laminas\Form\Element\Checkbox")
@@ -76,7 +76,7 @@ class Report extends AbstractEntity
      *
      * @var bool
      */
-    private bool $final = false;
+    private $final = false;
     /**
      * @ORM\Column(name="score", type="smallint", length=5, nullable=true)
      * @Annotation\Type("Laminas\Form\Element\Select")
@@ -96,7 +96,7 @@ class Report extends AbstractEntity
      *
      * @var DateTime
      */
-    private DateTime $dateCreated;
+    private $dateCreated;
     /**
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
      * @Gedmo\Timestampable(on="update")
@@ -104,21 +104,21 @@ class Report extends AbstractEntity
      *
      * @var DateTime
      */
-    private DateTime $dateUpdated;
+    private $dateUpdated;
     /**
      * @ORM\OneToOne(targetEntity="Evaluation\Entity\Report\ProjectReport", cascade={"persist"}, mappedBy="evaluationReport")
      * @Annotation\Exclude()
      *
      * @var Report\ProjectReport
      */
-    private Report\ProjectReport $projectReportReport;
+    private $projectReportReport;
     /**
      * @ORM\OneToOne(targetEntity="Evaluation\Entity\Report\ProjectVersion", cascade={"persist"}, mappedBy="evaluationReport")
      * @Annotation\Exclude()
      *
      * @var Report\ProjectVersion
      */
-    private Report\ProjectVersion $projectVersionReport;
+    private $projectVersionReport;
     /**
      * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Result", cascade={"persist","remove"}, mappedBy="evaluationReport", orphanRemoval=true)
      * @Annotation\Exclude()
