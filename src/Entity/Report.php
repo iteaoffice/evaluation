@@ -37,7 +37,7 @@ class Report extends AbstractEntity
     public const TYPE_INDIVIDUAL = 'individual'; // Individual review
     public const TYPE_FINAL      = 'final'; // Final review
 
-    private static $versionScores = [
+    private static array $versionScores = [
         self::SCORE_TOP          => 'txt-score-top-project',
         self::SCORE_MIDDLE_PLUS  => 'txt-score-middle+',
         self::SCORE_MIDDLE       => 'txt-score-middle',
@@ -45,7 +45,7 @@ class Report extends AbstractEntity
         self::SCORE_LOW          => 'txt-score-low-quality'
     ];
 
-    private static $reportScores = [
+    private static array $reportScores = [
         self::SCORE_APPROVED => 'txt-approved',
         self::SCORE_REJECTED => 'txt-rejected'
     ];
@@ -57,7 +57,7 @@ class Report extends AbstractEntity
      *
      * @var int
      */
-    private $id;
+    private int $id;
     /**
      * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Version", cascade={"persist"}, inversedBy="evaluationReports")
      * @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=false)
@@ -65,7 +65,7 @@ class Report extends AbstractEntity
      *
      * @var Report\Version
      */
-    private $version;
+    private Report\Version $version;
     /**
      * @ORM\Column(name="final", length=1, type="boolean", nullable=false)
      * @Annotation\Type("Laminas\Form\Element\Checkbox")
@@ -76,7 +76,7 @@ class Report extends AbstractEntity
      *
      * @var bool
      */
-    private $final = false;
+    private bool $final = false;
     /**
      * @ORM\Column(name="score", type="smallint", length=5, nullable=true)
      * @Annotation\Type("Laminas\Form\Element\Select")
@@ -88,7 +88,7 @@ class Report extends AbstractEntity
      *
      * @var int
      */
-    private $score;
+    private int $score;
     /**
      * @ORM\Column(name="date_created", type="datetime", nullable=false)
      * @Gedmo\Timestampable(on="create")
@@ -96,7 +96,7 @@ class Report extends AbstractEntity
      *
      * @var DateTime
      */
-    private $dateCreated;
+    private DateTime $dateCreated;
     /**
      * @ORM\Column(name="date_updated", type="datetime", nullable=true)
      * @Gedmo\Timestampable(on="update")
@@ -104,21 +104,21 @@ class Report extends AbstractEntity
      *
      * @var DateTime
      */
-    private $dateUpdated;
+    private DateTime $dateUpdated;
     /**
      * @ORM\OneToOne(targetEntity="Evaluation\Entity\Report\ProjectReport", cascade={"persist"}, mappedBy="evaluationReport")
      * @Annotation\Exclude()
      *
      * @var Report\ProjectReport
      */
-    private $projectReportReport;
+    private Report\ProjectReport $projectReportReport;
     /**
      * @ORM\OneToOne(targetEntity="Evaluation\Entity\Report\ProjectVersion", cascade={"persist"}, mappedBy="evaluationReport")
      * @Annotation\Exclude()
      *
      * @var Report\ProjectVersion
      */
-    private $projectVersionReport;
+    private Report\ProjectVersion $projectVersionReport;
     /**
      * @ORM\OneToMany(targetEntity="Evaluation\Entity\Report\Result", cascade={"persist","remove"}, mappedBy="evaluationReport", orphanRemoval=true)
      * @Annotation\Exclude()
@@ -180,7 +180,7 @@ class Report extends AbstractEntity
         return $this->score;
     }
 
-    public function setScore(int $score): Report
+    public function setScore(?int $score): Report
     {
         $this->score = $score;
         return $this;
