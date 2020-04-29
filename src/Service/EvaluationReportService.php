@@ -386,9 +386,9 @@ class EvaluationReportService extends AbstractService
         $count = $this->entityManager->getRepository(EvaluationReport\Criterion\Version::class)->count([
             'type'          => $type,
             'reportVersion' => $reportVersion,
-            'confidential'  => false
+            'confidential'  => true
         ]);
-        return ($count === 0);
+        return $count > 0;
     }
 
     public function typeIsDeletable(CriterionType $type): bool

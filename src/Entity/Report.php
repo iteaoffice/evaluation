@@ -88,7 +88,7 @@ class Report extends AbstractEntity
      *
      * @var int
      */
-    private int $score;
+    private $score;
     /**
      * @ORM\Column(name="date_created", type="datetime", nullable=false)
      * @Gedmo\Timestampable(on="create")

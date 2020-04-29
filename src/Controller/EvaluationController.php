@@ -25,6 +25,13 @@ use Evaluation\Service\FormService;
 use General\Entity\Country;
 use General\Service\CountryService;
 use General\Service\GeneralService;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Mvc\Plugin\Identity\Identity;
+use Laminas\View\Model\ViewModel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -37,13 +44,6 @@ use Project\Entity\Version\Version;
 use Project\Form\MatrixFilter;
 use Project\Service\ProjectService;
 use Project\Service\VersionService;
-use Laminas\Http\Request;
-use Laminas\Http\Response;
-use Laminas\I18n\Translator\TranslatorInterface;
-use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Laminas\Mvc\Plugin\Identity\Identity;
-use Laminas\View\Model\ViewModel;
 
 use function array_merge_recursive;
 use function file_exists;
@@ -83,16 +83,16 @@ final class EvaluationController extends AbstractActionController
         EntityManager $entityManager,
         TranslatorInterface $translator
     ) {
-        $this->projectService = $projectService;
-        $this->versionService = $versionService;
+        $this->projectService    = $projectService;
+        $this->versionService    = $versionService;
         $this->evaluationService = $evaluationService;
-        $this->callService = $callService;
-        $this->contactService = $contactService;
-        $this->generalService = $generalService;
-        $this->countryService = $countryService;
-        $this->formService = $formService;
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
+        $this->callService       = $callService;
+        $this->contactService    = $contactService;
+        $this->generalService    = $generalService;
+        $this->countryService    = $countryService;
+        $this->formService       = $formService;
+        $this->entityManager     = $entityManager;
+        $this->translator        = $translator;
     }
 
     public function indexAction()
@@ -109,15 +109,15 @@ final class EvaluationController extends AbstractActionController
         /** @var Request $request */
         $request = $this->getRequest();
         $display = $this->params('display', Entity\Evaluation::DISPLAY_PARTNERS);
-        $show = $this->params('show', 'proposals');
+        $show    = $this->params('show', 'proposals');
 
         $source = $this->params('source', MatrixFilter::SOURCE_VERSION);
         $typeId = $this->params('type', 1);
         $callId = $this->params('call');
 
         $evaluationTypes = $this->evaluationService->findAll(Entity\Type::class);
-        $versionTypes = $this->projectService->findAll(VersionType::class);
-        $projects = [];
+        $versionTypes    = $this->projectService->findAll(VersionType::class);
+        $projects        = [];
 
         /*
          * The form can be used to overrule some parameters. We therefore need to check if the form is set
@@ -133,10 +133,10 @@ final class EvaluationController extends AbstractActionController
             return $this->redirect()->toRoute(
                 'community/evaluation/overview',
                 [
-                    'show' => 'matrix',
-                    'type' => $typeId,
-                    'source' => (int)$formData['source'],
-                    'call' => (int)$formData['call'],
+                    'show'    => 'matrix',
+                    'type'    => $typeId,
+                    'source'  => (int)$formData['source'],
+                    'call'    => (int)$formData['call'],
                     'display' => $display,
 
                 ]
@@ -146,7 +146,7 @@ final class EvaluationController extends AbstractActionController
 
         $form->setData(
             [
-                'call' => $callId,
+                'call'   => $callId,
                 'source' => $source,
             ]
         );
@@ -155,12 +155,12 @@ final class EvaluationController extends AbstractActionController
         /** @var Call $call */
         $call = $this->callService->findCallById((int)$callId);
         /** @var Entity\Type $evaluationType */
-        $evaluationType = $this->evaluationService->find(Entity\Type::class, (int)$typeId);
+        $evaluationType  = $this->evaluationService->find(Entity\Type::class, (int)$typeId);
         $fundingStatuses = $this->evaluationService->getFundingStatusList(
             $this->evaluationService->parseMainEvaluationType($evaluationType)
         );
         /** @var VersionType $versionType */
-        $versionType = $this->projectService->find(
+        $versionType    = $this->projectService->find(
             VersionType::class,
             $evaluationType->getVersionType()
         );
@@ -168,7 +168,7 @@ final class EvaluationController extends AbstractActionController
 
         switch ($show) {
             case 'proposals':
-                $projects = $this->projectService->findProjectsByCallAndVersionTypeAndContact(
+                $projects       = $this->projectService->findProjectsByCallAndVersionTypeAndContact(
                     $call,
                     $versionType,
                     $this->identity()
@@ -210,22 +210,22 @@ final class EvaluationController extends AbstractActionController
         return new ViewModel(
             array_merge_recursive(
                 [
-                    'isEvaluation' => $this->evaluationService->isEvaluation($evaluationType),
-                    'projects' => $projects,
+                    'isEvaluation'    => $this->evaluationService->isEvaluation($evaluationType),
+                    'projects'        => $projects,
                     'fundingStatuses' => $fundingStatuses,
                     'evaluationTypes' => $evaluationTypes,
-                    'versionTypes' => $versionTypes,
-                    'call' => $call,
-                    'contactCountry' => $this->contactService->parseCountry($this->identity()),
-                    'show' => $show,
-                    'typeId' => $typeId,
-                    'source' => $source,
-                    'display' => (int)$display,
-                    'form' => $form,
-                    'generalService' => $this->generalService,
-                    'projectService' => $this->projectService,
-                    'countryService' => $this->countryService,
-                    'evaluation' => new Entity\Evaluation(),
+                    'versionTypes'    => $versionTypes,
+                    'call'            => $call,
+                    'contactCountry'  => $this->contactService->parseCountry($this->identity()),
+                    'show'            => $show,
+                    'typeId'          => $typeId,
+                    'source'          => $source,
+                    'display'         => (int)$display,
+                    'form'            => $form,
+                    'generalService'  => $this->generalService,
+                    'projectService'  => $this->projectService,
+                    'countryService'  => $this->countryService,
+                    'evaluation'      => new Entity\Evaluation(),
                 ],
                 $viewParameters
             )
@@ -288,10 +288,11 @@ final class EvaluationController extends AbstractActionController
             $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID);
             $sheet->getStyle($cell)->getFill()->getStartColor()->setRGB('CCCCCC');
 
-            //Find the latest version of the version type
+            //Find the latest reviewed version of the version type
             /** @var Version $latestVersion */
-            $latestVersion = $this->projectService->getLatestNotRejectedProjectVersion($project, $versionType);
-            $totalEffort = $this->versionService->findTotalEffortVersion($latestVersion);
+            $latestVersion = $this->projectService->getLatestReviewedProjectVersion($project, $versionType);
+
+            $totalEffort      = $this->versionService->findTotalEffortVersion($latestVersion);
             $evaluationResult = $this->createEvaluation(
                 [$project],
                 $evaluationType,
@@ -311,7 +312,7 @@ final class EvaluationController extends AbstractActionController
                  * @var $evaluation Entity\Evaluation
                  */
                 $evaluation = $projectEvaluation['evaluation'];
-                $value = $projectEvaluation['value'];
+                $value      = $projectEvaluation['value'];
                 $sheet->getRowDimension($row)->setRowHeight(60);
 
                 $sheet->setCellValue('B' . $row, (string)$country);
@@ -373,7 +374,7 @@ final class EvaluationController extends AbstractActionController
         /** @var Entity\Type $evaluationType */
         $evaluationType = $this->evaluationService
             ->find(Entity\Type::class, (int)$routeMatch->getParam('type'));
-        $project = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
+        $project        = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
 
         if (null === $project) {
             return $this->notFoundAction();
@@ -381,7 +382,7 @@ final class EvaluationController extends AbstractActionController
 
         /** @var Entity\Type $evaluationTypes */
         $evaluationTypes = $this->evaluationService->findAll(Entity\Type::class);
-        $data = $this->getRequest()->getPost()->toArray();
+        $data            = $this->getRequest()->getPost()->toArray();
         /*
          * The evaluation can be there, or be null, then we need to create it.
          */
@@ -408,7 +409,7 @@ final class EvaluationController extends AbstractActionController
                     'community/evaluation/overview-project',
                     [
                         'country' => $country->getId(),
-                        'type' => $evaluationType->getId(),
+                        'type'    => $evaluationType->getId(),
                         'project' => $project->getId(),
                     ]
                 );
@@ -423,7 +424,7 @@ final class EvaluationController extends AbstractActionController
                     'community/evaluation/overview-project',
                     [
                         'country' => $country->getId(),
-                        'type' => $evaluationType->getId(),
+                        'type'    => $evaluationType->getId(),
                         'project' => $project->getId(),
                     ]
                 );
@@ -435,15 +436,15 @@ final class EvaluationController extends AbstractActionController
         /** @var VersionType $versionType */
         $versionType = $this->versionService
             ->find(VersionType::class, $evaluationType->getVersionType());
-        $version = $this->versionService->findLatestVersionByType($project, $versionType);
+        $version     = $this->versionService->findLatestVersionByType($project, $versionType);
 
         return new ViewModel(
             [
-                'evaluation' => $evaluation,
-                'evaluationType' => $evaluationType,
+                'evaluation'      => $evaluation,
+                'evaluationType'  => $evaluationType,
                 'evaluationTypes' => $evaluationTypes,
-                'version' => $version,
-                'form' => $form,
+                'version'         => $version,
+                'form'            => $form,
             ]
         );
     }
@@ -533,7 +534,7 @@ final class EvaluationController extends AbstractActionController
         );
 
         $evaluation = new Entity\Evaluation();
-        $form = $this->formService->prepare($evaluation, $data);
+        $form       = $this->formService->prepare($evaluation, $data);
         $form->setAttribute('class', 'form-horizontal');
         $form->remove('delete');
 
@@ -586,23 +587,23 @@ final class EvaluationController extends AbstractActionController
         /** @var Entity\Type $evaluationType */
         $evaluationType = $this->evaluationService
             ->find(Entity\Type::class, (int)$routeMatch->getParam('type'));
-        $project = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
+        $project        = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
 
         if (null === $project) {
             return $this->notFoundAction();
         }
 
         $evaluationTypes = $this->evaluationService->findAll(Entity\Type::class);
-        $countries = $this->countryService->findCountryByProject(
+        $countries       = $this->countryService->findCountryByProject(
             $project
         );
         /*
          * Check to see if we have an active version
          */
         /** @var VersionType $versionType */
-        $versionType = $this->versionService
+        $versionType      = $this->versionService
             ->find(VersionType::class, $evaluationType->getVersionType());
-        $version = $this->versionService->findLatestVersionByType($project, $versionType);
+        $version          = $this->versionService->findLatestVersionByType($project, $versionType);
         $evaluationResult = $this->createEvaluation(
             [$project],
             $evaluationType,
@@ -612,22 +613,22 @@ final class EvaluationController extends AbstractActionController
 
         return new ViewModel(
             [
-                'country' => $country,
-                'countries' => $countries,
-                'totalEffort' => null !== $version ? $this->versionService->findTotalEffortVersion($version)
+                'country'          => $country,
+                'countries'        => $countries,
+                'totalEffort'      => null !== $version ? $this->versionService->findTotalEffortVersion($version)
                     : 0,
-                'contactCountry' => $this->contactService->parseCountry(
+                'contactCountry'   => $this->contactService->parseCountry(
                     $this->identity()
                 ),
-                'projectService' => $this->projectService,
-                'generalService' => $this->generalService,
-                'versionService' => $this->versionService,
-                'evaluationType' => $evaluationType,
-                'evaluationTypes' => $evaluationTypes,
+                'projectService'   => $this->projectService,
+                'generalService'   => $this->generalService,
+                'versionService'   => $this->versionService,
+                'evaluationType'   => $evaluationType,
+                'evaluationTypes'  => $evaluationTypes,
                 'evaluationResult' => $evaluationResult,
-                'version' => $version,
-                'project' => $project,
-                'versionType' => $versionType,
+                'version'          => $version,
+                'project'          => $project,
+                'versionType'      => $versionType,
             ]
         );
     }
@@ -645,7 +646,7 @@ final class EvaluationController extends AbstractActionController
         /** @var Entity\Type $evaluationType */
         $evaluationType = $this->evaluationService
             ->find(Entity\Type::class, (int)$routeMatch->getParam('type'));
-        $project = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
+        $project        = $this->projectService->findProjectById((int)$routeMatch->getParam('project'));
 
         if (null === $project) {
             return $response->setStatusCode(Response::STATUS_CODE_404);
@@ -658,7 +659,7 @@ final class EvaluationController extends AbstractActionController
          * Check to see if we have an active version
          */
         /** @var VersionType $versionType */
-        $versionType = $this->versionService
+        $versionType      = $this->versionService
             ->find(VersionType::class, $evaluationType->getVersionType());
         $evaluationResult = $this->createEvaluation(
             [$project],

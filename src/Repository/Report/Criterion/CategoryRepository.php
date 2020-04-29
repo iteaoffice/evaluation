@@ -1,7 +1,7 @@
 <?php
 
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Evaluation\Repository\Report\Criterion;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Evaluation\Entity\Report\Criterion\Category;
 use Evaluation\Repository\FilteredObjectRepository;
@@ -36,8 +37,8 @@ final class CategoryRepository extends SortableRepository implements FilteredObj
             'evaluation_entity_report_criterion_category'
         );
 
-        $direction = 'ASC';
-        if (isset($filter['direction']) && in_array(strtoupper($filter['direction']), ['ASC', 'DESC'])) {
+        $direction = Criteria::ASC;
+        if (isset($filter['direction']) && in_array(strtoupper($filter['direction']), [Criteria::ASC, Criteria::DESC])) {
             $direction = strtoupper($filter['direction']);
         }
 

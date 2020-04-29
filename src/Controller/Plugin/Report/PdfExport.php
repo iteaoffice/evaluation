@@ -117,7 +117,7 @@ final class PdfExport extends AbstractPlugin
             $project          = EvaluationReportService::getProject($this->evaluationReport);
 
             $template = $originalTemplate;
-            if (in_array('Penta', $project->parsePrograms(), true)) {
+            if (in_array('PENTA', $project->parsePrograms(), true)) {
                 $template = str_replace(
                     'evaluation-report-template',
                     'evaluation-report-template.penta',
@@ -134,7 +134,7 @@ final class PdfExport extends AbstractPlugin
             }
 
             if (
-                in_array('Penta', $project->parsePrograms(), true)
+                in_array('PENTA', $project->parsePrograms(), true)
                 && in_array('EURIPIDES', $project->parsePrograms(), true)
             ) {
                 $template = str_replace(

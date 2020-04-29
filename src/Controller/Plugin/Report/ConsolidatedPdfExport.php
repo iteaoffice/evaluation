@@ -140,36 +140,8 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         $pdf = new ReportPdf();
         //Doe some nasty hardcoded stuff for AENEAS
-        $pdf->setTemplate($this->moduleOptions->getProjectTemplate());
-
-        //@todo Change this so the template is taken from the program
-        if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
-            $project          = EvaluationReportService::getProject($this->evaluationReport);
-            $originalTemplate = $this->moduleOptions->getProjectTemplate();
-            $programs         = array_map('strtolower', $project->parsePrograms());
-
-            $template = $originalTemplate;
-            if (in_array('penta', $programs, true)) {
-                $template = str_replace('blank-template-firstpage', 'penta-template', $originalTemplate);
-            }
-
-            if (in_array('euripides', $programs, true)) {
-                $template = str_replace('blank-template-firstpage', 'euripides-template', $originalTemplate);
-            }
-
-            if (
-                in_array('penta', $programs, true)
-                && in_array(
-                    'euripides',
-                    $programs,
-                    true
-                )
-            ) {
-                $template = str_replace('blank-template-firstpage', 'penta-euripides-template', $originalTemplate);
-            }
-
-            $pdf->setTemplate($template);
-        }
+        $template = str_replace('blank-template-firstpage', 'penta-euripides-template', $this->moduleOptions->getProjectTemplate());
+        $pdf->setTemplate($template);
 
         $pdf->SetFontSize(self::$fontSize);
         $pdf->SetTopMargin(self::$topMargin);
@@ -248,19 +220,25 @@ final class ConsolidatedPdfExport extends AbstractPlugin
     private function parseHeader(): void
     {
         $project = EvaluationReportService::getProject($this->evaluationReport);
+        $year    = $project->getCall()->getFppCloseDate()->format('Y');
 
-        $this->parseHeading($project->parseCalls(), 20);
+        $this->parseHeading('PENTA-EURIPIDES² Joint Call ' . $year, 20);
 
         $this->parseHeading(
             sprintf(
-                $this->translator->translate('txt-po-fpp-%s-integrated-report'),
+                '%s Consolidated Feedback Report',
                 strtoupper($this->versionType->getType())
             ),
             15
         );
 
-        $explanation = 'EMPTY';
-        if (in_array($this->versionType->getId(), [Type::TYPE_FPP, Type::TYPE_PO], true)) {
+        $explanation = 'Project has not been approved or rejected yet';
+        if ($this->versionType->getId() === Type::TYPE_PO) {
+            $explanation = 'For those projects that have been invited to submit a Full Project Proposal, it is essential that all project partners discuss the outcome of the PO evaluation process with their respective Public Authorities to ensure that all National Funding criteria are met. In addition, all comments from the Technical experts should be taken into account in the FPP.';
+            $explanation .= '<br><br>Technical Expert and Public Authority feedback is also available in the PENTA-EURIPIDES² Project Zone.';
+        }
+
+        if ($this->versionType->getId() === Type::TYPE_FPP) {
             if ($this->version->isApproved()) {
                 $explanation = $this->translator->translate('txt-fpp-integrated-report-explanation-labelled');
             }
@@ -497,16 +475,16 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             $project->getProjectChallenge()->toArray()
         );
 
-        $this->pdf->Cell(
+        $this->pdf->MultiCell(
             self::$colWidths[2] + $thirdColumnWidth,
-            $lineHeight,
+            $lineHeight * 2,
             implode(', ', $challenges),
             0,
             1
         );
 
         // Summary
-        if ('' !== $project->getSummary()) {
+        if (null !== $project->getSummary() && '' !== $project->getSummary()) {
             $this->parseCriterionLabel($this->translator->translate('txt-summary'));
             $this->pdf->MultiCell(
                 self::$colWidths[2] + $thirdColumnWidth,
@@ -521,7 +499,6 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         $this->parseHeading($this->translator->translate('txt-participating-companies-and-countries'), 15, 'L', 'sub');
 
         $affiliationOverview = $this->affiliationService->findAffiliationByProjectAndWhich($project);
-        $latestVersion       = $this->projectService->getLatestApprovedProjectVersion($project);
 
         $affCountries = [];
         foreach ($affiliationOverview as $affiliation) {
@@ -529,13 +506,13 @@ final class ConsolidatedPdfExport extends AbstractPlugin
                 $affiliation->parseBranchedName(),
                 $affiliation->getOrganisation()->getType()->getType(),
                 $affiliation->getOrganisation()->getCountry()->getIso3(),
-                null === $latestVersion
+                null === $version
                     ? ''
                     : number_format(
                         $this->versionService
                         ->findTotalEffortVersionByAffiliationAndVersion(
                             $affiliation,
-                            $latestVersion
+                            $version
                         ),
                         2
                     ),
@@ -546,12 +523,12 @@ final class ConsolidatedPdfExport extends AbstractPlugin
             $this->translator->translate('txt-total'),
             '',
             '',
-            null === $latestVersion
+            null === $version
                 ? ''
                 : number_format(
                     $this->versionService
                     ->findTotalEffortVersionByProjectVersion(
-                        $latestVersion
+                        $version
                     ),
                     2
                 )];
@@ -793,16 +770,15 @@ final class ConsolidatedPdfExport extends AbstractPlugin
     {
         $this->parseHeading('', 15, 'L', 'sub');
 
-        $explanation = 'EMPTY';
-        $project     = EvaluationReportService::getProject($this->evaluationReport);
+        $explanation = 'Version has not been reviewed yet, so message is empty';
 
         if ($this->versionType->getId() === Type::TYPE_PO) {
             if ($this->version->isApproved()) {
-                $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-approved-po');
+                $explanation = '<h2>The consortium is invited to submit a Full Project Proposal<h2><h3>Additional Comments</h3>';
             }
 
             if ($this->version->isRejected()) {
-                $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-rejected-po');
+                $explanation = '<h2>The consortium is not invited to submit a Full Project Proposal<h2><h3>Additional Comments</h3>';
             }
         }
 
@@ -810,45 +786,20 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         if ($this->versionType->getId() === Type::TYPE_FPP) {
             if ($this->version->isApproved()) {
                 $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-approved-fpp');
+
+                $explanation .= $this->translator->translate(
+                    'txt-aeneas-management-committee-decision-approved-fpp-co-label'
+                );
             }
 
             if ($this->version->isRejected()) {
                 $explanation = $this->translator->translate('txt-aeneas-management-committee-decision-rejected-fpp');
+
+                $explanation .= $this->translator->translate(
+                    'txt-aeneas-management-committee-decision-rejected-fpp-co-label'
+                );
             }
         }
-
-
-        if (in_array('EURIPIDES', $project->parsePrograms(), true)) {
-            if ($this->versionType->getId() === Type::TYPE_PO) {
-                if ($this->version->isApproved()) {
-                    $explanation = $this->translator->translate(
-                        'txt-aeneas-management-committee-decision-approved-po-co-label'
-                    );
-                }
-
-                if ($this->version->isRejected()) {
-                    $explanation = $this->translator->translate(
-                        'txt-aeneas-management-committee-decision-rejected-po-co-label'
-                    );
-                }
-            }
-
-
-            if ($this->versionType->getId() === Type::TYPE_FPP) {
-                if ($this->version->isApproved()) {
-                    $explanation = $this->translator->translate(
-                        'txt-aeneas-management-committee-decision-approved-fpp-co-label'
-                    );
-                }
-
-                if ($this->version->isRejected()) {
-                    $explanation = $this->translator->translate(
-                        'txt-aeneas-management-committee-decision-rejected-fpp-co-label'
-                    );
-                }
-            }
-        }
-
 
         // Some explanation
         $lineHeight = self::$lineHeights['line'];
@@ -874,7 +825,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         );
 
         if (null !== $this->version->getFeedback()) {
-            $conclusion = (string)$this->version->getFeedback()->getEvaluationConclusion();
+            $conclusion = nl2br((string)$this->version->getFeedback()->getEvaluationConclusion());
 
             // Some explansion
             $lineHeight = self::$lineHeights['line'];

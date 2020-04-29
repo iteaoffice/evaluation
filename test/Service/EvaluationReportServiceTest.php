@@ -743,7 +743,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->with([
                 'type'          => $criterionType,
                 'reportVersion' => $evaluationReportVersion,
-                'confidential'  => false
+                'confidential'  => true
             ])
             ->will($this->onConsecutiveCalls(0, 1));
 
@@ -760,8 +760,8 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         /** @var EntityManager $entityManagerMock */
         $service = new EvaluationReportService($entityManagerMock);
 
-        $this->assertTrue($service->typeIsConfidential($criterionType, $evaluationReportVersion));
         $this->assertFalse($service->typeIsConfidential($criterionType, $evaluationReportVersion));
+        $this->assertTrue($service->typeIsConfidential($criterionType, $evaluationReportVersion));
     }
 
     public function testTypeIsDeletable()
