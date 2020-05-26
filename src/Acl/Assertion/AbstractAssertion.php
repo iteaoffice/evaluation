@@ -181,7 +181,10 @@ abstract class AbstractAssertion implements AssertionInterface
              */
             if (is_array($accessRoleOrCollection)) {
                 foreach ($accessRoleOrCollection as $key => $accessItem) {
-                    $access = $this->adminService->findAccessByName($accessItem);
+                    $access = $accessItem;
+                    if (! $accessItem instanceof Access) {
+                        $access = $this->adminService->findAccessByName($accessItem);
+                    }
 
                     if (null !== $access) {
                         $accessRoleOrCollection[$key] = strtolower($access->getAccess());

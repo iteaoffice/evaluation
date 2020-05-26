@@ -36,15 +36,17 @@
                     <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/criterion/list', 'criteria': 'archived', 'text': translate("txt-archived")} %}</th>
                 </tr>
                 </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="7"></td>
+                    </tr>
+                </tfoot>
                 <tbody>
                 {% for criterion in paginator.getCurrentItems() %}
                     <tr>
-                        <td>
-                            {{ criterion.id }}
-                            {{ reportCriterionLink(criterion,'edit','icon') }}
-                        </td>
+                        <td><small class="text-muted">{{ criterion.id }}</small></td>
                         <td>{{ criterion.sequence }}</td>
-                        <td>{{ reportCriterionLink(criterion,'view','name') }}</td>
+                        <td>{{ reportCriterionLink(criterion,'view','name') }} {{ reportCriterionLink(criterion,'edit','icon') }}</td>
                         <td>{{ translate(criterion.parseInputType()) }}</td>
                         <td>{% for reportType in criterion.reportTypes %}
                                 {{ reportType }}

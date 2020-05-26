@@ -12,26 +12,41 @@
 namespace EvaluationTest\Entity;
 
 use PHPUnit\Framework\TestCase;
+use Evaluation\Entity\AbstractEntity;
+use ReflectionClass;
+use Symfony\Component\Finder\Finder;
 use Laminas\Form\Annotation\AnnotationBuilder;
 use Laminas\Form\Element;
 
+use function is_array;
+use function str_replace;
+
 class EntityTest extends TestCase
 {
+    /**
+     *
+     */
     public function testCanCreateEntitiesAndSaveTxtFields(): void
     {
         $labels = [];
-        foreach (glob(__DIR__ . '/../../src/Entity/*.php') as $file) {
-            // get the file name of the current file without the extension
-            // which is essentially the class name
-            $class = basename($file, '.php');
-            $className = 'Evaluation\Entity\\' . $class;
 
-            $testClass = new \ReflectionClass($className);
+        $scanFolder = __DIR__ . '/../../src/Entity';
+
+        $finder = new Finder();
+        $finder->files()->name('*.php')->in($scanFolder);
+
+        foreach ($finder as $file) {
+            $className = 'Evaluation\Entity\\' . str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname());
+
+            $testClass = new ReflectionClass($className);
 
             if ($testClass->isInstantiable()) {
+                /** @var AbstractEntity $object */
                 $object = new $className();
 
                 $this->assertInstanceOf($className, $object);
+                $this->assertNull($object->getId());
+                $this->assertTrue(isset($object));
 
                 $builder = new AnnotationBuilder();
                 $dataFieldset = $builder->createForm($object);
@@ -40,7 +55,7 @@ class EntityTest extends TestCase
                 foreach ($dataFieldset->getElements() as $element) {
                     // Add only when a type is provided
                     if (! array_key_exists('type', $element->getAttributes())) {
-                        continue;
+                        //continue;
                     }
 
                     if (isset($element->getAttributes()['label'])) {
@@ -67,7 +82,7 @@ class EntityTest extends TestCase
                 }
 
                 foreach ($testClass->getStaticProperties() as $constant) {
-                    if (\is_array($constant)) {
+                    if (is_array($constant)) {
                         foreach ($constant as $constantValue) {
                             $labels[] = $constantValue;
                         }

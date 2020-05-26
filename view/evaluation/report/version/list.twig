@@ -38,15 +38,13 @@
                 <tbody>
                 {% for version in paginator.getCurrentItems() %}
                     <tr>
-                        <td>
-                            {{ version.id }}
-                            {{ reportVersionLink(version,'edit','icon') }}
-                        </td>
+                        <td><small class="text-muted">{{ version.id }}</small></td>
                         <td>{% if version.archived %}
                                 <del>{{ reportVersionLink(version,'view','name') }}</del>
                             {% else %}
                                 {{ reportVersionLink(version,'view','name') }}
                             {% endif %}
+                            {{ reportVersionLink(version,'edit','icon') }}
                         </td>
                         <td>{{ version.reportType.type }}</td>
                         <td>{% if version.archived %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</td>
