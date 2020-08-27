@@ -15,6 +15,7 @@ namespace Evaluation\Repository\Report;
 
 use DateTime;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Sortable\Entity\Repository\SortableRepository;
 use Evaluation\Entity\Report\Version;
@@ -93,7 +94,7 @@ final class WindowRepository extends SortableRepository implements FilteredObjec
             $queryBuilder->andWhere($queryBuilder->expr()->eq('rv.id', ':repportVersionId'));
             $queryBuilder->setParameter('repportVersionId', $reportVersion->getId());
         }
-        $queryBuilder->setParameter('now', new DateTime());
+        $queryBuilder->setParameter('now', new DateTime(), Types::DATETIME_MUTABLE);
 
         return $queryBuilder->getQuery()->getResult();
     }

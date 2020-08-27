@@ -1,7 +1,7 @@
 <?php
 
 /**
-*
+ *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
  * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
@@ -16,14 +16,15 @@ namespace Evaluation\Repository;
 use Contact\Entity\Contact;
 use DateTime;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Program\Entity\Call\Call;
-use Program\Repository\Call\Call as CallRepository;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Type as EvaluationReportType;
 use Evaluation\Entity\Report\Version as EvaluationReportVersion;
 use Evaluation\Service\EvaluationReportService;
+use Program\Entity\Call\Call;
+use Program\Repository\Call\Call as CallRepository;
 use Project\Entity\ChangeRequest\Process;
 use Project\Entity\Report\Report as ProjectReport;
 use Project\Entity\Report\Reviewer as ReportReviewer;
@@ -40,7 +41,9 @@ use function in_array;
  * Class ReportRepository
  * @package Evaluation\Repository
  */
-/*final*/ class ReportRepository extends EntityRepository implements FilteredObjectRepository
+/*final*/
+
+class ReportRepository extends EntityRepository implements FilteredObjectRepository
 {
     public function findReviewReportsByContact(
         Contact $contact,
@@ -66,7 +69,7 @@ use function in_array;
                     )
                 )
             );
-            $qbWindow->setParameter('now', new DateTime());
+            $qbWindow->setParameter('now', new DateTime(), Types::DATETIME_MUTABLE);
         }
         $windows = $qbWindow->getQuery()->getResult();
 
@@ -78,7 +81,7 @@ use function in_array;
                         'window'  => $window,
                         'reviews' => []
                     ];
-                    $versionTypes = [];
+                    $versionTypes             = [];
                     /** @var EvaluationReportVersion $reportVersion */
                     foreach ($window->getReportVersions() as $reportVersion) {
                         $versionType = $reportVersion->getReportType()->getVersionType();
@@ -103,21 +106,20 @@ use function in_array;
                             ));
                             if ($window->getDateEndSelection() !== null) {
                                 $qb1->andWhere($qb1->expr()->lt('v.dateSubmitted', ':dateEndSelection'));
-                                $qb1->setParameter('dateEndSelection', $window->getDateEndSelection());
+                                $qb1->setParameter('dateEndSelection', $window->getDateEndSelection(), Types::DATETIME_MUTABLE);
                             }
 
                             $qb1->setParameter('contact', $contact);
                             $qb1->setParameter('versionType', $versionType);
-                            $qb1->setParameter('dateStartSelection', $window->getDateStartSelection());
+                            $qb1->setParameter('dateStartSelection', $window->getDateStartSelection(), Types::DATETIME_MUTABLE);
                             $qb1->setParameter('processType', $reportVersion->getReportType()->getProcessType());
 
                             $return[$window->getId()]['reviews'] = array_merge(
                                 $return[$window->getId()]['reviews'],
                                 $qb1->getQuery()->useQueryCache(true)->getResult()
                             );
-                            $versionTypes[] = $versionType->getId();
-                        }
-                        // Window is for a PPR
+                            $versionTypes[]                      = $versionType->getId();
+                        } // Window is for a PPR
                         elseif ($reportVersion->getReportType()->getId() === EvaluationReportType::TYPE_REPORT) {
                             $qb2 = $this->_em->createQueryBuilder();
                             $qb2->select('rr');
@@ -129,11 +131,11 @@ use function in_array;
                             $qb2->andWhere($qb2->expr()->gte('pr.dateFinal', ':dateStartSelection'));
                             if ($window->getDateEndSelection() !== null) {
                                 $qb2->andWhere($qb2->expr()->lt('pr.dateFinal', ':dateEndSelection'));
-                                $qb2->setParameter('dateEndSelection', $window->getDateEndSelection());
+                                $qb2->setParameter('dateEndSelection', $window->getDateEndSelection(), Types::DATETIME_MUTABLE);
                             }
 
                             $qb2->setParameter('contact', $contact);
-                            $qb2->setParameter('dateStartSelection', $window->getDateStartSelection());
+                            $qb2->setParameter('dateStartSelection', $window->getDateStartSelection(), Types::DATETIME_MUTABLE);
 
                             $return[$window->getId()]['reviews'] = array_merge(
                                 $return[$window->getId()]['reviews'],
@@ -151,7 +153,7 @@ use function in_array;
                         'window'  => $window,
                         'reviews' => []
                     ];
-                    $versionTypes = [];
+                    $versionTypes             = [];
                     /** @var EvaluationReportVersion $reportVersion */
                     foreach ($window->getReportVersions() as $reportVersion) {
                         $versionType = $reportVersion->getReportType()->getVersionType();
@@ -172,18 +174,17 @@ use function in_array;
                             $qb1->andWhere($qb1->expr()->isNull('v.dateReviewed'));
                             if ($window->getDateEndSelection() !== null) {
                                 $qb1->andWhere($qb1->expr()->lt('v.dateSubmitted', ':dateEndSelection'));
-                                $qb1->setParameter('dateEndSelection', $window->getDateEndSelection());
+                                $qb1->setParameter('dateEndSelection', $window->getDateEndSelection(), Types::DATETIME_MUTABLE);
                             }
 
                             $qb1->setParameter('contact', $contact);
                             $qb1->setParameter('final', false);
                             $qb1->setParameter('versionType', $versionType);
-                            $qb1->setParameter('dateStartSelection', $window->getDateStartSelection());
+                            $qb1->setParameter('dateStartSelection', $window->getDateStartSelection(), Types::DATETIME_MUTABLE);
 
                             $return[$window->getId()]['reviews'] = $qb1->getQuery()->useQueryCache(true)->getResult();
-                            $versionTypes[] = $versionType->getId();
-                        }
-                        // Window is for a PPR
+                            $versionTypes[]                      = $versionType->getId();
+                        } // Window is for a PPR
                         elseif ($reportVersion->getReportType()->getId() === EvaluationReportType::TYPE_REPORT) {
                             $qb2 = $this->_em->createQueryBuilder();
                             $qb2->select('er');
@@ -196,12 +197,12 @@ use function in_array;
                             $qb2->andWhere($qb2->expr()->gte('pr.dateFinal', ':dateStartSelection'));
                             if ($window->getDateEndSelection() !== null) {
                                 $qb2->andWhere($qb2->expr()->lt('pr.dateFinal', ':dateEndSelection'));
-                                $qb2->setParameter('dateEndSelection', $window->getDateEndSelection());
+                                $qb2->setParameter('dateEndSelection', $window->getDateEndSelection(), Types::DATETIME_MUTABLE);
                             }
 
                             $qb2->setParameter('contact', $contact);
                             $qb2->setParameter('final', false);
-                            $qb2->setParameter('dateStartSelection', $window->getDateStartSelection());
+                            $qb2->setParameter('dateStartSelection', $window->getDateStartSelection(), Types::DATETIME_MUTABLE);
 
                             $return[$window->getId()]['reviews'] = $qb2->getQuery()->useQueryCache(true)->getResult();
                         }
@@ -238,7 +239,7 @@ use function in_array;
 
     public function findFiltered(array $filter = []): QueryBuilder
     {
-        $queryBuilder   = $this->_em->createQueryBuilder();
+        $queryBuilder = $this->_em->createQueryBuilder();
         /** @var CallRepository $callRepository */
         $callRepository = $this->_em->getRepository(Call::class);
         $call           = null;
@@ -251,7 +252,7 @@ use function in_array;
         // Progress report review evaluation
         if (
             array_key_exists('subject', $filter)
-            && ($filter['subject'] === (string) EvaluationReportType::TYPE_REPORT)
+            && ($filter['subject'] === (string)EvaluationReportType::TYPE_REPORT)
         ) {
             // Final evaluation report
             if ($finalReport) {
@@ -263,8 +264,7 @@ use function in_array;
                 $queryBuilder->leftJoin('prr.evaluationReport', 'er');
                 $queryBuilder->groupBy('pr.id');
                 $queryBuilder->addGroupBy('prr.id');
-            }
-            // Individual evaluation report
+            } // Individual evaluation report
             else {
                 $queryBuilder->select('rr');
                 $queryBuilder->from(ReportReviewer::class, 'rr');
@@ -341,8 +341,7 @@ use function in_array;
             } else {
                 $queryBuilder->orderBy('prr.dateUpdated', Criteria::DESC);
             }
-        }
-        // Project version review evaluation
+        } // Project version review evaluation
         else {
             // Final evaluation report
             if ($finalReport) {
@@ -355,8 +354,7 @@ use function in_array;
                 $queryBuilder->leftJoin('vrr.evaluationReport', 'rr');
                 $queryBuilder->groupBy('v.id');
                 $queryBuilder->addGroupBy('vrr.id');
-            }
-            // Individual evaluation report
+            } // Individual evaluation report
             else {
                 $queryBuilder->select('vr');
                 $queryBuilder->from(VersionReviewer::class, 'vr');
@@ -459,7 +457,7 @@ use function in_array;
                     'c.firstName',
                     $queryBuilder->expr()->concat($queryBuilder->expr()->literal(' '), 'c.lastName')
                 );
-                $expression = $queryBuilder->expr()->orX(
+                $expression  = $queryBuilder->expr()->orX(
                     $queryBuilder->expr()->like('p.project', ':project'),
                     $queryBuilder->expr()->like($contactName, ':contact')
                 );
