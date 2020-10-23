@@ -433,6 +433,9 @@ class ReportRepository extends EntityRepository implements FilteredObjectReposit
                     case 'version':
                         $queryBuilder->orderBy('vt.description', $direction);
                         break;
+                    case 'date-submitted':
+                        $queryBuilder->orderBy('v.dateSubmitted', $direction);
+                        break;
                     case 'created':
                         $queryBuilder->orderBy('vrr.dateCreated', $direction);
                         break;
