@@ -55,8 +55,12 @@ class Reviewer extends AbstractEntity
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
      *     "label":"txt-reviewer-type",
+     *     "property":"description",
      *     "target_class":"Evaluation\Entity\Reviewer\Type",
-     *     "property":"description"
+     *     "find_method":{
+     *         "name":"findBy",
+     *         "params": {"criteria":{"id": {1,2}}}
+     *     }
      * })
      *
      * @var Type

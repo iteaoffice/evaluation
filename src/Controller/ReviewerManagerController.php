@@ -63,8 +63,7 @@ final class ReviewerManagerController extends AbstractActionController
 
     public function listAction(): ViewModel
     {
-        $reviewerType = $this->reviewerService->find(ReviewerType::class, ReviewerType::TYPE_PREFERRED);
-        $project      = $this->projectService->findProjectById((int)$this->params()->fromRoute('projectId'));
+        $project = $this->projectService->findProjectById((int)$this->params()->fromRoute('projectId'));
 
         if (null === $project) {
             return $this->notFoundAction();
@@ -89,9 +88,14 @@ final class ReviewerManagerController extends AbstractActionController
             }
         }
 
+        $preferredReviewerType = $this->reviewerService->find(ReviewerType::class, ReviewerType::TYPE_PREFERRED);
+        $ignoredReviewerType = $this->reviewerService->find(ReviewerType::class, ReviewerType::TYPE_IGNORED);
+
         return new ViewModel([
-            'projectPreferredReviewers' => $this->entityManager->getRepository(Reviewer::class)
-                ->findBy(['project' => $project, 'type' => $reviewerType]),
+            'preferredReviewersManual' => $this->entityManager->getRepository(Reviewer::class)
+                ->findBy(['project' => $project, 'type' => $preferredReviewerType]),
+            'ignoredReviewersManual' => $this->entityManager->getRepository(Reviewer::class)
+                ->findBy(['project' => $project, 'type' => $ignoredReviewerType]),
             'projectIgnoredReviewers'   => $this->entityManager->getRepository(Contact::class)
                 ->findIgnoredReviewers($project),
             'projectFutureReviewers'    => $projectFutureReviewers,
