@@ -96,7 +96,7 @@ class ReviewerService extends AbstractService
         /** @var Reviewer $reviewer */
         foreach ($manuallyIgnoredReviewers as $reviewer) {
             $reviewContact = $reviewer->getContact()->getProjectReviewerContact();
-            if ($reviewContact && !in_array($reviewContact->getHandle(), $ignoredReviewers)) {
+            if ($reviewContact && ! in_array($reviewContact->getHandle(), $ignoredReviewers)) {
                 $ignoredReviewers[] = $reviewContact->getHandle();
             }
         }
