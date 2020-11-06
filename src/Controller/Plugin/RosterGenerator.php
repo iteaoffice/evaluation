@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Evaluation\Controller\Plugin;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Evaluation\Options\ModuleOptions;
 use Evaluation\Service\ReviewerService;
 use Evaluation\Service\ReviewRosterService;
@@ -49,26 +50,10 @@ use function ucfirst;
  */
 final class RosterGenerator extends AbstractPlugin
 {
-    /**
-     * On-the-fly config provided by uploading an Excel file
-     *
-     * @var array
-     */
-    private array $config = [];
-    /**
-     * The roster type (PO/FPP/PPR/CR)
-     *
-     * @var string
-     */
-    private string $type;
+    private string $type; // The roster type (PO/FPP/PPR/CR)
     private array $rosterData;
     private array $reviewers = [];
-    /**
-     * The main spreadsheet object the roster will be written to
-     *
-     * @var Spreadsheet
-     */
-    private Spreadsheet $spreadsheet;
+    private Spreadsheet $spreadsheet; // The main spreadsheet object the roster will be written to
     private ReviewRosterService $reviewRosterService;
     private TranslatorInterface $translator;
     private ModuleOptions $moduleOptions;
@@ -89,28 +74,33 @@ final class RosterGenerator extends AbstractPlugin
      * @param string   $configFile            Path to the uploaded Excel file with additional review config (formerly reviewers.txt)
      * @param int      $reviewersPerProject   Minimum number of reviewers assigned per project
      * @param bool     $includeSpareReviewers Include spare reviewers in the minimum number of reviewers assigned
+     * @param bool     $onlineReview          Whether the review is online (no rounds) or physical (use review rounds)
      * @param int|null $forceProjectsPerRound Overrule the calculated number of projects per round
      *
      * @return RosterGenerator
+     * @throws \Exception
+     * @throws EntityNotFoundException
      */
     public function __invoke(
         string $type,
         string $configFile,
-        int $reviewersPerProject,
-        bool $includeSpareReviewers = false,
-        ?int $forceProjectsPerRound = null
+        int    $reviewersPerProject,
+        bool   $includeSpareReviewers = false,
+        bool   $onlineReview = false,
+        ?int   $forceProjectsPerRound = null
     ): RosterGenerator {
-        $this->type       = $type;
-        $this->config     = $this->reviewRosterService->parseConfigFile($configFile);
+        $this->type = $type;
+        $config = $this->reviewRosterService->parseConfigFile($configFile);
         $this->rosterData = $this->reviewRosterService->generateRosterData(
             $type,
-            $this->config,
+            $config,
             $reviewersPerProject,
             $includeSpareReviewers,
+            $onlineReview,
             $forceProjectsPerRound
         );
-        $this->log       = $this->reviewRosterService->getLog();
-        $this->reviewers = array_merge($this->config['present'], $this->config['spare']);
+        $this->log = $this->reviewRosterService->getLog();
+        $this->reviewers = array_merge($config['present'], $config['spare']);
         ksort($this->reviewers);
         $this->generateSpreadsheet();
 
@@ -118,7 +108,7 @@ final class RosterGenerator extends AbstractPlugin
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     private function generateSpreadsheet()
     {
