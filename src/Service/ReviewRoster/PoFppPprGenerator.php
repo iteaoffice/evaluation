@@ -13,13 +13,11 @@ use function array_shift;
 use function array_slice;
 use function ceil;
 use function count;
-use function current;
 use function end;
 use function floor;
 use function in_array;
 use function krsort;
 use function ksort;
-use function next;
 use function rand;
 use function reset;
 use function shuffle;
@@ -70,7 +68,7 @@ class PoFppPprGenerator extends AbstractGenerator
             $this->forceProjectsPerRound
         );
 
-        $roundAssignments = $this->generateBasicRoundAssignment($this->projectReviewerScores, $projectsPerRound);
+        $roundAssignments = $this->initProjectRoundAssignments($projectsPerRound);
         $logger->log(
             __LINE__,
             sprintf(
@@ -170,7 +168,7 @@ class PoFppPprGenerator extends AbstractGenerator
             }
 
             foreach ($projects as $projectIndex => $projectData) {
-                $reviewersAssigned = [];
+                $this->reviewersAssigned = [];
                 $hasExperiencedReviewer = false;
                 $hasSpareReviewer = false;
                 $hasEnoughPresentReviewers = $this->includeSpareReviewers;
@@ -235,13 +233,13 @@ class PoFppPprGenerator extends AbstractGenerator
                             // Don't assign multiple spare reviewers
                             && (!$hasSpareReviewer || $this->reviewerData[$handle]['present'])
                             // Don't add reviewers from the same organisation
-                            && !$this->sameOrganisation($handle, $reviewersAssigned, $this->reviewerData)
+                            && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
                         ) {
                             $assigned = $this->reviewerData[$handle]['present'] ?
                                 ReviewRosterService::REVIEWER_ASSIGNED
                                 : ReviewRosterService::REVIEWER_SPARE;
                             $rosterData[$round][$projectIndex]['scores'][$handle] = $assigned;
-                            $reviewersAssigned[] = $handle;
+                            $this->reviewersAssigned[] = $handle;
                             $handlesAssigned[$round][] = $handle;
                             if ($this->reviewerData[$handle]['experienced']) {
                                 $hasExperiencedReviewer = true;
@@ -251,7 +249,7 @@ class PoFppPprGenerator extends AbstractGenerator
                             }
                         }
                         // Already enough reviewers, no need to go further
-                        if ((count($reviewersAssigned) === $this->reviewersPerProject)) {
+                        if ((count($this->reviewersAssigned) === $this->reviewersPerProject)) {
                             $hasEnoughPresentReviewers = true;
                             break;
                         }
@@ -259,7 +257,7 @@ class PoFppPprGenerator extends AbstractGenerator
                 }
 
                 // All done here, on to the next project
-                if (count($reviewersAssigned) === $this->reviewersPerProject) {
+                if (count($this->reviewersAssigned) === $this->reviewersPerProject) {
                     continue;
                 }
 
@@ -274,7 +272,7 @@ class PoFppPprGenerator extends AbstractGenerator
                 // Fill with other reviewers
                 foreach ($shuffledProjectData as $handle => $score) {
                     // Enough reviewers, no need to go further
-                    if (count($reviewersAssigned) === $this->reviewersPerProject) {
+                    if (count($this->reviewersAssigned) === $this->reviewersPerProject) {
                         break;
                     }
                     if (
@@ -290,11 +288,11 @@ class PoFppPprGenerator extends AbstractGenerator
                         // Prefer present reviewers when spare reviewers aren't counted
                         && ($hasEnoughPresentReviewers || $this->reviewerData[$handle]['present'])
                         // Don't add reviewers from the same organisation
-                        && !$this->sameOrganisation($handle, $reviewersAssigned, $this->reviewerData)
+                        && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
                     ) {
                         // When no experienced reviewer has been assigned yet, skip inexperienced reviewers
                         if (
-                            (count($reviewersAssigned) === ($this->reviewersPerProject - 1))
+                            (count($this->reviewersAssigned) === ($this->reviewersPerProject - 1))
                             && !$hasExperiencedReviewer
                             && !$this->reviewerData[$handle]['experienced']
                         ) {
@@ -305,7 +303,7 @@ class PoFppPprGenerator extends AbstractGenerator
                             ReviewRosterService::REVIEWER_ASSIGNED
                             : ReviewRosterService::REVIEWER_SPARE;
                         $rosterData[$round][$projectIndex]['scores'][$handle] = $assigned;
-                        $reviewersAssigned[] = $handle;
+                        $this->reviewersAssigned[] = $handle;
                         $handlesAssigned[$round][] = $handle;
                         if ($this->reviewerData[$handle]['experienced']) {
                             $hasExperiencedReviewer = true;
@@ -354,24 +352,6 @@ class PoFppPprGenerator extends AbstractGenerator
         }
 
         return $projectsPerRound;
-    }
-
-    // Basic round assignment. Just divide the projects over the rounds in the order they came.
-    private function generateBasicRoundAssignment(array $projectReviewerScores, array $projectsPerRound): array
-    {
-        $roundAssignments = [];
-        reset($projectReviewerScores);
-        foreach ($projectsPerRound as $round => $numberOfProjects) {
-            if (!isset($roundAssignments[$round])) {
-                $roundAssignments[$round] = [];
-            }
-            for ($i = 0; $i < $numberOfProjects; $i++) {
-                $roundAssignments[$round][] = current($projectReviewerScores);
-                next($projectReviewerScores);
-            }
-        }
-
-        return $roundAssignments;
     }
 
     // Assign unassigned reviewers as extra reviewers for projects in a review round or fill up edge cases when too few

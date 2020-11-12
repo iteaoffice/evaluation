@@ -24,6 +24,11 @@ final class Logger
         return $this->log;
     }
 
+    public function reset(): void
+    {
+        $this->log = [];
+    }
+
     public function merge(Logger $logger): void
     {
         $this->log = array_merge($this->log, $logger->getLog());

@@ -20,6 +20,7 @@ use Evaluation\Entity\Reviewer\Contact as ReviewContact;
 use Evaluation\Service\ReviewRoster\CrGenerator;
 use Evaluation\Service\ReviewRoster\Logger;
 use Evaluation\Service\ReviewRoster\PoFppPprGenerator;
+use Evaluation\Service\ReviewRoster\PoFppPprOnlineGenerator;
 use InvalidArgumentException;
 use Organisation\Entity\Parent\Organisation as ParentOrganisation;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -129,7 +130,7 @@ class ReviewRosterService
         ksort($allReviewers);
 
         // Apply score boosts and penalties based on review history, preferred and ignored reviewers
-        $projectReviewerScores = $this->generateProjectReviewerScores($projects, $allReviewers);
+        $projectReviewerScores = $this->generateProjectReviewerScores($config, $projects);
 
         $this->logger->log(
             __LINE__,
@@ -362,14 +363,7 @@ class ReviewRosterService
     ): array
     {
         if ($this->onlineReview) {
-            $generator = new PoFppPprGenerator(
-                $config,
-                $projectReviewerScores,
-                $this->reviewersPerProject,
-                $this->avgReviewActivityScore,
-                $this->includeSpareReviewers,
-                $forceProjectsPerRound
-            );
+            $generator = new PoFppPprOnlineGenerator($config, $projectReviewerScores, $this->reviewersPerProject);
         } else {
             $generator = new PoFppPprGenerator(
                 $config,

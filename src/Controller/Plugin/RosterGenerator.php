@@ -52,6 +52,7 @@ final class RosterGenerator extends AbstractPlugin
 {
     private string $type; // The roster type (PO/FPP/PPR/CR)
     private array $rosterData;
+    private bool $onlineReview = false;
     private array $reviewers = [];
     private Spreadsheet $spreadsheet; // The main spreadsheet object the roster will be written to
     private ReviewRosterService $reviewRosterService;
@@ -91,6 +92,7 @@ final class RosterGenerator extends AbstractPlugin
     ): RosterGenerator {
         $this->type = $type;
         $config = $this->reviewRosterService->parseConfigFile($configFile);
+        $this->onlineReview = $onlineReview;
         $this->rosterData = $this->reviewRosterService->generateRosterData(
             $type,
             $config,
@@ -165,7 +167,11 @@ final class RosterGenerator extends AbstractPlugin
         $sheet->freezePane('A3');
 
         if (in_array($this->type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP, ReviewerService::TYPE_PPR])) {
-            $this->fillPoFppPprSpreadsheet($sheet, $lastColumn);
+            if ($this->onlineReview) {
+                $this->fillPoFppPprOnlineSpreadsheet($sheet);
+            } else {
+                $this->fillPoFppPprSpreadsheet($sheet, $lastColumn);
+            }
         } elseif ($this->type === ReviewerService::TYPE_CR) {
             $this->fillCrSpreadsheet($sheet, $lastColumn);
         }
@@ -222,7 +228,37 @@ final class RosterGenerator extends AbstractPlugin
             foreach ($projects as $project) {
                 // Add review history
                 $this->parseReviewHistory($sheet, $row, $project['data']);
+                // Add current roster
+                $sheet->setCellValue('A' . $row, $project['data']['call']);
+                $sheet->setCellValue('B' . $row, $project['data']['number']);
+                $sheet->setCellValue('C' . $row, $project['data']['name']);
+                $sheet->getStyle('D' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('EEEEEE');
+                $sheet->setCellValue(
+                    'D' . $row,
+                    $this->type . sprintf(' (%s)', $this->translator->translate('txt-upcoming'))
+                );
+                $col = 'E';
+                foreach (array_keys($this->reviewers) as $handle) {
+                    $cell = $col . $row;
+                    $this->parseCell($sheet, $cell, $project['scores'][$handle]);
+                    $col++;
+                }
+                $row++;
+            }
+        }
+    }
 
+    /**
+     * @throws Exception
+     */
+    private function fillPoFppPprOnlineSpreadsheet(Worksheet $sheet): void
+    {
+        $row = 3;
+        foreach ($this->rosterData as $projects) {
+            foreach ($projects as $project) {
+                // Add review history
+                $this->parseReviewHistory($sheet, $row, $project['data']);
                 // Add current roster
                 $sheet->setCellValue('A' . $row, $project['data']['call']);
                 $sheet->setCellValue('B' . $row, $project['data']['number']);
