@@ -6,9 +6,7 @@ namespace Evaluation\Service\ReviewRoster;
 
 use Evaluation\Service\ReviewRosterService;
 
-use function array_values;
 use function current;
-use function ksort;
 use function next;
 use function reset;
 use function shuffle;
@@ -58,11 +56,10 @@ abstract class AbstractGenerator implements Generator
                 if ($score > $highestScore) {
                     $bestMatchesByProject[$projectIndex] = [$handle];
                     $highestScore = $score;
-                } elseif ($score === $highestScore) { // Multiple highest scores get added and shuffled
+                } elseif ($score === $highestScore) { // Multiple highest scores
                     $bestMatchesByProject[$projectIndex][] = $handle;
                 }
             }
-            shuffle($bestMatchesByProject[$projectIndex]);
         }
 
         return $bestMatchesByProject;
@@ -79,14 +76,8 @@ abstract class AbstractGenerator implements Generator
                 }
             }
         }
-        // Sort by project number
-        $projectAssignmentsSorted = [];
-        foreach ($projectAssignments as $projectAssignment) {
-            $projectAssignmentsSorted[$projectAssignment['data']['number']] = $projectAssignment;
-        }
-        ksort($projectAssignmentsSorted);
 
-        return array_values($projectAssignmentsSorted);
+        return $projectAssignments;
     }
 
     // Basic round assignment. Just divide the projects over the rounds in the order they came.

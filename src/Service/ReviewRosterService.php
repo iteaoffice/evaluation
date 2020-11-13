@@ -42,6 +42,7 @@ use function file_exists;
 use function in_array;
 use function key;
 use function ksort;
+use function set_time_limit;
 use function sprintf;
 use function strtolower;
 use function unlink;
@@ -120,6 +121,7 @@ class ReviewRosterService
         ?int $forceProjectsPerRound = null
     ): array
     {
+        set_time_limit(60); // Allow for multiple attempts to generate a roster
         $this->reviewersPerProject = $reviewersPerProject;
         $this->includeSpareReviewers = $includeSpareReviewers;
         $this->onlineReview = $onlineReview;
@@ -303,10 +305,10 @@ class ReviewRosterService
                         $score = self::$scoreBoost[$type];
                         // Older reviews have less weight
                         if ($count < $totalReviews) {
-                            $score = $score / ($totalReviews - $count);
+                            $score = $score / (1 + ($totalReviews - $count));
                         }
                         if (array_key_exists($reviewer, $projectReviewerScores[$projectKey]['scores'])) {
-                            $projectReviewerScores[$projectKey]['scores'][$reviewer] = $score;
+                            $projectReviewerScores[$projectKey]['scores'][$reviewer] += $score;
                         }
                     }
                     $count++;

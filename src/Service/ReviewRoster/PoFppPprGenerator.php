@@ -8,6 +8,7 @@ use Evaluation\Service\ReviewerService;
 use Evaluation\Service\ReviewRosterService;
 
 use function array_diff;
+use function array_key_exists;
 use function array_keys;
 use function array_shift;
 use function array_slice;
@@ -22,7 +23,7 @@ use function rand;
 use function reset;
 use function shuffle;
 
-class PoFppPprGenerator extends AbstractGenerator
+final class PoFppPprGenerator extends AbstractGenerator
 {
     protected const TEAM_RECURRENCE_FACTOR = 0.3; // In 10 rounds no more than 3x the same review team
 
@@ -112,7 +113,7 @@ class PoFppPprGenerator extends AbstractGenerator
                 // For the other FE reviewers the FE score boost can he undone and they should be assigned based on
                 // regular review history score.
                 $lastHistoryItem = end($projectData['data']['history']);
-                if ($lastHistoryItem && isset($lastHistoryItem[ReviewerService::TYPE_FE])) {
+                if ($lastHistoryItem && array_key_exists(ReviewerService::TYPE_FE, $lastHistoryItem)) {
                     $highestScore = 0;
                     $bestMatch = null;
                     /** @var array $feHandles */
@@ -120,7 +121,7 @@ class PoFppPprGenerator extends AbstractGenerator
                     shuffle($feHandles); // Add some randomization when FE reviewers have equal scores
                     foreach ($feHandles as $handle) {
                         // The FE handle could have been overruled by the ignored list (score = -1)
-                        if (isset($projectData['scores'][$handle])) {
+                        if (array_key_exists($handle, $projectData['scores'])) {
                             if ($projectData['scores'][$handle] > $highestScore) {
                                 $highestScore = $projectData['scores'][$handle];
                                 $bestMatch = $handle;
@@ -129,7 +130,7 @@ class PoFppPprGenerator extends AbstractGenerator
                     }
                     // Undo the FE boost for the reviewers that weren't the best match
                     foreach ($feHandles as $handle) {
-                        if (isset($projectData['scores'][$handle]) && ($handle !== $bestMatch)) {
+                        if (array_key_exists($handle, $projectData['scores']) && ($handle !== $bestMatch)) {
                             $projectData['scores'][$handle] -= (ReviewRosterService::$scoreBoost[ReviewerService::TYPE_FE]
                                 / $this->avgReviewActivityScore);
                         }
@@ -142,7 +143,7 @@ class PoFppPprGenerator extends AbstractGenerator
                 foreach ($projectData['scores'] as $handle => $score) {
                     if ($score > 0) {
                         // Score is not set yet or higher
-                        if (!isset($bestMatchByHandle[$handle]) || ($score > $bestMatchByHandle[$handle]['score'])) {
+                        if (!array_key_exists($handle, $bestMatchByHandle) || ($score > $bestMatchByHandle[$handle]['score'])) {
                             $bestMatchByHandle[$handle] = [
                                 'projectIndex' => $projectIndex,
                                 'score'        => $score
@@ -175,7 +176,7 @@ class PoFppPprGenerator extends AbstractGenerator
                 $excludeFromProject = []; // Replace these reviewers for better mixing of review teams
 
                 // Add the highest scoring matches per project
-                if (isset($bestMatchesByProject[$projectIndex])) {
+                if (array_key_exists($projectIndex, $bestMatchesByProject)) {
                     // Only check for mixing of teams when there are actual teams
                     if (($this->reviewersPerProject > 1)) {
                         $consideredHandles = array_slice(
@@ -188,7 +189,7 @@ class PoFppPprGenerator extends AbstractGenerator
                             $teamKey .= $handleData['handle'] . '|';
                         }
                         if (!empty($teamKey)) {
-                            if (!isset($reviewTeams[$teamKey])) {
+                            if (!array_key_exists($teamKey, $reviewTeams)) {
                                 $reviewTeams[$teamKey] = 0;
                             }
                             $reviewTeams[$teamKey]++;
@@ -205,12 +206,12 @@ class PoFppPprGenerator extends AbstractGenerator
                                     }
                                 }
                                 $index = rand($startIndex, ($this->reviewersPerProject - 1));
-                                if (isset($bestMatchesByProject[$projectIndex][$index])) {
+                                if (array_key_exists($index, $bestMatchesByProject[$projectIndex])) {
                                     $handle = $bestMatchesByProject[$projectIndex][$index]['handle'];
                                     $excludeFromProject[] = $handle;
                                     // When excluded from this project, also remove this project from the best matches by handle
                                     if (
-                                        isset($bestMatchByHandle[$handle])
+                                        array_key_exists($handle, $bestMatchByHandle)
                                         && ($bestMatchByHandle[$handle]['projectIndex'] === $projectIndex)
                                     ) {
                                         unset($bestMatchByHandle[$handle]);
@@ -228,7 +229,7 @@ class PoFppPprGenerator extends AbstractGenerator
                             // Not yet assigned in this round when rounds are used
                             && (!in_array($handle, $handlesAssigned[$round]))
                             // Not a best match on another project, or the other project has already been assigned to other reviewers
-                            && (!isset($bestMatchByHandle[$handle])
+                            && (!array_key_exists($handle, $bestMatchByHandle)
                                 || ($bestMatchByHandle[$handle]['projectIndex'] <= $projectIndex))
                             // Don't assign multiple spare reviewers
                             && (!$hasSpareReviewer || $this->reviewerData[$handle]['present'])
@@ -281,7 +282,7 @@ class PoFppPprGenerator extends AbstractGenerator
                         // Not yet assigned in this round when rounds are used
                         && (!in_array($handle, $handlesAssigned[$round]))
                         // Not a best match on another project, or the other project has already been assigned to other reviewers
-                        && (!isset($bestMatchByHandle[$handle])
+                        && (!array_key_exists($handle, $bestMatchByHandle)
                             || ($bestMatchByHandle[$handle]['projectIndex'] <= $projectIndex))
                         // Don't assign multiple spare reviewers
                         && (!$hasSpareReviewer || $this->reviewerData[$handle]['present'])
@@ -449,7 +450,7 @@ class PoFppPprGenerator extends AbstractGenerator
                     $projectAssignmentCount++;
                 }
             }
-            if (!isset($projectAssignments[$projectAssignmentCount])) {
+            if (!array_key_exists($projectAssignmentCount, $projectAssignments)) {
                 $projectAssignments[$projectAssignmentCount] = [];
             }
             // Allow for multiple projects with the same number of assignments

@@ -7,6 +7,14 @@ namespace Evaluation\Service\ReviewRoster;
 use Evaluation\Service\ReviewerService;
 use Evaluation\Service\ReviewRosterService;
 
+use function array_key_exists;
+use function array_keys;
+use function asort;
+use function is_array;
+use function krsort;
+use function reset;
+use function sprintf;
+
 class CrGenerator extends AbstractGenerator
 {
     protected array $reviewerLoad = [];
@@ -15,7 +23,7 @@ class CrGenerator extends AbstractGenerator
     {
         $this->logger->reset();
         $this->initReviewerLoad();
-        $assignments = $this->initAssignments();
+        $assignments = $this->initProjectAssignments();
         $bestMatchesByProject = $this->getBestMatchesPerProject();
 
         // Assign reviewers
@@ -25,7 +33,7 @@ class CrGenerator extends AbstractGenerator
 
             // If future evaluation is set, get reviewers from there
             $lastHistoryItem = end($this->projectReviewerScores[$projectIndex]['data']['history']);
-            if ($lastHistoryItem && isset($lastHistoryItem[ReviewerService::TYPE_FE])) {
+            if ($lastHistoryItem && array_key_exists(ReviewerService::TYPE_FE, $lastHistoryItem)) {
                 $this->assignFutureEvaluationReviewers($assignment, $projectIndex);
             }
             // Otherwise, add the highest scoring match per project
@@ -60,7 +68,7 @@ class CrGenerator extends AbstractGenerator
         }
     }
 
-    private function assignFutureEvaluationReviewers(array &$assignment, int $projectIndex): void
+    protected function assignFutureEvaluationReviewers(array &$assignment, int $projectIndex): void
     {
         $lastHistoryItem = end($this->projectReviewerScores[$projectIndex]['data']['history']);
         foreach ($lastHistoryItem[ReviewerService::TYPE_FE] as $handle) {
@@ -68,7 +76,7 @@ class CrGenerator extends AbstractGenerator
                 break;
             }
             if (
-                isset($reviewerData[$handle])
+                array_key_exists($handle, $this->reviewerData)
                 // Prevent rare cases where a preferred reviewer is also an ignored one (after org merge)
                 && ($this->projectReviewerScores[$projectIndex]['scores'][$handle] !== ReviewRosterService::REVIEWER_IGNORED)
                 // Prevent reviewers from the same company being added
@@ -92,6 +100,16 @@ class CrGenerator extends AbstractGenerator
     protected function assignBestProjectMatch(array &$assignment, array $bestProjectMatches): void
     {
         $handle = reset($bestProjectMatches);
+        // Multiple best matches? Take the one with the least assignments.
+        if (count($bestProjectMatches) > 1) {
+            asort($this->reviewerLoad);
+            foreach (array_keys($this->reviewerLoad) as $reviewerHandle) {
+                if (in_array($reviewerHandle, $bestProjectMatches)) {
+                    $handle = $reviewerHandle;
+                    break;
+                }
+            }
+        }
         $this->reviewersAssigned[] = $handle;
         $this->reviewerLoad[$handle]++;
         $assignment['scores'][$handle] = ReviewRosterService::REVIEWER_ASSIGNED;
@@ -148,27 +166,12 @@ class CrGenerator extends AbstractGenerator
         );
     }
 
-    // Init assignment data based on the project reviewer scores array wiping out all boosts keeping the ignores
-    protected function initAssignments(): array
-    {
-        $assignments = $this->projectReviewerScores;
-        foreach ($assignments as &$assignmentsProjectData) {
-            foreach ($assignmentsProjectData['scores'] as &$assignmentScore) {
-                if ($assignmentScore > 0) {
-                    $assignmentScore = ReviewRosterService::REVIEWER_UNASSIGNED;
-                }
-            }
-        }
-
-        return $assignments;
-    }
-
     // Sort by call DESC
     private function sortByCall(array $assignments): array
     {
         $rosterData = [];
         foreach ($assignments as $assignment) {
-            if (!isset($rosterData[$assignment['data']['call']])) {
+            if (!array_key_exists($assignment['data']['call'], $rosterData)) {
                 $rosterData[$assignment['data']['call']] = [];
             }
             $rosterData[$assignment['data']['call']][] = $assignment;
