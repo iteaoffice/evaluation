@@ -16,10 +16,10 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v1
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
-          extension-csv: mbstring, intl, zip, gd, soap
+          extensions: mbstring, intl, zip, gd, soap
           coverage: xdebug #optional, setup coverage driver
 
       - name: Check PHP Version
