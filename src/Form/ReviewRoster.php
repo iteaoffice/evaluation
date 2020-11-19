@@ -100,6 +100,15 @@ final class ReviewRoster extends Form
         ]);
 
         $this->add([
+            'type'       => Element\Checkbox::class,
+            'name'       => 'online',
+            'options'    => [
+                'label'      => _('txt-online-review'),
+                'help-block' => _('txt-check-when-the-review-is-done-online'),
+            ],
+        ]);
+
+        $this->add([
             'type'        => Element\Number::class,
             'name'        => 'projects',
             'options'     => [
