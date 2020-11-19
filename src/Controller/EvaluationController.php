@@ -275,6 +275,14 @@ final class EvaluationController extends AbstractActionController
 
         /** @var Project $project */
         foreach ($projects as $project) {
+            //Find the latest reviewed version of the version type
+            /** @var Version $latestVersion */
+            $latestVersion = $this->projectService->getAnyLatestProjectVersion($project, $versionType);
+
+            if (null === $latestVersion) {
+                continue;
+            }
+
             $sheet->setCellValue('A' . $row, $project->parseFullName());
             $sheet->setCellValue('B' . $row, 'Country');
             $sheet->setCellValue('C' . $row, 'Eligibility');
@@ -287,10 +295,6 @@ final class EvaluationController extends AbstractActionController
             $sheet->getStyle($cell)->getFont()->setBold(true);
             $sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID);
             $sheet->getStyle($cell)->getFill()->getStartColor()->setRGB('CCCCCC');
-
-            //Find the latest reviewed version of the version type
-            /** @var Version $latestVersion */
-            $latestVersion = $this->projectService->getLatestNotRejectedProjectVersion($project, $versionType);
 
             $totalEffort      = $this->versionService->findTotalEffortVersion($latestVersion);
             $evaluationResult = $this->createEvaluation(

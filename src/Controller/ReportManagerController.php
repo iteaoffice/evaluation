@@ -239,9 +239,8 @@ final class ReportManagerController extends AbstractActionController
                         break;
                     case ReportType::TYPE_GENERAL_VERSION:
                         return $this->redirect()->toRoute(
-                            'zfcadmin/project/version/view',
-                            ['id' => $version->getId()],
-                            ['fragment' => 'evaluation']
+                            'zfcadmin/project/version/evaluation',
+                            ['id' => $version->getId()]
                         );
                         break;
                 }
@@ -318,9 +317,8 @@ final class ReportManagerController extends AbstractActionController
             }
 
             return $this->redirect()->toRoute(
-                'zfcadmin/project/version/view',
+                'zfcadmin/project/version/evaluation',
                 ['id' => $evaluationReport->getProjectVersionReport()->getVersion()->getId()],
-                ['fragment' => 'evaluation']
             );
         }
 
@@ -413,9 +411,8 @@ final class ReportManagerController extends AbstractActionController
         }
 
         return $this->redirect()->toRoute(
-            'zfcadmin/project/version/view',
-            ['id' => $evaluationReport->getProjectVersionReport()->getVersion()->getId()],
-            ['fragment' => 'evaluation']
+            'zfcadmin/project/version/evaluation',
+            ['id' => $evaluationReport->getProjectVersionReport()->getVersion()->getId()]
         );
     }
 
@@ -449,9 +446,8 @@ final class ReportManagerController extends AbstractActionController
         // Final PO/FPP/CR evaluation report
         if ($evaluationReport->getProjectVersionReport() instanceof ProjectVersionReport) {
             return $this->redirect()->toRoute(
-                'zfcadmin/project/version/view',
-                ['id' => $evaluationReport->getProjectVersionReport()->getVersion()->getId()],
-                ['fragment' => 'evaluation']
+                'zfcadmin/project/version/evaluation',
+                ['id' => $evaluationReport->getProjectVersionReport()->getVersion()->getId()]
             );
         }
 

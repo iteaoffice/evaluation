@@ -66,9 +66,9 @@ abstract class AbstractAssertion implements AssertionInterface
 
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
+        $this->container      = $container;
         $this->contactService = $container->get(ContactService::class);
-        $this->adminService = $container->get(AdminService::class);
+        $this->adminService   = $container->get(AdminService::class);
 
         $this->contact = new Contact();
         if ($container->get(AuthenticationService::class)->hasIdentity()) {
@@ -147,12 +147,9 @@ abstract class AbstractAssertion implements AssertionInterface
     {
         $accessRoles = $this->prepareAccessRoles($accessRoleOrCollection);
 
-
-
         if (count($accessRoles) === 0) {
             return true;
         }
-
 
         foreach ($accessRoles as $role) {
             if ($role === Access::ACCESS_PUBLIC) {

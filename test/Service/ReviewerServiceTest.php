@@ -193,7 +193,7 @@ class ReviewerServiceTest extends AbstractServiceTest
         $project->getProjectCalendar()->add($futureProjectCalendar);
         $project->getProjectCalendar()->add($pastProjectCalendar);
         $project->getReport()->add($report);
-        
+
         $entityManagerMock = $this->getEntityManagerMock();
         $service = new ReviewerService($entityManagerMock);
 

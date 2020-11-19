@@ -7,7 +7,7 @@
                 {% if type is constant("Evaluation\\Entity\\Report\\Type::TYPE_GENERAL_REPORT") %}
                     {{ reportLink(review.projectReport, 'report-community', 'name') }}
                 {% elseif type is constant("Evaluation\\Entity\\Report\\Type::TYPE_GENERAL_VERSION") %}
-                    {{ versionLink(review.version,'view-community','description') }}
+                    {{ versionLink(review.version,'general','description') }}
                 {% endif %}
             </dd>
             <dt>{{ translate("txt-status") }}</dt>

@@ -36,7 +36,6 @@
                         <tr>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate("txt-project")} %}</th>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'version', 'text': translate("txt-version")} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'date-submitted', 'text': translate("txt-date-submitted")} %}</th>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'reviewer', 'text': translate("txt-reviewer")} %}</th>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'final', 'text': translate("txt-final")} %}</th>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'created', 'text': translate("txt-date-created")} %}</th>
@@ -50,16 +49,15 @@
                         {% for versionReviewer in paginator.getCurrentItems() %}
                             <tr>
                                 <td>{{ projectLink(versionReviewer.version.project, 'view-admin', 'name') }}</td>
-                                <td>{{ versionLink(versionReviewer.version, 'view-admin', 'description') }}
+                                <td>{{ versionLink(versionReviewer.version, 'general-admin', 'description') }}
                                 {% if versionReviewer.version.versionType.id == constant("Project\\Entity\\Version\\Type::TYPE_CR") %}
-                                    {% if versionReviewer.version.changerequestProcess.isMajor() %}
-                                        <small>({{ translate("txt-major") }})</small>
-                                    {% else %}
+                                    {% if versionReviewer.version.project.changerequestProcess.type == constant("Project\\Entity\\ChangeRequest\\Process::TYPE_MINOR") %}
                                         <small>({{ translate("txt-minor") }})</small>
+                                    {% else %}
+                                        <small>({{ translate("txt-major") }})</small>
                                     {% endif %}
                                 {% endif %}
                                 </td>
-                                <td>{{ versionReviewer.version.dateSubmitted|string_date }}</td>
                                 <td>{{ contactLink(versionReviewer.contact, 'view-admin', 'name') }}</td>
                                 {% if versionReviewer.projectVersionReport %}
                                     {% set report = versionReviewer.projectVersionReport.evaluationReport %}
@@ -85,7 +83,6 @@
                         <tr>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'project', 'text': translate("txt-project")} %}</th>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'version', 'text': translate("txt-version")} %}</th>
-                            <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'date-submitted', 'text': translate("txt-date-submitted")} %}</th>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'final', 'text': translate("txt-final")} %}</th>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'created', 'text': translate("txt-date-created")} %}</th>
                             <th>{% include 'application/partial/sortable-table-header' with {'route': 'zfcadmin/evaluation/report/list', 'criteria': 'updated', 'text': translate("txt-date-last-update")} %}</th>
@@ -98,8 +95,7 @@
                         {% for version in paginator.getCurrentItems() %}
                             <tr>
                                 <td>{{ projectLink(version.project, 'view-admin', 'name') }}</td>
-                                <td>{{ versionLink(version, 'view-admin', 'description') }}</td>
-                                <td>{{ version.dateSubmitted|string_date }}</td>
+                                <td>{{ versionLink(version, 'general-admin', 'description') }}</td>
                                 {% if version.projectVersionReport %}
                                     {% set report = version.projectVersionReport.evaluationReport %}
                                     <td>{% if report.final %}{{ translate("txt-yes") }}{% else %}{{ translate("txt-no") }}{% endif %}</td>
