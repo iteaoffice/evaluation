@@ -27,7 +27,7 @@ abstract class AbstractGenerator implements Generator
         $this->logger = new Logger();
     }
 
-    public abstract function generate(): RosterData;
+    abstract public function generate(): RosterData;
 
     // Check whether reviewers are from the same (parent) organisation
     protected function sameOrganisation(string $handle, array $otherHandles, array $reviewerData): bool
@@ -86,7 +86,7 @@ abstract class AbstractGenerator implements Generator
         $roundAssignments = [];
         reset($this->projectReviewerScores);
         foreach ($projectsPerRound as $round => $numberOfProjects) {
-            if (!isset($roundAssignments[$round])) {
+            if (! isset($roundAssignments[$round])) {
                 $roundAssignments[$round] = [];
             }
             for ($i = 0; $i < $numberOfProjects; $i++) {

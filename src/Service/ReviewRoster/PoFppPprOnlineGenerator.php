@@ -29,7 +29,7 @@ final class PoFppPprOnlineGenerator extends CrGenerator
                 $this->assignFutureEvaluationReviewers($assignment, $projectIndex);
             }
             // Otherwise, add the highest scoring match per project
-            elseif (!empty($bestMatchesByProject[$projectIndex])) {
+            elseif (! empty($bestMatchesByProject[$projectIndex])) {
                 $this->assignBestProjectMatch($assignment, $bestMatchesByProject[$projectIndex]);
             }
 

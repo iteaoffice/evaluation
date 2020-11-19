@@ -37,13 +37,13 @@ class CrGenerator extends AbstractGenerator
                 $this->assignFutureEvaluationReviewers($assignment, $projectIndex);
             }
             // Otherwise, add the highest scoring match per project
-            elseif (!empty($bestMatchesByProject[$projectIndex])) {
+            elseif (! empty($bestMatchesByProject[$projectIndex])) {
                 $this->assignBestProjectMatch($assignment, $bestMatchesByProject[$projectIndex]);
             }
 
             // Make one of the above reviewers the primary reviewer.
             // Inexperienced reviewers should not become primary reviewer.
-            if (!empty($this->reviewersAssigned)) {
+            if (! empty($this->reviewersAssigned)) {
                 $this->assignRandomPrimaryReviewer($assignment);
                 $hasPrimaryReviewer = true;
             }
@@ -52,7 +52,7 @@ class CrGenerator extends AbstractGenerator
             $this->assignRandomReviewers($assignment);
 
             // No primary reviewer has been assigned based on experience or FE label. Just pick a random one.
-            if (!$hasPrimaryReviewer) {
+            if (! $hasPrimaryReviewer) {
                 $this->assignRandomPrimaryReviewer($assignment, false);
             }
         }
@@ -80,7 +80,7 @@ class CrGenerator extends AbstractGenerator
                 // Prevent rare cases where a preferred reviewer is also an ignored one (after org merge)
                 && ($this->projectReviewerScores[$projectIndex]['scores'][$handle] !== ReviewRosterService::REVIEWER_IGNORED)
                 // Prevent reviewers from the same company being added
-                && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
+                && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
             ) {
                 $this->reviewersAssigned[] = $handle;
                 $this->reviewerLoad[$handle]++;
@@ -133,7 +133,7 @@ class CrGenerator extends AbstractGenerator
                 // Add reviewers with low load and not from the same organisation as reviewers already assigned
                 if (
                     ($assignment['scores'][$handle] === 0)
-                    && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
+                    && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
                 ) {
                     $this->reviewersAssigned[] = $handle;
                     $this->reviewerLoad[$handle]++;
@@ -171,7 +171,7 @@ class CrGenerator extends AbstractGenerator
     {
         $rosterData = [];
         foreach ($assignments as $assignment) {
-            if (!array_key_exists($assignment['data']['call'], $rosterData)) {
+            if (! array_key_exists($assignment['data']['call'], $rosterData)) {
                 $rosterData[$assignment['data']['call']] = [];
             }
             $rosterData[$assignment['data']['call']][] = $assignment;

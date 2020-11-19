@@ -47,8 +47,7 @@ final class PoFppPprGenerator extends AbstractGenerator
         float $avgReviewActivityScore,
         bool $includeSpareReviewers,
         ?int $forceProjectsPerRound = null
-    )
-    {
+    ) {
         parent::__construct($config, $projectReviewerScores, $reviewersPerProject);
         $this->presentReviewerData = $config['present'];
         $this->avgReviewActivityScore = $avgReviewActivityScore;
@@ -143,7 +142,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                 foreach ($projectData['scores'] as $handle => $score) {
                     if ($score > 0) {
                         // Score is not set yet or higher
-                        if (!array_key_exists($handle, $bestMatchByHandle) || ($score > $bestMatchByHandle[$handle]['score'])) {
+                        if (! array_key_exists($handle, $bestMatchByHandle) || ($score > $bestMatchByHandle[$handle]['score'])) {
                             $bestMatchByHandle[$handle] = [
                                 'projectIndex' => $projectIndex,
                                 'score'        => $score
@@ -188,8 +187,8 @@ final class PoFppPprGenerator extends AbstractGenerator
                         foreach ($consideredHandles as $handleData) {
                             $teamKey .= $handleData['handle'] . '|';
                         }
-                        if (!empty($teamKey)) {
-                            if (!array_key_exists($teamKey, $reviewTeams)) {
+                        if (! empty($teamKey)) {
+                            if (! array_key_exists($teamKey, $reviewTeams)) {
                                 $reviewTeams[$teamKey] = 0;
                             }
                             $reviewTeams[$teamKey]++;
@@ -225,16 +224,16 @@ final class PoFppPprGenerator extends AbstractGenerator
                         $handle = $handleData['handle'];
                         if (
                             // Not explicitly excluded
-                            !in_array($handle, $excludeFromProject)
+                            ! in_array($handle, $excludeFromProject)
                             // Not yet assigned in this round when rounds are used
-                            && (!in_array($handle, $handlesAssigned[$round]))
+                            && (! in_array($handle, $handlesAssigned[$round]))
                             // Not a best match on another project, or the other project has already been assigned to other reviewers
-                            && (!array_key_exists($handle, $bestMatchByHandle)
+                            && (! array_key_exists($handle, $bestMatchByHandle)
                                 || ($bestMatchByHandle[$handle]['projectIndex'] <= $projectIndex))
                             // Don't assign multiple spare reviewers
-                            && (!$hasSpareReviewer || $this->reviewerData[$handle]['present'])
+                            && (! $hasSpareReviewer || $this->reviewerData[$handle]['present'])
                             // Don't add reviewers from the same organisation
-                            && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
+                            && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
                         ) {
                             $assigned = $this->reviewerData[$handle]['present'] ?
                                 ReviewRosterService::REVIEWER_ASSIGNED
@@ -245,7 +244,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                             if ($this->reviewerData[$handle]['experienced']) {
                                 $hasExperiencedReviewer = true;
                             }
-                            if (!$this->reviewerData[$handle]['present']) {
+                            if (! $this->reviewerData[$handle]['present']) {
                                 $hasSpareReviewer = true;
                             }
                         }
@@ -278,24 +277,24 @@ final class PoFppPprGenerator extends AbstractGenerator
                     }
                     if (
                         // Not explicitly excluded
-                        ($score > ReviewRosterService::REVIEWER_IGNORED) && !in_array($handle, $excludeFromProject)
+                        ($score > ReviewRosterService::REVIEWER_IGNORED) && ! in_array($handle, $excludeFromProject)
                         // Not yet assigned in this round when rounds are used
-                        && (!in_array($handle, $handlesAssigned[$round]))
+                        && (! in_array($handle, $handlesAssigned[$round]))
                         // Not a best match on another project, or the other project has already been assigned to other reviewers
-                        && (!array_key_exists($handle, $bestMatchByHandle)
+                        && (! array_key_exists($handle, $bestMatchByHandle)
                             || ($bestMatchByHandle[$handle]['projectIndex'] <= $projectIndex))
                         // Don't assign multiple spare reviewers
-                        && (!$hasSpareReviewer || $this->reviewerData[$handle]['present'])
+                        && (! $hasSpareReviewer || $this->reviewerData[$handle]['present'])
                         // Prefer present reviewers when spare reviewers aren't counted
                         && ($hasEnoughPresentReviewers || $this->reviewerData[$handle]['present'])
                         // Don't add reviewers from the same organisation
-                        && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
+                        && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
                     ) {
                         // When no experienced reviewer has been assigned yet, skip inexperienced reviewers
                         if (
                             (count($this->reviewersAssigned) === ($this->reviewersPerProject - 1))
-                            && !$hasExperiencedReviewer
-                            && !$this->reviewerData[$handle]['experienced']
+                            && ! $hasExperiencedReviewer
+                            && ! $this->reviewerData[$handle]['experienced']
                         ) {
                             continue;
                         }
@@ -309,7 +308,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                         if ($this->reviewerData[$handle]['experienced']) {
                             $hasExperiencedReviewer = true;
                         }
-                        if (!$this->reviewerData[$handle]['present']) {
+                        if (! $this->reviewerData[$handle]['present']) {
                             $hasSpareReviewer = true;
                         }
                     }
@@ -331,8 +330,7 @@ final class PoFppPprGenerator extends AbstractGenerator
         int $minReviewersAssigned,
         int $totalReviewers,
         ?int $forceProjectsPerRound = null
-    ): array
-    {
+    ): array {
         $projectsPerRound = [];
         $maxProjectsPerRound = floor($totalReviewers / $minReviewersAssigned);
         if (($forceProjectsPerRound !== null) && ($forceProjectsPerRound < $maxProjectsPerRound)) {
@@ -399,9 +397,9 @@ final class PoFppPprGenerator extends AbstractGenerator
             }
 
             // No extra assignments for the last round (when rounds are used)
-            if (!empty($unassignedReviewers) && ($round < $lastRound)) {
+            if (! empty($unassignedReviewers) && ($round < $lastRound)) {
                 // Assign leftover unassigned reviewers to the other projects based on number of assignments and score
-                while (!empty($unassignedReviewers)) {
+                while (! empty($unassignedReviewers)) {
                     shuffle($unassignedReviewers);
                     $handle = reset($unassignedReviewers);
                     $sortedProjectIndexes = $this->getLeastAssignmentsProjectIndex($rosterData[$round]);
@@ -450,7 +448,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                     $projectAssignmentCount++;
                 }
             }
-            if (!array_key_exists($projectAssignmentCount, $projectAssignments)) {
+            if (! array_key_exists($projectAssignmentCount, $projectAssignments)) {
                 $projectAssignments[$projectAssignmentCount] = [];
             }
             // Allow for multiple projects with the same number of assignments
