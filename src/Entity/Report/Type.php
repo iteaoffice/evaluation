@@ -23,7 +23,7 @@ use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_report2_type")
- * @ORM\Entity(repositoryClass="Gedmo\Sortable\Entity\Repository\SortableRepository")
+ * @ORM\Entity
  */
 class Type extends AbstractEntity
 {
@@ -52,8 +52,6 @@ class Type extends AbstractEntity
      *     "label":"txt-evaluation-report-type-sequence-label",
      *     "help-block":"txt-evaluation-report-type-sequence-help-block"
      * })
-     *
-     * @Gedmo\SortablePosition
      *
      * @var int
      */

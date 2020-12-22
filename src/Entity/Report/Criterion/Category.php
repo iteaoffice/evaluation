@@ -36,7 +36,6 @@ class Category extends AbstractEntity
      */
     private $id;
     /**
-     * @Gedmo\SortablePosition
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
      * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({"label":"txt-sequence"})

@@ -58,39 +58,9 @@ final class RenderProjectEvaluation extends AbstractPlugin
 
         //Doe some nasty hardcoded stuff for AENEAS
         $pdf->setTemplate($this->moduleOptions->getProjectTemplate());
+        $pdf->Line(15, 60, 191, 60, ['color' => [0, 166, 81]]);
 
         $y = 35;
-
-        //@todo Change this so the template is taken from the program
-        if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
-            $originalTemplate = $this->moduleOptions->getProjectTemplate();
-
-            $template = $originalTemplate;
-            if (in_array('Penta', $project->parsePrograms(), true)) {
-                $template = str_replace('blank-template-firstpage', 'penta-template', $originalTemplate);
-            }
-
-            if (in_array('EURIPIDES', $project->parsePrograms(), true)) {
-                $template = str_replace('blank-template-firstpage', 'euripides-template', $originalTemplate);
-            }
-
-            if (
-                in_array('Penta', $project->parsePrograms(), true)
-                && in_array(
-                    'EURIPIDES',
-                    $project->parsePrograms(),
-                    true
-                )
-            ) {
-                $template = str_replace('blank-template-firstpage', 'penta-euripides-template', $originalTemplate);
-            }
-
-            $y = 60;
-
-            $pdf->setTemplate($template);
-        } else {
-            $pdf->Line(15, 60, 191, 60, ['color' => [0, 166, 81]]);
-        }
 
         $pdf->AddPage();
         $pdf->header();

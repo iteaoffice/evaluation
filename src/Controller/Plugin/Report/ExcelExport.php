@@ -45,7 +45,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Project\Entity\Challenge;
+use Project\Entity\Project\Challenge;
 use Project\Entity\Rationale;
 use Project\Entity\Report\Reviewer as ReportReviewer;
 use Project\Entity\Version\Reviewer as VersionReviewer;
@@ -466,7 +466,7 @@ final class ExcelExport extends AbstractPlugin
         $this->parseCriterionLabel($displaySheet, $row, $this->translator->translate('txt-challenge'));
         $displaySheet->mergeCells('B' . $row . ':C' . $row);
         $challenges = array_map(
-            static function (Challenge $challenge) {
+            static function (\Project\Entity\Project\Challenge $challenge) {
                 return $challenge->getChallenge();
             },
             $project->getProjectChallenge()->toArray()

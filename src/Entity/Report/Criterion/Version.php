@@ -93,7 +93,6 @@ class Version extends AbstractEntity
      *     "label":"txt-sequence",
      *     "help-block":"txt-evaluation-report-criterion-sequence-help-block"
      * })
-     * @Gedmo\SortablePosition
      *
      * @var int
      */

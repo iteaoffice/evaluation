@@ -34,7 +34,7 @@ use Laminas\Json\Json;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Laminas\Mvc\Controller\PluginManager;
 use Organisation\Entity\Organisation;
-use Project\Entity\Challenge;
+use Project\Entity\Project\Challenge;
 use Project\Entity\Rationale;
 use Project\Entity\Version\Reviewer as VersionReviewer;
 use Project\Entity\Version\Type;
@@ -140,8 +140,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
 
         $pdf = new ReportPdf();
         //Doe some nasty hardcoded stuff for AENEAS
-        $template = str_replace('blank-template-firstpage', 'penta-euripides-template', $this->moduleOptions->getProjectTemplate());
-        $pdf->setTemplate($template);
+        $pdf->setTemplate($this->moduleOptions->getProjectTemplate());
 
         $pdf->SetFontSize(self::$fontSize);
         $pdf->SetTopMargin(self::$topMargin);

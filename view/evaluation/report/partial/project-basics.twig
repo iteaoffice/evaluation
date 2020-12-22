@@ -22,10 +22,10 @@
             <dd>{{ project.call }}</dd>
             <dt>{{ translate("txt-start-date") }}</dt>
             <dd>
-                {% if projectService.isPrepareMode(project) %}
+                {% if projectService.canSubmitNextVersion(project) %}
                     {% if projectService.parseOfficialDateStart(project) != project.dateStart and projectService.hasVersions(project) %}
                         <span class="text-highlight"
-                              title="{{ translate("txt-item-has-changed-and-will-be-saved-when-a-%s-version-is-created")|format(projectService.getNextMode(project).versionType) }}">
+                              title="{{ translate("txt-item-has-changed-and-will-be-saved-when-a-%s-version-is-created")|format(projectService.getNextVersionType(project).versionType) }}">
                     {{ project.dateStart|string_date }}
                         </span>
                     {% else %}
@@ -41,10 +41,10 @@
             </dd>
             <dt>{{ translate("txt-end-date") }}</dt>
             <dd>
-                {% if projectService.isPrepareMode(project) %}
+                {% if projectService.canSubmitNextVersion(project) %}
                     {% if projectService.parseOfficialDateEnd(project) != project.dateEnd and projectService.hasVersions(project) %}
                         <span class="text-highlight"
-                              title="{{ translate("txt-item-has-changed-and-will-be-saved-when-a-%s-version-is-created")|format(projectService.getNextMode(project).versionType) }}">
+                              title="{{ translate("txt-item-has-changed-and-will-be-saved-when-a-%s-version-is-created")|format(projectService.getNextVersionType(project).versionType) }}">
                     {{ project.dateEnd|string_date }}
                         </span>
                     {% else %}

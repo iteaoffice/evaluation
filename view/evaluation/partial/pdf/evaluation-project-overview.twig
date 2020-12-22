@@ -1,7 +1,7 @@
 {% if not omitHeader %}
     <h1 style="font-size: 24px; color: #00a651;">{{ project.parseFullName() }}</h1>
 
-    <p style="font-size: 16px; color: #808285;">{{ project.parseCalls() }}
+    <p style="font-size: 16px; color: #808285;">{{ project.parseCallName() }}
         - {{ translate("txt-meeting-%s-evaluation")|format(versionType.type|upper) }}</p>
 {% endif %}
 

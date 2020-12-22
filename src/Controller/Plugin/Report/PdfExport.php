@@ -16,7 +16,7 @@ namespace Evaluation\Controller\Plugin\Report;
 use DateTime;
 use JpGraph\JpGraph;
 use LinearScale;
-use Project\Entity\Challenge;
+use Project\Entity\Project\Challenge;
 use Evaluation\Controller\Plugin\ReportPdf;
 use Evaluation\Entity\Report as EvaluationReport;
 use Evaluation\Entity\Report\Criterion;
@@ -111,41 +111,6 @@ final class PdfExport extends AbstractPlugin
         $pdf = new ReportPdf();
         $pdf->setTemplate($this->moduleOptions->getReportTemplate());
 
-        //@todo Change this so the template is taken from the program
-        if (defined('ITEAOFFICE_HOST') && ITEAOFFICE_HOST === 'aeneas') {
-            $originalTemplate = $this->moduleOptions->getReportTemplate();
-            $project          = EvaluationReportService::getProject($this->evaluationReport);
-
-            $template = $originalTemplate;
-            if (in_array('PENTA', $project->parsePrograms(), true)) {
-                $template = str_replace(
-                    'evaluation-report-template',
-                    'evaluation-report-template.penta',
-                    $originalTemplate
-                );
-            }
-
-            if (in_array('EURIPIDES', $project->parsePrograms(), true)) {
-                $template = str_replace(
-                    'evaluation-report-template',
-                    'evaluation-report-template.euripides',
-                    $originalTemplate
-                );
-            }
-
-            if (
-                in_array('PENTA', $project->parsePrograms(), true)
-                && in_array('EURIPIDES', $project->parsePrograms(), true)
-            ) {
-                $template = str_replace(
-                    'evaluation-report-template',
-                    'evaluation-report-template.penta-euripides',
-                    $originalTemplate
-                );
-            }
-
-            $pdf->setTemplate($template);
-        }
 
         $pdf->SetFontSize(9);
         $pdf->SetTopMargin(self::$topMargin);

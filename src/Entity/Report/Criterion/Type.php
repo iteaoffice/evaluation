@@ -28,7 +28,6 @@ class Type extends AbstractEntity
      */
     private $id;
     /**
-     * @Gedmo\SortablePosition
      * @ORM\Column(name="sequence", type="integer", options={"unsigned":true})
      * @Annotation\Type("\Laminas\Form\Element\Number")
      * @Annotation\Options({
@@ -51,7 +50,6 @@ class Type extends AbstractEntity
      */
     private $type;
     /**
-     * @Gedmo\SortableGroup
      * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Report\Criterion\Category", cascade={"persist"}, inversedBy="types")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="category_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
