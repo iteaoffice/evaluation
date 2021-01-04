@@ -1,12 +1,11 @@
 <?php
 
 /**
-*
- * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
- * @license     https://itea3.org/license.txt proprietary
+ * ITEA Office all rights reserved
  *
- * @link        http://github.com/iteaoffice/project for the canonical source repository
+ * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
+ * @copyright   Copyright (c) 2021 ITEA Office (https://itea3.org)
+ * @license     https://itea3.org/license.txt proprietary
  */
 
 declare(strict_types=1);
@@ -18,7 +17,6 @@ use Calendar\Entity\ContactRole;
 use Calendar\Entity\ContactStatus;
 use Contact\Entity\Contact;
 use DateTime;
-use Evaluation\Entity\Reviewer;
 use InvalidArgumentException;
 use Project\Entity\Calendar\Calendar as ProjectCalendar;
 use Project\Entity\Calendar\Reviewer as CalendarReviewer;
@@ -78,30 +76,13 @@ class ReviewerService extends AbstractService
 
     public function getIgnoredReviewers(Project $project): array
     {
-        $ignoredReviewers = [];
-        /** @var ReviewContactRepository $reviewContactRepository */
-        $reviewContactRepository = $this->entityManager->getRepository(ReviewContact::class);
-        // Find the auto-ignored reviewers
-        foreach ($reviewContactRepository->findIgnoredReviewers($project) as $reviewer) {
-            $ignoredReviewers[] = $reviewer->getHandle();
+        $preferredReviewers = [];
+        /** @var ReviewContactRepository $repository */
+        $repository = $this->entityManager->getRepository(ReviewContact::class);
+        foreach ($repository->findIgnoredReviewers($project) as $reviewer) {
+            $preferredReviewers[] = $reviewer->getHandle();
         }
-        // Add the manually ignored reviewers
-        $ignored = $this->entityManager->getRepository(Reviewer\Type::class)
-            ->find(Reviewer\Type::TYPE_IGNORED);
-        /** @var ReviewContactRepository $reviewContactRepository */
-        $manuallyIgnoredReviewers = $this->entityManager->getRepository(Reviewer::class)->findBy([
-            'project' => $project,
-            'type'    => $ignored,
-        ]);
-        /** @var Reviewer $reviewer */
-        foreach ($manuallyIgnoredReviewers as $reviewer) {
-            $reviewContact = $reviewer->getContact()->getProjectReviewerContact();
-            if ($reviewContact && ! in_array($reviewContact->getHandle(), $ignoredReviewers)) {
-                $ignoredReviewers[] = $reviewContact->getHandle();
-            }
-        }
-
-        return $ignoredReviewers;
+        return $preferredReviewers;
     }
 
     public function getReviewHistory(Project $project): array

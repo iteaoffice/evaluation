@@ -1,12 +1,11 @@
 <?php
 
 /**
-*
- * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
- * @license     https://itea3.org/license.txt proprietary
+ * ITEA Office all rights reserved
  *
- * @link        http://github.com/iteaoffice/project for the canonical source repository
+ * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
+ * @copyright   Copyright (c) 2021 ITEA Office (https://itea3.org)
+ * @license     https://itea3.org/license.txt proprietary
  */
 
 declare(strict_types=1);
@@ -17,7 +16,6 @@ use Doctrine\Common\Collections\Criteria;
 use Laminas\Http\Request;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
-use Laminas\Mvc\Controller\PluginManager;
 use Laminas\ServiceManager\ServiceManager;
 
 use function base64_decode;
@@ -33,14 +31,8 @@ use function urldecode;
  */
 final class GetFilter extends AbstractPlugin
 {
-    /**
-     * @var PluginManager
-     */
-    private $serviceManager;
-    /**
-     * @var array
-     */
-    private $filter = [];
+    private ServiceManager $serviceManager;
+    private array $filter = [];
 
     public function __construct(ServiceManager $serviceManager)
     {
@@ -51,7 +43,7 @@ final class GetFilter extends AbstractPlugin
     {
         $filter = [];
         /** @var Application $application */
-        $application = $this->serviceManager->get('application');
+        $application   = $this->serviceManager->get('application');
         $encodedFilter = urldecode((string)$application->getMvcEvent()->getRouteMatch()->getParam('encodedFilter'));
         /** @var Request $request */
         $request = $application->getMvcEvent()->getRequest();
@@ -74,7 +66,7 @@ final class GetFilter extends AbstractPlugin
 
         // Add a default order and direction if not known in the filter
         if (! isset($filter['order'])) {
-            $filter['order'] = '';
+            $filter['order']     = '';
             $filter['direction'] = Criteria::ASC;
         }
 

@@ -1,12 +1,11 @@
 <?php
 
 /**
+ * ITEA Office all rights reserved
  *
- * @author      Bart van Eijck <bart.van.eijck@itea3.org>
- * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
+ * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
+ * @copyright   Copyright (c) 2021 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
- *
- * @link        http://github.com/iteaoffice/project for the canonical source repository
  */
 
 declare(strict_types=1);
@@ -21,6 +20,7 @@ use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use PhpOffice\PhpPresentation\DocumentLayout;
 use PhpOffice\PhpPresentation\IOFactory;
 use PhpOffice\PhpPresentation\PhpPresentation;
 use PhpOffice\PhpPresentation\Shape\RichText;
@@ -84,6 +84,8 @@ final class Presentation extends AbstractPlugin
     public function __invoke(array $evaluationReports): Presentation
     {
         $presentation = new PhpPresentation();
+        //We go to 16x9 now
+        $presentation->getLayout()->setDocumentLayout(DocumentLayout::LAYOUT_SCREEN_16X9);
         $presentation->getDocumentProperties()->setCreator($this->moduleOptions->getReportAuthor());
 
         // Add title slide
@@ -137,15 +139,15 @@ final class Presentation extends AbstractPlugin
         $challenge    = $project->getProjectChallenge()->first()->getChallenge()->getChallenge();
         $projectLabel = sprintf('%s - %s (%s)', $project->getProject(), $project->getNumber(), $challenge);
         $headerShape  = $slide->createRichTextShape();
-        $headerShape->setWidthAndHeight(885, 70)->setOffsetX(50)->setOffsetY(30);
+        $headerShape->setWidthAndHeight(885, 70)->setOffsetX(50)->setOffsetY(10);
         $labelRun = $headerShape->createTextRun($projectLabel);
-        $labelRun->getFont()->setBold(true)->setSize(24)->setColor(new Color('FF00A651'))
+        $labelRun->getFont()->setBold(true)->setSize(20)->setColor(new Color('FF00A651'))
             ->setName(self::FONT);
         $headerShape->createBreak();
         $titleRun    = $headerShape->createTextRun($project->getTitle());
         $titleLength = strlen($project->getTitle());
         // Crude way to make the full name fit
-        $fontSize = 18;
+        $fontSize = 16;
         if ($titleLength > 65) {
             $fontSize = 18 - ceil(($titleLength - 65) / 7);
         }
@@ -154,7 +156,7 @@ final class Presentation extends AbstractPlugin
 
         // Body
         $bodyShape = $slide->createRichTextShape();
-        $bodyShape->setWidthAndHeight(885, 590)->setOffsetX(50)->setOffsetY(115);
+        $bodyShape->setWidthAndHeight(885, 590)->setOffsetX(50)->setOffsetY(100);
         // Summary
         $this->parseSectionHeader($bodyShape, $this->translator->translate('txt-summary'));
         $bodyShape->createBreak();
@@ -167,7 +169,7 @@ final class Presentation extends AbstractPlugin
         $this->parseSectionHeader($bodyShape, $this->translator->translate('txt-countries'));
         $bodyShape->createBreak();
         $countries = array_map(
-            function (Rationale $rationale) {
+            static function (Rationale $rationale) {
                 return $rationale->getCountry()->getCountry();
             },
             $project->getRationale()->toArray()

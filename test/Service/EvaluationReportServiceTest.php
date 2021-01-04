@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * ITEA Office all rights reserved
+ *
+ * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
+ * @copyright   Copyright (c) 2021 ITEA Office (https://itea3.org)
+ * @license     https://itea3.org/license.txt proprietary
+ */
+
 declare(strict_types=1);
 
 namespace EvaluationTest\Service;
@@ -30,22 +38,10 @@ use Testing\Util\AbstractServiceTest;
 
 class EvaluationReportServiceTest extends AbstractServiceTest
 {
-    /**
-     * @var EvaluationReport
-     */
-    private static $individualVersionEvaluationReport;
-    /**
-     * @var EvaluationReport
-     */
-    private static $finalVersionEvaluationReport;
-    /**
-     * @var EvaluationReport
-     */
-    private static $individualReportEvaluationReport;
-    /**
-     * @var EvaluationReport
-     */
-    private static $finalReportEvaluationReport;
+    private static EvaluationReport $individualVersionEvaluationReport;
+    private static EvaluationReport $finalVersionEvaluationReport;
+    private static EvaluationReport $individualReportEvaluationReport;
+    private static EvaluationReport $finalReportEvaluationReport;
 
     public static function setUpBeforeClass(): void
     {
@@ -132,7 +128,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->disableOriginalConstructor()
             ->onlyMethods(['findReviewReportsByContact'])
             ->getMock();
-        $repositoryMock->expects($this->once())
+        $repositoryMock->expects(self::once())
             ->method('findReviewReportsByContact')
             ->with($contact, EvaluationReportService::STATUS_NEW)
             ->willReturn([]);
@@ -141,7 +137,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $entityManagerMock = $this->getEntityManagerMock(EvaluationReport::class, $repositoryMock);
         $service = new EvaluationReportService($entityManagerMock);
         $reviews = $service->findReviewReportsByContact($contact, EvaluationReportService::STATUS_NEW);
-        $this->assertEquals([], $reviews);
+        self::assertEquals([], $reviews);
     }
 
     public function testGetReviewers(): void
@@ -152,104 +148,104 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         // Test empty
         $reviewers = $service->getReviewers(new EvaluationReport());
-        $this->assertTrue($reviewers->isEmpty());
+        self::assertTrue($reviewers->isEmpty());
 
         // Get version reviewers for individual report
         $reviewers = $service->getReviewers(self::$individualVersionEvaluationReport);
-        $this->assertCount(1, $reviewers);
+        self::assertCount(1, $reviewers);
         /** @var VersionReviewer $reviewer */
         $reviewer = $reviewers->first();
-        $this->assertInstanceOf(VersionReviewer::class, $reviewer);
-        $this->assertEquals(1, $reviewer->getId());
+        self::assertInstanceOf(VersionReviewer::class, $reviewer);
+        self::assertEquals(1, $reviewer->getId());
 
         // Get version reviewers for final report
         $reviewers = $service->getReviewers(self::$finalVersionEvaluationReport);
-        $this->assertCount(1, $reviewers);
+        self::assertCount(1, $reviewers);
         /** @var VersionReviewer $reviewer */
         $reviewer = $reviewers->first();
-        $this->assertInstanceOf(VersionReviewer::class, $reviewer);
-        $this->assertEquals(1, $reviewer->getId());
+        self::assertInstanceOf(VersionReviewer::class, $reviewer);
+        self::assertEquals(1, $reviewer->getId());
 
         // Get report reviewers for individual report
         $reviewers = $service->getReviewers(self::$individualReportEvaluationReport);
-        $this->assertCount(1, $reviewers);
+        self::assertCount(1, $reviewers);
         /** @var ReportReviewer $reviewer */
         $reviewer = $reviewers->first();
-        $this->assertInstanceOf(ReportReviewer::class, $reviewer);
-        $this->assertEquals(1, $reviewer->getId());
+        self::assertInstanceOf(ReportReviewer::class, $reviewer);
+        self::assertEquals(1, $reviewer->getId());
 
         // Get report reviewers for final report
         $reviewers = $service->getReviewers(self::$finalReportEvaluationReport);
-        $this->assertCount(1, $reviewers);
+        self::assertCount(1, $reviewers);
         /** @var ReportReviewer $reviewer */
         $reviewer = $reviewers->first();
-        $this->assertInstanceOf(ReportReviewer::class, $reviewer);
-        $this->assertEquals(1, $reviewer->getId());
+        self::assertInstanceOf(ReportReviewer::class, $reviewer);
+        self::assertEquals(1, $reviewer->getId());
     }
 
-    public function testGetProject()
+    public function testGetProject(): void
     {
         // Test empty
-        $this->assertTrue(EvaluationReportService::getProject(new EvaluationReport())->isEmpty());
+        self::assertTrue(EvaluationReportService::getProject(new EvaluationReport())->isEmpty());
 
         // Test individual version evaluation report project
-        $this->assertEquals(
+        self::assertEquals(
             1,
             EvaluationReportService::getProject(self::$individualVersionEvaluationReport)->getId()
         );
 
         // Test final version evaluation report project
-        $this->assertEquals(
+        self::assertEquals(
             1,
             EvaluationReportService::getProject(self::$finalVersionEvaluationReport)->getId()
         );
 
         // Test individual report evaluation report project
-        $this->assertEquals(
+        self::assertEquals(
             1,
             EvaluationReportService::getProject(self::$individualReportEvaluationReport)->getId()
         );
 
         // Test final report evaluation report project
-        $this->assertEquals(
+        self::assertEquals(
             1,
             EvaluationReportService::getProject(self::$finalReportEvaluationReport)->getId()
         );
     }
 
-    public function testParseLabel()
+    public function testParseLabel(): void
     {
         // Test empty
-        $this->assertEquals('', EvaluationReportService::parseLabel(new EvaluationReport()));
+        self::assertEquals('', EvaluationReportService::parseLabel(new EvaluationReport()));
 
-        $versionLabel = 'Test program Call Test call - 12345 Text project - Test';
+        $versionLabel = 'Test call - 12345 Text project - Test';
         // Test individual version evaluation report label
-        $this->assertEquals(
+        self::assertEquals(
             $versionLabel,
             EvaluationReportService::parseLabel(self::$individualVersionEvaluationReport)
         );
 
         // Test final version evaluation report label
-        $this->assertEquals(
+        self::assertEquals(
             $versionLabel,
             EvaluationReportService::parseLabel(self::$finalVersionEvaluationReport)
         );
 
-        $reportLabel = 'Test program Call Test call - 12345 Text project - Progress report in 2019 (semester 1)';
+        $reportLabel = 'Test call - 12345 Text project - Progress report in 2019 (semester 1)';
         // Test individual report evaluation report label
-        $this->assertEquals(
+        self::assertEquals(
             $reportLabel,
             EvaluationReportService::parseLabel(self::$individualReportEvaluationReport)
         );
 
         // Test final report evaluation report label
-        $this->assertEquals(
+        self::assertEquals(
             $reportLabel,
             EvaluationReportService::parseLabel(self::$finalReportEvaluationReport)
         );
     }
 
-    public function testParseCompletedPercentage()
+    public function testParseCompletedPercentage(): void
     {
         $evaluationReport = self::$finalVersionEvaluationReport;
         $requiredCriterionVersion = new EvaluationReport\Criterion\Version();
@@ -269,36 +265,36 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             [['reportVersion' => $reportVersion3, 'required' => true], 1],
         ];
 
-        $repositoryMock->expects($this->exactly(2))
+        $repositoryMock->expects(self::exactly(2))
             ->method('count')
-            ->will($this->returnValueMap($map));
+            ->will(self::returnValueMap($map));
 
         /** @var EntityManager $entityManagerMock */
         $entityManagerMock = $this->getEntityManagerMock(CriterionVersion::class, $repositoryMock);
         $service = new EvaluationReportService($entityManagerMock);
 
         // Test empty
-        $this->assertEquals(0.0, $service->parseCompletedPercentage());
+        self::assertEquals(0.0, $service->parseCompletedPercentage());
 
         // Test no results
-        $this->assertEquals(0.0, $service->parseCompletedPercentage($evaluationReport));
+        self::assertEquals(0.0, $service->parseCompletedPercentage($evaluationReport));
 
         // Test no required results
         $result = new EvaluationReport\Result();
         $result->setCriterionVersion($requiredCriterionVersion);
         $result->setValue('test');
         $evaluationReport->getResults()->add($result);
-        $this->assertEquals(100.0, $service->parseCompletedPercentage($evaluationReport));
+        self::assertEquals(100.0, $service->parseCompletedPercentage($evaluationReport));
 
         // Test 1 required result (we need another version as required criteria for a report version are cached)
         $evaluationReport->setVersion($reportVersion3);
-        $this->assertEquals(100.0, $service->parseCompletedPercentage($evaluationReport));
+        self::assertEquals(100.0, $service->parseCompletedPercentage($evaluationReport));
 
         // Cleanup for next test!
         $evaluationReport->setResults(new ArrayCollection());
     }
 
-    public function testGetSortedResults()
+    public function testGetSortedResults(): void
     {
         $evaluationReport = clone self::$finalVersionEvaluationReport;
         $result = new EvaluationReport\Result();
@@ -310,9 +306,9 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->disableOriginalConstructor()
             ->onlyMethods(['getSortedResults'])
             ->getMock();
-        $repositoryMock->expects($this->once())
+        $repositoryMock->expects(self::once())
             ->method('getSortedResults')
-            ->with($this->equalTo($evaluationReport))
+            ->with(self::equalTo($evaluationReport))
             ->willReturn($results);
 
         /** @var EntityManager $entityManagerMock */
@@ -320,14 +316,14 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $service = new EvaluationReportService($entityManagerMock);
 
         // Test new results
-        $this->assertEquals($results, $service->getSortedResults($evaluationReport));
+        self::assertEquals($results, $service->getSortedResults($evaluationReport));
 
         // Test existing results
         $evaluationReport->setId(1);
-        $this->assertEquals($results, $service->getSortedResults($evaluationReport));
+        self::assertEquals($results, $service->getSortedResults($evaluationReport));
     }
 
-    public function testParseEvaluationReportType()
+    public function testParseEvaluationReportType(): void
     {
         $repositoryMock = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
@@ -352,19 +348,19 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         ];
 
         $repositoryMock
-            ->expects($this->exactly(4))
+            ->expects(self::exactly(4))
             ->method('findOneBy')
-            ->will($this->returnValueMap($map));
+            ->will(self::returnValueMap($map));
 
         /** @var EntityManager $entityManagerMock */
         $entityManagerMock = $this->getEntityManagerMock(EvaluationReportType::class, $repositoryMock);
         $service = new EvaluationReportService($entityManagerMock);
 
         // Test invalid type
-        $this->assertNull($service->parseEvaluationReportType(new EvaluationReport()));
+        self::assertNull($service->parseEvaluationReportType(new EvaluationReport()));
 
         // Test project report evaluation report
-        $this->assertEquals(
+        self::assertEquals(
             EvaluationReportType::TYPE_REPORT,
             $service->parseEvaluationReportType(self::$finalReportEvaluationReport)
         );
@@ -375,28 +371,28 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         // Test PO version final report
         $finalEvaluationReport->getProjectVersionReport()->getProjectVersion()->setVersionType($poVersionType);
-        $this->assertEquals(
+        self::assertEquals(
             EvaluationReportType::TYPE_PO_VERSION,
             $service->parseEvaluationReportType($finalEvaluationReport)
         );
         // Test PO version individual report
         $individualEvaluationReport->getProjectVersionReport()->getReviewer()->getVersion()
             ->setVersionType($poVersionType);
-        $this->assertEquals(
+        self::assertEquals(
             EvaluationReportType::TYPE_PO_VERSION,
             $service->parseEvaluationReportType($individualEvaluationReport)
         );
 
         // Test FPP version final report
         $finalEvaluationReport->getProjectVersionReport()->getProjectVersion()->setVersionType($fppVersionType);
-        $this->assertEquals(
+        self::assertEquals(
             EvaluationReportType::TYPE_FPP_VERSION,
             $service->parseEvaluationReportType($finalEvaluationReport)
         );
         // Test FPP version individual report
         $individualEvaluationReport->getProjectVersionReport()->getReviewer()->getVersion()
             ->setVersionType($fppVersionType);
-        $this->assertEquals(
+        self::assertEquals(
             EvaluationReportType::TYPE_FPP_VERSION,
             $service->parseEvaluationReportType($individualEvaluationReport)
         );
@@ -409,7 +405,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $finalEvaluationReport->getProjectVersionReport()->setProjectVersion($crVersion);
         // test older projects without changerequest process
-        $this->assertEquals(
+        self::assertEquals(
             EvaluationReportType::TYPE_MAJOR_CR_VERSION,
             $service->parseEvaluationReportType($finalEvaluationReport)
         );
@@ -418,20 +414,20 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $crProcess = new Process();
         $crProcess->setType(Process::TYPE_MAJOR);
         $finalEvaluationReport->getProjectVersionReport()->getProjectVersion()->setChangerequestProcess($crProcess);
-        $this->assertEquals(
+        self::assertEquals(
             EvaluationReportType::TYPE_MAJOR_CR_VERSION,
             $service->parseEvaluationReportType($finalEvaluationReport)
         );
 
         // Test minor change request
         $crProcess->setType(Process::TYPE_MINOR);
-        $this->assertEquals(
+        self::assertEquals(
             EvaluationReportType::TYPE_MINOR_CR_VERSION,
             $service->parseEvaluationReportType($finalEvaluationReport)
         );
     }
 
-    public function testPrepareEvaluationReport()
+    public function testPrepareEvaluationReport(): void
     {
         // Setup the data
         $reportReviewer = new ReportReviewer();
@@ -442,7 +438,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->getMock();
         $reportReviewerRepositoryMock
             ->method('find')
-            ->with($this->equalTo(1))
+            ->with(self::equalTo(1))
             ->willReturn($reportReviewer);
 
         $versionReviewer = new VersionReviewer();
@@ -453,7 +449,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->getMock();
         $versionReviewerRepositoryMock
             ->method('find')
-            ->with($this->equalTo(1))
+            ->with(self::equalTo(1))
             ->willReturn($versionReviewer);
 
         $evaluationReportRepositoryMock = $this->getMockBuilder(ReportRepository::class)
@@ -491,7 +487,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             [EvaluationReport::class, $evaluationReportRepositoryMock],
         ];
 
-        $entityManagerMock->method('getRepository')->will($this->returnValueMap($map));
+        $entityManagerMock->method('getRepository')->will(self::returnValueMap($map));
         /** @var EntityManager $entityManagerMock */
         $service = new EvaluationReportService($entityManagerMock);
 
@@ -501,23 +497,23 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             1
         );
 
-        $this->assertInstanceOf(
+        self::assertInstanceOf(
             EvaluationReport\ProjectReport::class,
             $evaluationReport->getProjectReportReport()
         );
-        $this->assertEquals(
+        self::assertEquals(
             $reportReviewer->getId(),
             $evaluationReport->getProjectReportReport()->getReviewer()->getId()
         );
-        $this->assertEquals(
+        self::assertEquals(
             $criterionVersionWithValues->getId(),
             $evaluationReport->getResults()->first()->getCriterionVersion()->getId()
         );
-        $this->assertEquals(
+        self::assertEquals(
             $criterionVersionWithValues->getDefaultValue(),
             $evaluationReport->getResults()->first()->getValue()
         );
-        $this->assertEquals(
+        self::assertEquals(
             $criterionVersionWithValues->getDefaultValue(),
             $evaluationReport->getResults()->get(1)->getComment()
         );
@@ -528,15 +524,15 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             1
         );
 
-        $this->assertInstanceOf(
+        self::assertInstanceOf(
             EvaluationReport\ProjectVersion::class,
             $evaluationReport->getProjectVersionReport()
         );
-        $this->assertEquals(
+        self::assertEquals(
             $versionReviewer->getId(),
             $evaluationReport->getProjectVersionReport()->getReviewer()->getId()
         );
-        $this->assertEquals(
+        self::assertEquals(
             $criterionVersionWithValues->getId(),
             $evaluationReport->getResults()->first()->getCriterionVersion()->getId()
         );
@@ -549,12 +545,12 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $reportVersion->setReportType($unknownReportType);
         $evaluationReport = $service->prepareEvaluationReport($reportVersion, 1);
 
-        $this->assertNull($evaluationReport->getProjectVersionReport());
-        $this->assertNull($evaluationReport->getProjectReportReport());
-        $this->assertEquals(1, $evaluationReport->getVersion()->getId());
+        self::assertNull($evaluationReport->getProjectVersionReport());
+        self::assertNull($evaluationReport->getProjectReportReport());
+        self::assertEquals(1, $evaluationReport->getVersion()->getId());
     }
 
-    public function testPreFillFppReport()
+    public function testPreFillFppReport(): void
     {
         $matchingCriterion = new EvaluationReport\Criterion();
         $matchingCriterion->setId(1);
@@ -612,14 +608,14 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $service->preFillFppReport($fppEvaluationReport);
 
-        $this->assertEquals(EvaluationReport::SCORE_TOP, $fppEvaluationReport->getScore());
+        self::assertEquals(EvaluationReport::SCORE_TOP, $fppEvaluationReport->getScore());
         /** @var EvaluationReport\Result $fppResult */
         $fppResult = $fppEvaluationReport->getResults()->first();
-        $this->assertInstanceOf(EvaluationReport\Result::class, $fppResult);
-        $this->assertEquals(1, $fppResult->getScore());
+        self::assertInstanceOf(EvaluationReport\Result::class, $fppResult);
+        self::assertEquals(1, $fppResult->getScore());
     }
 
-    public function testCopyEvaluationReportVersion()
+    public function testCopyEvaluationReportVersion(): void
     {
         $criterionVersion = new EvaluationReport\Criterion\Version();
         $criterionVersion->setId(1);
@@ -646,20 +642,20 @@ class EvaluationReportServiceTest extends AbstractServiceTest
 
         $copy = $service->copyEvaluationReportVersion($evaluationReportVersion);
 
-        $this->assertCount(1, $copy->getCriterionVersions());
+        self::assertCount(1, $copy->getCriterionVersions());
         /** @var EvaluationReport\Criterion\Version $criterionVersionCopy */
         $criterionVersionCopy = $copy->getCriterionVersions()->first();
-        $this->assertNotEquals(1, $criterionVersionCopy->getId());
-        $this->assertEquals(1, $criterionVersionCopy->getCriterion()->getId());
-        $this->assertEquals(1, $criterionVersionCopy->getType()->getId());
-        $this->assertNotEquals(1, $criterionVersionCopy->getReportVersion()->getId());
-        $this->assertEquals(3, $criterionVersionCopy->getSequence());
-        $this->assertTrue($criterionVersionCopy->getHighlighted());
-        $this->assertTrue($criterionVersionCopy->getRequired());
-        $this->assertTrue($criterionVersionCopy->getConfidential());
+        self::assertNotEquals(1, $criterionVersionCopy->getId());
+        self::assertEquals(1, $criterionVersionCopy->getCriterion()->getId());
+        self::assertEquals(1, $criterionVersionCopy->getType()->getId());
+        self::assertNotEquals(1, $criterionVersionCopy->getReportVersion()->getId());
+        self::assertEquals(3, $criterionVersionCopy->getSequence());
+        self::assertTrue($criterionVersionCopy->getHighlighted());
+        self::assertTrue($criterionVersionCopy->getRequired());
+        self::assertTrue($criterionVersionCopy->getConfidential());
     }
 
-    public function testFindReportVersionForProjectVersion()
+    public function testFindReportVersionForProjectVersion(): void
     {
         $projectVersion = new Version();
         $projectVersion->setId(1);
@@ -672,7 +668,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->onlyMethods(['findByProjectVersion'])
             ->getMock();
 
-        $evaluationReportVersionRepositoryMock->expects($this->once())
+        $evaluationReportVersionRepositoryMock->expects(self::once())
             ->method('findByProjectVersion')
             ->with($projectVersion)
             ->willReturn($evaluationReportVersion1);
@@ -682,7 +678,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->onlyMethods(['getRepository'])
             ->getMock();
 
-        $entityManagerMock->expects($this->once())
+        $entityManagerMock->expects(self::once())
             ->method('getRepository')
             ->with(EvaluationReport\Version::class)
             ->willReturn($evaluationReportVersionRepositoryMock);
@@ -691,10 +687,10 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $service = new EvaluationReportService($entityManagerMock);
 
         $evaluationReportVersion2 = $service->findReportVersionForProjectVersion($projectVersion);
-        $this->assertEquals($evaluationReportVersion1->getId(), $evaluationReportVersion2->getId());
+        self::assertEquals($evaluationReportVersion1->getId(), $evaluationReportVersion2->getId());
     }
 
-    public function testFindReportVersionForProjectReport()
+    public function testFindReportVersionForProjectReport(): void
     {
         $evaluationReportVersion1 = new EvaluationReport\Version();
         $evaluationReportVersion1->setId(1);
@@ -704,7 +700,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->onlyMethods(['findForProjectReport'])
             ->getMock();
 
-        $evaluationReportVersionRepositoryMock->expects($this->once())
+        $evaluationReportVersionRepositoryMock->expects(self::once())
             ->method('findForProjectReport')
             ->willReturn($evaluationReportVersion1);
 
@@ -713,7 +709,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->onlyMethods(['getRepository'])
             ->getMock();
 
-        $entityManagerMock->expects($this->once())
+        $entityManagerMock->expects(self::once())
             ->method('getRepository')
             ->with(EvaluationReport\Version::class)
             ->willReturn($evaluationReportVersionRepositoryMock);
@@ -722,10 +718,10 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         $service = new EvaluationReportService($entityManagerMock);
 
         $evaluationReportVersion2 = $service->findReportVersionForProjectReport();
-        $this->assertEquals($evaluationReportVersion1->getId(), $evaluationReportVersion2->getId());
+        self::assertEquals($evaluationReportVersion1->getId(), $evaluationReportVersion2->getId());
     }
 
-    public function testTypeIsConfidential()
+    public function testTypeIsConfidential(): void
     {
         $evaluationReportVersion = new EvaluationReport\Version();
         $evaluationReportVersion->setId(1);
@@ -738,21 +734,21 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->onlyMethods(['count'])
             ->getMock();
 
-        $criterionVersionRepositoryMock->expects($this->exactly(2))
+        $criterionVersionRepositoryMock->expects(self::exactly(2))
             ->method('count')
             ->with([
                 'type'          => $criterionType,
                 'reportVersion' => $evaluationReportVersion,
                 'confidential'  => true
             ])
-            ->will($this->onConsecutiveCalls(0, 1));
+            ->will(self::onConsecutiveCalls(0, 1));
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getRepository'])
             ->getMock();
 
-        $entityManagerMock->expects($this->exactly(2))
+        $entityManagerMock->expects(self::exactly(2))
             ->method('getRepository')
             ->with(CriterionVersion::class)
             ->willReturn($criterionVersionRepositoryMock);
@@ -760,11 +756,11 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         /** @var EntityManager $entityManagerMock */
         $service = new EvaluationReportService($entityManagerMock);
 
-        $this->assertFalse($service->typeIsConfidential($criterionType, $evaluationReportVersion));
-        $this->assertTrue($service->typeIsConfidential($criterionType, $evaluationReportVersion));
+        self::assertFalse($service->typeIsConfidential($criterionType, $evaluationReportVersion));
+        self::assertTrue($service->typeIsConfidential($criterionType, $evaluationReportVersion));
     }
 
-    public function testTypeIsDeletable()
+    public function testTypeIsDeletable(): void
     {
         $criterionType = new CriterionType();
         $criterionType->setId(1);
@@ -774,17 +770,17 @@ class EvaluationReportServiceTest extends AbstractServiceTest
             ->onlyMethods(['count'])
             ->getMock();
 
-        $criterionVersionRepositoryMock->expects($this->exactly(2))
+        $criterionVersionRepositoryMock->expects(self::exactly(2))
             ->method('count')
             ->with(['type' => $criterionType])
-            ->will($this->onConsecutiveCalls(0, 1));
+            ->will(self::onConsecutiveCalls(0, 1));
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getRepository'])
             ->getMock();
 
-        $entityManagerMock->expects($this->exactly(2))
+        $entityManagerMock->expects(self::exactly(2))
             ->method('getRepository')
             ->with(CriterionVersion::class)
             ->willReturn($criterionVersionRepositoryMock);
@@ -792,7 +788,7 @@ class EvaluationReportServiceTest extends AbstractServiceTest
         /** @var EntityManager $entityManagerMock */
         $service = new EvaluationReportService($entityManagerMock);
 
-        $this->assertTrue($service->typeIsDeletable($criterionType));
-        $this->assertFalse($service->typeIsDeletable($criterionType));
+        self::assertTrue($service->typeIsDeletable($criterionType));
+        self::assertFalse($service->typeIsDeletable($criterionType));
     }
 }

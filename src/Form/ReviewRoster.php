@@ -3,10 +3,9 @@
 /**
  * ITEA Office all rights reserved
  *
- * @category    Content
- *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2021 ITEA Office (https://itea3.org)
+ * @license     https://itea3.org/license.txt proprietary
  */
 
 declare(strict_types=1);
@@ -96,15 +95,6 @@ final class ReviewRoster extends Form
             'options'    => [
                 'label'      => _('txt-include-spare-reviewers'),
                 'help-block' => _('txt-include-spare-reviewers-in-the-minimum-number-of-reviewers-assigned-to-a-project'),
-            ],
-        ]);
-
-        $this->add([
-            'type'       => Element\Checkbox::class,
-            'name'       => 'online',
-            'options'    => [
-                'label'      => _('txt-online-review'),
-                'help-block' => _('txt-check-when-the-review-is-done-online'),
             ],
         ]);
 

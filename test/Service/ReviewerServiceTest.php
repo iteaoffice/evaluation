@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * ITEA Office all rights reserved
+ *
+ * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
+ * @copyright   Copyright (c) 2021 ITEA Office (https://itea3.org)
+ * @license     https://itea3.org/license.txt proprietary
+ */
+
 declare(strict_types=1);
 
 namespace EvaluationTest\Service;
@@ -11,7 +19,6 @@ use Calendar\Entity\ContactStatus;
 use Contact\Entity\Contact;
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Evaluation\Entity\Reviewer;
 use Evaluation\Repository\Reviewer\ContactRepository;
 use Evaluation\Service\ReviewerService;
@@ -21,26 +28,24 @@ use Project\Entity\Project;
 use Project\Entity\Report\Report;
 use Project\Entity\Version\Type;
 use Project\Entity\Version\Version;
-use ReflectionClass;
-use ReflectionException;
 use Testing\Util\AbstractServiceTest;
+
+use function array_values;
 
 class ReviewerServiceTest extends AbstractServiceTest
 {
-    /**
-     * @throws ReflectionException
-     */
     public function testParseReviewHandle()
     {
         $contact = new Contact();
         $contact->setId(1);
         $contact->setProjectReviewerContact((new Reviewer\Contact())->setHandle('XYZ'));
 
+        /** @var EntityManager $entityManagerMock */
         $entityManagerMock = $this->getEntityManagerMock();
         $service = new ReviewerService($entityManagerMock);
 
         // make private method accessible
-        $reflection = new ReflectionClass(get_class($service));
+        $reflection = new \ReflectionClass(get_class($service));
         $method = $reflection->getMethod('parseReviewHandle');
         $method->setAccessible(true);
 
@@ -65,6 +70,7 @@ class ReviewerServiceTest extends AbstractServiceTest
         $project = new Project();
         $project->getReviewers()->add($reviewer);
 
+        /** @var EntityManager $entityManagerMock */
         $entityManagerMock = $this->getEntityManagerMock();
         $service = new ReviewerService($entityManagerMock);
 
@@ -76,61 +82,37 @@ class ReviewerServiceTest extends AbstractServiceTest
     public function testGetIgnoredReviewers()
     {
         $project = new Project();
-        $reviewerContact1 = (new Reviewer\Contact())->setId(1)->setHandle('ABC');
-        $reviewerContact2 = (new Reviewer\Contact())->setId(2)->setHandle('XYZ');
+
+        $reviewContact = new Reviewer\Contact();
+        $reviewContact->setId(1);
+        $reviewContact->setHandle('XYZ');
 
         $reviewContactRepositoryMock = $this->getMockBuilder(ContactRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['findIgnoredReviewers'])
             ->getMock();
 
-        $repositoryMock = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['find', 'findBy'])
-            ->getMock();
-
         $reviewContactRepositoryMock->expects($this->once())
             ->method('findIgnoredReviewers')
             ->with($project)
-            ->willReturn([$reviewerContact1]);
+            ->willReturn([$reviewContact]);
 
         $entityManagerMock = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getRepository'])
             ->getMock();
 
-        $map = [
-            [Reviewer\Contact::class, $reviewContactRepositoryMock],
-            [Reviewer\Type::class, $repositoryMock],
-            [Reviewer::class, $repositoryMock],
-        ];
-        $entityManagerMock->expects($this->exactly(count($map)))
+        $entityManagerMock->expects($this->once())
             ->method('getRepository')
-            ->will($this->returnValueMap($map));
-
-        $ignoredReviewerType = new Reviewer\Type();
-        $repositoryMock->expects($this->once())
-            ->method('find')
-            ->with(Reviewer\Type::TYPE_IGNORED)
-            ->willReturn($ignoredReviewerType);
-
-        $contact = (new Contact())->setProjectReviewerContact($reviewerContact2);
-        $reviewer = (new Reviewer())->setContact($contact);
-        $repositoryMock->expects($this->once())
-            ->method('findBy')
-            ->with([
-                'project' => $project,
-                'type'    => $ignoredReviewerType,
-            ])
-            ->willReturn([$reviewer]);
+            ->with(Reviewer\Contact::class)
+            ->willReturn($reviewContactRepositoryMock);
 
         /** @var EntityManager $entityManagerMock */
         $service = new ReviewerService($entityManagerMock);
 
         $ignoredReviewers = $service->getIgnoredReviewers($project);
         $this->assertIsArray($ignoredReviewers);
-        $this->assertEquals('ABC', reset($ignoredReviewers));
-        $this->assertEquals('XYZ', end($ignoredReviewers));
+        $this->assertEquals('XYZ', reset($ignoredReviewers));
     }
 
     public function testGetReviewHistory()
@@ -194,6 +176,7 @@ class ReviewerServiceTest extends AbstractServiceTest
         $project->getProjectCalendar()->add($pastProjectCalendar);
         $project->getReport()->add($report);
 
+        /** @var EntityManager $entityManagerMock */
         $entityManagerMock = $this->getEntityManagerMock();
         $service = new ReviewerService($entityManagerMock);
 

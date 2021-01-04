@@ -1,12 +1,11 @@
 <?php
 
 /**
+ * ITEA Office all rights reserved
  *
  * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
- * @copyright   Copyright (c) 2019 ITEA Office (https://itea3.org)
+ * @copyright   Copyright (c) 2021 ITEA Office (https://itea3.org)
  * @license     https://itea3.org/license.txt proprietary
- *
- * @link        http://github.com/iteaoffice/project for the canonical source repository
  */
 
 declare(strict_types=1);
@@ -18,14 +17,14 @@ use Doctrine\ORM\EntityManager;
 use Evaluation\Entity\Evaluation;
 use Evaluation\Entity\Type;
 use Evaluation\Service\EvaluationService;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use Program\Entity\Call\Call;
 use Program\Service\CallService;
 use Project\Entity\Version\Type as VersionType;
 use Project\Form;
 use Project\Service\ProjectService;
-use Laminas\Http\Request;
-use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\View\Model\ViewModel;
 
 /**
  * @method array createEvaluation(array $projects, Type $evaluationType, int $display, int $source)
@@ -44,10 +43,10 @@ final class EvaluationManagerController extends AbstractActionController
         CallService $callService,
         EntityManager $entityManager
     ) {
-        $this->projectService = $projectService;
+        $this->projectService    = $projectService;
         $this->evaluationService = $evaluationService;
-        $this->callService = $callService;
-        $this->entityManager = $entityManager;
+        $this->callService       = $callService;
+        $this->entityManager     = $entityManager;
     }
 
     public function matrixAction()
@@ -59,10 +58,10 @@ final class EvaluationManagerController extends AbstractActionController
         $callId = (int)$this->getEvent()->getRouteMatch()
             ->getParam('call', $this->callService->findFirstAndLastCall()->lastCall->getId());
 
-        $source = (int)$this->params('source', Form\MatrixFilter::SOURCE_VERSION);
-        $typeId = (int)$this->params('type', Type::TYPE_FUNDING_STATUS);
+        $source          = (int)$this->params('source', Form\MatrixFilter::SOURCE_VERSION);
+        $typeId          = (int)$this->params('type', Type::TYPE_FUNDING_STATUS);
         $evaluationTypes = $this->evaluationService->findAll(Type::class);
-        $versionTypes = $this->projectService->findAll(VersionType::class);
+        $versionTypes    = $this->projectService->findAll(VersionType::class);
 
         /*
          * The form can be used to overrule some parameters. We therefore need to check if the form is set
@@ -95,14 +94,14 @@ final class EvaluationManagerController extends AbstractActionController
         /** @var Call $call */
         $call = $this->callService->findCallById((int)$callId);
         /** @var Type $evaluationType */
-        $evaluationType = $this->evaluationService->find(Type::class, $typeId);
+        $evaluationType  = $this->evaluationService->find(Type::class, $typeId);
         $fundingStatuses = $this->evaluationService->getFundingStatusList(
             $this->evaluationService->parseMainEvaluationType($evaluationType)
         );
         /** @var VersionType $versionType */
         $versionType = $this->projectService
             ->find(VersionType::class, $evaluationType->getVersionType());
-        $contact = $this->identity();
+        $contact     = $this->identity();
 
         switch ($evaluationType->getId()) {
             case Type::TYPE_PO_EVALUATION:

@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * ITEA Office all rights reserved
+ *
+ * @author      Johan van der Heide <johan.van.der.heide@itea3.org>
+ * @copyright   Copyright (c) 2021 ITEA Office (https://itea3.org)
+ * @license     https://itea3.org/license.txt proprietary
+ */
+
 declare(strict_types=1);
 
 namespace Evaluation\Service\ReviewRoster;
@@ -26,12 +34,6 @@ use function shuffle;
 final class PoFppPprGenerator extends AbstractGenerator
 {
     protected const TEAM_RECURRENCE_FACTOR = 0.3; // In 10 rounds no more than 3x the same review team
-
-    protected array $presentReviewerData;
-    protected float $avgReviewActivityScore;
-    protected bool $includeSpareReviewers;
-    protected ?int $forceProjectsPerRound;
-
     protected static array $assigned = [
         ReviewRosterService::REVIEWER_ASSIGNED,
         ReviewRosterService::REVIEWER_PRIMARY,
@@ -39,6 +41,10 @@ final class PoFppPprGenerator extends AbstractGenerator
         ReviewRosterService::REVIEWER_EXTRA_SPARE,
         ReviewRosterService::REVIEWER_EXTRA
     ];
+    protected array $presentReviewerData;
+    protected float $avgReviewActivityScore;
+    protected bool $includeSpareReviewers;
+    protected ?int $forceProjectsPerRound;
 
     public function __construct(
         array $config,
@@ -49,18 +55,18 @@ final class PoFppPprGenerator extends AbstractGenerator
         ?int $forceProjectsPerRound = null
     ) {
         parent::__construct($config, $projectReviewerScores, $reviewersPerProject);
-        $this->presentReviewerData = $config['present'];
+        $this->presentReviewerData    = $config['present'];
         $this->avgReviewActivityScore = $avgReviewActivityScore;
-        $this->includeSpareReviewers = $includeSpareReviewers;
-        $this->forceProjectsPerRound = $forceProjectsPerRound;
+        $this->includeSpareReviewers  = $includeSpareReviewers;
+        $this->forceProjectsPerRound  = $forceProjectsPerRound;
     }
 
     public function generate(): RosterData
     {
         $logger = new Logger();
         // Basic round assignment. Just divide the projects over the rounds in the order they came.
-        $reviewerCount = $this->includeSpareReviewers ? count($this->reviewerData) : count($this->presentReviewerData);
-        $projectCount = count($this->projectReviewerScores);
+        $reviewerCount    = $this->includeSpareReviewers ? count($this->reviewerData) : count($this->presentReviewerData);
+        $projectCount     = count($this->projectReviewerScores);
         $projectsPerRound = $this->preCalculateRounds(
             $projectCount,
             $this->reviewersPerProject,
@@ -85,8 +91,8 @@ final class PoFppPprGenerator extends AbstractGenerator
         $roundAssignments = (new RoundOptimizer($projectsPerRound))->optimize($roundAssignments);
 
         $logger->log(__LINE__, 'Generate the roster data');
-        $reviewTeams = []; // Keep a list of created reviewer teams to keep teams mixed
-        $handlesAssigned = []; // Keep a list of assigned handles per round
+        $reviewTeams              = []; // Keep a list of created reviewer teams to keep teams mixed
+        $handlesAssigned          = []; // Keep a list of assigned handles per round
         $numberOfReviewTeamRepeat = floor((self::TEAM_RECURRENCE_FACTOR * count($roundAssignments)));
 
         // Init roster data based on the group assignments array wiping out all boosts keeping the ignores
@@ -105,7 +111,7 @@ final class PoFppPprGenerator extends AbstractGenerator
             $handlesAssigned[$round] = [];
 
             // Determine the best project match based on score for each reviewer
-            $bestMatchByHandle = [];
+            $bestMatchByHandle    = [];
             $bestMatchesByProject = [];
             foreach ($projects as $projectIndex => $projectData) {
                 // When there are FE reviewers, we just need to assign 1 reviewer based on FE score boost.
@@ -114,7 +120,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                 $lastHistoryItem = end($projectData['data']['history']);
                 if ($lastHistoryItem && array_key_exists(ReviewerService::TYPE_FE, $lastHistoryItem)) {
                     $highestScore = 0;
-                    $bestMatch = null;
+                    $bestMatch    = null;
                     /** @var array $feHandles */
                     $feHandles = $lastHistoryItem[ReviewerService::TYPE_FE];
                     shuffle($feHandles); // Add some randomization when FE reviewers have equal scores
@@ -123,7 +129,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                         if (array_key_exists($handle, $projectData['scores'])) {
                             if ($projectData['scores'][$handle] > $highestScore) {
                                 $highestScore = $projectData['scores'][$handle];
-                                $bestMatch = $handle;
+                                $bestMatch    = $handle;
                             }
                         }
                     }
@@ -137,7 +143,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                 }
 
                 // Determine the best matches per project and per handle
-                $bestMatchesByProjectTemp = [$projectIndex => []];
+                $bestMatchesByProjectTemp            = [$projectIndex => []];
                 $bestMatchesByProject[$projectIndex] = [];
                 foreach ($projectData['scores'] as $handle => $score) {
                     if ($score > 0) {
@@ -168,11 +174,11 @@ final class PoFppPprGenerator extends AbstractGenerator
             }
 
             foreach ($projects as $projectIndex => $projectData) {
-                $this->reviewersAssigned = [];
-                $hasExperiencedReviewer = false;
-                $hasSpareReviewer = false;
+                $this->reviewersAssigned   = [];
+                $hasExperiencedReviewer    = false;
+                $hasSpareReviewer          = false;
                 $hasEnoughPresentReviewers = $this->includeSpareReviewers;
-                $excludeFromProject = []; // Replace these reviewers for better mixing of review teams
+                $excludeFromProject        = []; // Replace these reviewers for better mixing of review teams
 
                 // Add the highest scoring matches per project
                 if (array_key_exists($projectIndex, $bestMatchesByProject)) {
@@ -183,7 +189,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                             0,
                             $this->reviewersPerProject
                         );
-                        $teamKey = '';
+                        $teamKey           = '';
                         foreach ($consideredHandles as $handleData) {
                             $teamKey .= $handleData['handle'] . '|';
                         }
@@ -206,7 +212,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                                 }
                                 $index = rand($startIndex, ($this->reviewersPerProject - 1));
                                 if (array_key_exists($index, $bestMatchesByProject[$projectIndex])) {
-                                    $handle = $bestMatchesByProject[$projectIndex][$index]['handle'];
+                                    $handle               = $bestMatchesByProject[$projectIndex][$index]['handle'];
                                     $excludeFromProject[] = $handle;
                                     // When excluded from this project, also remove this project from the best matches by handle
                                     if (
@@ -235,12 +241,12 @@ final class PoFppPprGenerator extends AbstractGenerator
                             // Don't add reviewers from the same organisation
                             && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
                         ) {
-                            $assigned = $this->reviewerData[$handle]['present'] ?
+                            $assigned                                             = $this->reviewerData[$handle]['present'] ?
                                 ReviewRosterService::REVIEWER_ASSIGNED
                                 : ReviewRosterService::REVIEWER_SPARE;
                             $rosterData[$round][$projectIndex]['scores'][$handle] = $assigned;
-                            $this->reviewersAssigned[] = $handle;
-                            $handlesAssigned[$round][] = $handle;
+                            $this->reviewersAssigned[]                            = $handle;
+                            $handlesAssigned[$round][]                            = $handle;
                             if ($this->reviewerData[$handle]['experienced']) {
                                 $hasExperiencedReviewer = true;
                             }
@@ -263,7 +269,7 @@ final class PoFppPprGenerator extends AbstractGenerator
 
                 // Shuffle the reviewer list to equalize assignment chances
                 $shuffledProjectData = [];
-                $handles = array_keys($projectData['scores']);
+                $handles             = array_keys($projectData['scores']);
                 shuffle($handles);
                 foreach ($handles as $handle) {
                     $shuffledProjectData[$handle] = $projectData['scores'][$handle];
@@ -299,12 +305,12 @@ final class PoFppPprGenerator extends AbstractGenerator
                             continue;
                         }
                         // Assign the reviewer
-                        $assigned = $this->reviewerData[$handle]['present'] ?
+                        $assigned                                             = $this->reviewerData[$handle]['present'] ?
                             ReviewRosterService::REVIEWER_ASSIGNED
                             : ReviewRosterService::REVIEWER_SPARE;
                         $rosterData[$round][$projectIndex]['scores'][$handle] = $assigned;
-                        $this->reviewersAssigned[] = $handle;
-                        $handlesAssigned[$round][] = $handle;
+                        $this->reviewersAssigned[]                            = $handle;
+                        $handlesAssigned[$round][]                            = $handle;
                         if ($this->reviewerData[$handle]['experienced']) {
                             $hasExperiencedReviewer = true;
                         }
@@ -331,7 +337,7 @@ final class PoFppPprGenerator extends AbstractGenerator
         int $totalReviewers,
         ?int $forceProjectsPerRound = null
     ): array {
-        $projectsPerRound = [];
+        $projectsPerRound    = [];
         $maxProjectsPerRound = floor($totalReviewers / $minReviewersAssigned);
         if (($forceProjectsPerRound !== null) && ($forceProjectsPerRound < $maxProjectsPerRound)) {
             $maxProjectsPerRound = $forceProjectsPerRound;
@@ -342,7 +348,7 @@ final class PoFppPprGenerator extends AbstractGenerator
         for ($round = 1; $round <= $rounds; $round++) {
             if ($numberOfProjects >= $maxProjectsPerRound) {
                 $projectsPerRound[$round] = $maxProjectsPerRound;
-                $numberOfProjects -= $maxProjectsPerRound;
+                $numberOfProjects         -= $maxProjectsPerRound;
             } // Last round with the leftover projects
             else {
                 $projectsPerRound[$round] = $numberOfProjects;
@@ -358,10 +364,10 @@ final class PoFppPprGenerator extends AbstractGenerator
     private function assignUnassignedReviewers(array &$rosterData, array $roundAssignments, array $reviewerData): void
     {
         $allReviewers = array_keys($reviewerData);
-        $lastRound = count($rosterData);
+        $lastRound    = count($rosterData);
 
         foreach ($rosterData as $round => $projects) {
-            $assignedReviewers = [];
+            $assignedReviewers                 = [];
             $projectsWithInsufficientReviewers = [];
             foreach ($projects as $projectIndex => $project) {
                 $assignedReviewersPerProject = 0;
@@ -387,7 +393,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                     }
                     $handle = reset($unassignedReviewers);
                     if ($rosterData[$round][$projectIndex]['scores'][$handle] !== ReviewRosterService::REVIEWER_IGNORED) {
-                        $assignedType = $reviewerData[$handle]['present'] ?
+                        $assignedType                                         = $reviewerData[$handle]['present'] ?
                             ReviewRosterService::REVIEWER_ASSIGNED
                             : ReviewRosterService::REVIEWER_SPARE;
                         $rosterData[$round][$projectIndex]['scores'][$handle] = $assignedType;
@@ -401,17 +407,17 @@ final class PoFppPprGenerator extends AbstractGenerator
                 // Assign leftover unassigned reviewers to the other projects based on number of assignments and score
                 while (! empty($unassignedReviewers)) {
                     shuffle($unassignedReviewers);
-                    $handle = reset($unassignedReviewers);
+                    $handle               = reset($unassignedReviewers);
                     $sortedProjectIndexes = $this->getLeastAssignmentsProjectIndex($rosterData[$round]);
-                    $bestMatchIndex = null;
-                    $bestScore = ReviewRosterService::REVIEWER_IGNORED;
+                    $bestMatchIndex       = null;
+                    $bestScore            = ReviewRosterService::REVIEWER_IGNORED;
                     // Iterate the projects with the least assignments and get the best matching project
                     foreach ($sortedProjectIndexes as $projectIndexes) {
                         foreach ($projectIndexes as $projectIndex) {
                             $score = $roundAssignments[$round][$projectIndex]['scores'][$handle];
                             if ($score > $bestScore) {
                                 $bestMatchIndex = $projectIndex;
-                                $bestScore = $score;
+                                $bestScore      = $score;
                             }
                         }
                         // Break out as soon as a best match has been found. Iterating further will only get less good
@@ -421,7 +427,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                         }
                     }
 
-                    $assignedType = $this->reviewerData[$handle]['present'] ?
+                    $assignedType                                           = $this->reviewerData[$handle]['present'] ?
                         ReviewRosterService::REVIEWER_EXTRA
                         : ReviewRosterService::REVIEWER_EXTRA_SPARE;
                     $rosterData[$round][$bestMatchIndex]['scores'][$handle] = $assignedType;
