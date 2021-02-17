@@ -112,8 +112,6 @@ _('txt-score-middle-');
 _('txt-score-low-quality');
 _('txt-approved');
 _('txt-rejected');
-_('txt-version');
-_('txt-version-type');
 _('txt-mandatory-improvements');
 _('txt-mandatory-improvements-explanation');
 _('txt-recommended-improvements');

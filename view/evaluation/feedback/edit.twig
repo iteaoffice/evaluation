@@ -8,15 +8,28 @@
 
 {% set feedback = form.get('evaluation_entity_feedback') %}
 
-<fieldset>
-    {{ ztbformelement(feedback.get('version')) }}
-    {{ ztbformelement(feedback.get('status')) }}
-    {{ ztbformelement(feedback.get('mandatoryImprovements')) }}
-    {{ ztbformelement(feedback.get('recommendedImprovements')) }}
-    {{ ztbformelement(feedback.get('reviewFeedback')) }}
-    {{ ztbformelement(feedback.get('evaluationFeedback')) }}
-    {{ ztbformelement(feedback.get('evaluationConclusion')) }}
-</fieldset>
+<div class="form-group row">
+    <label class="col-sm-3 col-form-label">{{ translate("txt-project") }}</label>
+
+    <div class="col-sm-9">
+        <p class="form-control-plaintext">{{ projectLink(version.project,'view-admin') }}</p>
+    </div>
+</div>
+
+<div class="form-group row">
+    <label class="col-sm-3 col-form-label">{{ translate("txt-version") }}</label>
+
+    <div class="col-sm-9">
+        <p class="form-control-plaintext">{{ versionLink(version,'general-admin') }} ({{ versionService.parseStatus(version) }})</p>
+    </div>
+</div>
+
+{{ ztbformelement(feedback.get('status')) }}
+{{ ztbformelement(feedback.get('mandatoryImprovements')) }}
+{{ ztbformelement(feedback.get('recommendedImprovements')) }}
+{{ ztbformelement(feedback.get('reviewFeedback')) }}
+{{ ztbformelement(feedback.get('evaluationFeedback')) }}
+{{ ztbformelement(feedback.get('evaluationConclusion')) }}
 
 <div class="form-group row">
     <div class="offset-sm-3 col-sm-9">

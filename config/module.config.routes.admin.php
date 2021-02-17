@@ -628,16 +628,6 @@ return [
                                     ],
                                 ],
                             ],
-                            'view' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/view/[:id].html',
-                                    'defaults' => [
-                                        'action' => 'view',
-
-                                    ],
-                                ],
-                            ],
                             'edit' => [
                                 'type'    => 'Segment',
                                 'options' => [

@@ -25,13 +25,6 @@ final class FeedbackFilter extends InputFilter
         $inputFilter = new InputFilter();
         $inputFilter->add(
             [
-                'name'     => 'parentType',
-                'required' => false,
-            ]
-        );
-
-        $inputFilter->add(
-            [
                 'name'     => 'reviewFeedback',
                 'required' => false,
                 'filters'  => [

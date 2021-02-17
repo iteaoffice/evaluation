@@ -15,9 +15,9 @@ namespace Evaluation\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Laminas\Form\Annotation;
 use Project\Entity\Funding\Status;
 use Project\Entity\Version\Version;
-use Laminas\Form\Annotation;
 
 /**
  * @ORM\Table(name="evaluation_feedback")
@@ -47,21 +47,7 @@ class Feedback extends AbstractEntity
     /**
      * @ORM\OneToOne(targetEntity="Project\Entity\Version\Version", cascade="persist", inversedBy="feedback")
      * @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=false)
-     * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
-     * @Annotation\Options({
-     *      "target_class":"Project\Entity\Version\Version",
-     *      "label":"txt-version-type",
-     *      "find_method":{
-     *          "name":"findBy",
-     *          "params": {
-     *              "criteria":{},
-     *              "orderBy":{
-     *                  "dateReviewed":"DESC"}
-     *              }
-     *          }
-     *      }
-     * )
-     * @Annotation\Attributes({"label":"txt-version", "required":"true"})
+     * @Annotation\Exclude();
      *
      * @var Version
      */

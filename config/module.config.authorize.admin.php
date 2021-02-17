@@ -240,10 +240,6 @@ return [
                     'roles' => ['office'],
                 ],
                 [
-                    'route' => 'zfcadmin/feedback/view',
-                    'roles' => ['office'],
-                ],
-                [
                     'route' => 'zfcadmin/feedback/edit',
                     'roles' => ['office'],
                 ],
