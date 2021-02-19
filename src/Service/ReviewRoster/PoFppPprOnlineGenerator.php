@@ -14,8 +14,11 @@ namespace Evaluation\Service\ReviewRoster;
 
 use Evaluation\Service\ReviewerService;
 
+use Evaluation\Service\ReviewRosterService;
 use function array_values;
+use function asort;
 use function ksort;
+use function rsort;
 
 final class PoFppPprOnlineGenerator extends CrGenerator
 {
@@ -28,6 +31,8 @@ final class PoFppPprOnlineGenerator extends CrGenerator
         // Determine the best matches per project
         $bestMatchesByProject = $this->getBestMatchesPerProject();
 
+        $sortedProjectScores = $this->getSortedProjectScores();
+
         // Assign reviewers
         foreach ($assignments as $projectIndex => &$assignment) {
             $this->reviewersAssigned = [];
@@ -37,14 +42,13 @@ final class PoFppPprOnlineGenerator extends CrGenerator
                 $this->assignFutureEvaluationReviewers($assignment, $projectIndex);
             }
             // Otherwise, add the highest scoring match per project
-            elseif (! empty($bestMatchesByProject[$projectIndex])) {
+            elseif (count($bestMatchesByProject[$projectIndex]) > 0) {
                 $this->assignBestProjectMatch($assignment, $bestMatchesByProject[$projectIndex]);
             }
 
-            // Add randomly picked other reviewers based on reviewer workload
-            $this->assignRandomReviewers($assignment);
+            // Add other reviewers based on reviewer history + workload
+            $this->assignOtherReviewers($assignment, $bestMatchesByProject);
         }
-        //die();
 
         return new RosterData([$this->sortAssignments($assignments)], $this->logger);
     }
@@ -59,5 +63,56 @@ final class PoFppPprOnlineGenerator extends CrGenerator
         ksort($projectAssignmentsSorted);
 
         return array_values($projectAssignmentsSorted);
+    }
+
+    private function assignOtherReviewers(array &$assignment, array $bestMatchesByProject): void
+    {
+
+    }
+
+    private function getSortedProjectScores(): array
+    {
+        static $sortedProjectScores = null;
+
+        if ($sortedProjectScores === null) {
+            $sortedProjectScores = [];
+            foreach ($this->projectReviewerScores as $projectIndex => $project) {
+                $sortedScores = $project['scores'];
+                rsort($sortedScores);
+                $sortedProjectScores[$projectIndex] = $sortedScores;
+            }
+        }
+
+        return $sortedProjectScores;
+    }
+
+    private function assignBestMatch(array &$assignment, array $sortedProjectScores): array
+    {
+        $projectCount = count($this->projectReviewerScores);
+        foreach ($sortedProjectScores as $handle => $score) {
+            $sortedProjectScores[$handle] = ($projectCount - $this->reviewerLoad[$handle]) * $score;
+        }
+        rsort($sortedProjectScores);
+
+        foreach (array_keys($sortedProjectScores) as $handle) {
+            // Add reviewers with low load and not from the same organisation as reviewers already assigned
+            if (
+                ($assignment['scores'][$handle] === 0)
+                && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
+            ) {
+                $this->reviewersAssigned[] = $handle;
+                $this->reviewerLoad[$handle]++;
+                $assignment['scores'][$handle] = ReviewRosterService::REVIEWER_ASSIGNED;
+                $this->logger->log(
+                    __LINE__,
+                    sprintf(
+                        '%s: %s assigned randomly based on reviewer history and workload',
+                        $assignment['data']['number'] . ' ' . $assignment['data']['name'],
+                        $handle
+                    )
+                );
+                break 1;
+            }
+        }
     }
 }

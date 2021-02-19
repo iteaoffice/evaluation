@@ -45,13 +45,13 @@ class CrGenerator extends AbstractGenerator
                 $this->assignFutureEvaluationReviewers($assignment, $projectIndex);
             }
             // Otherwise, add the highest scoring match per project
-            elseif (! empty($bestMatchesByProject[$projectIndex])) {
+            elseif (count($bestMatchesByProject[$projectIndex]) > 0) {
                 $this->assignBestProjectMatch($assignment, $bestMatchesByProject[$projectIndex]);
             }
 
             // Make one of the above reviewers the primary reviewer.
             // Inexperienced reviewers should not become primary reviewer.
-            if (! empty($this->reviewersAssigned)) {
+            if (count($this->reviewersAssigned) > 0) {
                 $this->assignRandomPrimaryReviewer($assignment);
                 $hasPrimaryReviewer = true;
             }
@@ -131,7 +131,7 @@ class CrGenerator extends AbstractGenerator
         );
     }
 
-    protected function assignRandomReviewers(array &$assignment): void
+    private function assignRandomReviewers(array &$assignment): void
     {
         $iteration = 1; // Fail safe to prevent infinite loop
         asort($this->reviewerLoad);
@@ -155,7 +155,7 @@ class CrGenerator extends AbstractGenerator
                             $handle
                         )
                     );
-                    break;
+                    break 1;
                 }
             }
             $iteration++;
