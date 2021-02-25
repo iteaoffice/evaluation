@@ -16,9 +16,9 @@ use Evaluation\Service\ReviewerService;
 
 use Evaluation\Service\ReviewRosterService;
 use function array_values;
+use function arsort;
 use function asort;
 use function ksort;
-use function rsort;
 
 final class PoFppPprOnlineGenerator extends CrGenerator
 {
@@ -30,7 +30,6 @@ final class PoFppPprOnlineGenerator extends CrGenerator
         $assignments = $this->initProjectAssignments();
         // Determine the best matches per project
         $bestMatchesByProject = $this->getBestMatchesPerProject();
-
         $sortedProjectScores = $this->getSortedProjectScores();
 
         // Assign reviewers
@@ -47,7 +46,7 @@ final class PoFppPprOnlineGenerator extends CrGenerator
             }
 
             // Add other reviewers based on reviewer history + workload
-            $this->assignOtherReviewers($assignment, $bestMatchesByProject);
+            $this->assignOtherReviewers($assignment, $sortedProjectScores[$projectIndex]);
         }
 
         return new RosterData([$this->sortAssignments($assignments)], $this->logger);
@@ -65,9 +64,14 @@ final class PoFppPprOnlineGenerator extends CrGenerator
         return array_values($projectAssignmentsSorted);
     }
 
-    private function assignOtherReviewers(array &$assignment, array $bestMatchesByProject): void
+    private function assignOtherReviewers(array &$assignment, array $sortedProjectScores): void
     {
-
+        $iteration = 1; // Fail safe to prevent infinite loop
+        asort($this->reviewerLoad);
+        $reviewers = count($this->reviewerData);
+        while ((count($this->reviewersAssigned) < $this->reviewersPerProject) && ($iteration <= $reviewers)) {
+            $this->assignBestMatch($assignment, $sortedProjectScores);
+        }
     }
 
     private function getSortedProjectScores(): array
@@ -78,7 +82,7 @@ final class PoFppPprOnlineGenerator extends CrGenerator
             $sortedProjectScores = [];
             foreach ($this->projectReviewerScores as $projectIndex => $project) {
                 $sortedScores = $project['scores'];
-                rsort($sortedScores);
+                arsort($sortedScores);
                 $sortedProjectScores[$projectIndex] = $sortedScores;
             }
         }
@@ -86,19 +90,20 @@ final class PoFppPprOnlineGenerator extends CrGenerator
         return $sortedProjectScores;
     }
 
-    private function assignBestMatch(array &$assignment, array $sortedProjectScores): array
+    private function assignBestMatch(array &$assignment, array $sortedProjectScores): void
     {
+        // Re-calculate and sort score as reviewer load has changed
         $projectCount = count($this->projectReviewerScores);
         foreach ($sortedProjectScores as $handle => $score) {
             $sortedProjectScores[$handle] = ($projectCount - $this->reviewerLoad[$handle]) * $score;
         }
-        rsort($sortedProjectScores);
+        arsort($sortedProjectScores);
 
         foreach (array_keys($sortedProjectScores) as $handle) {
             // Add reviewers with low load and not from the same organisation as reviewers already assigned
             if (
                 ($assignment['scores'][$handle] === 0)
-                && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
+                && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
             ) {
                 $this->reviewersAssigned[] = $handle;
                 $this->reviewerLoad[$handle]++;
@@ -106,7 +111,7 @@ final class PoFppPprOnlineGenerator extends CrGenerator
                 $this->logger->log(
                     __LINE__,
                     sprintf(
-                        '%s: %s assigned randomly based on reviewer history and workload',
+                        '%s: %s assigned based on reviewer history and workload',
                         $assignment['data']['number'] . ' ' . $assignment['data']['name'],
                         $handle
                     )

@@ -23,9 +23,7 @@ use Evaluation\Controller\Plugin\RosterGenerator;
 use Evaluation\Entity\Reviewer\Contact;
 use Evaluation\Entity\Reviewer;
 use Evaluation\Entity\Reviewer\Type as ReviewerType;
-use Evaluation\Repository\Reviewer\ContactRepository as ContactRepository;
 use Project\Service\ProjectService;
-use Laminas\Http\Headers;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\I18n\Translator\TranslatorInterface;
@@ -35,17 +33,10 @@ use Laminas\View\Model\ViewModel;
 
 use function array_merge_recursive;
 use function in_array;
-use function iconv;
-use function ob_end_flush;
-use function ob_get_clean;
-use function ob_get_length;
-use function ob_start;
-use function trim;
-use function unlink;
 
 /**
  * @method FlashMessenger flashMessenger()
- * @method RosterGenerator rosterGenerator(string $type, string $configFile, int $reviewersPerProject, bool $includeSpareReviewers = false, ?int $forceProjectsPerRound = null)
+ * @method RosterGenerator rosterGenerator(string $type, string $configFile, int $reviewersPerProject, bool $includeSpareReviewers = false, bool $onlineReview = false, ?int $forceProjectsPerRound = null)
  */
 final class ReviewerManagerController extends AbstractActionController
 {
@@ -71,8 +62,7 @@ final class ReviewerManagerController extends AbstractActionController
 
     public function listAction(): ViewModel
     {
-        $reviewerType = $this->reviewerService->find(ReviewerType::class, ReviewerType::TYPE_PREFERRED);
-        $project      = $this->projectService->findProjectById((int)$this->params()->fromRoute('projectId'));
+        $project = $this->projectService->findProjectById((int)$this->params()->fromRoute('projectId'));
 
         if (null === $project) {
             return $this->notFoundAction();
@@ -97,9 +87,14 @@ final class ReviewerManagerController extends AbstractActionController
             }
         }
 
+        $preferredReviewerType = $this->reviewerService->find(ReviewerType::class, ReviewerType::TYPE_PREFERRED);
+        $ignoredReviewerType = $this->reviewerService->find(ReviewerType::class, ReviewerType::TYPE_IGNORED);
+
         return new ViewModel([
-            'projectPreferredReviewers' => $this->entityManager->getRepository(Reviewer::class)
-                ->findBy(['project' => $project, 'type' => $reviewerType]),
+            'preferredReviewersManual' => $this->entityManager->getRepository(Reviewer::class)
+                ->findBy(['project' => $project, 'type' => $preferredReviewerType]),
+            'ignoredReviewersManual' => $this->entityManager->getRepository(Reviewer::class)
+                ->findBy(['project' => $project, 'type' => $ignoredReviewerType]),
             'projectIgnoredReviewers'   => $this->entityManager->getRepository(Contact::class)
                 ->findIgnoredReviewers($project),
             'projectFutureReviewers'    => $projectFutureReviewers,
@@ -242,6 +237,7 @@ final class ReviewerManagerController extends AbstractActionController
                         $excelFile['tmp_name'],
                         (int) $form->get('nr')->getValue(),
                         (bool) $form->get('include-spare')->getValue(),
+                        (bool) $form->get('online')->getValue(),
                         (empty($form->get('projects')->getValue()) ? null : (int)$form->get('projects')->getValue())
                     );
 
