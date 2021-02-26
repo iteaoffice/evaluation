@@ -151,7 +151,7 @@ class ReviewRosterService
         if ($type === ReviewerService::TYPE_CR) {
             $rosterData = $this->generateCrRosterData($config, $projectReviewerScores);
         } elseif (in_array($type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP, ReviewerService::TYPE_PPR])) {
-            $rosterData = $this->generatePoFppPprRosterData($config, $projectReviewerScores, $forceProjectsPerRound);
+            $rosterData = $this->generatePoFppPprRosterData($config, $projectReviewerScores, $type, $forceProjectsPerRound);
         }
 
         //Logger::dumpRoundAssignments($config, $rosterData); die();
@@ -164,7 +164,7 @@ class ReviewRosterService
                 if ($type === ReviewerService::TYPE_CR) {
                     $rosterData = $this->generateCrRosterData($config, $projectReviewerScores);
                 } elseif (in_array($type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP, ReviewerService::TYPE_PPR])) {
-                    $rosterData = $this->generatePoFppPprRosterData($config, $projectReviewerScores, $forceProjectsPerRound);
+                    $rosterData = $this->generatePoFppPprRosterData($config, $projectReviewerScores, $type, $forceProjectsPerRound);
                 }
                 if ($this->testRosterAssignments($rosterData)) {
                     return $rosterData;
@@ -202,12 +202,12 @@ class ReviewRosterService
             foreach ($reports as $report) {
                 $projects[] = $report->getProject();
             }
-        } // Project version review
+        }
+        // Project version review
         elseif (in_array($type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_FPP], false)) {
-            $calls = $this->callService->findOpenCall()->toArray();
-            $currentCall = reset($calls);
+            $lastActiveCall = $this->callService->findLastActiveCall();
             $filter = [
-                'program_call_id'     => $currentCall->getId(),
+                'program_call_id'     => $lastActiveCall->getId(),
                 'latest_version_type' => strtolower($type)
             ];
 
@@ -225,7 +225,8 @@ class ReviewRosterService
 
             // Works with a small to moderate amount of project IDs
             $projects = $this->entityManager->getRepository(Project::class)->findBy(['id' => $projectIDs]);
-        } // Assignment for change requests
+        }
+        // Assignment for change requests
         elseif ($type === ReviewerService::TYPE_CR) {
             $projects = $this->projectService->findActiveProjectsForReviewRoster();
         }
@@ -356,11 +357,12 @@ class ReviewRosterService
     private function generatePoFppPprRosterData(
         array $config,
         array $projectReviewerScores,
+        string $type,
         ?int $forceProjectsPerRound = null
     ): array
     {
         if ($this->onlineReview) {
-            $generator = new PoFppPprOnlineGenerator($config, $projectReviewerScores, $this->reviewersPerProject);
+            $generator = new PoFppPprOnlineGenerator($config, $projectReviewerScores, $type, $this->reviewersPerProject);
         } else {
             $generator = new PoFppPprGenerator(
                 $config,

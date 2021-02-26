@@ -22,6 +22,14 @@ use function ksort;
 
 final class PoFppPprOnlineGenerator extends CrGenerator
 {
+    private string $type;
+
+    public function __construct(array $config, array $projectReviewerScores, string $type, int $reviewersPerProject)
+    {
+        parent::__construct($config, $projectReviewerScores, $reviewersPerProject);
+        $this->type = $type;
+    }
+
     public function generate(): RosterData
     {
         $this->logger->reset();
@@ -40,13 +48,17 @@ final class PoFppPprOnlineGenerator extends CrGenerator
             if ($lastHistoryItem && array_key_exists(ReviewerService::TYPE_FE, $lastHistoryItem)) {
                 $this->assignFutureEvaluationReviewers($assignment, $projectIndex);
             }
-            // Otherwise, add the highest scoring match per project
+            // Otherwise, add the highest scoring match per project when present
             elseif (count($bestMatchesByProject[$projectIndex]) > 0) {
                 $this->assignBestProjectMatch($assignment, $bestMatchesByProject[$projectIndex]);
             }
 
-            // Add other reviewers based on reviewer history + workload
-            $this->assignOtherReviewers($assignment, $sortedProjectScores[$projectIndex]);
+            // No history yet in PO phase, so add reviewers randomly based on workload
+            if ($this->type === ReviewerService::TYPE_PO) {
+                $this->assignRandomReviewers($assignment);
+            } else { // Add other reviewers based on reviewer history + workload
+                $this->assignOtherReviewers($assignment, $sortedProjectScores[$projectIndex]);
+            }
         }
 
         return new RosterData([$this->sortAssignments($assignments)], $this->logger);

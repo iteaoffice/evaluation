@@ -17,7 +17,6 @@ use Evaluation\Service\ReviewRosterService;
 use function current;
 use function next;
 use function reset;
-use function shuffle;
 
 abstract class AbstractGenerator implements Generator
 {

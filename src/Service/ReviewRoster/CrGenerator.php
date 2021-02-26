@@ -18,7 +18,6 @@ use Evaluation\Service\ReviewRosterService;
 use function array_key_exists;
 use function array_keys;
 use function asort;
-use function is_array;
 use function krsort;
 use function reset;
 use function sprintf;
@@ -131,7 +130,7 @@ class CrGenerator extends AbstractGenerator
         );
     }
 
-    private function assignRandomReviewers(array &$assignment): void
+    protected function assignRandomReviewers(array &$assignment): void
     {
         $iteration = 1; // Fail safe to prevent infinite loop
         asort($this->reviewerLoad);
