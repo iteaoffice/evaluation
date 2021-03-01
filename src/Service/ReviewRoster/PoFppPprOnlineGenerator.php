@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Evaluation\Service\ReviewRoster;
 
 use Evaluation\Service\ReviewerService;
-
 use Evaluation\Service\ReviewRosterService;
+
 use function array_values;
 use function arsort;
 use function asort;
@@ -115,7 +115,7 @@ final class PoFppPprOnlineGenerator extends CrGenerator
             // Add reviewers with low load and not from the same organisation as reviewers already assigned
             if (
                 ($assignment['scores'][$handle] === 0)
-                && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
+                && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
             ) {
                 $this->reviewersAssigned[] = $handle;
                 $this->reviewerLoad[$handle]++;

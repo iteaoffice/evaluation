@@ -119,8 +119,7 @@ class ReviewRosterService
         bool $includeSpareReviewers = false,
         bool $onlineReview = false,
         ?int $forceProjectsPerRound = null
-    ): array
-    {
+    ): array {
         set_time_limit(60); // Allow for multiple attempts to generate a roster
         $this->reviewersPerProject = $reviewersPerProject;
         $this->includeSpareReviewers = $includeSpareReviewers;
@@ -157,7 +156,7 @@ class ReviewRosterService
         //Logger::dumpRoundAssignments($config, $rosterData); die();
 
         // Test the roster data and re-generate when required
-        if (!$this->testRosterAssignments($rosterData)) {
+        if (! $this->testRosterAssignments($rosterData)) {
             $try = 1;
             while ($try <= self::MAX_RETRIES) {
                 $this->logger->log(__LINE__, sprintf('Retry %d of %d', $try, self::MAX_RETRIES));
@@ -237,7 +236,7 @@ class ReviewRosterService
             $projectIndex[$project->getProject()] = $index;
         }
         foreach ($projectConfig['included'] as $projectName) {
-            if (!isset($projectIndex[$projectName]) && !in_array($projectName, $projectConfig['excluded'])) {
+            if (! isset($projectIndex[$projectName]) && ! in_array($projectName, $projectConfig['excluded'])) {
                 $project = $this->entityManager->getRepository(Project::class)->findOneBy([
                     'project' => $projectName
                 ]);
@@ -359,8 +358,7 @@ class ReviewRosterService
         array $projectReviewerScores,
         string $type,
         ?int $forceProjectsPerRound = null
-    ): array
-    {
+    ): array {
         if ($this->onlineReview) {
             $generator = new PoFppPprOnlineGenerator($config, $projectReviewerScores, $type, $this->reviewersPerProject);
         } else {
@@ -427,7 +425,7 @@ class ReviewRosterService
     public function parseConfigFile(string $configFile): array
     {
         $config = [];
-        if (!file_exists($configFile)) {
+        if (! file_exists($configFile)) {
             throw new InvalidArgumentException('Excel config file not found.');
         }
 
@@ -455,7 +453,7 @@ class ReviewRosterService
             if ($sheetIndex < 3) {
                 for ($row = $startRow; $row <= $highestRow; $row++) {
                     $handle = $sheet->getCell('A' . $row)->getValue();
-                    if (!empty($handle)) {
+                    if (! empty($handle)) {
                         $reviewContact = $this->entityManager->getRepository(ReviewContact::class)
                             ->findOneBy(['handle' => $handle]);
                         // Check whether the review contact has been found and has the same case XyZ / XYZ would both
@@ -492,10 +490,10 @@ class ReviewRosterService
                 for ($row = $startRow; $row <= $highestRow; $row++) {
                     $includedProject = $sheet->getCell('A' . $row)->getValue();
                     $excludedProject = $sheet->getCell('B' . $row)->getValue();
-                    if (!empty($includedProject)) {
+                    if (! empty($includedProject)) {
                         $config[$keys[$sheetIndex]]['included'][] = $includedProject;
                     }
-                    if (!empty($excludedProject)) {
+                    if (! empty($excludedProject)) {
                         $config[$keys[$sheetIndex]]['excluded'][] = $excludedProject;
                     }
                 }
