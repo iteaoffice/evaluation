@@ -127,7 +127,7 @@ final class ExcelExport extends AbstractPlugin
         // Set the dropdown lookup data in a hidden sheet
         $lookupSheet = $this->excel->createSheet(1);
         $lookupSheet->setTitle('LookupData');
-        $lookupSheet->setSheetState(Worksheet::SHEETSTATE_VERYHIDDEN);
+        //$lookupSheet->setSheetState(Worksheet::SHEETSTATE_VERYHIDDEN);
         // Scores
         $row = 1;
         foreach (Result::getScoreValues() as $scoreValue => $scoreLabel) {
@@ -139,7 +139,7 @@ final class ExcelExport extends AbstractPlugin
             new NamedRange(
                 'scores',
                 $lookupSheet,
-                'A1:A' . count(Result::getScoreValues())
+                '$A$1:$A$' . count(Result::getScoreValues())
             )
         );
         // Yes/no
@@ -147,7 +147,7 @@ final class ExcelExport extends AbstractPlugin
         $lookupSheet->setCellValue('E1', 'Yes');
         $lookupSheet->setCellValue('D2', $this->translator->translate('txt-no'));
         $lookupSheet->setCellValue('E2', 'No');
-        $this->excel->addNamedRange(new NamedRange('yesNo', $lookupSheet, 'D1:D2'));
+        $this->excel->addNamedRange(new NamedRange('yesNo', $lookupSheet, '$D$1:$D$2'));
 
         // Steering group decision
         $row        = 1;
@@ -166,7 +166,7 @@ final class ExcelExport extends AbstractPlugin
             $row++;
         }
         $this->excel->addNamedRange(
-            new NamedRange('finalScores', $lookupSheet, 'G1:G' . count($scores))
+            new NamedRange('finalScores', $lookupSheet, '$G$1:$G$' . count($scores))
         );
 
         // Project status (PPR-only)
@@ -179,7 +179,7 @@ final class ExcelExport extends AbstractPlugin
                 $row++;
             }
             $this->excel->addNamedRange(
-                new NamedRange('projectStatuses', $lookupSheet, 'J1:J' . count($statuses))
+                new NamedRange('projectStatuses', $lookupSheet, '$J$1:$J$' . count($statuses))
             );
         }
 
@@ -465,7 +465,7 @@ final class ExcelExport extends AbstractPlugin
         $this->parseCriterionLabel($displaySheet, $row, $this->translator->translate('txt-challenge'));
         $displaySheet->mergeCells('B' . $row . ':C' . $row);
         $challenges = array_map(
-            static function (\Project\Entity\Project\Challenge $challenge) {
+            static function (Challenge $challenge) {
                 return $challenge->getChallenge();
             },
             $project->getProjectChallenge()->toArray()
