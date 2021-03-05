@@ -54,7 +54,8 @@ final class PoFppPprOnlineGenerator extends CrGenerator
             }
 
             // No history yet in PO phase, so add reviewers randomly based on workload
-            if ($this->type === ReviewerService::TYPE_PO) {
+            // PPR has history, but may be too random to evenly spread the workload
+            if (in_array($this->type, [ReviewerService::TYPE_PO, ReviewerService::TYPE_PPR])) {
                 $this->assignRandomReviewers($assignment);
             } else { // Add other reviewers based on reviewer history + workload
                 $this->assignOtherReviewers($assignment, $sortedProjectScores[$projectIndex]);
@@ -107,15 +108,17 @@ final class PoFppPprOnlineGenerator extends CrGenerator
         // Re-calculate and sort score as reviewer load has changed
         $projectCount = count($this->projectReviewerScores);
         foreach ($sortedProjectScores as $handle => $score) {
-            $sortedProjectScores[$handle] = ($projectCount - $this->reviewerLoad[$handle]) * $score;
+            if ($score >= ReviewRosterService::REVIEWER_UNASSIGNED) {
+                $sortedProjectScores[$handle] = ($projectCount - $this->reviewerLoad[$handle]) * $score;
+            }
         }
         arsort($sortedProjectScores);
 
         foreach (array_keys($sortedProjectScores) as $handle) {
             // Add reviewers with low load and not from the same organisation as reviewers already assigned
             if (
-                ($assignment['scores'][$handle] === 0)
-                && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
+                ($assignment['scores'][$handle] === ReviewRosterService::REVIEWER_UNASSIGNED)
+                && !$this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
             ) {
                 $this->reviewersAssigned[] = $handle;
                 $this->reviewerLoad[$handle]++;
@@ -123,9 +126,11 @@ final class PoFppPprOnlineGenerator extends CrGenerator
                 $this->logger->log(
                     __LINE__,
                     sprintf(
-                        '%s: %s assigned based on reviewer history and workload',
+                        '%s: %s assigned based on reviewer history (%d) and workload (%d)',
                         $assignment['data']['number'] . ' ' . $assignment['data']['name'],
-                        $handle
+                        $handle,
+                        $sortedProjectScores[$handle],
+                        $this->reviewerLoad[$handle]
                     )
                 );
                 break 1;

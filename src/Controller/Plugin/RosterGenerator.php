@@ -84,10 +84,10 @@ final class RosterGenerator extends AbstractPlugin
     public function __invoke(
         string $type,
         string $configFile,
-        int $reviewersPerProject,
-        bool $includeSpareReviewers = false,
-        bool $onlineReview = false,
-        ?int $forceProjectsPerRound = null
+        int    $reviewersPerProject,
+        bool   $includeSpareReviewers = false,
+        bool   $onlineReview = false,
+        ?int   $forceProjectsPerRound = null
     ): RosterGenerator {
         $this->type = $type;
         $config = $this->reviewRosterService->parseConfigFile($configFile);

@@ -100,7 +100,7 @@ final class PoFppPprGenerator extends AbstractGenerator
         foreach ($rosterData as &$rosterProjects) {
             foreach ($rosterProjects as &$rosterProjectData) {
                 foreach ($rosterProjectData['scores'] as &$rosterScore) {
-                    if ($rosterScore > 0) {
+                    if ($rosterScore > ReviewRosterService::REVIEWER_UNASSIGNED) {
                         $rosterScore = ReviewRosterService::REVIEWER_UNASSIGNED;
                     }
                 }
@@ -241,12 +241,12 @@ final class PoFppPprGenerator extends AbstractGenerator
                             // Don't add reviewers from the same organisation
                             && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
                         ) {
-                            $assigned                                             = $this->reviewerData[$handle]['present'] ?
+                            $assigned = $this->reviewerData[$handle]['present'] ?
                                 ReviewRosterService::REVIEWER_ASSIGNED
                                 : ReviewRosterService::REVIEWER_SPARE;
                             $rosterData[$round][$projectIndex]['scores'][$handle] = $assigned;
-                            $this->reviewersAssigned[]                            = $handle;
-                            $handlesAssigned[$round][]                            = $handle;
+                            $this->reviewersAssigned[] = $handle;
+                            $handlesAssigned[$round][] = $handle;
                             if ($this->reviewerData[$handle]['experienced']) {
                                 $hasExperiencedReviewer = true;
                             }
@@ -269,7 +269,7 @@ final class PoFppPprGenerator extends AbstractGenerator
 
                 // Shuffle the reviewer list to equalize assignment chances
                 $shuffledProjectData = [];
-                $handles             = array_keys($projectData['scores']);
+                $handles = array_keys($projectData['scores']);
                 shuffle($handles);
                 foreach ($handles as $handle) {
                     $shuffledProjectData[$handle] = $projectData['scores'][$handle];
@@ -305,12 +305,12 @@ final class PoFppPprGenerator extends AbstractGenerator
                             continue;
                         }
                         // Assign the reviewer
-                        $assigned                                             = $this->reviewerData[$handle]['present'] ?
+                        $assigned = $this->reviewerData[$handle]['present'] ?
                             ReviewRosterService::REVIEWER_ASSIGNED
                             : ReviewRosterService::REVIEWER_SPARE;
                         $rosterData[$round][$projectIndex]['scores'][$handle] = $assigned;
-                        $this->reviewersAssigned[]                            = $handle;
-                        $handlesAssigned[$round][]                            = $handle;
+                        $this->reviewersAssigned[] = $handle;
+                        $handlesAssigned[$round][] = $handle;
                         if ($this->reviewerData[$handle]['experienced']) {
                             $hasExperiencedReviewer = true;
                         }
@@ -364,10 +364,10 @@ final class PoFppPprGenerator extends AbstractGenerator
     private function assignUnassignedReviewers(array &$rosterData, array $roundAssignments, array $reviewerData): void
     {
         $allReviewers = array_keys($reviewerData);
-        $lastRound    = count($rosterData);
+        $lastRound = count($rosterData);
 
         foreach ($rosterData as $round => $projects) {
-            $assignedReviewers                 = [];
+            $assignedReviewers = [];
             $projectsWithInsufficientReviewers = [];
             foreach ($projects as $projectIndex => $project) {
                 $assignedReviewersPerProject = 0;
@@ -407,17 +407,17 @@ final class PoFppPprGenerator extends AbstractGenerator
                 // Assign leftover unassigned reviewers to the other projects based on number of assignments and score
                 while (! empty($unassignedReviewers)) {
                     shuffle($unassignedReviewers);
-                    $handle               = reset($unassignedReviewers);
+                    $handle = reset($unassignedReviewers);
                     $sortedProjectIndexes = $this->getLeastAssignmentsProjectIndex($rosterData[$round]);
-                    $bestMatchIndex       = null;
-                    $bestScore            = ReviewRosterService::REVIEWER_IGNORED;
+                    $bestMatchIndex = null;
+                    $bestScore = ReviewRosterService::REVIEWER_IGNORED;
                     // Iterate the projects with the least assignments and get the best matching project
                     foreach ($sortedProjectIndexes as $projectIndexes) {
                         foreach ($projectIndexes as $projectIndex) {
                             $score = $roundAssignments[$round][$projectIndex]['scores'][$handle];
                             if ($score > $bestScore) {
                                 $bestMatchIndex = $projectIndex;
-                                $bestScore      = $score;
+                                $bestScore = $score;
                             }
                         }
                         // Break out as soon as a best match has been found. Iterating further will only get less good
@@ -427,7 +427,7 @@ final class PoFppPprGenerator extends AbstractGenerator
                         }
                     }
 
-                    $assignedType                                           = $this->reviewerData[$handle]['present'] ?
+                    $assignedType = $this->reviewerData[$handle]['present'] ?
                         ReviewRosterService::REVIEWER_EXTRA
                         : ReviewRosterService::REVIEWER_EXTRA_SPARE;
                     $rosterData[$round][$bestMatchIndex]['scores'][$handle] = $assignedType;

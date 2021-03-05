@@ -139,7 +139,7 @@ class CrGenerator extends AbstractGenerator
             foreach (array_keys($this->reviewerLoad) as $handle) {
                 // Add reviewers with low load and not from the same organisation as reviewers already assigned
                 if (
-                    ($assignment['scores'][$handle] === 0)
+                    ($assignment['scores'][$handle] === ReviewRosterService::REVIEWER_UNASSIGNED)
                     && ! $this->sameOrganisation($handle, $this->reviewersAssigned, $this->reviewerData)
                 ) {
                     $this->reviewersAssigned[] = $handle;
