@@ -32,11 +32,14 @@
             <th>{{ translate("txt-country") }}</th>
         </tr>
         </thead>
+        <tfoot>
+            <tr><td colspan="5"></td></tr>
+        </tfoot>
         <tbody>
         {% for reviewerContact in paginator.getCurrentItems() %}
             <tr>
-                <td>{{ reviewerContact.id }} {{ reviewerContactLink(reviewerContact, 'edit', 'icon') }}</td>
-                <td>{{ reviewerContactLink(reviewerContact, 'view', 'handle') }}</td>
+                <td><small class="text-muted">{{ reviewerContact.id }}</small></td>
+                <td>{{ reviewerContactLink(reviewerContact, 'view', 'handle') }} {{ reviewerContactLink(reviewerContact, 'edit', 'icon') }}</td>
                 <td>{{ contactLink(reviewerContact.getContact(),'view-admin','name') }}</td>
                 <td>{% if reviewerContact.contact.hasOrganisation() %}{{ organisationLink(reviewerContact.contact.contactOrganisation.organisation,'view-admin','name') }}{% endif %}</td>
                 <td>{% if reviewerContact.contact.hasOrganisation() %}{{ countryLink(reviewerContact.contact.contactOrganisation.organisation.country,'view','name') }}{% endif %}</td>
