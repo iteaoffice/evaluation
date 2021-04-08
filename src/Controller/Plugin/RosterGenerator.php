@@ -222,6 +222,7 @@ final class RosterGenerator extends AbstractPlugin
     private function fillPoFppPprSpreadsheet(Worksheet $sheet, string $lastColumn): void
     {
         $row = 3;
+
         foreach ($this->rosterData as $round => $projects) {
             $this->parseSection($sheet, $row, $lastColumn, (string)$round);
             foreach ($projects as $project) {
@@ -254,6 +255,7 @@ final class RosterGenerator extends AbstractPlugin
     private function fillPoFppPprOnlineSpreadsheet(Worksheet $sheet): void
     {
         $row = 3;
+
         foreach ($this->rosterData as $projects) {
             foreach ($projects as $project) {
                 // Add review history

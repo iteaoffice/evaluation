@@ -136,7 +136,7 @@ class Criterion extends AbstractEntity
     private $versions;
     /**
      * @ORM\ManyToMany(targetEntity="Evaluation\Entity\Report\Type", cascade={"persist", "remove"}, inversedBy="criteria")
-     * @ORM\OrderBy=({"sequence"="ASC"})
+     * @ORM\OrderBy({"sequence"="ASC"})
      * @ORM\JoinTable(name="evaluation_report2_criterion_report_type",
      *    joinColumns={@ORM\JoinColumn(name="criterion_id", referencedColumnName="criterion_id")},
      *    inverseJoinColumns={@ORM\JoinColumn(name="type_id", referencedColumnName="type_id")}

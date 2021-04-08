@@ -45,7 +45,7 @@ class Feedback extends AbstractEntity
      */
     private $dateUpdated;
     /**
-     * @ORM\OneToOne(targetEntity="Project\Entity\Version\Version", cascade="persist", inversedBy="feedback")
+     * @ORM\OneToOne(targetEntity="Project\Entity\Version\Version", cascade={"persist"}, inversedBy="feedback")
      * @ORM\JoinColumn(name="version_id", referencedColumnName="version_id", nullable=false)
      * @Annotation\Exclude();
      *
@@ -98,7 +98,7 @@ class Feedback extends AbstractEntity
      */
     private $evaluationConclusion;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Funding\Status", cascade="persist", inversedBy="feedback")
+     * @ORM\ManyToOne(targetEntity="Project\Entity\Funding\Status", cascade={"persist"}, inversedBy="feedback")
      * @ORM\JoinColumn(name="status_id", referencedColumnName="status_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({"target_class":"Project\Entity\Funding\Status"})

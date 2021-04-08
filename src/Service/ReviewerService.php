@@ -129,10 +129,10 @@ class ReviewerService extends AbstractService
                 $projectCalendarReviewers[$sortKey][self::TYPE_R] = [];
                 // Add the legacy Calendar\Review items from the old reviewer import
                 /** @var CalendarReviewer $calendarReview */
-                /*foreach ($projectCalendar->getReviewers() as $calendarReview) {
+                foreach ($projectCalendar->getReviewers() as $calendarReview) {
                     $projectCalendarReviewers[$sortKey][self::TYPE_R][]
                         = $this->parseReviewHandle($calendarReview->getContact());
-                }*/
+                }
                 // Merge data above with actual data from the calendar items and add reviewers from more recent meetings
                 foreach ($projectCalendar->getCalendar()->getCalendarContact() as $attendee) {
                     // The attendee is a project reviewer and status = accepted (assume that reviewer was present)

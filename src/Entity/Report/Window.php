@@ -116,7 +116,7 @@ class Window extends AbstractEntity
     private $dateEndSelection;
     /**
      * @ORM\ManyToMany(targetEntity="Evaluation\Entity\Report\Version", cascade={"persist"}, inversedBy="windows")
-     * @ORM\OrderBy=({"type"="ASC"})
+     * @ORM\OrderBy({"label"="ASC"})
      * @ORM\JoinTable(name="evaluation_report2_window_report_version",
      *    joinColumns={@ORM\JoinColumn(name="window_id", referencedColumnName="window_id")},
      *    inverseJoinColumns={@ORM\JoinColumn(name="version_id", referencedColumnName="version_id")}

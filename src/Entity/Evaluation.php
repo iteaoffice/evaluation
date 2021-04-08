@@ -79,7 +79,7 @@ class Evaluation extends AbstractEntity
      */
     private $dateUpdated;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Funding\Status", cascade="persist", inversedBy="evaluation")
+     * @ORM\ManyToOne(targetEntity="Project\Entity\Funding\Status", cascade={"persist"}, inversedBy="evaluation")
      * @ORM\JoinColumn(name="status_id", referencedColumnName="status_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
@@ -101,7 +101,7 @@ class Evaluation extends AbstractEntity
      */
     private $status;
     /**
-     * @ORM\ManyToOne(targetEntity="Contact\Entity\Contact", cascade="persist", inversedBy="evaluation")
+     * @ORM\ManyToOne(targetEntity="Contact\Entity\Contact", cascade={"persist"}, inversedBy="evaluation")
      * @ORM\JoinColumn(name="contact_id", referencedColumnName="contact_id")
      * @Annotation\Type("Contact\Form\Element\Contact")
      * @Annotation\Attributes({"label":"txt-evaluation-contact-label"})
@@ -111,7 +111,7 @@ class Evaluation extends AbstractEntity
      */
     private $contact;
     /**
-     * @ORM\ManyToOne(targetEntity="General\Entity\Country", cascade="persist", inversedBy="evaluation")
+     * @ORM\ManyToOne(targetEntity="General\Entity\Country", cascade={"persist"}, inversedBy="evaluation")
      * @ORM\JoinColumn(name="country_id", referencedColumnName="country_id")
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
@@ -133,7 +133,7 @@ class Evaluation extends AbstractEntity
      */
     private $country;
     /**
-     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Type", cascade="persist", inversedBy="evaluation")
+     * @ORM\ManyToOne(targetEntity="Evaluation\Entity\Type", cascade={"persist"}, inversedBy="evaluation")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="type_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntityRadio")
      * @Annotation\Options({
@@ -155,7 +155,7 @@ class Evaluation extends AbstractEntity
      */
     private $type;
     /**
-     * @ORM\ManyToOne(targetEntity="Project\Entity\Project", cascade="persist", inversedBy="evaluation")
+     * @ORM\ManyToOne(targetEntity="Project\Entity\Project", cascade={"persist"}, inversedBy="evaluation")
      * @ORM\JoinColumn(name="project_id", referencedColumnName="project_id", nullable=false)
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntitySelect")
      * @Annotation\Options({
