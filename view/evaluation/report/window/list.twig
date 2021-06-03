@@ -38,8 +38,8 @@
         <tbody>
         {% for window in paginator.getCurrentItems() %}
             <tr>
-                <td>{{ window.id }} {{ reportWindowLink(window,'edit','icon') }}</td>
-                <td>{{ reportWindowLink(window,'view','name') }}</td>
+                <td><small class="text-muted">{{ window.id }}</small></td>
+                <td>{{ reportWindowLink(window,'view','name') }} {{ reportWindowLink(window,'edit','icon') }}</td>
                 <td>{% for reportVersion in window.reportVersions %}
                         {{ reportVersionLink(reportVersion, 'view') }}
                         {% if not loop.last %}<br>{% endif %}

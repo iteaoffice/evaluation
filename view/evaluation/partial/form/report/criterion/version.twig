@@ -3,7 +3,7 @@
 {{ form().openTag(form)|raw }}
 {% set criterionFieldset = form.get('evaluation_entity_report_criterion_version') %}
 
-<div class="form-group row">
+<div class="row mb-3">
     <label for="report-version" class="col-sm-3 col-form-label">{{ translate("txt-evaluation-report") }}</label>
     <div class="col-sm-9">
         <input id="report-version" type="text" readonly class="form-control-plaintext" value="{{ reportVersion.label }}">
@@ -14,7 +14,7 @@
 {{ ztbformelement(criterionFieldset.get('defaultValue')) }}
 {{ ztbformelement(criterionFieldset.get('type')) }}
 {% if reportVersion.topics|length > 0 %}
-<div class="form-group row">
+<div class="row mb-3">
     <label class="col-sm-3 col-form-label">{{ translate(criterionFieldset.get('versionTopics').getOption('label')) }}</label>
     <div class="col-sm-9">
         <div id="topics">
@@ -48,7 +48,7 @@
 {{ ztbformelement(criterionFieldset.get('highlighted')) }}
 {{ formelement(form.get('csrf')) }}
 
-<div class="form-group row">
+<div class="row mb-3">
     <div class="offset-sm-3 col-sm-9">
         {{ formelement(form.get('submit')) }}
         {{ formelement(form.get('cancel')) }}

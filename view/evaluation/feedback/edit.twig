@@ -8,7 +8,7 @@
 
 {% set feedback = form.get('evaluation_entity_feedback') %}
 
-<div class="form-group row">
+<div class="row mb-3">
     <label class="col-sm-3 col-form-label">{{ translate("txt-project") }}</label>
 
     <div class="col-sm-9">
@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<div class="form-group row">
+<div class="row mb-3">
     <label class="col-sm-3 col-form-label">{{ translate("txt-version") }}</label>
 
     <div class="col-sm-9">
@@ -31,7 +31,7 @@
 {{ ztbformelement(feedback.get('evaluationFeedback')) }}
 {{ ztbformelement(feedback.get('evaluationConclusion')) }}
 
-<div class="form-group row">
+<div class="row mb-3">
     <div class="offset-sm-3 col-sm-9">
         {{ ztbformelement(form.get('csrf')) }}
         {{ ztbformelement(form.get('submit')) }}

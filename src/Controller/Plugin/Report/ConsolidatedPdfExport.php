@@ -207,6 +207,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
         }
 
         $this->parseHeading(' ');
+        $this->pdf->AddPage();
         $this->parseHeading($this->translator->translate('txt-public-authorities-feedback'), 15, 'L', 'sub');
         $this->parseFunderFeedbackOverview();
 
