@@ -67,7 +67,7 @@
             {% if project.projectChallenge.count() > 0 %}
                 <dt>{{ translate("txt-challenge") }}</dt>
                 {% for projectChallenge in project.projectChallenge %}
-                    <dd>{{ challengeIcon(projectChallenge.challenge, 15) }}
+                    <dd>{{ challengeIcon(projectChallenge.challenge, 15, 'icon') }}
                         {{ challengeLink(projectChallenge.challenge, 'view') }}</dd>
                 {% endfor %}
             {% endif %}
