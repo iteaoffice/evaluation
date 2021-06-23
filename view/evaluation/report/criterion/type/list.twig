@@ -37,11 +37,8 @@
                 <tbody>
                 {% for type in paginator.getCurrentItems() %}
                     <tr>
-                        <td>
-                            {{ type.id }}
-                            {{ reportCriterionTypeLink(type,'edit','icon') }}
-                        </td>
-                        <td>{{ reportCriterionTypeLink(type,'view','name') }}</td>
+                        <td><small class="text-muted">{{ type.id }}</small></td>
+                        <td>{{ reportCriterionTypeLink(type,'view','name') }} {{ reportCriterionTypeLink(type,'edit','icon') }}</td>
                         <td>{{ type.category }}</td>
                         <td>{{ type.sequence }}</td>
                     </tr>

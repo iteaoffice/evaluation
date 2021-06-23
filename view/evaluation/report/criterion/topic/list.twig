@@ -38,11 +38,8 @@
                 <tbody>
                 {% for topic in paginator.getCurrentItems() %}
                     <tr>
-                        <td>
-                            {{ topic.id }}
-                            {{ reportCriterionTopicLink(topic,'edit','icon') }}
-                        </td>
-                        <td>{{ reportCriterionTopicLink(topic,'view','name') }}</td>
+                        <td><small class="text-muted">{{ topic.id }}</small></td>
+                        <td>{{ reportCriterionTopicLink(topic,'view','name') }} {{ reportCriterionTopicLink(topic,'edit','icon') }}</td>
                         <td>{{ topic.sequence }}</td>
                         <td>{{ topic.reportVersions.count() }}</td>
                         <td>{{ topic.versionTopics.count() }}</td>

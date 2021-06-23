@@ -138,7 +138,7 @@
                 </table>
 
 
-                {# do not use the evaluationLink helper as that is fully built to produce evaluation links#}
+                {# do not use the evaluationLink helper as that is fully built to produce evaluation links #}
                 <a class="btn btn-primary"
                    href="{{ url('community/evaluation/download', {'call': call.id, 'type': typeId}) }}"><i
                             class="far fa-file-excel"></i>
@@ -156,11 +156,13 @@
             {% else %}
                 <h2>{{ translate("txt-funding-status-legend") }}</h2>
             {% endif %}
-            <div class="card-deck">
+            <div class="row row-cols-6">
                 {% for status in fundingStatuses %}
-                    <div class="card {{ status.parseCssName() }}">
-                        <div class="card-body">
-                            {% if isEvaluation %}{{ status.statusEvaluation }}{% else %}{{ status.statusFunding }}{% endif %}
+                    <div class="col mb-4">
+                        <div class="card h-100 {{ status.parseCssName() }}">
+                            <div class="card-body">
+                                {% if isEvaluation %}{{ status.statusEvaluation }}{% else %}{{ status.statusFunding }}{% endif %}
+                            </div>
                         </div>
                     </div>
                 {% endfor %}

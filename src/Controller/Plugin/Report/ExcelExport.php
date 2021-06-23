@@ -461,6 +461,27 @@ final class ExcelExport extends AbstractPlugin
         $displaySheet->setCellValue('B' . $row, implode(', ', $countries));
         $row++;
 
+        // Cluster
+        $this->parseCriterionLabel($displaySheet, $row, $this->translator->translate('txt-cluster'));
+        $displaySheet->mergeCells('B' . $row . ':C' . $row);
+
+        $clusters = [];
+        foreach ($project->getProjectCluster() as $projectCluster) {
+            $cluster = $projectCluster->getCluster();
+            if ($projectCluster->isPrimary()) {
+                $clusters[1] = $cluster . ' (primary)';
+            }
+
+            if ($projectCluster->isSecondary()) {
+                $clusters[2] = $cluster . ' (secondary)';
+            }
+        }
+
+        ksort($clusters);
+
+        $displaySheet->setCellValue('B' . $row, implode(', ', $clusters));
+        $row++;
+
         // Challenge
         $this->parseCriterionLabel($displaySheet, $row, $this->translator->translate('txt-challenge'));
         $displaySheet->mergeCells('B' . $row . ':C' . $row);
