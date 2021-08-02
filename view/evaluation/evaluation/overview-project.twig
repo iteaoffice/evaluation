@@ -95,7 +95,7 @@
             </tbody>
         </table>
     {% else %}
-        {{ ztbalert().info(translate("txt-no-evaluation-given-in-%s")|format(contactCountry))|raw }}
+        {{ lbs5alert().info(translate("txt-no-evaluation-given-in-%s")|format(contactCountry))|raw }}
     {% endif %}
 
     {{ evaluationLink(evaluation, project, evaluationType, contactCountry, 'evaluate-project','button') }}
@@ -132,5 +132,5 @@
     </table>
 {% else %}
     <h2>{{ translate("txt-no-version") }}</h2>
-    {{ ztbalert().info(translate("txt-there-is-no-version-of-type-%s-submitted-for-%s")|format(versionType, project))|raw }}
+    {{ lbs5alert().info(translate("txt-there-is-no-version-of-type-%s-submitted-for-%s")|format(versionType, project))|raw }}
 {% endif %}

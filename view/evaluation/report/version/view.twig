@@ -3,7 +3,7 @@
 {% do headTitle().append(translate("txt-evaluation-report-version-%s")|format(reportVersion.label)) %}
 
 {% if reportVersion.archived %}
-    {{ ztbalert().info(translate("txt-this-evaluation-report-version-has-been-archived"))|raw }}
+    {{ lbs5alert().info(translate("txt-this-evaluation-report-version-has-been-archived"))|raw }}
 {% endif %}
 <h1>{{ reportVersion.label }}</h1>
 {% if reportVersion.description is not empty %}

@@ -47,7 +47,7 @@
     {% endfor %}
     {{ evaluationReportDownloadLink(status) }}
 {% else %}
-    {{ ztbalert().info(translate("txt-no-new-evaluation-reports-found"))|raw }}
+    {{ lbs5alert().info(translate("txt-no-new-evaluation-reports-found"))|raw }}
 {% endif %}
 
 {#<h2>{{ translate("txt-in-progress") }}</h2>
@@ -78,7 +78,7 @@
         </tbody>
     </table>
 {% else %}
-    {{ ztbalert().info(translate("txt-no-evaluation-reports-found"))|raw }}
+    {{ lbs5alert().info(translate("txt-no-evaluation-reports-found"))|raw }}
 {% endif %}
 <h2>{{ translate("txt-finalised") }}</h2>
 {% if hasFinal %}
@@ -105,5 +105,5 @@
         </tbody>
     </table>
 {% else %}
-    {{ ztbalert().info(translate("txt-no-evaluation-reports-found"))|raw }}
+    {{ lbs5alert().info(translate("txt-no-evaluation-reports-found"))|raw }}
 {% endif %}#}

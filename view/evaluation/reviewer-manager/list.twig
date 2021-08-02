@@ -23,7 +23,7 @@
                 </tbody>
             </table>
         {% else %}
-            {{ ztbalert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
+            {{ lbs5alert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
         {% endif %}
 
         <h3>{{ translate("txt-ignored-reviewers") }}</h3>
@@ -45,7 +45,7 @@
                 </tbody>
             </table>
         {% else %}
-            {{ ztbalert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
+            {{ lbs5alert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
         {% endif %}
 
         {{ reviewerLink(null, 'new', 'button', project) }}
@@ -72,7 +72,7 @@
                 </tbody>
             </table>
         {% else %}
-            {{ ztbalert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
+            {{ lbs5alert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
         {% endif %}
 
         <h3>{{ translate("txt-future-evaluation-reviewers") }}</h3>
@@ -98,7 +98,7 @@
                 <dd>{{ calendarLink(calendarItem,'view-admin', 'name') }} {{ calendarItem.dateFrom|from_to_date(calendarItem.dateEnd) }}</dd>
             </dl>
         {% else %}
-            {{ ztbalert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
+            {{ lbs5alert().info(translate("txt-no-reviewers-can-be-found-for-this-review-type"))|raw }}
         {% endif %}
     </div>
 </div>

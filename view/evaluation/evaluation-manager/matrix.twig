@@ -146,7 +146,7 @@
                 </a>
                 {% else %}
 
-                    {{ ztbalert().info(translate("txt-there-are-no-projects-matching-your-criterea"))|raw }}
+                    {{ lbs5alert().info(translate("txt-there-are-no-projects-matching-your-criterea"))|raw }}
 
                 {% endif %}
             </div>
@@ -220,11 +220,11 @@
     }
 
     .note-expected:after { /* Magic Happens Here!!! */
-        border-top: 20px solid var(--pink);
+        border-top: 20px solid var(--bs-pink);
     }
 
     .note-submitted:after { /* Magic Happens Here!!! */
-        border-top: 20px solid var(--purple);
+        border-top: 20px solid var(--bs-purple);
     }
 
     .legend {

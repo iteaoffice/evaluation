@@ -1,19 +1,24 @@
 {% do headTitle().append(translate("txt-project-evaluation")) %}
 {% do headLink().appendStylesheet(url('assets/funding-status-css')) %}
 
-<div class="row">
+<div class="row community">
     <div class="col-md-10">
         <h1>{{ translate("txt-project-evaluation-call-%s")|format(call) }}</h1>
 
+        {% set versions = [1,2] %}
+        {% if not call.hasTwoStageProcess %}
+            {% set versions = [2] %}
+        {% endif %}
+
         <ul class="nav nav-tabs" role="tablist">
-            {% for type in versionTypes|filter(type => type.id in [1,2]) -%}
+            {% for type in versionTypes|filter(type => type.id in versions) -%}
                 <li class="nav-item {% if show == 'proposals' and typeId == type.id %}active{% endif %}">
                     <a class="nav-link {% if show == 'proposals' and typeId == type.id %}active{% endif %}"
                        role="tab"
                        href="{{ url('community/evaluation/overview', {'source': source, 'call': call.id,  'show': 'proposals', 'type': type.id} ) }}">{{ type }}</a>
                 </li>
             {% endfor %}
-            {% for type in evaluationTypes %}
+            {% for type in evaluationTypes|filter(type => type.id != 1) %}
                 <li class="nav-item {% if show == 'matrix' and  typeId == type.id %}active{% endif %}">
                     <a class="nav-link {% if show == 'matrix' and  typeId == type.id %}active{% endif %}"
                        role="tab"
@@ -36,6 +41,8 @@
                         <tr>
                             <th>{{ translate("txt-project-name") }}</th>
                             <th>{{ translate("txt-country-involved") }}</th>
+                            <th>{{ translate("txt-primary-cluster") }}</th>
+                            <th>{{ translate("txt-secondary-cluster") }}</th>
                             <th>{{ translate("txt-status") }}</th>
                             <th>{{ translate("txt-start-date") }}</th>
                             <th>{{ translate("txt-end-date") }}</th>
@@ -66,6 +73,12 @@
                                         {{ translate("txt-yes") }}
                                     {% endif %}
                                 </td>
+                                <td>{% for projectCluster in project.projectCluster|filter(projectCluster => projectCluster.isPrimary()) %}
+                                        {{ projectCluster.cluster.name }}
+                                    {% endfor %}</td>
+                                <td>{% for projectCluster in project.projectCluster|filter(projectCluster => projectCluster.isSecondary()) %}
+                                        {{ projectCluster.cluster.name }}
+                                    {% endfor %}</td>
                                 <td>{{ projectService.parseStatus(project) }}</td>
                                 <td>{{ project.startDate|string_date }}</td>
                                 <td>{{ project.endDate|string_date }}</td>
@@ -78,7 +91,7 @@
                        href="{{ url('community/project/version/document/download-proposals', {'call': call.id, 'type': versionType.id} ) }}">{{ translate("txt-download-%s-proposals-in-call-%s")|format(versionType.type|upper,call) }}</a>
 
                 {% else %}
-                    {{ ztbalert().info(translate("txt-there-are-no-projects-matching-you-criteria"))|raw }}
+                    {{ lbs5alert().info(translate("txt-there-are-no-projects-matching-you-criteria"))|raw }}
                 {% endif %}
 
 
@@ -173,7 +186,7 @@
                         </a>
                     {% else %}
 
-                        {{ ztbalert().info(translate("txt-there-are-no-projects-matching-your-criterea"))|raw }}
+                        {{ lbs5alert().info(translate("txt-there-are-no-projects-matching-your-criterea"))|raw }}
 
                     {% endif %}
                 </div>

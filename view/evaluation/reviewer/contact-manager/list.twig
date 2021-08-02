@@ -49,7 +49,7 @@
     </table>
     {% include 'application/partial/pagination-control' %}
 {% else %}
-    {{ ztbalert().info(translate("txt-no-review-contacts-could-be-found"))|raw }}
+    {{ lbs5alert().info(translate("txt-no-review-contacts-could-be-found"))|raw }}
 {% endif %}
 {{ form().closeTag()|raw }}
 

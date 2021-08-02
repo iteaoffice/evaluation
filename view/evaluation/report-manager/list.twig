@@ -50,11 +50,11 @@
                             <tr>
                                 <td>{{ projectLink(versionReviewer.version.project, 'view-admin', 'name') }}</td>
                                 <td>{{ versionLink(versionReviewer.version, 'general-admin', 'description') }}
-                                {% if versionReviewer.version.versionType.id == constant("Project\\Entity\\Version\\Type::TYPE_CR") %}
-                                    {% if versionReviewer.version.project.changerequestProcess.type == constant("Project\\Entity\\ChangeRequest\\Process::TYPE_MINOR") %}
-                                        <small>({{ translate("txt-minor") }})</small>
-                                    {% else %}
+                                {% if versionReviewer.version.versionType.isCr() %}
+                                    {% if versionReviewer.version.changerequestProcess.isMajor() %}
                                         <small>({{ translate("txt-major") }})</small>
+                                    {% else %}
+                                        <small>({{ translate("txt-minor") }})</small>
                                     {% endif %}
                                 {% endif %}
                                 </td>
@@ -204,7 +204,7 @@
             {% include 'application/partial/pagination-control' %}
 
         {% else %}
-            {{ ztbalert().info(translate("txt-no-evaluation-report-found"))|raw }}
+            {{ lbs5alert().info(translate("txt-no-evaluation-report-found"))|raw }}
         {% endif %}
     </div>
 

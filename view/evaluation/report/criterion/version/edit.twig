@@ -3,7 +3,7 @@
 {% do headTitle().append(translate("txt-edit-report-criterion-version-%s")|format(criterionVersion)) %}
 
 {% if criterionVersion.criterion.archived %}
-    {{ ztbalert().info(translate("txt-criterion-'%s'-has-been-archived-and-should-only-be-used-for-historical-reasons")|format(criterionVersion.criterion))|raw }}
+    {{ lbs5alert().info(translate("txt-criterion-'%s'-has-been-archived-and-should-only-be-used-for-historical-reasons")|format(criterionVersion.criterion))|raw }}
 {% endif %}
 <h1>{{ translate("txt-edit-%s")|format(criterionVersion) }}</h1>
 

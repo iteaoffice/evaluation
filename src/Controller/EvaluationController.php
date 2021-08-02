@@ -114,7 +114,7 @@ final class EvaluationController extends AbstractActionController
         $typeId = $this->params('type', 1);
         $callId = $this->params('call');
 
-        $evaluationTypes = $this->evaluationService->findAll(Entity\Type::class);
+
         $versionTypes    = $this->projectService->findAll(VersionType::class);
         $projects        = [];
 
@@ -153,6 +153,8 @@ final class EvaluationController extends AbstractActionController
 
         /** @var Call $call */
         $call = $this->callService->findCallById((int)$callId);
+        $evaluationTypes = $this->evaluationService->findAll(Entity\Type::class);
+
         /** @var Entity\Type $evaluationType */
         $evaluationType  = $this->evaluationService->find(Entity\Type::class, (int)$typeId);
         $fundingStatuses = $this->evaluationService->getFundingStatusList(
