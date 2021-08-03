@@ -25,18 +25,18 @@
 </div>
 
 
-{{ ztbformelement(feedback.get('status')) }}
-{{ ztbformelement(feedback.get('mandatoryImprovements')) }}
-{{ ztbformelement(feedback.get('recommendedImprovements')) }}
-{{ ztbformelement(feedback.get('reviewFeedback')) }}
-{{ ztbformelement(feedback.get('evaluationFeedback')) }}
-{{ ztbformelement(feedback.get('evaluationConclusion')) }}
+{{ lbs5formelement(feedback.get('status')) }}
+{{ lbs5formelement(feedback.get('mandatoryImprovements')) }}
+{{ lbs5formelement(feedback.get('recommendedImprovements')) }}
+{{ lbs5formelement(feedback.get('reviewFeedback')) }}
+{{ lbs5formelement(feedback.get('evaluationFeedback')) }}
+{{ lbs5formelement(feedback.get('evaluationConclusion')) }}
 
 <div class="row mb-3">
     <div class="offset-sm-3 col-sm-9">
-        {{ ztbformelement(form.get('csrf')) }}
-        {{ ztbformelement(form.get('submit')) }}
-        {{ ztbformelement(form.get('cancel')) }}
+        {{ lbs5formelement(form.get('csrf')) }}
+        {{ lbs5formelement(form.get('submit')) }}
+        {{ lbs5formelement(form.get('cancel')) }}
     </div>
 </div>
 

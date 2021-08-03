@@ -9,10 +9,10 @@
         <input id="report-version" type="text" readonly class="form-control-plaintext" value="{{ reportVersion.label }}">
     </div>
 </div>
-{{ ztbformelement(criterionFieldset.get('sequence')) }}
-{{ ztbformelement(criterionFieldset.get('criterion')) }}
-{{ ztbformelement(criterionFieldset.get('defaultValue')) }}
-{{ ztbformelement(criterionFieldset.get('type')) }}
+{{ lbs5formelement(criterionFieldset.get('sequence')) }}
+{{ lbs5formelement(criterionFieldset.get('criterion')) }}
+{{ lbs5formelement(criterionFieldset.get('defaultValue')) }}
+{{ lbs5formelement(criterionFieldset.get('type')) }}
 {% if reportVersion.topics|length > 0 %}
 <div class="row mb-3">
     <label class="col-sm-3 col-form-label">{{ translate(criterionFieldset.get('versionTopics').getOption('label')) }}</label>
@@ -22,10 +22,10 @@
                 <div class="card mb-2">
                     <div class="card-body row">
                         <div class="col">
-                            {{ ztbformelement(fieldset.get('topic'), true) }}
+                            {{ lbs5formelement(fieldset.get('topic'), true) }}
                         </div>
                         <div class="col">
-                            {{ ztbformelement(fieldset.get('weight'), true) }}
+                            {{ lbs5formelement(fieldset.get('weight'), true) }}
                         </div>
                         <div class="col">
                             <div class="form-group">
@@ -43,9 +43,9 @@
 </div>
 {% endif %}
 
-{{ ztbformelement(criterionFieldset.get('required')) }}
-{{ ztbformelement(criterionFieldset.get('confidential')) }}
-{{ ztbformelement(criterionFieldset.get('highlighted')) }}
+{{ lbs5formelement(criterionFieldset.get('required')) }}
+{{ lbs5formelement(criterionFieldset.get('confidential')) }}
+{{ lbs5formelement(criterionFieldset.get('highlighted')) }}
 {{ formelement(form.get('csrf')) }}
 
 <div class="row mb-3">

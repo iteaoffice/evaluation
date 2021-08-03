@@ -3,23 +3,23 @@
 
 {% set evaluation = form.get('evaluation_entity_evaluation') %}
 
-{{ ztbformelement(evaluation.get('project')) }}
-{{ ztbformelement(evaluation.get('country')) }}
+{{ lbs5formelement(evaluation.get('project')) }}
+{{ lbs5formelement(evaluation.get('country')) }}
 {{ contactformelement(evaluation.get('contact')) }}
-{{ ztbformelement(evaluation.get('type')) }}
-{{ ztbformelement(evaluation.get('status')) }}
-{{ ztbformelement(evaluation.get('eligible')) }}
-{{ ztbformelement(evaluation.get('description')) }}
+{{ lbs5formelement(evaluation.get('type')) }}
+{{ lbs5formelement(evaluation.get('status')) }}
+{{ lbs5formelement(evaluation.get('eligible')) }}
+{{ lbs5formelement(evaluation.get('description')) }}
 
 {{ formelement(form.get('csrf')) }}
 
 <div class="row mb-3">
     <div class="offset-sm-3 col-sm-9">
-        {{ ztbformelement(form.get('submit')) }}
+        {{ lbs5formelement(form.get('submit')) }}
         {% if form.has('delete') %}
-            {{ ztbformelement(form.get('delete')) }}
+            {{ lbs5formelement(form.get('delete')) }}
         {% endif %}
-        {{ ztbformelement(form.get('cancel')) }}
+        {{ lbs5formelement(form.get('cancel')) }}
     </div>
 </div>
 

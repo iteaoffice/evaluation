@@ -21,9 +21,9 @@
                     </div>
                 </div>
                 {% if type == constant("Evaluation\\Entity\\Report::TYPE_FINAL") %}
-                <div class="form-group">
-                    {{ evaluationReportPresentationLink(query) }}
-                </div>
+                    <div class="form-group">
+                        {{ evaluationReportPresentationLink(query) }}
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -50,13 +50,13 @@
                             <tr>
                                 <td>{{ projectLink(versionReviewer.version.project, 'view-admin', 'name') }}</td>
                                 <td>{{ versionLink(versionReviewer.version, 'general-admin', 'description') }}
-                                {% if versionReviewer.version.versionType.isCr() %}
-                                    {% if versionReviewer.version.changerequestProcess.isMajor() %}
-                                        <small>({{ translate("txt-major") }})</small>
-                                    {% else %}
-                                        <small>({{ translate("txt-minor") }})</small>
+                                    {% if versionReviewer.version.versionType.isCr() %}
+                                        {% if versionReviewer.version.changerequestProcess.isMajor() %}
+                                            <small>({{ translate("txt-major") }})</small>
+                                        {% else %}
+                                            <small>({{ translate("txt-minor") }})</small>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
                                 </td>
                                 <td>{{ contactLink(versionReviewer.contact, 'view-admin', 'name') }}</td>
                                 {% if versionReviewer.projectVersionReport %}
@@ -209,22 +209,18 @@
     </div>
 
     <div class="col-md-2">
-        <div class="well well-sm">
-            <fieldset>
-                <div class="row mb-3">
-                    {{ ztbformelement(filterFieldset.get('type'), true) }}
-                    {{ ztbformelement(filterFieldset.get('status'), true) }}
-                    {{ ztbformelement(filterFieldset.get('subject'), true) }}
-                    {% if subject == constant("Evaluation\\Entity\\Report\\Type::TYPE_REPORT") %}
-                        {{ ztbformelement(filterFieldset.get('year'), true) }}
-                        {{ ztbformelement(filterFieldset.get('period'), true) }}
-                    {% endif %}
-                    {{ ztbformelement(filterFieldset.get('call'), true) }}
-                </div>
-                    {{ ztbformelement(form.get('submit')) }}
-                    {{ ztbformelement(form.get('clear')) }}
-            </fieldset>
-        </div>
+        {{ lbs5formelement(filterFieldset.get('type'),'default') }}
+        {{ lbs5formelement(filterFieldset.get('status'), 'default') }}
+        {{ lbs5formelement(filterFieldset.get('subject'), 'default') }}
+        {% if subject == constant("Evaluation\\Entity\\Report\\Type::TYPE_REPORT") %}
+            {{ lbs5formelement(filterFieldset.get('year'), 'default') }}
+            {{ lbs5formelement(filterFieldset.get('period'), 'default') }}
+        {% endif %}
+        {{ lbs5formelement(filterFieldset.get('call'), 'default') }}
+        <br>
+
+        {{ lbs5formelement(form.get('submit')) }}
+        {{ lbs5formelement(form.get('clear')) }}
     </div>
 </div>
 

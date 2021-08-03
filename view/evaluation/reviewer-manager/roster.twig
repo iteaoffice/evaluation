@@ -4,15 +4,15 @@
 
 <h1>{{ translate("txt-review-roster") }}</h1>
 
-{{ ztbformelement(form.get('type')) }}
-{{ ztbformelement(form.get('online')) }}
-{{ ztbformelement(form.get('excel')) }}
-{{ ztbformelement(form.get('nr')) }}
-{{ ztbformelement(form.get('include-spare')) }}
-{{ ztbformelement(form.get('projects')) }}
+{{ lbs5formelement(form.get('type')) }}
+{{ lbs5formelement(form.get('online')) }}
+{{ lbs5formelement(form.get('excel')) }}
+{{ lbs5formelement(form.get('nr')) }}
+{{ lbs5formelement(form.get('include-spare')) }}
+{{ lbs5formelement(form.get('projects')) }}
 
 <div class="col-md-9 offset-md-3">
-    {{ ztbformelement(form.get('submit')) }}
+    {{ lbs5formelement(form.get('submit')) }}
 </div>
 
 {{ form().closeTag()|raw }}

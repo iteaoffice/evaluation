@@ -3,11 +3,11 @@
 {{ form().openTag(form)|raw }}
 {% set versionFieldset = form.get('evaluation_entity_report_version') %}
 
-{{ ztbformelement(versionFieldset.get('label')) }}
-{{ ztbformelement(versionFieldset.get('description')) }}
-{{ ztbformelement(versionFieldset.get('reportType')) }}
-{{ ztbformelement(versionFieldset.get('topics')) }}
-{{ ztbformelement(versionFieldset.get('archived')) }}
+{{ lbs5formelement(versionFieldset.get('label')) }}
+{{ lbs5formelement(versionFieldset.get('description')) }}
+{{ lbs5formelement(versionFieldset.get('reportType')) }}
+{{ lbs5formelement(versionFieldset.get('topics')) }}
+{{ lbs5formelement(versionFieldset.get('archived')) }}
 {{ formelement(form.get('csrf')) }}
 
 <div class="row mb-3">

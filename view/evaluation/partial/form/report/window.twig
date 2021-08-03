@@ -3,13 +3,13 @@
 {{ form().openTag(form)|raw }}
 {% set window = form.get('evaluation_entity_report_window') %}
 
-{{ ztbformelement(window.get('reportVersions')) }}
-{{ ztbformelement(window.get('title')) }}
-{{ ztbformelement(window.get('description')) }}
-{{ ztbformelement(window.get('dateStartReport')) }}
-{{ ztbformelement(window.get('dateEndReport')) }}
-{{ ztbformelement(window.get('dateStartSelection')) }}
-{{ ztbformelement(window.get('dateEndSelection')) }}
+{{ lbs5formelement(window.get('reportVersions')) }}
+{{ lbs5formelement(window.get('title')) }}
+{{ lbs5formelement(window.get('description')) }}
+{{ lbs5formelement(window.get('dateStartReport')) }}
+{{ lbs5formelement(window.get('dateEndReport')) }}
+{{ lbs5formelement(window.get('dateStartSelection')) }}
+{{ lbs5formelement(window.get('dateEndSelection')) }}
 {{ formelement(form.get('csrf')) }}
 
 <div class="row mb-3">

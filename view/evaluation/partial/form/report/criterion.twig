@@ -2,14 +2,14 @@
 {{ form().openTag(form)|raw }}
 {% set criterionFieldset = form.get('evaluation_entity_report_criterion') %}
 
-{{ ztbformelement(criterionFieldset.get('sequence')) }}
-{{ ztbformelement(criterionFieldset.get('criterion')) }}
-{{ ztbformelement(criterionFieldset.get('helpBlock')) }}
-{{ ztbformelement(criterionFieldset.get('inputType')) }}
-{{ ztbformelement(criterionFieldset.get('values')) }}
-{{ ztbformelement(criterionFieldset.get('reportTypes')) }}
-{{ ztbformelement(criterionFieldset.get('hasScore')) }}
-{{ ztbformelement(criterionFieldset.get('archived')) }}
+{{ lbs5formelement(criterionFieldset.get('sequence')) }}
+{{ lbs5formelement(criterionFieldset.get('criterion')) }}
+{{ lbs5formelement(criterionFieldset.get('helpBlock')) }}
+{{ lbs5formelement(criterionFieldset.get('inputType')) }}
+{{ lbs5formelement(criterionFieldset.get('values')) }}
+{{ lbs5formelement(criterionFieldset.get('reportTypes')) }}
+{{ lbs5formelement(criterionFieldset.get('hasScore')) }}
+{{ lbs5formelement(criterionFieldset.get('archived')) }}
 {{ formelement(form.get('csrf')) }}
 
 <div class="row mb-3">
