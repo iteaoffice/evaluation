@@ -27,7 +27,7 @@ return [
                         ],
                         'may_terminate' => false,
                         'child_routes'  => [
-                            'matrix'   => [
+                            'matrix'          => [
                                 'type'    => Segment::class,
                                 'options' => [
                                     'route'    => '/matrix[/source-:source][/call-:call[/type-[:type[/display-:display]]]].html',
@@ -36,7 +36,7 @@ return [
                                     ],
                                 ],
                             ],
-                            'report'   => [
+                            'report'          => [
                                 'type'          => Literal::class,
                                 'options'       => [
                                     'route'    => '/report',
@@ -47,7 +47,7 @@ return [
                                 ],
                                 'may_terminate' => true,
                                 'child_routes'  => [
-                                    'migrate'                => [
+                                    'migrate'             => [
                                         'type'     => Segment::class,
                                         'priority' => 1000,
                                         'options'  => [
@@ -133,7 +133,7 @@ return [
                                             ],
                                         ],
                                     ],
-                                    'presentation'            => [
+                                    'presentation'        => [
                                         'type'    => Segment::class,
                                         'options' => [
                                             'route'    => '/presentation.html',
@@ -500,7 +500,19 @@ return [
                                     ],
                                 ],
                             ],
-                            'reviewer' => [
+                            'review-schedule' => [
+                                'type'          => 'Segment',
+                                'options'       => [
+                                    'route'    => '/review/schedule',
+                                    'defaults' => [
+                                        'controller' => Controller\ReviewScheduleController::class,
+                                        'action'     => 'overview',
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes'  => []
+                            ],
+                            'reviewer'        => [
                                 'type'          => 'Segment',
                                 'options'       => [
                                     'route'    => '/reviewer',
@@ -640,8 +652,8 @@ return [
                         ],
                     ],
                     'project'    => [
-                        'child_routes'  => [
-                            'evaluation'       => [
+                        'child_routes' => [
+                            'evaluation' => [
                                 'type'          => 'Segment',
                                 'options'       => [
                                     'route'    => '/evaluation',

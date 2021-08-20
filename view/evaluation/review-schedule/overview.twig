@@ -1,0 +1,37 @@
+{% do headTitle().append(translate("txt-admin")) %}
+{% do headTitle().append(translate("txt-review-schedule")) %}
+
+<h1>{{ translate("txt-review-schedule") }}</h1>
+
+{% if schedule|length > 0 %}
+    <table class="table table-hover table-striped table-sm">
+        <thead>
+        <tr>
+            <th>{{ translate("txt-no") }}</th>
+            <th>{{ translate("txt-call") }}</th>
+            <th>{{ translate("txt-project") }}</th>
+            <th>{{ translate("txt-start-date") }}</th>
+            <th>{{ translate("txt-review") }} 1</th>
+            <th>{{ translate("txt-review") }} 2</th>
+            <th>{{ translate("txt-review") }} 3</th>
+            <th>{{ translate("txt-review") }} 4</th>
+            <th>{{ translate("txt-end-date") }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in schedule %}
+            <tr>
+                <td class="text-muted">{{ loop.index }}</td>
+                <td>{{ reviewerContact.id }} {{ reviewerContactLink(reviewerContact, 'edit', 'icon') }}</td>
+                <td>{{ reviewerContactLink(reviewerContact, 'view', 'handle') }}</td>
+                <td>{{ contactLink(reviewerContact.getContact(),'view-admin','name') }}</td>
+                <td>{% if reviewerContact.contact.hasOrganisation() %}{{ organisationLink(reviewerContact.contact.contactOrganisation.organisation,'view-admin','name') }}{% endif %}</td>
+                <td>{% if reviewerContact.contact.hasOrganisation() %}{{ countryLink(reviewerContact.contact.contactOrganisation.organisation.country,'view','name') }}{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    {{ ztbalert().info(translate("txt-no-active-projects-could-be-found"))|raw }}
+{% endif %}
+

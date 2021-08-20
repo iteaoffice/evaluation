@@ -24,6 +24,10 @@ return [
              */
             Route::class => [
                 [
+                    'route' => 'zfcadmin/evaluation/review-schedule',
+                    'roles' => ['office'],
+                ],
+                [
                     'route' => 'zfcadmin/evaluation/reviewer',
                     'roles' => ['office'],
                 ],
