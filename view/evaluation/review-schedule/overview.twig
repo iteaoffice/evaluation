@@ -22,11 +22,26 @@
         {% for row in schedule %}
             <tr>
                 <td class="text-muted">{{ loop.index }}</td>
-                <td>{{ reviewerContact.id }} {{ reviewerContactLink(reviewerContact, 'edit', 'icon') }}</td>
-                <td>{{ reviewerContactLink(reviewerContact, 'view', 'handle') }}</td>
-                <td>{{ contactLink(reviewerContact.getContact(),'view-admin','name') }}</td>
-                <td>{% if reviewerContact.contact.hasOrganisation() %}{{ organisationLink(reviewerContact.contact.contactOrganisation.organisation,'view-admin','name') }}{% endif %}</td>
-                <td>{% if reviewerContact.contact.hasOrganisation() %}{{ countryLink(reviewerContact.contact.contactOrganisation.organisation.country,'view','name') }}{% endif %}</td>
+                <td>{{ callLink(row.project.call, 'view-admin') }}</td>
+                <td>{{ projectLink(row.project, 'view-admin') }}</td>
+                <td>{{ row.project.dateStartActual|date('d-m-Y') }}</td>
+                {% set cols = 0 %}
+                {% for projectCalendar in row.project.projectCalendar %}
+                    <td><span title="{{ projectCalendar.calendar.calendar }}">{{ projectCalendar.calendar.dateFrom|date('d-m-Y') }}</span> {{ calendarLink(projectCalendar.calendar, 'view-admin', 'icon') }}</td>
+                    {% set cols = cols + 1 %}
+                {% endfor %}
+                {% if row.nextReview is not null %}
+                    <td>
+                        <a class="btn btn-sm btn-primary" href="{{ url('zfcadmin/calendar/new', {'project': row.project.id}, {'query': { 'date': row.nextReview|date('Y-m-d') }}) }}"><i class="fas fa-plus"></i> {{ row.nextReview|date('d-m-Y') }}</a>
+                    </td>
+                    {% set cols = cols + 1 %}
+                {% endif %}
+                {% if cols < 4 %}
+                    {% for td in (cols + 1)..4 %}
+                        <td></td>
+                    {% endfor %}
+                {% endif %}
+                <td>{{ row.project.dateEndActual|date('d-m-Y') }}</td>
             </tr>
         {% endfor %}
         </tbody>

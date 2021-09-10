@@ -14,6 +14,7 @@ namespace Evaluation\Service;
 
 use Affiliation\Entity\Affiliation;
 use DateInterval;
+use DateTime;
 use General\Entity\Country;
 use Evaluation\Entity\Evaluation;
 use Evaluation\Entity\Feedback;
@@ -133,26 +134,30 @@ class EvaluationService extends AbstractService
     public function getReviewSchedule(): array
     {
         $schedule = [];
-        $activeProjects = $this->entityManager->getRepository(Project::class)->findProjects();
+        $activeProjects = $this->entityManager->getRepository(Project::class)
+            ->findActiveProjectsForReviewRoster();
         /** @var Project $project */
         foreach ($activeProjects as $project) {
             $lastReview =  $project->getProjectCalendar()->isEmpty()
                 ? $project->getDateStartActual()
                 : $project->getProjectCalendar()->last()->getCalendar()->getDateFrom();
-            $diff = $lastReview->diff($project->getDateEndActual());
-            $reviews = round(($diff->days - 14) / 365);
-            $nextReview = null;
-            if ($reviews > 0)
-            {
-                $interval = floor(($diff->days - 14) / $reviews);
-                $nextReview = $lastReview->add(new DateInterval('P' . $interval . 'D'));
-            }
+            if ($project->getDateEndActual() !== null) {
+                $diff = $lastReview->diff($project->getDateEndActual());
+                $reviews = round(($diff->days - 14) / 365);
+                $nextReview = null;
+                if ($reviews > 0) {
+                    $interval = floor(($diff->days - 14) / $reviews);
+                    $nextReview = clone $lastReview;
+                    $nextReview->add(new DateInterval('P' . $interval . 'D'));
+                }
 
-            $schedule[] = [
-                'project'    => $project,
-                'nextReview' => $nextReview,
-            ];
+                $schedule[] = [
+                    'project'    => $project,
+                    'nextReview' => $nextReview,
+                ];
+            }
         }
+
         return $schedule;
     }
 }

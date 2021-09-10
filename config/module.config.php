@@ -32,6 +32,7 @@ $config = [
             Controller\Report\Criterion\TopicController::class    => ConfigAbstractFactory::class,
             Controller\Report\Criterion\VersionController::class  => ConfigAbstractFactory::class,
             Controller\ReviewerManagerController::class           => ConfigAbstractFactory::class,
+            Controller\ReviewScheduleController::class            => ConfigAbstractFactory::class,
             Controller\Reviewer\ContactManagerController::class   => ConfigAbstractFactory::class,
             Controller\JsonController::class                      => ConfigAbstractFactory::class,
         ],
