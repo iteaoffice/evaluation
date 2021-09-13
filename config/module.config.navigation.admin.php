@@ -15,6 +15,14 @@ namespace Evaluation;
 return [
     'navigation' => [
         'admin' => [
+            'tools'   => [
+                'pages' => [
+                    'review-schedule' => [
+                        'label' => _('txt-nav-review-schedule'),
+                        'route' => 'zfcadmin/evaluation/review-schedule',
+                    ],
+                ],
+            ],
             'config'  => [
                 'pages' => [
                     'report-criterion-category' => [

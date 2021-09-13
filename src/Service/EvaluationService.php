@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Evaluation\Service;
 
 use Affiliation\Entity\Affiliation;
+use DateInterval;
+use DateTime;
 use General\Entity\Country;
 use Evaluation\Entity\Evaluation;
 use Evaluation\Entity\Feedback;
@@ -22,7 +24,9 @@ use Project\Entity\Funding\Source;
 use Project\Entity\Funding\Status;
 use Project\Entity\Project;
 
+use function floor;
 use function in_array;
+use function round;
 use function strlen;
 
 /**
@@ -125,5 +129,35 @@ class EvaluationService extends AbstractService
             default:
                 return $this->entityManager->getRepository(Status::class)->findBy([], ['sequence' => 'ASC']);
         }
+    }
+
+    public function getReviewSchedule(): array
+    {
+        $schedule = [];
+        $activeProjects = $this->entityManager->getRepository(Project::class)
+            ->findActiveProjectsForReviewRoster();
+        /** @var Project $project */
+        foreach ($activeProjects as $project) {
+            $lastReview =  $project->getProjectCalendar()->isEmpty()
+                ? $project->getDateStartActual()
+                : $project->getProjectCalendar()->last()->getCalendar()->getDateFrom();
+            if ($project->getDateEndActual() !== null) {
+                $diff = $lastReview->diff($project->getDateEndActual());
+                $reviews = round(($diff->days - 14) / 365);
+                $nextReview = null;
+                if ($reviews > 0) {
+                    $interval = floor(($diff->days - 14) / $reviews);
+                    $nextReview = clone $lastReview;
+                    $nextReview->add(new DateInterval('P' . $interval . 'D'));
+                }
+
+                $schedule[] = [
+                    'project'    => $project,
+                    'nextReview' => $nextReview,
+                ];
+            }
+        }
+
+        return $schedule;
     }
 }

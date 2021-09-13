@@ -1,5 +1,6 @@
 <?php
 return [
+    'evaluation/review-schedule/overview' => __DIR__ . '/./view/evaluation/review-schedule/overview.twig',
     'evaluation/reviewer/contact-manager/view' => __DIR__ . '/./view/evaluation/reviewer/contact-manager/view.twig',
     'evaluation/reviewer/contact-manager/new' => __DIR__ . '/./view/evaluation/reviewer/contact-manager/new.twig',
     'evaluation/reviewer/contact-manager/list' => __DIR__ . '/./view/evaluation/reviewer/contact-manager/list.twig',

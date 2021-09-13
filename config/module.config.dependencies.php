@@ -115,6 +115,10 @@ return [
             EntityManager::class,
             TranslatorInterface::class
         ],
+        Controller\ReviewScheduleController::class            => [
+            Service\EvaluationService::class,
+            TranslatorInterface::class
+        ],
         Controller\Reviewer\ContactManagerController::class   => [
             Service\ReviewerService::class,
             Service\FormService::class
