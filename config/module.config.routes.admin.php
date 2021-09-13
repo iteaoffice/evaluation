@@ -503,7 +503,7 @@ return [
                             'review-schedule' => [
                                 'type'          => 'Segment',
                                 'options'       => [
-                                    'route'    => '/review/schedule',
+                                    'route'    => '/review/schedule.html',
                                     'defaults' => [
                                         'controller' => Controller\ReviewScheduleController::class,
                                         'action'     => 'overview',
