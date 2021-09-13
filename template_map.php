@@ -1,5 +1,4 @@
 <?php
-
 return [
     'evaluation/reviewer/contact-manager/view' => __DIR__ . '/./view/evaluation/reviewer/contact-manager/view.twig',
     'evaluation/reviewer/contact-manager/new' => __DIR__ . '/./view/evaluation/reviewer/contact-manager/new.twig',
