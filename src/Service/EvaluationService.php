@@ -138,7 +138,7 @@ class EvaluationService extends AbstractService
             ->findActiveProjectsForReviewRoster();
         /** @var Project $project */
         foreach ($activeProjects as $project) {
-            $lastReview =  $project->getProjectCalendar()->isEmpty()
+            $lastReview = $project->getProjectCalendar()->isEmpty()
                 ? $project->getDateStartActual()
                 : $project->getProjectCalendar()->last()->getCalendar()->getDateFrom();
             if ($project->getDateEndActual() !== null) {

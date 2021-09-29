@@ -69,7 +69,7 @@ final class ConsolidatedPdfExport extends AbstractPlugin
     private static array $lineHeights = [
         'category' => 8, 'type' => 6, 'line' => 5, 'bigLine' => 15
     ];
-    private static int $topMargin = ITEAOFFICE_HOST === 'itea' ? 30 : 70;
+    private static int $topMargin = ITEAOFFICE_HOST === 'itea' ? 70 : 70;
     private static int $bottomMargin = ITEAOFFICE_HOST === 'itea' ? 30 : 20;
     private static string $orientation = 'P';
     private static int $fontSize = 9;
