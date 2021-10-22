@@ -33,6 +33,7 @@ use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use PhpOffice\PhpSpreadsheet\Chart\PlotArea;
+use PhpOffice\PhpSpreadsheet\Chart\Properties;
 use PhpOffice\PhpSpreadsheet\Chart\Title;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\NamedRange;
@@ -127,7 +128,7 @@ final class ExcelExport extends AbstractPlugin
         // Set the dropdown lookup data in a hidden sheet
         $lookupSheet = $this->excel->createSheet(1);
         $lookupSheet->setTitle('LookupData');
-        //$lookupSheet->setSheetState(Worksheet::SHEETSTATE_VERYHIDDEN);
+        $lookupSheet->setSheetState(Worksheet::SHEETSTATE_VERYHIDDEN);
         // Scores
         $row = 1;
         foreach (Result::getScoreValues() as $scoreValue => $scoreLabel) {
@@ -962,33 +963,32 @@ final class ExcelExport extends AbstractPlugin
             DataSeries::STYLE_FILLED
         );
 
-        // Hide Y axis and set minimum and maximum chart bounds
-        $yAxisStyle = new Axis();
-        $yAxisStyle->setAxisOptionsProperties(
-            'none',
+        $xAxis = new Axis();
+        $xAxis->setAxisOptionsProperties(
+            'nextTo',
             null,
             null,
             null,
             null,
-            null,
+            Properties::TICK_MARK_CROSS,
             Result::SCORE_NOT_EVALUATED,
-            end($scoreValues)
+            end($scoreValues),
+            '0.5',
+            '0.5'
         );
+        $xAxis->setLineParameters('A6A6A6', 0, Properties::EXCEL_COLOR_TYPE_STANDARD);
 
-        $chart = new Chart(
+        return new Chart(
             'evaluation_summary',
             new Title('Evaluation summary'),
             null,
             new PlotArea(new Layout(), [$dataSeries]),
             true,
-            'gap', //Gap is important for PHPExcel
+            DataSeries::EMPTY_AS_GAP, // Gap is important for PHPExcel
             null,
             null,
-            $yAxisStyle,
-            null
+            $xAxis
         );
-
-        return $chart;
     }
 
     public function parseResponse(): Response
