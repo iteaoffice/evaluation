@@ -30,10 +30,6 @@ use Evaluation\Entity\Report\Type as ReportType;
 use Evaluation\Form\ReportFilter;
 use Evaluation\Form\ReportUpload;
 use Evaluation\Service\EvaluationReportService;
-use Project\Entity\Report\Report as ProjectReport;
-use Project\Entity\Version\Version as ProjectVersion;
-use Project\Service\ReportService;
-use Project\Service\VersionService;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\I18n\Translator\TranslatorInterface;
@@ -41,6 +37,10 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Paginator\Paginator;
 use Laminas\View\Model\ViewModel;
+use Project\Entity\Report\Report as ProjectReport;
+use Project\Entity\Version\Version as ProjectVersion;
+use Project\Service\ReportService;
+use Project\Service\VersionService;
 
 use function array_keys;
 use function array_merge;
@@ -74,10 +74,10 @@ final class ReportManagerController extends AbstractActionController
         TranslatorInterface $translator
     ) {
         $this->evaluationReportService = $evaluationReportService;
-        $this->versionService = $versionService;
-        $this->reportService = $reportService;
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
+        $this->versionService          = $versionService;
+        $this->reportService           = $reportService;
+        $this->entityManager           = $entityManager;
+        $this->translator              = $translator;
     }
 
     public function listAction()
@@ -88,12 +88,12 @@ final class ReportManagerController extends AbstractActionController
             return $this->redirect()->toRoute('zfcadmin/evaluation/report/list');
         }
 
-        $page = $this->params()->fromRoute('page', 1);
+        $page         = $this->params()->fromRoute('page', 1);
         $filterPlugin = $this->getEvaluationFilter();
         $filterValues = $filterPlugin->getFilter();
-        $subject = $filterValues['subject'] ?? null;
-        $type = $filterValues['type'] ?? EvaluationReport::TYPE_INDIVIDUAL;
-        $versionType = $filterValues['version'] ?? null;
+        $subject      = $filterValues['subject'] ?? null;
+        $type         = $filterValues['type'] ?? EvaluationReport::TYPE_INDIVIDUAL;
+        $versionType  = $filterValues['version'] ?? null;
         /** @var QueryBuilder $reportQuery */
         $reportQuery = $this->evaluationReportService->findFiltered(EvaluationReport::class, $filterValues);
 
@@ -129,10 +129,10 @@ final class ReportManagerController extends AbstractActionController
     public function newFinalAction()
     {
         /** @var Request $request */
-        $request = $this->getRequest();
+        $request     = $this->getRequest();
         $offlineMode = ($request->getQuery('mode') === 'offline');
-        $versionId = $this->params()->fromRoute('version');
-        $reportId = $this->params()->fromRoute('report');
+        $versionId   = $this->params()->fromRoute('version');
+        $reportId    = $this->params()->fromRoute('report');
 
         if (($versionId === null) && ($reportId === null)) {
             return $this->notFoundAction();
@@ -144,16 +144,16 @@ final class ReportManagerController extends AbstractActionController
 
         // Create upon starting the form so that create and edit can be handled by the same form
         $evaluationReport = new EvaluationReport();
-        $report = null;
-        $version = null;
+        $report           = null;
+        $version          = null;
 
         // In offline mode, produce an Excel download instead of the form
         if ($offlineMode) {
             switch ($type) {
                 case ReportType::TYPE_GENERAL_REPORT:
                     /** @var ProjectReport $report */
-                    $report = $this->reportService->find(ProjectReport::class, (int)$reportId);
-                    $label = $report->parseName();
+                    $report              = $this->reportService->find(ProjectReport::class, (int)$reportId);
+                    $label               = $report->parseName();
                     $projectReportReport = new EvaluationReport\ProjectReport();
                     $projectReportReport->setReport($report);
                     $projectReportReport->setEvaluationReport($evaluationReport);
@@ -164,8 +164,8 @@ final class ReportManagerController extends AbstractActionController
 
                 case ReportType::TYPE_GENERAL_VERSION:
                     /** @var ProjectVersion $version */
-                    $version = $this->versionService->find(ProjectVersion::class, (int)$versionId);
-                    $label = $version->getVersionType()->getDescription();
+                    $version              = $this->versionService->find(ProjectVersion::class, (int)$versionId);
+                    $label                = $version->getVersionType()->getDescription();
                     $projectVersionReport = new EvaluationReport\ProjectVersion();
                     $projectVersionReport->setVersion($version);
                     $projectVersionReport->setEvaluationReport($evaluationReport);
@@ -193,7 +193,7 @@ final class ReportManagerController extends AbstractActionController
 
             // Upload Excel
             if ($request->isPost()) {
-                $data = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
+                $data       = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
                 $uploadForm = new ReportUpload('');
                 $uploadForm->setData($data);
                 $excel = $uploadForm->get('excel')->getValue();
@@ -202,7 +202,7 @@ final class ReportManagerController extends AbstractActionController
                     if ($evaluationReport->getProjectVersionReport() instanceof ProjectVersionReport) {
                         $evaluationReport->setFinal(true);
                     }
-                    $success = false;
+                    $success      = false;
                     $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
                     if (! $importHelper->hasParseErrors()) {
                         $success = $importHelper->import($evaluationReport);
@@ -231,17 +231,14 @@ final class ReportManagerController extends AbstractActionController
                 switch ($type) {
                     case ReportType::TYPE_GENERAL_REPORT:
                         return $this->redirect()->toRoute(
-                            'zfcadmin/project/report/view',
-                            ['id' => $report->getId()],
-                            ['fragment' => 'evaluation']
+                            'zfcadmin/project/report/evaluation',
+                            ['id' => $report->getId()]
                         );
-                        break;
                     case ReportType::TYPE_GENERAL_VERSION:
                         return $this->redirect()->toRoute(
                             'zfcadmin/project/version/evaluation',
                             ['id' => $version->getId()]
                         );
-                        break;
                 }
             } // Final version can only be uploaded from an existing sheet
             else {
@@ -256,8 +253,8 @@ final class ReportManagerController extends AbstractActionController
     public function editFinalAction()
     {
         /** @var Request $request */
-        $request = $this->getRequest();
-        $form = null;
+        $request     = $this->getRequest();
+        $form        = null;
         $offlineMode = ($request->getQuery('mode') === 'offline');
 
         /** @var EvaluationReport $evaluationReport */
@@ -272,14 +269,14 @@ final class ReportManagerController extends AbstractActionController
 
         // Upload offline Excel
         if ($offlineMode && $request->isPost()) {
-            $data = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
+            $data       = array_merge($request->getPost()->toArray(), $request->getFiles()->toArray());
             $uploadForm = new ReportUpload(
                 ''
             );//@bart, could the action be '' as you only use the form here for validation
             $uploadForm->setData($data);
             $excel = $uploadForm->get('excel')->getValue();
             if ($uploadForm->isValid() && ! empty($excel['name']) && ($excel['error'] === 0)) {
-                $success = false;
+                $success      = false;
                 $importHelper = $this->evaluationReportExcelImport($excel['tmp_name']);
                 if (! $importHelper->hasParseErrors()) {
                     // Prevent duplicate entries by clearing old results when an outdated Excel is used
@@ -329,7 +326,7 @@ final class ReportManagerController extends AbstractActionController
     {
         /** @var Request $request */
         $request = $this->getRequest();
-        $format = $request->getQuery('format');
+        $format  = $request->getQuery('format');
         /** @var EvaluationReport $evaluationReport */
         $evaluationReport = $this->evaluationReportService->find(
             EvaluationReport::class,

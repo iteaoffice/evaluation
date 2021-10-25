@@ -109,7 +109,7 @@ class Version extends AbstractEntity
      *      joinColumns={@ORM\JoinColumn(name="version_id", referencedColumnName="version_id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="topic_id", referencedColumnName="topic_id")}
      * )
-     * @ORM\OrderBy({"sequence" = "ASC"})
+     * @ORM\OrderBy({"sequence"="ASC"})
      * @Annotation\Type("DoctrineORMModule\Form\Element\EntityMultiCheckbox")
      * @Annotation\Options({
      *     "label":"txt-topics",
