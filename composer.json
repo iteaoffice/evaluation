@@ -22,7 +22,7 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "php": "^7.4 || ^8.0",
+    "php": "^8.0",
     "ext-dom": "*",
     "ext-json": "*",
     "ext-zip": "*",
@@ -48,7 +48,8 @@
     "iteaoffice/organisation": "^5.1",
     "iteaoffice/search": "^2.1",
     "iteaoffice/program": "^5.1",
-    "iteaoffice/project": "^5.1"
+    "iteaoffice/project": "^5.1",
+    "jetbrains/phpstorm-attributes": "dev-master"
   },
   "autoload": {
     "psr-4": {
